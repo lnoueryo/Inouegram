@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\User;
+use App\Like;
+use App\Comment;
+use App\Post;
+use App\Follower;
+use App\Http\Resources\UserCollection;
+
+class ProfileController extends Controller
+{
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
+    public function index() {
+
+        // $id = $request->id;
+        // $this_user = User::find(1);
+        // $my_info = User::find(Auth::id());
+        $this_user_posts = Post::where('user_id', 1)->orderBy('updated_at', 'desc');
+        // $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
+        // $this_user_comments = Comment::whereIn('post_id', $this_user_posts->get('id'))->latest();
+        // $comment_users = User::whereIn('id', $this_user_comments->get('user_id'))->get();
+        // $followed_numbers = Follower::where('followed_id', $id);
+        // $followed_count = $followed_numbers->count();
+        // $following_count = Follower::where('following_id', $id)->count();
+        // if($followed_numbers->where('following_id', Auth::id())->count() == 0){
+        //     $followed = 0;
+        // } else {
+        //     $followed = 1;
+        // }
+
+        return view('profile',['this_user_posts' => $this_user_posts->get()]);
+    }
+
+    // public function index(Request $request) {
+
+    //     $id = $request->id;
+    //     $this_user = User::find(1);
+    //     $my_info = User::find(Auth::id());
+    //     $this_user_posts = Post::where('user_id', $id)->orderBy('updated_at', 'desc');
+    //     $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
+    //     $this_user_comments = Comment::whereIn('post_id', $this_user_posts->get('id'))->latest();
+    //     $comment_users = User::whereIn('id', $this_user_comments->get('user_id'))->get();
+    //     $followed_numbers = Follower::where('followed_id', $id);
+    //     $followed_count = $followed_numbers->count();
+    //     $following_count = Follower::where('following_id', $id)->count();
+    //     if($followed_numbers->where('following_id', Auth::id())->count() == 0){
+    //         $followed = 0;
+    //     } else {
+    //         $followed = 1;
+    //     }
+
+    //     return view('profile',['comment_users' => $comment_users, 'this_user_comments' => $this_user_comments->get(), 'this_user_likes' => $this_user_likes, 'followed_count' => $followed_count, 'following_count' => $following_count, 'this_user' => $this_user, 'my_info' => $my_info, 'this_user_posts' => $this_user_posts->get(), 'id' => $id, 'followed' => $followed]);
+    // }
+
+    public function create(Request $request) {
+        if($request->followed == 0) {
+            $follower = new Follower;
+            $follower->following_id = $request->myId;
+            $follower->followed_id = $request->id;
+            $follower->save();
+            return  1;
+        } else {
+            $follower = Follower::where('following_id', $request->myId)->where('followed_id', $request->id);
+            $follower->delete();
+            return  0;
+        }
+    }
+
+    public function delete(Request $request) {
+        $follower = Follower::where('following_id', Auth::id())->where('followed_id', $request->id);
+        $follower->delete();
+        return  redirect()->route('profile', ['id' => $request->id]);
+    }
+}
