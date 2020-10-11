@@ -24,7 +24,7 @@
 
             <v-stepper-content step="2">
                 <div style="font-size: 14px; text-align: center; width: 100vw;">
-                    <vue-canvas></vue-canvas>
+                    <post-canvas></post-canvas>
                     <post-all></post-all>
                         <!-- <input id="cropped-image" type="hidden" name="cropped-image" :value="cropImg"> -->
                 </div>
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import Canvas from '../organisms/Canvas.vue'
+import PostCanvas from '../organisms/PostCanvas.vue'
 import Crop from '../organisms/Crop.vue'
 import PostAll from '../organisms/PostAll.vue'
 import { mapGetters } from 'vuex'
@@ -54,7 +54,7 @@ export default {
     components: {
         'crop': Crop,
         'post-all': PostAll,
-        'vue-canvas': Canvas,
+        'post-canvas': PostCanvas,
     },
     data () {
         return {

@@ -7,34 +7,32 @@
     <br>
     <v-container>
       <v-layout>
-    <div v-if="imgSrc !== ''">
-      <vue-cropper
-        ref="cropper"
-        :guides="true"
-        :view-mode="2"
-        :auto-crop-area="0.5"
-        :min-container-width="500"
-        :min-container-height="500"
-        :background="true"
-        :rotatable="false"
-        :src="imgSrc"
-        :img-style="{ 'width': '500px', 'height': '500px' }"
-        :aspect-ratio="targetWidth / targetHeight"
-        drag-mode="crop"
-        preview=".preview"
-      /></div>
-      <br>
-          <p>Preview</p>
-          <div class="preview" />
-      <button @click="cropImage" v-if="imgSrc !== ''">
-        トリミング
-      </button>
-    
-    </v-layout>
-        </v-container>
+        <div v-if="imgSrc !== ''">
+        <vue-cropper
+            ref="cropper"
+            :guides="true"
+            :view-mode="2"
+            :auto-crop-area="0.5"
+            :min-container-width="500"
+            :min-container-height="500"
+            :background="true"
+            :rotatable="false"
+            :src="imgSrc"
+            :img-style="{ 'width': '500px', 'height': '500px' }"
+            :aspect-ratio="targetWidth / targetHeight"
+            drag-mode="crop"
+            preview=".preview"
+        /></div>
+        <br>
+            <p>Preview</p>
+            <div class="preview" />
+        </v-layout>
+    </v-container>
     <br>
     <br>
     <br>
+    <cropping-btn @clickCroppingBtn="clickCroppingBtn($event)"></cropping-btn>
+    <!-- <v-btn color="primary" @click="clickNext()" :disabled="btnValidationNext1">Next<v-icon right>mdi-menu-right</v-icon></v-btn> -->
     <div v-if="cropImg !== ''">
       <img
         :src="cropImg"
@@ -53,10 +51,12 @@
 import InputFile from '../molecules/InputFile.vue'
 import VueCropper from 'vue-cropperjs'
 import 'cropperjs/dist/cropper.css'
+import CroppingBtn from '../molecules/CroppingBtn'
 export default {
   components: {
     VueCropper,
     'input-file': InputFile,
+    'cropping-btn': CroppingBtn,
   },
   data () {
     return {
@@ -66,19 +66,30 @@ export default {
       cropImg: '',
     }
   },
-  // computed: {
-  //     imgSrc() {
-  //         return this.$store.state.post.imgSrc;
-  //     }
-  // },
   methods: {
         loadImage(e){
       this.$refs.cropper.replace(e);
       this.imgSrc = e;
     },
-    cropImage () {
-      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+    clickCroppingBtn(){
+        this.secondStep();
+        this.cropImage();
     },
+    secondStep(){
+        this.$emit('secondStep');
+    },
+    cropImage () {
+        const cropImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+        var canvas = document.getElementById("photo");
+        var ctx = canvas.getContext("2d");
+        var background = new Image();
+        background.src = cropImage;
+        var width = background.naturalWidth;
+        var height = background.naturalHeight;
+        background.onload = function(){
+                ctx.drawImage(background,0,0,600,600);
+            }
+        },
     croppedInfo(){
         // var croppedInfo = this.cropImg.toDataURL();
         document.getElementById('cropped-image').value = this.cropImg;

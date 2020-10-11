@@ -20,7 +20,7 @@
                         drag-mode="crop"
                         preview=".preview"
                         />
-                        <v-btn color="primary" @click="clickNext()" :disabled="btnValidationNext1">Next<v-icon right>mdi-menu-right</v-icon></v-btn>
+                        
                     </div>
                 </section>
                 <section class="preview-area">

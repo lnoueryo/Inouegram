@@ -4,12 +4,13 @@ const state = {
     message: '',
     btnValidation: {'next1': false, 'next2': true, 'send': true},
     submitBtn: {'color': 'pink', 'text': true, 'value': '投稿する'},
+    croppingBtn: {icons: [{name: 'mdi-menu-right', leftValue: '', rightValue: 'Next', left: false, right: true}], color: ['primary']},
 };
 
 const getters = {
-    cropImg: state => state.cropImage[state.cropImage.length-1],
-    btnValidation: state => state.btnValidation,
-
+    cropImage: state => state.cropImage[state.cropImage.length-1],
+    btnValidationNext1: state => state.btnValidation.next1,
+    croppingBtn: state => state.croppingBtn,
 }
 
 const mutations = {

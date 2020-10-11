@@ -42,5 +42,10 @@ const app = new Vue({
             iconfont: 'mdi',
             iconfont: 'fa'
         }
-    })
+    }),
+    methods: {
+        abc(){
+            console.log('hello')
+        }
+    }
 });

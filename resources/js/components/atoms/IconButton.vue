@@ -10,6 +10,8 @@
 export default {
     props: ['iconButtonIcons', 'iconButtonUrl'],
 }
+// 下記をjson形式でvuexに記述
+// iconButton: {icons: [''], url: ['/']},
 </script>
 
 <!-- 親コンポーネント -->
