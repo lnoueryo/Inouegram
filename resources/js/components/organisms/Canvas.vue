@@ -2,11 +2,13 @@
   <div>
     <h1>DrawTool</h1>
     <div id="canvas-area">
-      <canvas id="myCanvas" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw" :width="width" :height="height"></canvas>
+        <canvas id="myCanvas" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw" :width="width" :height="height"></canvas><!-- width,heightは写真の大きさに合わせる -->
     </div>
-    ><button id="putImageToCanvas" @click="putImageToCanvas()">転送→</button>
+    <p>
+        <a :href="cropImg" :download="filename">ダウンロード</a>
+    </p>
+    <!-- <button id="putImageToCanvas" @click="putImageToCanvas()">転送→</button> -->
     <v-btn @click="canvasInfo()">submit</v-btn>
-    {{ cropImg }}
   </div>
 </template>
 
@@ -17,14 +19,10 @@ export default {
             canvas: null,
             context: null,
             isDrag: false,
-            width: '',
-            height: '',
+            cropImg: this.$store.state.post.cropImage[0],
+            width: '500px',
+            height: '500px',
         };
-    },
-    computed: {
-        cropImg(){
-            return this.$store.state.post.cropImage[0];
-        }
     },
     mounted(){
         this.canvas = document.querySelector('#myCanvas');

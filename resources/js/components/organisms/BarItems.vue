@@ -3,19 +3,19 @@
         <v-app-bar-nav-icon @click="onClick()"></v-app-bar-nav-icon>
         <v-toolbar-title>Shiftkey</v-toolbar-title>
         <v-spacer></v-spacer>
-        <search-bar></search-bar>
+        <search-field></search-field>
         <v-spacer></v-spacer>
-        <icon-buttons></icon-buttons>
+        <header-icons></header-icons>
     </v-container>
 </template>
 
 <script>
-import SearchBar from '../molecules/SearchBar.vue'
-import IconButton from '../atoms/IconButton.vue'
+import SearchField from '../molecules/SearchField.vue'
+import HeaderIcons from '../molecules/HeaderIcons.vue'
 export default {
     components: {
-        'search-bar': SearchBar,
-        'icon-buttons': IconButton,
+        'search-field': SearchField,
+        'header-icons': HeaderIcons,
     },
     methods: {
         onClick(){

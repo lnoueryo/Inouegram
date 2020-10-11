@@ -26,3 +26,6 @@ button::before {
 }
 </style>
 
+<!-- 親コンポーネント -->
+<!-- project://resources/js/components/molecules/UserList.vue#5 --><!-- project://resources/js/components/organisms/PostCard.vue#3 -->
+

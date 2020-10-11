@@ -1,97 +1,93 @@
 <template>
-    <div>
-        <input-file @change="setImage"></input-file>
-        <v-container>
-            <v-layout>
-                <section class="cropper-area">
-                    <div v-if="imgSrc !== ''" class="l_cropper_container">
-                        <vue-cropper
-                        ref="cropper"
-                        :guides="true"
-                        :view-mode="2"
-                        :auto-crop-area="0.5"
-                        :min-container-width="500"
-                        :min-container-height="500"
-                        :background="true"
-                        :rotatable="false"
-                        :src="imgSrc"
-                        :img-style="{ 'width': '500px', 'height': '500px' }"
-                        :aspect-ratio="targetWidth / targetHeight"
-                        drag-mode="crop"
-                        preview=".preview"
-                        />
-                        <br>
-                    </div>
-                </section>
-                <section class="preview-area">
-                    <p>Preview</p>
-                    <div class="preview" />
-                </section>
-            </v-layout>
+  <div style="font-size: 14px; text-align: center; width: 100vw;">
+    <h2>画像のトリミング</h2>
+    <hr>
+    <h3>画像を選択</h3>
+    <input-file @selectedImage="loadImage($event)"></input-file>
+    <br>
+    <v-container>
+      <v-layout>
+    <div v-if="imgSrc !== ''">
+      <vue-cropper
+        ref="cropper"
+        :guides="true"
+        :view-mode="2"
+        :auto-crop-area="0.5"
+        :min-container-width="500"
+        :min-container-height="500"
+        :background="true"
+        :rotatable="false"
+        :src="imgSrc"
+        :img-style="{ 'width': '500px', 'height': '500px' }"
+        :aspect-ratio="targetWidth / targetHeight"
+        drag-mode="crop"
+        preview=".preview"
+      /></div>
+      <br>
+          <p>Preview</p>
+          <div class="preview" />
+      <button @click="cropImage" v-if="imgSrc !== ''">
+        トリミング
+      </button>
+    
+    </v-layout>
         </v-container>
+    <br>
+    <br>
+    <br>
+    <div v-if="cropImg !== ''">
+      <img
+        :src="cropImg"
+        alt="Cropped Image"
+        class="c_cropped_image"
+      >
+      <p>
+        <a :href="cropImg" :download="filename">画像を保存</a>
+        <v-btn @click="croppedInfo()">submit</v-btn>
+      </p>
+      <br>
     </div>
+  </div>
 </template>
-
 <script>
-import VueCropper from 'vue-cropperjs'
-
 import InputFile from '../molecules/InputFile.vue'
+import VueCropper from 'vue-cropperjs'
+import 'cropperjs/dist/cropper.css'
 export default {
-    components: {
-        VueCropper,
-        'input-file': InputFile,
-    },
-    data () {
-        return {
-            e1: 1,
-            targetWidth: 1,
-            targetHeight: 1,
-            filename: '',
-            data: null,
-        }
-    },
-    computed: {
-        imgSrc(){
-          return this.$store.state.post.imgSrc;
-        }
-    },
-    methods: {
-        setImage (e) {
-            const file = e.target.files[0];
-            this.filename = file.name;
-            console.log(this.filename)
-            if (!file.type.includes('image/')) {
-                alert('Please select an image file')
-                return
-            }
-            if (typeof FileReader === 'function') {
-                const reader = new FileReader()
-                reader.onload = (event) => {
-                this.imgSrc = event.target.result,
-                this.$refs.cropper.replace(event.target.result);
-                }
-                reader.readAsDataURL(file)
-            } else {
-                alert('Sorry, FileReader API not supported')
-            };
-        },
-        cropImage () {
-            var cropImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
-            this.$store.dispatch('cropImage', [
-                cropImage,
-            ]);
-
-            // var testCanvas = document.getElementById('myCanvas');
-            // var testContext = testCanvas.getContext('2d');
-            // testContext.drawImage(cropImage, 0, 0);
-            // document.getElementById('cropped-image').value = this.cropImg;
-            // console.log(document.getElementById('cropped-image').value);
-            console.log('hello');
-        },
+  components: {
+    VueCropper,
+    'input-file': InputFile,
+  },
+  data () {
+    return {
+      targetWidth: 1,
+      targetHeight: 1,
+      imgSrc: 'storage/image/panda.png',
+      cropImg: '',
     }
+  },
+  // computed: {
+  //     imgSrc() {
+  //         return this.$store.state.post.imgSrc;
+  //     }
+  // },
+  methods: {
+        loadImage(e){
+      this.$refs.cropper.replace(e);
+      this.imgSrc = e;
+    },
+    cropImage () {
+      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+    },
+    croppedInfo(){
+        // var croppedInfo = this.cropImg.toDataURL();
+        document.getElementById('cropped-image').value = this.cropImg;
+        console.log(document.getElementById('cropped-image').value);
+    },
+  }
 }
 </script>
-<style scoped>
+<style>
 h2 {
   font-size: 25px;
   margin-top: 20px;
@@ -110,23 +106,16 @@ h3 {
   border: 1px solid gray;
   display: inline-block;
 }
-.preview {
-  width: 100%;
-  height: calc(372px * (9 / 16));
-  overflow: hidden;
-}
-.crop-placeholder {
-  width: 100%;
-  height: 200px;
-  background: #ccc;
-}
-.cropped-image img {
-  max-width: 100%;
-}
 
 .preview {
-  width: 100%;
-  height: calc(372px * (9 / 16));
+  width: 300px;
+  height: 300px;
+  border: solid 1px black;
   overflow: hidden;
 }
+
 </style>
+
+
+
+

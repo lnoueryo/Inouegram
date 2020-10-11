@@ -1,45 +1,13 @@
-<template>
+<template atoms functional>
     <v-container>
-        <input style="display: none" ref="input" type="file" accept="image/jpeg, image/jpg, image/png" @change="selectedFile();">
+        <input style="display: none" ref="input" type="file" accept="image/jpeg, image/jpg, image/png" @input="listeners.input">
         <v-layout text-xs-center wrap>
             <v-flex xs12>
-                <v-btn color="deep-purple text--white" @click="btnclick" fab><v-icon color="white">mdi-image-plus</v-icon></v-btn>
+                <v-btn color="deep-purple text--white" @click="listeners.click" fab><v-icon color="white">mdi-image-plus</v-icon></v-btn>{{ abc }}
             </v-flex>
         </v-layout>
     </v-container>
 </template>
-
-<script>
-export default {
-    methods: {
-        // selectfileボタン押下時
-        btnclick() {
-            this.$refs.input.click();
-        },
-        async selectedFile() {
-            this.isUploading = true;
-            const file = this.$refs.input.files[0];
-            if (!file.type.includes('image/')) {
-                    alert('Please select an image file')
-                    return
-                }
-            if (typeof FileReader === 'function') {
-                const reader = new FileReader();
-                // vuexに送信
-                reader.onload = (event) => {
-                    this.$store.dispatch('imgSrc', [
-                    event.target.result,
-                    ]);
-                }
-                reader.readAsDataURL(file)
-            } else {
-                alert('Sorry, FileReader API not supported')
-            }
-        },
-    }
-}
-</script>
-
 <style>
 input {
 position: relative;
@@ -56,3 +24,13 @@ line-height: 1.8;
 text-align: right;
 }
 </style>
+
+
+
+
+<!-- 親コンポーネント -->
+<!-- project://resources/js/components/molecules/InputFile.vue#3 --><!-- project://resources/js/components/organisms/Crop.vue#3 --><!-- project://resources/js/components/templates/ProfileTemplate.vue#3 -->
+
+<!-- event -->
+<!-- click  project://resources/js/components/organisms/Crop.vue#60 -->
+<!-- input  project://resources/js/components/organisms/Crop.vue#64 -->

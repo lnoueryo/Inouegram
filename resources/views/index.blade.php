@@ -12,5 +12,5 @@
     {{--  <input id="submit_image" type="submit" name="submit" value="送信">
 </form>  --}}
 {{--  <index :latest-posted-users="{{ $latest_posted_users }}" :latest-posts="{{ $latest_posts }}"></index>  --}}
-<can-pra></can-pra>
+{{--  <practice></practice>  --}}
 @endsection

@@ -17,29 +17,18 @@
 
         <v-stepper-items>
             <v-stepper-content step="1">
-                    <div style="font-size: 14px; text-align: center; width: 100vw;">
-                        <crop ref="crop"></crop>
-                    </div>
-                <v-btn color="primary" @click="e1 = 2; cropImage()" :disabled="btnValidation.next1">Next<v-icon right>mdi-menu-right</v-icon></v-btn>
-                <v-btn color="red" text><v-icon>mdi-menu-right</v-icon>Cancel</v-btn>
+                <div style="font-size: 14px; text-align: center; width: 100vw;">
+                    <crop @secondStep="e1 = 2;"></crop> <!-- 画像を切り抜く project://resources/js/components/organisms/Crop.vue -->
+                </div>
             </v-stepper-content>
 
             <v-stepper-content step="2">
                 <div style="font-size: 14px; text-align: center; width: 100vw;">
-                    <v-card class="mb-12">
-                        <div v-if="cropImg !== ''">
-                            <img id="testImage" :src="cropImg" alt="Cropped Image" class="c_cropped_image">
-                            <p>
-                                <a :href="cropImg" :download="filename">ダウンロード</a>
-                            </p>
-                            <br>
-                            <vue-canvas></vue-canvas>
-                        </div>
-                        <post-all></post-all>
-                        <input id="cropped-image" type="hidden" name="cropped-image" :value="cropImg">
-                    </v-card>
+                    <vue-canvas></vue-canvas>
+                    <post-all></post-all>
+                        <!-- <input id="cropped-image" type="hidden" name="cropped-image" :value="cropImg"> -->
                 </div>
-                <v-btn color="primary" @click="e1 = 3; submit()" :disabled="btnValidation.next2">トリミング</v-btn>
+                <v-btn color="primary" @click="e1 = 3; submit()">トリミング</v-btn>
                 <v-btn color="red" @click="e1 = 1">戻る</v-btn>
             </v-stepper-content>
 
@@ -58,16 +47,11 @@
 
 <script>
 import Canvas from '../organisms/Canvas.vue'
-import VueCropper from 'vue-cropperjs'
-import 'cropperjs/dist/cropper.css'
-import InputFile from '../molecules/InputFile.vue'
 import Crop from '../organisms/Crop.vue'
 import PostAll from '../organisms/PostAll.vue'
 import { mapGetters } from 'vuex'
 export default {
     components: {
-        VueCropper,
-        'input-file': InputFile,
         'crop': Crop,
         'post-all': PostAll,
         'vue-canvas': Canvas,
@@ -75,8 +59,6 @@ export default {
     data () {
         return {
             e1: 1,
-            targetWidth: 1,
-            targetHeight: 1,
             filename: '',
             data: null,
         }
@@ -84,15 +66,10 @@ export default {
     computed: {
         // 長くなったためmapGetterでまとめる
         ...mapGetters([
-            'imgSrc',
             'cropImg',
-            'btnValidation',
         ]),
     },
     methods: {
-        cropImage () {
-            this.$refs.crop.cropImage();
-        },
         submit(){
             let fd= new FormData();
             fd.append("cropped_image", JSON.stringify(this.$store.state.post.cropImage));
@@ -114,3 +91,15 @@ export default {
 }
 </script>
 
+    <!-- 写真アップロードの紫ボタン -->
+    <!-- project://resources/js/components/organisms/Crop.vue#line[3] -->
+
+    <!-- 親コンポーネント -->
+    <!--☆ project://resources/js/components/pages/Post.vue#3 -->
+
+    <!-- 子コンポーネント -->
+    <!--☆ project://resources/js/components/organisms/Crop.vue --><!--☆ project://resources/js/components/molecules/InputFile.vue --><!-- project://resources/js/components/atoms/InputFileBtn.vue -->
+
+    <!-- event -->
+    <!-- secondStep project://resources/js/components/organisms/Crop.vue#60 -->
+    <!--☆ input  project://resources/js/components/organisms/Crop.vue#64 -->
