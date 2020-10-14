@@ -77,7 +77,6 @@ export default {
             axios.post('/api/create', fd)
             .then(
                 // response => (this.followed = response.data)
-                console.log('yes'),
             )
             .catch(function (error) {
                 console.log(error);

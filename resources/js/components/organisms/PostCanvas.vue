@@ -2,7 +2,7 @@
   <div>
     <h1>DrawTool</h1>
     <div id="canvas-area">
-        <draw-canvas @click="canvasInfo($event)"></draw-canvas><!-- width,heightは写真の大きさに合わせる -->
+        <draw-canvas @abcd="canvasInfo($event)"></draw-canvas><!-- width,heightは写真の大きさに合わせる -->
     </div>
     <p>
         <a :href="cropImage" :download="filename">ダウンロード</a>
