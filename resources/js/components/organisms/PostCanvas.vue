@@ -7,7 +7,34 @@
     <p>
         <a :href="cropImage" :download="filename">ダウンロード</a>
     </p>
-    <!-- <button id="putImageToCanvas" @click="putImageToCanvas()">転送→</button> -->
+    <!-- <v-card height="400px">
+    <v-footer
+      v-bind="localAttrs"
+      :padless="padless"
+      app
+    >
+      <v-card
+        flat
+        tile
+        width="100%"
+        class="red lighten-1 text-center"
+      >
+        <v-card-text>
+          <v-btn
+            v-for="icon in icons"
+            :key="icon"
+            class="mx-4"
+            icon
+          >
+            <v-icon size="24px">
+              {{ icon }}
+            </v-icon>
+          </v-btn>
+        </v-card-text>
+
+      </v-card>
+    </v-footer>
+  </v-card> -->
   </div>
 </template>
 
@@ -22,7 +49,18 @@ export default {
             canvas: null,
             isDrag: false,
             cropImage: this.$store.state.post.cropImage,
-            filename: 'abc'
+            filename: 'abc',
+            // icons: [
+            //     'mdi-home',
+            //     'mdi-email',
+            //     'mdi-calendar',
+            //     'mdi-delete',
+            // ],
+            // items: [
+            //     'default',
+            //     'absolute',
+            //     'fixed',
+            // ],
         };
     },
     methods: {

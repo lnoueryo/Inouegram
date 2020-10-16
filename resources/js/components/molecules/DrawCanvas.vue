@@ -1,49 +1,107 @@
 <template>
-  <div>
+    <div>
+        <v-card class="overflow-hidden mx-auto" height="550" max-width="500">
+            <div id="canvas-area" style="position: relative;">
+                <canvas id="photo" style=" z-index: 0;" :width="width" :height="height"></canvas>
+                <canvas id="cover" style="z-index: 10;" :width="width" :height="height"></canvas>
+                <canvas id="myCanvas" style="z-index: 20;" v-bind:class="{eraser: canvasMode === 'eraser'}" :width="width" :height="height" @mousedown.prevent="mousedown" @mouseup.prevent="mouseup" @mouseout.prevent="mouseout" @mousemove.prevent="mousemove" />
+            </div>
+            <v-bottom-navigation absolute hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
+            <v-btn color="deep-purple accent-4" text　@click="pen" value="0">
+                <span>ペン</span>
+                <v-icon>mdi-draw</v-icon>
+            </v-btn>
+            <v-btn color="deep-purple accent-4" text　@click="text">
+                <span>テキスト</span>
+                <v-icon>mdi-format-color-text</v-icon>
+            </v-btn>
+            <v-btn color="deep-purple accent-4" text>
+                <span>エフェクト</span>
+                <v-icon>mdi-checkerboard</v-icon>
+            </v-btn>
+            <v-btn color="deep-purple accent-4" text>
+                <span>ダウンロード</span>
+                <v-icon>mdi-briefcase-download</v-icon>
+            </v-btn>
+            </v-bottom-navigation>
+        </v-card>
+
+  <v-stepper v-model="el" style="width: 600px; margin: auto;">
+    <v-stepper-items>
+      <v-stepper-content step="1">
+        <v-card class="mb-12" color="grey lighten-1" height="600px">
+            <button id="eraser-button" @click="eraser" >消しゴム</button>
+            <button id="clear-button" @click="clear">クリア</button>
+            <v-subheader class="pl-0">
+            太さ
+            </v-subheader>
+            <v-slider v-model="context.lineWidth" max="40" min="1"></v-slider>
+            Options
+            Dot Size
+            Swatches Max Height
+            Mode
+            <v-subheader class="pl-0">
+            カラー
+            </v-subheader>
+            <v-color-picker class="ma-2" hide-mode-switch v-model="context.strokeStyle"></v-color-picker>
+        </v-card>
+      </v-stepper-content>
+
+      <v-stepper-content step="2">
+        <v-card class="mb-12" color="grey lighten-1" height="200px">
         <input id="theText" type="text">
-        <button id="submit" @click="submit()">Draw text on canvas</button><br>
-    <div id="canvas-area" style="position: relative;">
+        <button id="submit" @click="submit()">Draw text on canvas</button>
+        </v-card>
+      </v-stepper-content>
 
-        <canvas id="photo" style="position: absolute; z-index: 0; top: 50px;" :width="width" :height="height"></canvas>
-        <canvas id="cover" style="position: absolute; z-index: 10; top: 50px" :width="width" :height="height"></canvas>
-        <canvas id="myCanvas" style="position: absolute; z-index: 20; top: 50px " v-bind:class="{eraser: canvasMode === 'eraser'}" :width="width" :height="height" @mousedown.prevent="mousedown" @mouseup.prevent="mouseup" @mouseout.prevent="mouseout" @mousemove.prevent="mousemove" />
-    </div>
-    <div id="tool-area" style="position: relative;">
-        <!-- <v-subheader class="pl-0">
-          太さ
-        </v-subheader>
-        <v-slider v-model="context.lineWidth" max="40" min="1"></v-slider>
-        Options
-        Dot Size
-        Swatches Max Height
-        Mode
-        <v-subheader class="pl-0">
-          カラー
-        </v-subheader> -->
-        <button id="pen-button" @click="pen" >ペン</button>
-        <button id="text-button" @click="text" >テキスト</button>
-        <button id="eraser-button" @click="eraser" >消しゴム</button>
-        <button id="clear-button" @click="clear">クリア</button>
-        <button id="rotate-button" @click="gray()">反転</button>
-        <button id="reflection-button" @click="reflection()">反映</button>
-        <v-btn @click="$emit('abcd', concatImg)">保存</v-btn>
-<v-color-picker
-      class="ma-2"
-      hide-mode-switch
-      v-model="context.strokeStyle"
-    ></v-color-picker><br><br><br><br><br><br><br>
+      <v-stepper-content step="3">
+        <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+      </v-stepper-content>
+    </v-stepper-items>
+  </v-stepper>
 
-        
+            <!-- <js-accordion>
+            <div slot="title">アコーディオン1</div>
+            <div class="js-accordion--body" slot="body">
+
+            </div>
+            </js-accordion> -->
+
+
+        <div id="tool-area" style="position: relative;">
+            <v-subheader class="pl-0">
+            太さ
+            </v-subheader>
+            <v-slider v-model="context.lineWidth" max="40" min="1"></v-slider>
+            Options
+            Dot Size
+            Swatches Max Height
+            Mode
+            <v-subheader class="pl-0">
+            カラー
+            </v-subheader>
+            <button id="pen-button" @click="pen" >ペン</button>
+            <button id="text-button" @click="text" >テキスト</button>
+            <button id="rotate-button" @click="gray()">反転</button>
+            <button id="reflection-button" @click="reflection()">反映</button>
+            <v-btn @click="$emit('abcd', concatImg)">保存</v-btn>
+
+
+
+        </div>
+            <!-- <canvas id="concat" :width="width" :height="height" /> -->
     </div>
-        <canvas id="concat" :width="width" :height="height" />
-  </div>
 </template>
 <script>
+import JSaccordion from './JSaccordion'
 export default {
     name: "DrawTool",
+    components: {
+        'js-accordion': JSaccordion,
+    },
     data() {
         return {
-        canvasMode: 'text',
+            canvasMode: 'penBlack',
             canvas: document.getElementById('myCanvas'),
             context: {
                 lineWidth: '',
@@ -64,7 +122,15 @@ export default {
             startX: '',
             startY: '',
             font: '',
-        };
+            length: 4,
+            onboarding: '',
+            value: 0,
+            };
+    },
+    computed: {
+        el(){
+            return Number(this.value) + 1;
+        }
     },
     mounted(){
         var canvas = this.canvas;
@@ -79,8 +145,24 @@ export default {
         this.offsetY = canvasOffset.top;
         this.scrollX = canvas.scrollLeft;
         this.scrollY = canvas.scrollTop;
+
+        this.canvasMode = 'penBlack';
+        this.context.globalCompositeOperation = 'source-over';
+        this.context.lineCap = 'round';
+        this.context.lineJoin = 'round';
+        this.onboarding = 0;
     },
     methods: {
+              next () {
+        this.onboarding = this.onboarding + 1 === this.length
+          ? 0
+          : this.onboarding + 1
+      },
+      prev () {
+        this.onboarding = this.onboarding - 1 < 0
+          ? this.length - 1
+          : this.onboarding - 1
+      },
         mousedown(e){
             if(this.canvasMode == 'penBlack' || this.canvasMode == 'eraser'){
                 this.dragStart(e);
@@ -172,6 +254,7 @@ export default {
         this.context.globalCompositeOperation = 'source-over';
         this.context.lineCap = 'round';
         this.context.lineJoin = 'round';
+        this.onboarding = 0;
         },
         text(){
             this.canvasMode = 'text';
@@ -184,6 +267,7 @@ export default {
             this.offsetY = canvasOffset.top;
             this.scrollX = this.canvas.scrollLeft;
             this.scrollY = this.canvas.scrollTop;
+            this.onboarding = 1;
         },
         // rotate(){
         //     var ct = this.photocxt
@@ -196,7 +280,7 @@ export default {
             var concat = document.getElementById('concat');
             var concatCxt = concat.getContext("2d");
             var photo = this.createImage(document.getElementById("photo"));
-            
+
             // var cover = this.createImage(document.getElementById("cover"));
             var image = this.createImage(this.canvas);
             console.log(image);
@@ -287,7 +371,9 @@ export default {
 
 
 <style scoped>
-#myCanvas {
- border: 1px solid #000000;
-}
+    canvas{
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
 </style>
