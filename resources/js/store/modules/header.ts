@@ -1,4 +1,10 @@
-const state = {
+interface State {
+    drawer: boolean,
+    iconButton: {icons: string[], url: string[]},
+    listItem: {icons: string[], titles: string[]}
+  }
+
+const state: object = {
     hello: 'hello',
     drawer: true,
     // 右上のアイコン
@@ -29,24 +35,20 @@ const state = {
     }
 };
 
-const getters = {
-    drawer: state => state.drawer,
-    iconButtonIcons: state => state.iconButton.icons,
-    iconButtonUrl: state => state.iconButton.url,
-    listItemIcons: state => state.listItem.icons,
-    listItemTitles: state => state.listItem.titles,
+const getters: any = {
+    drawer: (state: State) => state.drawer,
+    iconButtonIcons: (state: State) => state.iconButton.icons,
+    iconButtonUrl: (state: State) => state.iconButton.url,
+    listItemIcons: (state: State) => state.listItem.icons,
+    listItemTitles: (state: State) => state.listItem.titles,
 }
 
 const mutations = {
-    TOGGLE_HOME_NAVIGATION_DRAWER: (state, open) => {
-        state.isHomeNavigationDrawerOpen = open
-      },
+
 };
 
 const actions = {
-    TOGGLE_HOME_NAVIGATION_DRAWER(context, open) {
-        context.commit('TOGGLE_HOME_NAVIGATION_DRAWER', open)
-      },
+
 };
 
 export default {

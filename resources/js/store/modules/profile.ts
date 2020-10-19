@@ -1,4 +1,6 @@
-
+interface State {
+    thisUserPosts: null | [{id: number, user_id: number, text: string, image: any}],
+  }
 const state = {
     thisUserPosts: '',
     // thisUserLikes: '',
@@ -14,19 +16,21 @@ const getters = {
     // getThisUserPosts: function(state) {
     //   return state.hoge;
     // },
-    getThisUserPosts(state){
+    getThisUserPosts(state: State){
         let thisUserPosts = state.thisUserPosts;
-        for(var i=0; i<thisUserPosts.length; i++){
-        thisUserPosts[i].image = JSON.parse(thisUserPosts[i].image);
-        for(var j=0; j<thisUserPosts[i].image.length; j++){
-            thisUserPosts[i].image[j].src = 'storage/image/' + thisUserPosts[i].image[j].src;
+        if(thisUserPosts) {
+            for(var i=0; i<thisUserPosts.length; i++){
+                thisUserPosts[i].image = JSON.parse(thisUserPosts[i].image);
+                for(var j=0; j<thisUserPosts[i].image.length; j++){
+                    thisUserPosts[i].image[j].src = 'storage/image/' + thisUserPosts[i].image[j].src;
+                }
+            }
         }
-    }
-    return thisUserPosts;
-},
+        return thisUserPosts;
+    },
 }
 const mutations = {
-    profileInfo(state, profileInfo) {
+    profileInfo(state: State, profileInfo: any) {
         state.thisUserPosts = profileInfo[0];
         // state.thisUserLikes = profileInfo[1];
         // state.thisUserComments = profileInfo[2];
@@ -39,7 +43,7 @@ const mutations = {
     }
 };
 const actions = {
-    profileInfo (context, profileInfo) {
+    profileInfo (context: any, profileInfo: string[]) {
         context.commit('profileInfo', profileInfo);
     }
 };

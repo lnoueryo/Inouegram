@@ -1,7 +1,7 @@
-import VueRouter from 'vue-router';
+import VueRouter, { RouteConfig } from 'vue-router'
 // import Profile from './components/pages/Profile.vue';
 
-const routes = [
+const routes: Array<RouteConfig> = [
     // {
     //     path: '/index',
     //     component: Profile,

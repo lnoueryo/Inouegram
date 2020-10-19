@@ -3,12 +3,12 @@ const state = {
 
 };
 const mutations = {
-    profileInfo(state, ) {
+    profileInfo(state: any, ) {
 
     }
 };
 const actions = {
-    profileInfo (context, ) {
+    profileInfo (context: any, ) {
         context.commit('profileInfo', );
     }
 };

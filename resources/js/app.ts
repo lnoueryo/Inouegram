@@ -1,8 +1,6 @@
-require('./bootstrap');
-
-window.Vue = require('vue');
-const files = require.context('./', true, /\.vue$/i);
-files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+import Vue from 'vue';
+import bootstrap from './bootstrap';
+bootstrap();
 
 // VueRouter
 import VueRouter from 'vue-router';
@@ -10,7 +8,7 @@ import router from './routes';
 
 // Vuex
 import Vuex from 'vuex';
-import store from './store/index.js';
+import store from './store/index';
 
 // Vuetify
 import Vuetify from 'vuetify';
@@ -33,19 +31,14 @@ Vue.component('header-bar', require('./components/globals/Header.vue').default);
 
 
 
-const app = new Vue({
+const app: any = new Vue({
     el: '#app',
     router: router,
     store: store,
     vuetify: new Vuetify({
         icons: {
             iconfont: 'mdi',
-            iconfont: 'fa'
+            // iconfont: 'fa'
         }
     }),
-    methods: {
-        abc(){
-            console.log('hello')
-        }
-    }
 });
