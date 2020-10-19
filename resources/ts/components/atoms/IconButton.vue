@@ -6,10 +6,15 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: ['iconButtonIcons', 'iconButtonUrl'],
-}
+<script lang="ts">
+import Vue, { PropType } from 'vue'
+export default Vue.extend({
+    props: {
+        iconButtonIcons: Object as PropType<{icons: string}>,
+        iconButtonUrl: Object as PropType<{url: string}>,
+    }
+    // props: ['iconButtonIcons', 'iconButtonUrl'],
+})
 // 下記をjson形式でvuexに記述
 // iconButton: {icons: [''], url: ['/']},
 </script>

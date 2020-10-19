@@ -5,12 +5,11 @@
     </v-list-item-content>
 </template>
 
-<script>
+<script lang="ts">
+import Vue, {PropType} from 'vue'
 export default {
     props: {
-        user: {
-            type: Object,
-        }
+        user: Object as PropType<{screen_name: string, comment: string}>
     },
 }
 </script>

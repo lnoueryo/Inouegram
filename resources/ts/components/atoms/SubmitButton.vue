@@ -2,14 +2,15 @@
     <v-btn height="48px" :color="submitBtn.color" :text="submitBtn.text" :ripple="false" large @click="listeners.click">{{ submitBtn.value }}</v-btn>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from 'vue'
+export default Vue.extend({
     computed: {
         submitBtn(){
             return this.$store.state.post.submitBtn;
         }
     }
-}
+})
 </script>
 <style scoped>
 

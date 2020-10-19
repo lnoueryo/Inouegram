@@ -7,9 +7,17 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue, { PropType } from 'vue'
+export type blockIconButton = {
+    icons: [{name: string | null, leftValue: string | null, rightValue: string | null, left: boolean, right: boolean}], color: [string | null]
+}
 export default {
-    props: ['blockIconButton', 'btnValidation'],
+    props: {
+        blockIconButton: Object as PropType<blockIconButton>,
+        btnValidation: String,
+    },
+    // props: ['blockIconButton', 'btnValidation'],
 }
 // 下記をjson形式でvuexに記述
 // blockIconButton: {icons: [{name: '', leftValue: '', rightValue: '', left: false, right: true}], color: ['']},

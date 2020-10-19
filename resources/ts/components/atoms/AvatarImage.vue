@@ -7,11 +7,14 @@
 </template>
 
 <script lang="ts">
-export default {
-    props: ['userImage', 'imageData'],
-
-}
+import Vue, { PropType } from 'vue'
+export default Vue.extend({
+    props: {
+        userImage: String as PropType<string>,
+        imageData:  String as PropType<string>,
+    },
+})
 </script>
 
 <!-- 親コンポーネント -->
-<!-- project://resources/js/components/molecules/UserList.vue#4 --><!-- project://resources/js/components/organisms/PostCard.vue#3 --><!-- project://resources/js/components/templates/HeaderTemplate.vue#4 -->
+<!-- project://resources/ts/components/molecules/UserList.vue#4 --><!-- project://resources/js/components/organisms/PostCard.vue#3 --><!-- project://resources/js/components/templates/HeaderTemplate.vue#4 -->
