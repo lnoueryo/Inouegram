@@ -6,7 +6,7 @@
     </v-list-item-avatar>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     props: ['userImage', 'imageData'],
 

@@ -16,6 +16,6 @@
       ]
     },
     "include": [
-      "resources/js/**/*"
+      "resources/ts/**/*"
     ]
 }
