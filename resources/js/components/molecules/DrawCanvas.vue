@@ -1,10 +1,10 @@
 <template>
     <div>
-        <v-card class="overflow-hidden mx-auto" height="550" max-width="500">
-            <div id="canvas-area" style="position: relative;">
+        <v-card class="overflow-hidden" height="550" width="500">
+            <div id="canvas-area" style="position: relative">
+                <canvas id="myCanvas" style="z-index: 20;" v-bind:class="{eraser: canvasMode === 'eraser'}" :width="width" :height="height" @mousedown.prevent="mousedown" @mouseup.prevent="mouseup" @mouseout.prevent="mouseout" @mousemove.prevent="mousemove" />
                 <canvas id="photo" style=" z-index: 0;" :width="width" :height="height"></canvas>
                 <canvas id="cover" style="z-index: 10;" :width="width" :height="height"></canvas>
-                <canvas id="myCanvas" style="z-index: 20;" v-bind:class="{eraser: canvasMode === 'eraser'}" :width="width" :height="height" @mousedown.prevent="mousedown" @mouseup.prevent="mouseup" @mouseout.prevent="mouseout" @mousemove.prevent="mousemove" />
             </div>
             <v-bottom-navigation absolute hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
             <v-btn color="deep-purple accent-4" text　@click="pen" value="0">
@@ -140,7 +140,7 @@ export default {
         this.context.lineJoin = 'round';
         this.context.lineWidth = 10;
         this.photocxt = document.getElementById('photo').getContext('2d');
-        var canvasOffset = canvas.getBoundingClientRect();
+        var canvasOffset = this.canvas.getBoundingClientRect();
         this.offsetX = canvasOffset.left;
         this.offsetY = canvasOffset.top;
         this.scrollX = canvas.scrollLeft;
@@ -303,6 +303,8 @@ export default {
             for (var i = 0; i < this.texts.length; i++) {
                 var text = this.texts[i];
                 this.context.fillText(text.text, text.x, text.y);
+            console.log(text.x);
+            console.log(text.y);
             }
         },
         textHittest(x, y, textIndex) {
@@ -311,7 +313,7 @@ export default {
         },
         dragText(e) {
             this.startX = parseInt(e.clientX - this.offsetX);
-            this.startY = parseInt(e.clientY - this.offsetY);
+            this.startY = parseInt(e.clientY + 10);
             // Put your mousedown stuff here
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
@@ -343,7 +345,7 @@ export default {
         submit(){
             this.canvasMode = 'text';
             // calc the y coordinate for this text on the canvas
-            var y = this.texts.length * 20 + 50;
+            var y = this.texts.length * 20 + 20;
 
             // get the text from the input element
             var text = {
