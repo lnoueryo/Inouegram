@@ -2242,416 +2242,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _atoms_BlockIconBtn__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../atoms/BlockIconBtn */ "./resources/ts/components/atoms/BlockIconBtn.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-//
-//
-//
-//
-//
-
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  components: {
-    'block-icon-btn': _atoms_BlockIconBtn__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_1__["mapGetters"])(['croppingBtn', 'btnValidationNext1'])),
-  methods: {
-    clickCroppingBtn: function clickCroppingBtn() {
-      this.$emit('clickCroppingBtn');
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _JSaccordion__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./JSaccordion */ "./resources/ts/components/molecules/JSaccordion.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  name: "DrawTool",
-  components: {
-    'js-accordion': _JSaccordion__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  data: function data() {
-    return {
-      canvasMode: 'penBlack',
-      canvas: document.getElementById('myCanvas'),
-      context: {
-        lineWidth: '',
-        strokeStyle: ''
-      },
-      isDrag: false,
-      width: '500px',
-      height: '500px',
-      photocxt: '',
-      concatImg: '',
-      picker: '',
-      texts: [],
-      selectedText: -1,
-      offsetX: '',
-      offsetY: '',
-      scrollX: '',
-      scrollY: '',
-      startX: '',
-      startY: '',
-      font: '',
-      length: 4,
-      onboarding: '',
-      value: 0
-    };
-  },
-  computed: {
-    el: function el() {
-      return Number(this.value) + 1;
-    }
-  },
-  mounted: function mounted() {
-    var canvas = this.canvas;
-    this.canvas = document.getElementById('myCanvas');
-    this.context = this.canvas.getContext('2d');
-    this.context.lineCap = 'round';
-    this.context.lineJoin = 'round';
-    this.context.lineWidth = 10;
-    this.photocxt = document.getElementById('photo').getContext('2d');
-    var canvasOffset = this.canvas.getBoundingClientRect();
-    this.offsetX = canvasOffset.left;
-    this.offsetY = canvasOffset.top;
-    this.scrollX = canvas.scrollLeft;
-    this.scrollY = canvas.scrollTop;
-    this.canvasMode = 'penBlack';
-    this.context.globalCompositeOperation = 'source-over';
-    this.context.lineCap = 'round';
-    this.context.lineJoin = 'round';
-    this.onboarding = 0;
-  },
-  methods: {
-    next: function next() {
-      this.onboarding = this.onboarding + 1 === this.length ? 0 : this.onboarding + 1;
-    },
-    prev: function prev() {
-      this.onboarding = this.onboarding - 1 < 0 ? this.length - 1 : this.onboarding - 1;
-    },
-    mousedown: function mousedown(e) {
-      if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-        this.dragStart(e);
-      } else {
-        this.dragText(e);
-      }
-    },
-    mouseup: function mouseup(e) {
-      if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-        this.dragEnd(e);
-      } else {
-        this.dropText(e);
-      }
-    },
-    mouseout: function mouseout(e) {
-      if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-        this.dragEnd(e);
-      } else {
-        this.dropText(e);
-      }
-    },
-    mousemove: function mousemove(e) {
-      if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-        this.draw(e);
-      } else {
-        this.move(e);
-      }
-    },
-    gray: function gray() {
-      var photo = this.createImage(document.getElementById("cover"));
-      var ctx = photo.getContext("2d");
-      ctx.drawImage(image, 0, 0, image.width, image.height);
-      var src = ctx.getImageData(0, 0, image.width, image.height);
-      var dst = ctx.createImageData(image.width, image.height);
-
-      for (var i = 0; i < src.data.length; i += 4) {
-        var y = 0.2126 * src.data[i] + 0.7152 * src.data[i + 1] + 0.0722 * src.data[i + 2];
-        y = parseInt(y, 10);
-        dst.data[i] = y;
-        dst.data[i + 1] = y;
-        dst.data[i + 2] = y;
-        dst.data[i + 3] = src.data[i + 3];
-      }
-
-      ctx.putImageData(dst, 0, 0);
-    },
-    // 描画
-    draw: function draw(e) {
-      var x = e.layerX;
-      var y = e.layerY;
-
-      if (!this.isDrag) {
-        return;
-      }
-
-      this.context.lineTo(x, y);
-      this.context.stroke();
-    },
-    // 描画開始（mousedown）
-    dragStart: function dragStart(e) {
-      var x = e.layerX;
-      var y = e.layerY;
-      this.context.beginPath();
-      this.context.lineTo(x, y);
-      this.context.stroke();
-      this.isDrag = true;
-    },
-    // 描画終了（mouseup, mouseout）
-    dragEnd: function dragEnd() {
-      this.context.closePath();
-      this.isDrag = false;
-    },
-    clear: function clear() {
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    },
-    // 消しゴムモード
-    eraser: function eraser() {
-      // カーソル変更
-      this.canvasMode = 'eraser';
-      this.context.globalCompositeOperation = 'destination-out'; // 描画設定
-
-      this.context.lineCap = 'square';
-      this.context.lineJoin = 'square';
-    },
-    pen: function pen() {
-      this.canvasMode = 'penBlack';
-      this.context.globalCompositeOperation = 'source-over';
-      this.context.lineCap = 'round';
-      this.context.lineJoin = 'round';
-      this.onboarding = 0;
-    },
-    text: function text() {
-      this.canvasMode = 'text';
-      this.canvas = document.getElementById('myCanvas');
-      this.context.lineCap = 'round';
-      this.context.lineJoin = 'round';
-      this.context.lineWidth = 10;
-      var canvasOffset = this.canvas.getBoundingClientRect();
-      this.offsetX = canvasOffset.left;
-      this.offsetY = canvasOffset.top;
-      this.scrollX = this.canvas.scrollLeft;
-      this.scrollY = this.canvas.scrollTop;
-      this.onboarding = 1;
-    },
-    // rotate(){
-    //     var ct = this.photocxt
-    // ct.beginPath();
-    // ct.rect(0, 0, 600, 600);
-    // ct.stroke();
-    // ct.rotate(180);
-    // },
-    reflection: function reflection() {
-      var concat = document.getElementById('concat');
-      var concatCxt = concat.getContext("2d");
-      var photo = this.createImage(document.getElementById("photo")); // var cover = this.createImage(document.getElementById("cover"));
-
-      var image = this.createImage(this.canvas);
-      console.log(image);
-
-      image.onload = function () {
-        concatCxt.drawImage(photo, 0, 0, 600, 600);
-        concatCxt.drawImage(image, 0, 0, 600, 600);
-      };
-
-      var that = this;
-      setTimeout(function () {
-        that.concatImg = concat.toDataURL('image/png');
-      }, 500);
-    },
-    createImage: function createImage(context) {
-      var image = new Image();
-      image.src = context.toDataURL();
-      return image;
-    },
-    drawText: function drawText() {
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-
-      for (var i = 0; i < this.texts.length; i++) {
-        var text = this.texts[i];
-        this.context.fillText(text.text, text.x, text.y);
-        console.log(text.x);
-        console.log(text.y);
-      }
-    },
-    textHittest: function textHittest(x, y, textIndex) {
-      var text = this.texts[textIndex];
-      return x >= text.x && x <= text.x + text.width && y >= text.y - text.height && y <= text.y;
-    },
-    dragText: function dragText(e) {
-      this.startX = parseInt(e.clientX - this.offsetX);
-      this.startY = parseInt(e.clientY + 10); // Put your mousedown stuff here
-
-      for (var i = 0; i < this.texts.length; i++) {
-        if (this.textHittest(this.startX, this.startY, i)) {
-          this.selectedText = i;
-        }
-      }
-    },
-    dropText: function dropText(e) {
-      this.selectedText = -1;
-    },
-    move: function move(e) {
-      if (this.selectedText < 0) {
-        return;
-      }
-
-      var mouseX = parseInt(e.clientX - this.offsetX);
-      var mouseY = parseInt(e.clientY - this.offsetY); // Put your mousemove stuff here
-
-      var dx = mouseX - this.startX;
-      var dy = mouseY - this.startY;
-      this.startX = mouseX;
-      this.startY = mouseY;
-      var text = this.texts[this.selectedText];
-      text.x += dx;
-      text.y += dy;
-      this.drawText();
-    },
-    submit: function submit() {
-      this.canvasMode = 'text'; // calc the y coordinate for this text on the canvas
-
-      var y = this.texts.length * 20 + 20; // get the text from the input element
-
-      var text = {
-        text: document.getElementById('theText').value,
-        x: 20,
-        y: y
-      }; // calc the size of this text for hit-testing purposes
-
-      this.context.font = '48px serif';
-      this.context.fillStyle = 'rgba(0, 0, 255)';
-      text.width = this.context.measureText(text.text).width;
-      text.height = 16; // put this new text in the texts array
-
-      this.texts.push(text); // redraw everything
-
-      this.drawText();
-    }
-  }
-});
-
-/***/ }),
-
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/HeaderIcons.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/HeaderIcons.vue?vue&type=script&lang=js& ***!
@@ -9971,6 +9561,337 @@ __webpack_require__.r(__webpack_exports__);
     computed: {
         submitBtn() {
             return this.$store.state.post.submitBtn;
+        }
+    }
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=ts&":
+/*!***********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/ts-loader??ref--5!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=ts& ***!
+  \***********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var _atoms_BlockIconBtn_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../atoms/BlockIconBtn.vue */ "./resources/ts/components/atoms/BlockIconBtn.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0__["default"].extend({
+    components: {
+        'block-icon-btn': _atoms_BlockIconBtn_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    },
+    computed: Object.assign({}, Object(vuex__WEBPACK_IMPORTED_MODULE_2__["mapGetters"])([
+        'croppingBtn',
+        'btnValidationNext1'
+    ])),
+    methods: {
+        clickCroppingBtn() {
+            this.$emit('clickCroppingBtn');
+        },
+    }
+}));
+
+
+/***/ }),
+
+/***/ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&":
+/*!**********************************************************************************************************************************************************************!*\
+  !*** ./node_modules/ts-loader??ref--5!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts& ***!
+  \**********************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
+/* harmony import */ var _JSaccordion_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./JSaccordion.vue */ "./resources/ts/components/molecules/JSaccordion.vue");
+
+
+/* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0__["default"].extend({
+    name: "DrawTool",
+    components: {
+        'js-accordion': _JSaccordion_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    },
+    data() {
+        return {
+            canvasMode: 'penBlack',
+            canvas: document.getElementById('myCanvas'),
+            context: {
+                lineWidth: '',
+                strokeStyle: '',
+            },
+            isDrag: false,
+            width: '500px',
+            height: '500px',
+            photo: null,
+            photocxt: '',
+            concatImg: '',
+            picker: '',
+            texts: [],
+            selectedText: -1,
+            offsetX: null,
+            offsetY: null,
+            scrollX: null,
+            scrollY: null,
+            startX: null,
+            startY: null,
+            font: null,
+            length: 4,
+            onboarding: null,
+            value: 0,
+        };
+    },
+    computed: {
+        el() {
+            return Number(this.value) + 1;
+        }
+    },
+    mounted() {
+        var canvas = this.canvas;
+        this.canvas = document.getElementById('myCanvas');
+        this.context = this.canvas.getContext('2d');
+        this.context.lineCap = 'round';
+        this.context.lineJoin = 'round';
+        this.context.lineWidth = 10;
+        this.photo = document.getElementById('photo');
+        this.photocxt = this.photo.getContext('2d');
+        var canvasOffset = this.canvas.getBoundingClientRect();
+        this.offsetX = canvasOffset.left;
+        this.offsetY = canvasOffset.top;
+        this.scrollX = canvas.scrollLeft;
+        this.scrollY = canvas.scrollTop;
+        this.canvasMode = 'penBlack';
+        this.context.globalCompositeOperation = 'source-over';
+        this.context.lineCap = 'round';
+        this.context.lineJoin = 'round';
+        this.onboarding = 0;
+    },
+    methods: {
+        next() {
+            this.onboarding = this.onboarding + 1 === this.length
+                ? 0
+                : this.onboarding + 1;
+        },
+        prev() {
+            this.onboarding = this.onboarding - 1 < 0
+                ? this.length - 1
+                : this.onboarding - 1;
+        },
+        mousedown(e) {
+            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
+                this.dragStart(e);
+            }
+            else {
+                this.dragText(e);
+            }
+        },
+        mouseup(e) {
+            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
+                this.dragEnd(e);
+            }
+            else {
+                this.dropText(e);
+            }
+        },
+        mouseout(e) {
+            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
+                this.dragEnd(e);
+            }
+            else {
+                this.dropText(e);
+            }
+        },
+        mousemove(e) {
+            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
+                this.draw(e);
+            }
+            else {
+                this.move(e);
+            }
+        },
+        // gray(){
+        //     var photo = this.createImage(document.getElementById("cover"));
+        //     let ctx = photo.getContext("2d");
+        //     ctx.drawImage(image, 0, 0, image.width, image.height)
+        //     let src = ctx.getImageData(0, 0, image.width, image.height)
+        //     let dst = ctx.createImageData(image.width, image.height)
+        //     for (let i = 0; i < src.data.length; i += 4) {
+        //     let y = 0.2126 * src.data[i] + 0.7152 * src.data[i + 1] + 0.0722 * src.data[i + 2]
+        //     y = parseInt(y, 10)
+        //     dst.data[i] = y
+        //     dst.data[i + 1] = y
+        //     dst.data[i + 2] = y
+        //     dst.data[i + 3] = src.data[i + 3]
+        //     }
+        //     ctx.putImageData(dst, 0, 0)
+        // },
+        // 描画
+        draw: function (e) {
+            var x = e.layerX;
+            var y = e.layerY;
+            if (!this.isDrag) {
+                return;
+            }
+            this.context.lineTo(x, y);
+            this.context.stroke();
+        },
+        // 描画開始（mousedown）
+        dragStart: function (e) {
+            var x = e.layerX;
+            var y = e.layerY;
+            this.context.beginPath();
+            this.context.lineTo(x, y);
+            this.context.stroke();
+            this.isDrag = true;
+        },
+        // 描画終了（mouseup, mouseout）
+        dragEnd: function () {
+            this.context.closePath();
+            this.isDrag = false;
+        },
+        clear: function () {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        },
+        // 消しゴムモード
+        eraser: function () {
+            // カーソル変更
+            this.canvasMode = 'eraser';
+            this.context.globalCompositeOperation = 'destination-out';
+            // 描画設定
+            this.context.lineCap = 'square';
+            this.context.lineJoin = 'square';
+        },
+        pen() {
+            this.canvasMode = 'penBlack';
+            this.context.globalCompositeOperation = 'source-over';
+            this.context.lineCap = 'round';
+            this.context.lineJoin = 'round';
+            this.onboarding = 0;
+        },
+        text() {
+            this.canvasMode = 'text';
+            this.canvas = document.getElementById('myCanvas');
+            this.context.lineCap = 'round';
+            this.context.lineJoin = 'round';
+            this.context.lineWidth = 10;
+            var canvasOffset = this.canvas.getBoundingClientRect();
+            this.offsetX = canvasOffset.left;
+            this.offsetY = canvasOffset.top;
+            this.scrollX = this.canvas.scrollLeft;
+            this.scrollY = this.canvas.scrollTop;
+            this.onboarding = 1;
+        },
+        // rotate(){
+        //     var ct = this.photocxt
+        // ct.beginPath();
+        // ct.rect(0, 0, 600, 600);
+        // ct.stroke();
+        // ct.rotate(180);
+        // },
+        reflection() {
+            var concat = document.getElementById('concat');
+            var concatCxt = concat.getContext("2d");
+            var photo = this.createImage(document.getElementById("photo"));
+            // var cover = this.createImage(document.getElementById("cover"));
+            var image = this.createImage(this.canvas);
+            console.log(image);
+            image.onload = function () {
+                concatCxt.drawImage(photo, 0, 0, 600, 600);
+                concatCxt.drawImage(image, 0, 0, 600, 600);
+            };
+            let that = this;
+            setTimeout(function () {
+                that.concatImg = concat.toDataURL('image/png');
+            }, 500);
+        },
+        createImage(context) {
+            var image = new Image;
+            image.src = context.toDataURL();
+            return image;
+        },
+        drawText() {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            for (var i = 0; i < this.texts.length; i++) {
+                var text = this.texts[i];
+                this.context.fillText(text.text, text.x, text.y);
+                console.log(text.x);
+                console.log(text.y);
+            }
+        },
+        textHittest(x, y, textIndex) {
+            var text = this.texts[textIndex];
+            return (x >= text.x && x <= text.x + text.width && y >= text.y - text.height && y <= text.y);
+        },
+        dragText(e) {
+            this.startX = parseInt(e.clientX - this.offsetX);
+            this.startY = parseInt(e.clientY + this.offsetY);
+            // Put your mousedown stuff here
+            for (var i = 0; i < this.texts.length; i++) {
+                if (this.textHittest(this.startX, this.startY, i)) {
+                    this.selectedText = i;
+                }
+            }
+        },
+        dropText(e) {
+            this.selectedText = -1;
+        },
+        move(e) {
+            if (this.selectedText < 0) {
+                return;
+            }
+            var mouseX = parseInt(e.clientX - this.offsetX);
+            var mouseY = parseInt(e.clientY - this.offsetY);
+            // Put your mousemove stuff here
+            var dx = mouseX - this.startX;
+            var dy = mouseY - this.startY;
+            this.startX = mouseX;
+            this.startY = mouseY;
+            var text = this.texts[this.selectedText];
+            text.x += dx;
+            text.y += dy;
+            this.drawText();
+        },
+        submit() {
+            this.canvasMode = 'text';
+            // calc the y coordinate for this text on the canvas
+            var y = this.texts.length * 20 + 20;
+            // get the text from the input element
+            var text = {
+                text: document.getElementById('theText').value,
+                x: 20,
+                y: y
+            };
+            // calc the size of this text for hit-testing purposes
+            this.context.font = '48px serif';
+            this.context.fillStyle = 'rgba(0, 0, 255)';
+            text.width = this.context.measureText(text.text).width;
+            text.height = 16;
+            // put this new text in the texts array
+            this.texts.push(text);
+            // redraw everything
+            this.drawText();
+        },
+        mounted() {
+            var canvas = [];
+            const canvasContainer = document.getElementById('abc');
+            for (let i = 1; i < 5; i++) {
+                canvas[i] = document.createElement("img");
+                canvas[i].id = 'canvas' + i;
+                canvas[i].src = '/storage/content2.png';
+                canvas[i].style.width = '300px';
+                canvas[i].style.height = '300px';
+                if (canvasContainer !== null) {
+                    canvasContainer.appendChild(canvas[i]);
+                }
+            }
+            console.log(canvasContainer);
         }
     }
 }));
@@ -73146,7 +73067,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _CroppingBtn_vue_vue_type_template_id_708cf472___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CroppingBtn.vue?vue&type=template&id=708cf472& */ "./resources/ts/components/molecules/CroppingBtn.vue?vue&type=template&id=708cf472&");
-/* harmony import */ var _CroppingBtn_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CroppingBtn.vue?vue&type=script&lang=js& */ "./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=js&");
+/* harmony import */ var _CroppingBtn_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CroppingBtn.vue?vue&type=script&lang=ts& */ "./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=ts&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -73156,7 +73077,7 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _CroppingBtn_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CroppingBtn_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__["default"],
   _CroppingBtn_vue_vue_type_template_id_708cf472___WEBPACK_IMPORTED_MODULE_0__["render"],
   _CroppingBtn_vue_vue_type_template_id_708cf472___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -73173,17 +73094,17 @@ component.options.__file = "resources/ts/components/molecules/CroppingBtn.vue"
 
 /***/ }),
 
-/***/ "./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=js&":
+/***/ "./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=ts&":
 /*!************************************************************************************!*\
-  !*** ./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=js& ***!
+  !*** ./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=ts& ***!
   \************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CroppingBtn_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./CroppingBtn.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CroppingBtn_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_CroppingBtn_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/ts-loader??ref--5!../../../../node_modules/vue-loader/lib??vue-loader-options!./CroppingBtn.vue?vue&type=script&lang=ts& */ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/CroppingBtn.vue?vue&type=script&lang=ts&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_CroppingBtn_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
@@ -73215,7 +73136,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true&");
-/* harmony import */ var _DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=script&lang=js& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&");
+/* harmony import */ var _DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=script&lang=ts& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&");
 /* empty/unused harmony star reexport *//* harmony import */ var _DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
@@ -73227,7 +73148,7 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__["default"],
   _DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
   _DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -73244,17 +73165,17 @@ component.options.__file = "resources/ts/components/molecules/DrawCanvas.vue"
 
 /***/ }),
 
-/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&":
+/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&":
 /*!***********************************************************************************!*\
-  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js& ***!
+  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts& ***!
   \***********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/ts-loader??ref--5!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=script&lang=ts& */ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 

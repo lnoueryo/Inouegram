@@ -85,21 +85,46 @@
             <button id="rotate-button" @click="gray()">反転</button>
             <button id="reflection-button" @click="reflection()">反映</button>
             <v-btn @click="$emit('abcd', concatImg)">保存</v-btn>
-
-
-
         </div>
             <!-- <canvas id="concat" :width="width" :height="height" /> -->
     </div>
 </template>
-<script>
-import JSaccordion from './JSaccordion'
-export default {
+<script lang="ts">
+import Vue from 'vue'
+import JSaccordion from './JSaccordion.vue'
+interface Data {
+    canvasMode: string,
+            canvas: HTMLElement,
+            context: {
+                lineWidth: string | null,
+                strokeStyle: string | null,
+            },
+            isDrag: boolean,
+            width: string,
+            height: string,
+            photo: HTMLElement | null,
+            photocxt: string,
+            concatImg: string | null,
+            picker: string | null,
+            texts: number[] | null,
+            selectedText: number,
+            offsetX: number | null,
+            offsetY: number | null,
+            scrollX: number | null,
+            scrollY: number | null,
+            startX: number | null,
+            startY: number | null,
+            font: string | null,
+            length: number,
+            onboarding: number | null,
+            value: number,
+  }
+export default Vue.extend({
     name: "DrawTool",
     components: {
         'js-accordion': JSaccordion,
     },
-    data() {
+    data(): Data {
         return {
             canvasMode: 'penBlack',
             canvas: document.getElementById('myCanvas'),
@@ -110,20 +135,21 @@ export default {
             isDrag: false,
             width: '500px',
             height: '500px',
+            photo: null,
             photocxt: '',
             concatImg: '',
             picker: '',
             texts: [],
             selectedText: -1,
-            offsetX: '',
-            offsetY: '',
-            scrollX: '',
-            scrollY: '',
-            startX: '',
-            startY: '',
-            font: '',
+            offsetX: null,
+            offsetY: null,
+            scrollX: null,
+            scrollY: null,
+            startX: null,
+            startY: null,
+            font: null,
             length: 4,
-            onboarding: '',
+            onboarding: null,
             value: 0,
             };
     },
@@ -139,7 +165,8 @@ export default {
         this.context.lineCap = 'round';
         this.context.lineJoin = 'round';
         this.context.lineWidth = 10;
-        this.photocxt = document.getElementById('photo').getContext('2d');
+        this.photo = <HTMLCanvasElement>document.getElementById('photo');
+        this.photocxt = this.photo.getContext('2d');
         var canvasOffset = this.canvas.getBoundingClientRect();
         this.offsetX = canvasOffset.left;
         this.offsetY = canvasOffset.top;
@@ -191,23 +218,23 @@ export default {
                 this.move(e);
             }
         },
-        gray(){
-            var photo = this.createImage(document.getElementById("cover"));
-            let ctx = photo.getContext("2d");
-            ctx.drawImage(image, 0, 0, image.width, image.height)
-            let src = ctx.getImageData(0, 0, image.width, image.height)
-            let dst = ctx.createImageData(image.width, image.height)
+        // gray(){
+        //     var photo = this.createImage(document.getElementById("cover"));
+        //     let ctx = photo.getContext("2d");
+        //     ctx.drawImage(image, 0, 0, image.width, image.height)
+        //     let src = ctx.getImageData(0, 0, image.width, image.height)
+        //     let dst = ctx.createImageData(image.width, image.height)
 
-            for (let i = 0; i < src.data.length; i += 4) {
-            let y = 0.2126 * src.data[i] + 0.7152 * src.data[i + 1] + 0.0722 * src.data[i + 2]
-            y = parseInt(y, 10)
-            dst.data[i] = y
-            dst.data[i + 1] = y
-            dst.data[i + 2] = y
-            dst.data[i + 3] = src.data[i + 3]
-            }
-            ctx.putImageData(dst, 0, 0)
-        },
+        //     for (let i = 0; i < src.data.length; i += 4) {
+        //     let y = 0.2126 * src.data[i] + 0.7152 * src.data[i + 1] + 0.0722 * src.data[i + 2]
+        //     y = parseInt(y, 10)
+        //     dst.data[i] = y
+        //     dst.data[i + 1] = y
+        //     dst.data[i + 2] = y
+        //     dst.data[i + 3] = src.data[i + 3]
+        //     }
+        //     ctx.putImageData(dst, 0, 0)
+        // },
 
         // 描画
         draw :function(e) {
@@ -277,9 +304,9 @@ export default {
         // ct.rotate(180);
         // },
         reflection(){
-            var concat = document.getElementById('concat');
-            var concatCxt = concat.getContext("2d");
-            var photo = this.createImage(document.getElementById("photo"));
+            var concat: any = document.getElementById('concat');
+            var concatCxt: any = concat.getContext("2d");
+            var photo: string = this.createImage(document.getElementById("photo"));
 
             // var cover = this.createImage(document.getElementById("cover"));
             var image = this.createImage(this.canvas);
@@ -311,9 +338,9 @@ export default {
             var text = this.texts[textIndex];
             return (x >= text.x && x <= text.x + text.width && y >= text.y - text.height && y <= text.y);
         },
-        dragText(e) {
+        dragText(e: MouseEvent): void {
             this.startX = parseInt(e.clientX - this.offsetX);
-            this.startY = parseInt(e.clientY + 10);
+            this.startY = parseInt(e.clientY + this.offsetY);
             // Put your mousedown stuff here
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
@@ -348,7 +375,7 @@ export default {
             var y = this.texts.length * 20 + 20;
 
             // get the text from the input element
-            var text = {
+            var text: any = {
                 text: document.getElementById('theText').value,
                 x: 20,
                 y: y
@@ -366,9 +393,25 @@ export default {
             // redraw everything
             this.drawText();
 
+        },
+        mounted() {
+        var canvas = [];
+        const canvasContainer: HTMLElement | null = document.getElementById('abc');
+        for (let i = 1; i < 5; i++) {
+            canvas[i] = document.createElement("img");
+            canvas[i].id = 'canvas' + i;
+            canvas[i].src = '/storage/content2.png';
+            canvas[i].style.width = '300px';
+            canvas[i].style.height = '300px';
+            if (canvasContainer !== null) {
+                canvasContainer.appendChild(canvas[i]);
+            }
         }
+        console.log(canvasContainer);
     }
-};
+
+    }
+});
 </script>
 
 
