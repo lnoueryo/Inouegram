@@ -2242,6 +2242,673 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "DrawTool",
+  data: function data() {
+    var _ref;
+
+    return _ref = {
+      value: 0,
+      photo: '',
+      canvasMode: 'penBlack',
+      drawCanvas: null,
+      drawCanvasctx: null,
+      isDrag: false,
+      cover: null,
+      coverctx: this.$store.state.post.cropImage[0],
+      penColor: '#000000',
+      lineWidth: 5,
+      lineCaps: ['square', 'butt', 'round'],
+      lineCap: 'round',
+      lineJoins: ['bebel', 'miter', 'round'],
+      lineJoin: 'round',
+      filterObject: {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      },
+      globalCompositeOperation: ['lighter', 'darken', 'overlay', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity']
+    }, _defineProperty(_ref, "isDrag", false), _defineProperty(_ref, "model", null), _defineProperty(_ref, "globalAlpha", 1), _defineProperty(_ref, "color", '#00000080'), _defineProperty(_ref, "timer", ''), _defineProperty(_ref, "filters", ''), _defineProperty(_ref, "toggle_multiple", []), _defineProperty(_ref, "textCanvas", ''), _defineProperty(_ref, "textCanvasctx", ''), _defineProperty(_ref, "texts", []), _defineProperty(_ref, "selectedText", -1), _defineProperty(_ref, "selectedEditText", -1), _defineProperty(_ref, "offsetX", ''), _defineProperty(_ref, "offsetY", ''), _defineProperty(_ref, "scrollX", ''), _defineProperty(_ref, "scrollY", ''), _defineProperty(_ref, "startX", ''), _defineProperty(_ref, "startY", ''), _defineProperty(_ref, "photoctx", ''), _defineProperty(_ref, "isActive", false), _defineProperty(_ref, "isActiveEditText", false), _defineProperty(_ref, "dialog", false), _defineProperty(_ref, "selectedEditTextMessage", ''), _defineProperty(_ref, "inputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '500',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _defineProperty(_ref, "selectedInputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '500',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _ref;
+  },
+  computed: {
+    el: function el() {
+      return Number(this.value) + 1;
+    },
+    opacity: {
+      get: function get() {
+        return this.globalAlpha * 10;
+      },
+      set: function set(newValue) {
+        this.globalAlpha = newValue / 10;
+      }
+    },
+    fontSize: {
+      get: function get() {
+        return this.inputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.inputPosition.fontSize = newValue + 'px';
+      }
+    },
+    selectedFontSize: {
+      get: function get() {
+        return this.selectedInputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.selectedInputPosition.fontSize = newValue + 'px';
+      }
+    }
+  },
+  mounted: function mounted() {
+    // canvas
+    this.drawCanvas = document.getElementById('drawCanvas');
+    this.drawCanvasctx = this.drawCanvas.getContext('2d');
+    this.drawCanvasctx.lineCap = 'round';
+    this.drawCanvasctx.lineJoin = 'round';
+    this.drawCanvasctx.lineWidth = 5;
+    this.drawCanvasctx.miterLimit = 50;
+    this.drawCanvasctx.strokeStyle = '#000000';
+    this.cover = document.getElementById('cover');
+    this.coverctx = this.cover.getContext('2d');
+    var image = new Image();
+    image.src = this.$store.state.post.cropImage[0];
+    image.src = '/storage/image/panda.png';
+    var that = this;
+
+    image.onload = function () {
+      that.coverctx.drawImage(image, 0, 0, 500, 500);
+    };
+
+    console.log(this.$store.state.post.cropImage[0]);
+    var that = this;
+    setTimeout(function () {
+      that.$store.state.post.cropImage = that.cover.toDataURL();
+    }, 500);
+    var canvas = [];
+    var canvasCtx = [];
+    var coverImage = [];
+    var that = this;
+    setTimeout(function () {
+      var _loop = function _loop(i) {
+        canvas[i] = document.getElementById("pic" + i);
+        canvasCtx[i] = canvas[i].getContext('2d');
+        canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+        canvasCtx[i].globalAlpha = 1;
+        coverImage[i] = new Image();
+        coverImage[i].src = that.$store.state.post.cropImage;
+
+        coverImage[i].onload = function () {
+          canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+        };
+      };
+
+      for (var i = 1; i < 14; i++) {
+        _loop(i);
+      }
+    }, 500);
+    this.coverctx.save(); // text
+
+    this.textCanvas = document.getElementById("text");
+    this.textCanvasctx = this.textCanvas.getContext("2d");
+    var canvasOffset = this.textCanvas.getBoundingClientRect();
+    this.offsetX = canvasOffset.left;
+    this.offsetY = canvasOffset.top;
+    this.scrollX = this.textCanvas.scrollLeft;
+    this.scrollY = this.textCanvas.scrollTop;
+  },
+  methods: {
+    searchTimeOut: function searchTimeOut() {
+      var _this = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        console.log(_this.penColor);
+
+        _this.pen();
+      }, 200);
+    },
+    pen: function pen() {
+      this.canvasMode = 'pen';
+      this.drawCanvasctx.globalCompositeOperation = 'source-over';
+      this.drawCanvasctx.lineCap = this.lineCap;
+      this.drawCanvasctx.lineJoin = this.lineJoin;
+      this.drawCanvasctx.lineWidth = this.lineWidth;
+      this.drawCanvasctx.strokeStyle = this.penColor;
+    },
+    eraser: function eraser() {
+      this.canvasMode = 'eraser';
+      this.drawCanvasctx.lineCap = 'square';
+      this.drawCanvasctx.lineJoin = 'square';
+      this.drawCanvasctx.lineWidth = 30;
+      this.drawCanvasctx.globalCompositeOperation = 'destination-out';
+    },
+    draw: function draw(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+
+      if (!this.isDrag) {
+        return;
+      }
+
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+    },
+    dragStart: function dragStart(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+      this.drawCanvasctx.beginPath();
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+      this.isDrag = true;
+    },
+    dragEnd: function dragEnd() {
+      this.drawCanvasctx.closePath();
+      this.isDrag = false;
+    },
+    clear: function clear() {
+      this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+    },
+    back: function back() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.restore();
+      var picImage = new Image();
+      picImage.src = this.$store.state.post.cropImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+      };
+
+      this.coverctx.fillRect(0, 0, 500, 500);
+    },
+    rotate: function rotate() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.translate(500, 0);
+      this.coverctx.rotate(90 * Math.PI / 180);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.color;
+      this.coverctx.fillRect(0, 0, 500, 500);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.$store.state.post.cropImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    click: function click() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.color;
+      this.coverctx.fillRect(0, 0, 500, 500);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.$store.state.post.cropImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    reset: function reset() {
+      this.coverctx.filter = 'grayscale(0%)';
+      this.globalAlpha = 1;
+      this.color = 'transparent';
+      this.model = '';
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.filterObject = {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      };
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.cover = document.getElementById('cover');
+      this.coverctx = this.cover.getContext('2d');
+      var myImage = new Image();
+      myImage.src = this.$store.state.post.cropImage;
+      var that = this;
+
+      myImage.onload = function () {
+        that.coverctx.drawImage(myImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+
+      this.color = '#00000080';
+      that.searchTimeOut2();
+    },
+    searchTimeOut2: function searchTimeOut2() {
+      var _this2 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this2.colorImage();
+      }, 200);
+    },
+    searchTimeOut3: function searchTimeOut3() {
+      var _this3 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this3.filter();
+
+        _this3.colorImage();
+      }, 200);
+    },
+    colorImage: function colorImage() {
+      var canvas = [];
+      var canvasCtx = [];
+      var coverImage = [];
+      var that = this;
+      setTimeout(function () {
+        var _loop2 = function _loop2(i) {
+          canvas[i] = document.getElementById("pic" + i);
+          canvasCtx[i] = canvas[i].getContext('2d');
+          canvasCtx[i].clearRect(0, 0, 500, 500);
+          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+          canvasCtx[i].globalAlpha = that.globalAlpha;
+          canvasCtx[i].fillStyle = that.color;
+          canvasCtx[i].filter = that.filters;
+          canvasCtx[i].fillRect(0, 0, 500, 500);
+          coverImage[i] = new Image();
+          coverImage[i].src = that.$store.state.post.cropImage;
+
+          coverImage[i].onload = function () {
+            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+          };
+        };
+
+        for (var i = 1; i < 14; i++) {
+          _loop2(i);
+        }
+      }, 500);
+    },
+    filter: function filter() {
+      var filterKeys = Object.keys(this.filterObject);
+      var filterValues = Object.values(this.filterObject);
+      var filtersArray = [];
+      var newValue;
+
+      for (var i = 0; i < filterKeys.length; i++) {
+        if (filterKeys[i] == 'hueRotate') {
+          newValue = "hue-rotate(".concat(filterValues[i], "deg)");
+          filtersArray.push(newValue);
+        } else if (filterKeys[i] == 'blur') {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "px)");
+          filtersArray.push(newValue);
+        } else {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "%)");
+          filtersArray.push(newValue);
+        }
+      }
+
+      ;
+      var filters = filtersArray.join(' ');
+      this.filters = filters;
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillstyle = this.color;
+      this.coverctx.filter = this.filters;
+      console.log(this.coverctx.filter);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      this.coverctx.fillRect(0, 0, 500, 500);
+      var picImage = new Image();
+      picImage.src = this.$store.state.post.cropImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    blur: function blur(e) {
+      e.target.blur();
+    },
+    create: function create(e) {
+      this.isActive = true;
+      var that = this;
+      setTimeout(function () {
+        that.startX = parseInt(e.clientX - that.offsetX);
+        that.startY = parseInt(e.clientY - that.offsetY);
+        var currentDiv = document.getElementById("abc");
+        that.inputPosition.top = that.startY + 20 + 'px';
+        that.inputPosition.left = that.startX + 77 + 'px';
+        document.getElementById('newText').focus();
+      }, 100);
+    },
+    discribeNew: function discribeNew() {
+      this.isActive = false;
+      var text = {
+        text: document.getElementById('newText').value,
+        x: this.startX,
+        y: this.startY,
+        font: "bold ".concat(this.inputPosition.fontSize, " normal"),
+        fillStyle: this.inputPosition.color
+      };
+      this.textCanvasctx.font = text.font;
+      this.textCanvasctx.fillStyle = text.fillStyle;
+      text.width = this.textCanvasctx.measureText(text.text).width;
+      text.height = this.inputPosition.fontSize.replace(/px/g, "");
+      this.texts.push(text);
+      this.drawText();
+    },
+    edit: function edit() {
+      this.isActiveEditText = false;
+      var editText = this.texts[this.selectedEditText];
+      editText.text = this.selectedEditTextMessage;
+      editText.width = this.textCanvasctx.measureText(this.selectedEditTextMessage).width;
+      editText.fillStyle = this.selectedInputPosition.color;
+      editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
+      this.drawText();
+      this.selectedEditText = -1;
+      console.log(editText.width);
+    },
+    drawText: function drawText() {
+      this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+
+        if (text.text == '') {
+          this.texts.splice(i, 1);
+        }
+      }
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+        this.textCanvasctx.font = text.font;
+        this.textCanvasctx.fillStyle = text.fillStyle;
+        this.textCanvasctx.fillText(text.text, text.x, text.y);
+      }
+    },
+    selectText: function selectText(event) {
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = parseInt(event.clientY - this.offsetY);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.isActiveEditText = true;
+          this.isActive = false;
+          this.selectedEditText = i;
+          setTimeout(function () {
+            document.getElementById('selectedText').focus();
+          }, 100); // var selectedInput = document.getElementById('selectedText');
+          // selectedInput.focus();
+
+          this.selectedInputPosition.top = this.texts[i].y + 20 + 'px';
+          this.selectedInputPosition.left = this.texts[i].x + 80 + 'px';
+          this.selectedInputPosition.color = this.texts[i].fillStyle;
+          this.texts[i].fillStyle = 'transparent';
+          var fontArray = this.texts[i].font.split(/\s+/);
+          this.selectedInputPosition.fontWeight = fontArray[0];
+          this.selectedInputPosition.fontSize = fontArray[1];
+          this.selectedInputPosition.fontStyle = fontArray[2];
+          var that = this;
+          setTimeout(that.drawText(), 100);
+          this.selectedEditTextMessage = this.texts[i].text;
+        }
+      }
+
+      if (this.selectedEditText == -1) {
+        this.create(event);
+      }
+    },
+    textHittest: function textHittest(x, y, textIndex) {
+      var text = this.texts[textIndex];
+      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
+    },
+    handleMouseDown: function handleMouseDown(event) {
+      var newText = document.getElementById('newText');
+      var selectedText = document.getElementById('selectedText'); // if(newText == document.activeElement){
+      //   newText.blur();
+      // }
+      // if(selectedText == document.activeElement){
+      //   selectedText.blur();
+      // }
+
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = parseInt(event.clientY - this.offsetY);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.selectedText = i;
+        }
+      }
+    },
+    handleMouseUp: function handleMouseUp(e) {
+      this.selectedText = -1;
+    },
+    handleMouseOut: function handleMouseOut(e) {
+      this.selectedText = -1;
+    },
+    handleMouseMove: function handleMouseMove(e) {
+      if (this.selectedText < 0) {
+        return;
+      }
+
+      var mouseX = parseInt(e.clientX - this.offsetX);
+      var mouseY = parseInt(e.clientY - this.offsetY);
+      var dx = mouseX - this.startX;
+      var dy = mouseY - this.startY;
+      this.startX = mouseX;
+      this.startY = mouseY;
+      var text = this.texts[this.selectedText];
+      text.x += dx;
+      text.y += dy;
+      this.drawText();
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/HeaderIcons.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/HeaderIcons.vue?vue&type=script&lang=js& ***!
@@ -2354,55 +3021,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee);
       }))();
-    }
-  }
-});
-
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/JSaccordion.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  data: function data() {
-    return {
-      isOpened: false
-    };
-  },
-  methods: {
-    accordionToggle: function accordionToggle() {
-      this.isOpened = !this.isOpened;
-    },
-    beforeEnter: function beforeEnter(el) {
-      el.style.height = '0';
-    },
-    enter: function enter(el) {
-      el.style.height = el.scrollHeight + 'px';
-    },
-    beforeLeave: function beforeLeave(el) {
-      el.style.height = el.scrollHeight + 'px';
-    },
-    leave: function leave(el) {
-      el.style.height = '0';
     }
   }
 });
@@ -2701,7 +3319,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     cropImage: function cropImage() {
       var cropImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
-      var canvas = document.getElementById("photo");
+      var canvas = document.getElementById("cover");
       var ctx = canvas.getContext("2d");
       var background = new Image();
       background.src = cropImage;
@@ -2711,6 +3329,8 @@ __webpack_require__.r(__webpack_exports__);
       background.onload = function () {
         ctx.drawImage(background, 0, 0, 600, 600);
       };
+
+      this.$store.dispatch('cropImage', cropImage);
     },
     croppedInfo: function croppedInfo() {
       // var croppedInfo = this.cropImg.toDataURL();
@@ -3392,6 +4012,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
 
 
 
@@ -3406,18 +4030,56 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return {
       e1: 1,
       filename: '',
-      data: null
+      data: null,
+      concatImg: []
     };
   },
   computed: _objectSpread({}, Object(vuex__WEBPACK_IMPORTED_MODULE_3__["mapGetters"])(['cropImg'])),
   methods: {
     submit: function submit() {
+      console.log(JSON.stringify(this.concatImg));
       var fd = new FormData();
-      fd.append("cropped_image", JSON.stringify(this.$store.state.post.cropImage));
-      fd.append("message", this.$store.state.post.message);
+      fd.append("cropped_image", JSON.stringify(this.concatImg));
+      fd.append("message", 'hello');
       axios.post('/api/create', fd).then()["catch"](function (error) {
         console.log(error);
       });
+    },
+    // submit(){
+    //     let fd= new FormData();
+    //     fd.append("cropped_image", JSON.stringify(this.$store.state.post.cropImage));
+    //     fd.append("message", this.$store.state.post.message);
+    //     axios.post('/api/create', fd)
+    //     .then(
+    //         // response => (this.followed = response.data)
+    //     )
+    //     .catch(function (error) {
+    //         console.log(error);
+    //     });
+    // },
+    getImage: function getImage() {
+      var concat = document.getElementById('concat');
+      var concatCxt = concat.getContext("2d");
+      var cover = this.createImage(document.getElementById("cover"));
+      var text = this.createImage(document.getElementById("text"));
+      var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
+
+      drawCanvas.onload = function () {
+        concatCxt.drawImage(cover, 0, 0, 500, 500);
+        concatCxt.drawImage(text, 0, 0, 500, 500);
+        concatCxt.drawImage(drawCanvas, 0, 0, 500, 500);
+      };
+
+      var that = this;
+      setTimeout(function () {
+        var abc = document.getElementById('concat').toDataURL('image/png');
+        that.concatImg.push(abc);
+      }, 200);
+    },
+    createImage: function createImage(context) {
+      var image = new Image();
+      image.src = context.toDataURL();
+      return image;
     } //     submit () {
     //     document.getElementById('cropped-image').value = this.$store.state.add.cropImage;
     //     console.log(document.getElementById('cropped-image').value);
@@ -7092,25 +7754,6 @@ if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss&":
-/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--8-2!./node_modules/sass-loader/dist/cjs.js??ref--8-3!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss& ***!
-  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, ".js-accordion {\n  background-color: #fff;\n  border-color: #666;\n  border-width: 1px 1px 0 1px;\n  border-radius: 2px;\n}\n.js-accordion:last-child {\n  border-bottom-width: 1px;\n}\n.js-accordion--trigger._state-open {\n  background-color: #f1f1f1;\n  text-decoration: none;\n}\n.js-accordion--trigger._state-open:after {\n  transform: rotateX(180deg);\n  margin-top: -10px;\n}\n.js-accordion--trigger:hover {\n  background-color: #f1f1f1;\n  text-decoration: none;\n}\n.js-accordion--target {\n  overflow: hidden;\n  transition: height 0.4s ease-in-out;\n}\n.js-accordion--body {\n  padding: 30px;\n}\n.js-accordion-enter-active {\n  -webkit-animation-duration: 1s;\n          animation-duration: 1s;\n  -webkit-animation-fill-mode: both;\n          animation-fill-mode: both;\n  -webkit-animation-name: js-accordion--anime__opend;\n          animation-name: js-accordion--anime__opend;\n}\n.js-accordion-leave-active {\n  -webkit-animation-duration: 1s;\n          animation-duration: 1s;\n  -webkit-animation-fill-mode: both;\n          animation-fill-mode: both;\n  -webkit-animation-name: js-accordion--anime__closed;\n          animation-name: js-accordion--anime__closed;\n}\n@-webkit-keyframes js-accordion--anime__opend {\n0% {\n    opacity: 0;\n}\n100% {\n    opacity: 1;\n}\n}\n@keyframes js-accordion--anime__opend {\n0% {\n    opacity: 0;\n}\n100% {\n    opacity: 1;\n}\n}\n@-webkit-keyframes js-accordion--anime__closed {\n0% {\n    opacity: 1;\n}\n100% {\n    opacity: 0;\n}\n}\n@keyframes js-accordion--anime__closed {\n0% {\n    opacity: 1;\n}\n100% {\n    opacity: 0;\n}\n}", ""]);
-
-// exports
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/@fortawesome/fontawesome-free/css/all.css":
 /*!************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--7-1!./node_modules/postcss-loader/src??ref--7-2!./node_modules/@fortawesome/fontawesome-free/css/all.css ***!
@@ -7227,10 +7870,10 @@ exports.push([module.i, "\nbutton[data-v-19a8aef8] {\n    outline: none;\n}\nbut
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css&":
-/*!**************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css& ***!
-  \**************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -7239,7 +7882,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\ncanvas[data-v-41c4207f]{\n    position: absolute;\n    top: 0;\n    left: 0;\n}\n", ""]);
+exports.push([module.i, "\n.eraser {\n    cursor: url('/image/eraser.png') 15 15,auto;\n    z-index: 2\n}\n#newText {\n　outline: none!important;\n  height: 64px;\n}\n#newText:focus {\n  outline: none!important;\n  border: none!important;\n}\n#selectedText {\n　outline: none!important;\n  height: 64px;\n}\n#selectedText:focus {\n  outline: none!important;\n  border: none!important;\n}\n.index2{\n  z-index: 2;\n}\n", ""]);
 
 // exports
 
@@ -8607,36 +9250,6 @@ try {
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--8-2!./node_modules/sass-loader/dist/cjs.js??ref--8-3!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../node_modules/css-loader!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--8-2!../../../../node_modules/sass-loader/dist/cjs.js??ref--8-3!../../../../node_modules/vue-loader/lib??vue-loader-options!./JSaccordion.vue?vue&type=style&index=0&lang=scss& */ "./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css&":
 /*!****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css& ***!
@@ -8697,15 +9310,15 @@ if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css&":
-/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css& ***!
-  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css&");
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -9601,304 +10214,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&":
-/*!**********************************************************************************************************************************************************************!*\
-  !*** ./node_modules/ts-loader??ref--5!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts& ***!
-  \**********************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var _JSaccordion_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./JSaccordion.vue */ "./resources/ts/components/molecules/JSaccordion.vue");
-
-
-/* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0__["default"].extend({
-    name: "DrawTool",
-    components: {
-        'js-accordion': _JSaccordion_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
-    },
-    data() {
-        return {
-            canvasMode: 'penBlack',
-            canvas: document.getElementById('myCanvas'),
-            context: {
-                lineWidth: '',
-                strokeStyle: '',
-            },
-            isDrag: false,
-            width: '500px',
-            height: '500px',
-            photo: null,
-            photocxt: '',
-            concatImg: '',
-            picker: '',
-            texts: [],
-            selectedText: -1,
-            offsetX: null,
-            offsetY: null,
-            scrollX: null,
-            scrollY: null,
-            startX: null,
-            startY: null,
-            font: null,
-            length: 4,
-            onboarding: null,
-            value: 0,
-        };
-    },
-    computed: {
-        el() {
-            return Number(this.value) + 1;
-        }
-    },
-    mounted() {
-        var canvas = this.canvas;
-        this.canvas = document.getElementById('myCanvas');
-        this.context = this.canvas.getContext('2d');
-        this.context.lineCap = 'round';
-        this.context.lineJoin = 'round';
-        this.context.lineWidth = 10;
-        this.photo = document.getElementById('photo');
-        this.photocxt = this.photo.getContext('2d');
-        var canvasOffset = this.canvas.getBoundingClientRect();
-        this.offsetX = canvasOffset.left;
-        this.offsetY = canvasOffset.top;
-        this.scrollX = canvas.scrollLeft;
-        this.scrollY = canvas.scrollTop;
-        this.canvasMode = 'penBlack';
-        this.context.globalCompositeOperation = 'source-over';
-        this.context.lineCap = 'round';
-        this.context.lineJoin = 'round';
-        this.onboarding = 0;
-    },
-    methods: {
-        next() {
-            this.onboarding = this.onboarding + 1 === this.length
-                ? 0
-                : this.onboarding + 1;
-        },
-        prev() {
-            this.onboarding = this.onboarding - 1 < 0
-                ? this.length - 1
-                : this.onboarding - 1;
-        },
-        mousedown(e) {
-            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-                this.dragStart(e);
-            }
-            else {
-                this.dragText(e);
-            }
-        },
-        mouseup(e) {
-            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-                this.dragEnd(e);
-            }
-            else {
-                this.dropText(e);
-            }
-        },
-        mouseout(e) {
-            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-                this.dragEnd(e);
-            }
-            else {
-                this.dropText(e);
-            }
-        },
-        mousemove(e) {
-            if (this.canvasMode == 'penBlack' || this.canvasMode == 'eraser') {
-                this.draw(e);
-            }
-            else {
-                this.move(e);
-            }
-        },
-        // gray(){
-        //     var photo = this.createImage(document.getElementById("cover"));
-        //     let ctx = photo.getContext("2d");
-        //     ctx.drawImage(image, 0, 0, image.width, image.height)
-        //     let src = ctx.getImageData(0, 0, image.width, image.height)
-        //     let dst = ctx.createImageData(image.width, image.height)
-        //     for (let i = 0; i < src.data.length; i += 4) {
-        //     let y = 0.2126 * src.data[i] + 0.7152 * src.data[i + 1] + 0.0722 * src.data[i + 2]
-        //     y = parseInt(y, 10)
-        //     dst.data[i] = y
-        //     dst.data[i + 1] = y
-        //     dst.data[i + 2] = y
-        //     dst.data[i + 3] = src.data[i + 3]
-        //     }
-        //     ctx.putImageData(dst, 0, 0)
-        // },
-        // 描画
-        draw: function (e) {
-            var x = e.layerX;
-            var y = e.layerY;
-            if (!this.isDrag) {
-                return;
-            }
-            this.context.lineTo(x, y);
-            this.context.stroke();
-        },
-        // 描画開始（mousedown）
-        dragStart: function (e) {
-            var x = e.layerX;
-            var y = e.layerY;
-            this.context.beginPath();
-            this.context.lineTo(x, y);
-            this.context.stroke();
-            this.isDrag = true;
-        },
-        // 描画終了（mouseup, mouseout）
-        dragEnd: function () {
-            this.context.closePath();
-            this.isDrag = false;
-        },
-        clear: function () {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        },
-        // 消しゴムモード
-        eraser: function () {
-            // カーソル変更
-            this.canvasMode = 'eraser';
-            this.context.globalCompositeOperation = 'destination-out';
-            // 描画設定
-            this.context.lineCap = 'square';
-            this.context.lineJoin = 'square';
-        },
-        pen() {
-            this.canvasMode = 'penBlack';
-            this.context.globalCompositeOperation = 'source-over';
-            this.context.lineCap = 'round';
-            this.context.lineJoin = 'round';
-            this.onboarding = 0;
-        },
-        text() {
-            this.canvasMode = 'text';
-            this.canvas = document.getElementById('myCanvas');
-            this.context.lineCap = 'round';
-            this.context.lineJoin = 'round';
-            this.context.lineWidth = 10;
-            var canvasOffset = this.canvas.getBoundingClientRect();
-            this.offsetX = canvasOffset.left;
-            this.offsetY = canvasOffset.top;
-            this.scrollX = this.canvas.scrollLeft;
-            this.scrollY = this.canvas.scrollTop;
-            this.onboarding = 1;
-        },
-        // rotate(){
-        //     var ct = this.photocxt
-        // ct.beginPath();
-        // ct.rect(0, 0, 600, 600);
-        // ct.stroke();
-        // ct.rotate(180);
-        // },
-        reflection() {
-            var concat = document.getElementById('concat');
-            var concatCxt = concat.getContext("2d");
-            var photo = this.createImage(document.getElementById("photo"));
-            // var cover = this.createImage(document.getElementById("cover"));
-            var image = this.createImage(this.canvas);
-            console.log(image);
-            image.onload = function () {
-                concatCxt.drawImage(photo, 0, 0, 600, 600);
-                concatCxt.drawImage(image, 0, 0, 600, 600);
-            };
-            let that = this;
-            setTimeout(function () {
-                that.concatImg = concat.toDataURL('image/png');
-            }, 500);
-        },
-        createImage(context) {
-            var image = new Image;
-            image.src = context.toDataURL();
-            return image;
-        },
-        drawText() {
-            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            for (var i = 0; i < this.texts.length; i++) {
-                var text = this.texts[i];
-                this.context.fillText(text.text, text.x, text.y);
-                console.log(text.x);
-                console.log(text.y);
-            }
-        },
-        textHittest(x, y, textIndex) {
-            var text = this.texts[textIndex];
-            return (x >= text.x && x <= text.x + text.width && y >= text.y - text.height && y <= text.y);
-        },
-        dragText(e) {
-            this.startX = parseInt(e.clientX - this.offsetX);
-            this.startY = parseInt(e.clientY + this.offsetY);
-            // Put your mousedown stuff here
-            for (var i = 0; i < this.texts.length; i++) {
-                if (this.textHittest(this.startX, this.startY, i)) {
-                    this.selectedText = i;
-                }
-            }
-        },
-        dropText(e) {
-            this.selectedText = -1;
-        },
-        move(e) {
-            if (this.selectedText < 0) {
-                return;
-            }
-            var mouseX = parseInt(e.clientX - this.offsetX);
-            var mouseY = parseInt(e.clientY - this.offsetY);
-            // Put your mousemove stuff here
-            var dx = mouseX - this.startX;
-            var dy = mouseY - this.startY;
-            this.startX = mouseX;
-            this.startY = mouseY;
-            var text = this.texts[this.selectedText];
-            text.x += dx;
-            text.y += dy;
-            this.drawText();
-        },
-        submit() {
-            this.canvasMode = 'text';
-            // calc the y coordinate for this text on the canvas
-            var y = this.texts.length * 20 + 20;
-            // get the text from the input element
-            var text = {
-                text: document.getElementById('theText').value,
-                x: 20,
-                y: y
-            };
-            // calc the size of this text for hit-testing purposes
-            this.context.font = '48px serif';
-            this.context.fillStyle = 'rgba(0, 0, 255)';
-            text.width = this.context.measureText(text.text).width;
-            text.height = 16;
-            // put this new text in the texts array
-            this.texts.push(text);
-            // redraw everything
-            this.drawText();
-        },
-        mounted() {
-            var canvas = [];
-            const canvasContainer = document.getElementById('abc');
-            for (let i = 1; i < 5; i++) {
-                canvas[i] = document.createElement("img");
-                canvas[i].id = 'canvas' + i;
-                canvas[i].src = '/storage/content2.png';
-                canvas[i].style.width = '300px';
-                canvas[i].style.height = '300px';
-                if (canvasContainer !== null) {
-                    canvasContainer.appendChild(canvas[i]);
-                }
-            }
-            console.log(canvasContainer);
-        }
-    }
-}));
-
-
-/***/ }),
-
 /***/ "./node_modules/vue-cropperjs/dist/VueCropper.js":
 /*!*******************************************************!*\
   !*** ./node_modules/vue-cropperjs/dist/VueCropper.js ***!
@@ -10491,10 +10806,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true&":
-/*!***********************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true& ***!
-  \***********************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f& ***!
+  \***********************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -10510,122 +10825,779 @@ var render = function() {
     "div",
     [
       _c(
-        "v-card",
-        {
-          staticClass: "overflow-hidden",
-          attrs: { height: "550", width: "500" }
-        },
+        "v-layout",
         [
+          _vm.isActive
+            ? _c("div", [
+                _c("input", {
+                  style: _vm.inputPosition,
+                  attrs: { id: "newText", type: "text" },
+                  on: {
+                    keyup: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.discribeNew($event)
+                    }
+                  }
+                })
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.isActiveEditText
+            ? _c("div", [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selectedEditTextMessage,
+                      expression: "selectedEditTextMessage"
+                    }
+                  ],
+                  style: _vm.selectedInputPosition,
+                  attrs: { id: "selectedText", type: "text" },
+                  domProps: { value: _vm.selectedEditTextMessage },
+                  on: {
+                    blur: _vm.edit,
+                    keyup: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.blur($event)
+                    },
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.selectedEditTextMessage = $event.target.value
+                    }
+                  }
+                })
+              ])
+            : _vm._e(),
+          _vm._v(" "),
           _c(
-            "div",
+            "v-card",
             {
-              staticStyle: { position: "relative" },
-              attrs: { id: "canvas-area" }
+              staticClass: "overflow-hidden",
+              attrs: { height: "550", width: "500" }
             },
             [
-              _c("canvas", {
-                class: { eraser: _vm.canvasMode === "eraser" },
-                staticStyle: { "z-index": "20" },
-                attrs: { id: "myCanvas", width: _vm.width, height: _vm.height },
-                on: {
-                  mousedown: function($event) {
-                    $event.preventDefault()
-                    return _vm.mousedown($event)
+              _c(
+                "div",
+                {
+                  staticStyle: { position: "relative" },
+                  attrs: { id: "canvas-area" }
+                },
+                [
+                  _c("canvas", {
+                    class: { eraser: _vm.canvasMode === "eraser" },
+                    staticStyle: {
+                      position: "absolute",
+                      "z-index": "1",
+                      top: "0",
+                      left: "0"
+                    },
+                    attrs: { id: "drawCanvas", width: "500", height: "500" },
+                    on: {
+                      mousedown: _vm.dragStart,
+                      mouseup: _vm.dragEnd,
+                      mouseout: _vm.dragEnd,
+                      mousemove: _vm.draw
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("canvas", {
+                    staticStyle: { position: "absolute", top: "0", left: "0" },
+                    attrs: { id: "cover", width: "500", height: "500" }
+                  }),
+                  _vm._v(" "),
+                  _c("canvas", {
+                    class: { index2: _vm.value == 2 },
+                    staticStyle: { position: "absolute", top: "0", left: "0" },
+                    attrs: { id: "text", width: "500", height: "500" },
+                    on: {
+                      dblclick: _vm.selectText,
+                      mousedown: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseDown($event)
+                      },
+                      mousemove: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseMove($event)
+                      },
+                      mouseup: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseUp($event)
+                      },
+                      mouseout: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseOut($event)
+                      }
+                    }
+                  })
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "v-bottom-navigation",
+                {
+                  attrs: {
+                    absolute: "",
+                    "hide-on-scroll": "",
+                    "scroll-target": "#hide-on-scroll-example"
                   },
-                  mouseup: function($event) {
-                    $event.preventDefault()
-                    return _vm.mouseup($event)
-                  },
-                  mouseout: function($event) {
-                    $event.preventDefault()
-                    return _vm.mouseout($event)
-                  },
-                  mousemove: function($event) {
-                    $event.preventDefault()
-                    return _vm.mousemove($event)
+                  model: {
+                    value: _vm.value,
+                    callback: function($$v) {
+                      _vm.value = $$v
+                    },
+                    expression: "value"
                   }
-                }
-              }),
-              _vm._v(" "),
-              _c("canvas", {
-                staticStyle: { "z-index": "0" },
-                attrs: { id: "photo", width: _vm.width, height: _vm.height }
-              }),
-              _vm._v(" "),
-              _c("canvas", {
-                staticStyle: { "z-index": "10" },
-                attrs: { id: "cover", width: _vm.width, height: _vm.height }
-              })
-            ]
+                },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: {
+                        color: "deep-purple accent-4",
+                        text: "",
+                        value: "0"
+                      },
+                      on: { click: _vm.pen }
+                    },
+                    [
+                      _c("span", [_vm._v("ペン")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-draw")])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    { attrs: { color: "deep-purple accent-4", text: "" } },
+                    [
+                      _c("span", [_vm._v("エフェクト")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-checkerboard")])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    { attrs: { color: "deep-purple accent-4", text: "" } },
+                    [
+                      _c("span", [_vm._v("テキスト")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-format-color-text")])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    { attrs: { color: "deep-purple accent-4", text: "" } },
+                    [
+                      _c("span", [_vm._v("ダウンロード")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-briefcase-download")])
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
           ),
           _vm._v(" "),
           _c(
-            "v-bottom-navigation",
+            "v-card",
             {
-              attrs: {
-                absolute: "",
-                "hide-on-scroll": "",
-                "scroll-target": "#hide-on-scroll-example"
-              },
-              model: {
-                value: _vm.value,
-                callback: function($$v) {
-                  _vm.value = $$v
-                },
-                expression: "value"
-              }
+              staticClass: "overflow-hidden",
+              attrs: { height: "550", width: "500" }
             },
             [
               _c(
-                "v-btn",
+                "v-stepper",
                 {
-                  attrs: {
-                    color: "deep-purple accent-4",
-                    text: "",
-                    value: "0"
-                  },
-                  on: { click: _vm.pen }
+                  staticStyle: { width: "500px" },
+                  model: {
+                    value: _vm.el,
+                    callback: function($$v) {
+                      _vm.el = $$v
+                    },
+                    expression: "el"
+                  }
                 },
                 [
-                  _c("span", [_vm._v("ペン")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-draw")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  attrs: { color: "deep-purple accent-4", text: "" },
-                  on: { click: _vm.text }
-                },
-                [
-                  _c("span", [_vm._v("テキスト")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-format-color-text")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                { attrs: { color: "deep-purple accent-4", text: "" } },
-                [
-                  _c("span", [_vm._v("エフェクト")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-checkerboard")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                { attrs: { color: "deep-purple accent-4", text: "" } },
-                [
-                  _c("span", [_vm._v("ダウンロード")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-briefcase-download")])
+                  _c(
+                    "v-stepper-items",
+                    [
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "1" } },
+                        [
+                          _c("v-card-title", [_vm._v("Pen")]),
+                          _vm._v(" "),
+                          _c("v-color-picker", {
+                            staticClass: "mb-5 ml-3",
+                            on: { input: _vm.searchTimeOut },
+                            model: {
+                              value: _vm.penColor,
+                              callback: function($$v) {
+                                _vm.penColor = $$v
+                              },
+                              expression: "penColor"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            { attrs: { cols: "12", sm: "11" } },
+                            [
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "lineWidth",
+                                  min: "4",
+                                  max: "25",
+                                  "thumb-label": "always",
+                                  "thumb-color": "pink",
+                                  color: "pink"
+                                },
+                                on: { input: _vm.searchTimeOut },
+                                model: {
+                                  value: _vm.lineWidth,
+                                  callback: function($$v) {
+                                    _vm.lineWidth = $$v
+                                  },
+                                  expression: "lineWidth"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            {
+                              staticClass: "d-flex",
+                              attrs: { cols: "12", sm: "12" }
+                            },
+                            [
+                              _c("v-select", {
+                                staticClass: "px-1",
+                                attrs: {
+                                  items: _vm.lineCaps,
+                                  label: "lineCap",
+                                  outlined: ""
+                                },
+                                on: { input: _vm.searchTimeOut },
+                                model: {
+                                  value: _vm.lineCap,
+                                  callback: function($$v) {
+                                    _vm.lineCap = $$v
+                                  },
+                                  expression: "lineCap"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-select", {
+                                staticClass: "px-1",
+                                attrs: {
+                                  items: _vm.lineJoins,
+                                  label: "lineJoin",
+                                  outlined: ""
+                                },
+                                on: { input: _vm.searchTimeOut },
+                                model: {
+                                  value: _vm.lineJoin,
+                                  callback: function($$v) {
+                                    _vm.lineJoin = $$v
+                                  },
+                                  expression: "lineJoin "
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "2" } },
+                        [
+                          _c("v-card-title", { staticClass: "headline" }, [
+                            _vm._v(
+                              "\n                    Filters\n                "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "opacity",
+                              min: "4",
+                              max: "10",
+                              "thumb-label": "always",
+                              "thumb-color": "pink",
+                              color: "pink"
+                            },
+                            on: { input: _vm.searchTimeOut2 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.opacity,
+                                        callback: function($$v) {
+                                          _vm.opacity = $$v
+                                        },
+                                        expression: "opacity"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.opacity,
+                              callback: function($$v) {
+                                _vm.opacity = $$v
+                              },
+                              expression: "opacity"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "blur",
+                              min: "0",
+                              max: "10",
+                              "thumb-label": "always",
+                              "thumb-color": "purple",
+                              color: "purple"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.blur,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "blur",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.blur"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.blur,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "blur", $$v)
+                              },
+                              expression: "filterObject.blur"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "brightness",
+                              min: "35",
+                              max: "250",
+                              "thumb-label": "always",
+                              "thumb-color": "red",
+                              color: "red"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.brightness,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "brightness",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.brightness"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.brightness,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "brightness", $$v)
+                              },
+                              expression: "filterObject.brightness"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "contrast",
+                              min: "0",
+                              max: "400",
+                              "thumb-label": "always",
+                              "thumb-color": "orange",
+                              color: "orange"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.contrast,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "contrast",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.contrast"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.contrast,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "contrast", $$v)
+                              },
+                              expression: "filterObject.contrast"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "grayscale",
+                              min: "0",
+                              max: "100",
+                              "thumb-label": "always",
+                              "thumb-color": "indigo",
+                              color: "indigo"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.grayscale,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "grayscale",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.grayscale"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.grayscale,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "grayscale", $$v)
+                              },
+                              expression: "filterObject.grayscale"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "hue-rotate",
+                              min: "0",
+                              max: "359",
+                              "thumb-label": "always",
+                              "thumb-color": "green",
+                              color: "green"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.hueRotate,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "hueRotate",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.hueRotate"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.hueRotate,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "hueRotate", $$v)
+                              },
+                              expression: "filterObject.hueRotate"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "invert",
+                              min: "0",
+                              max: "100",
+                              "thumb-label": "always",
+                              "thumb-color": "deep-purple",
+                              color: "deep-purple"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.invert,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "invert",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.invert"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.invert,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "invert", $$v)
+                              },
+                              expression: "filterObject.invert"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "saturate",
+                              min: "0",
+                              max: "300",
+                              "thumb-label": "always",
+                              "thumb-color": "light-blue",
+                              color: "light-blue"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.saturate,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "saturate",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.saturate"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.saturate,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "saturate", $$v)
+                              },
+                              expression: "filterObject.saturate"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "sepia",
+                              min: "0",
+                              max: "100",
+                              "thumb-label": "always",
+                              "thumb-color": "lime",
+                              color: "lime"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.sepia,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "sepia",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.sepia"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.sepia,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "sepia", $$v)
+                              },
+                              expression: "filterObject.sepia"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "3" } },
+                        [
+                          _c("v-card", {
+                            staticClass: "mb-12",
+                            attrs: { color: "grey lighten-1", height: "200px" }
+                          })
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
                 ],
                 1
               )
@@ -10639,7 +11611,7 @@ var render = function() {
       _c(
         "v-stepper",
         {
-          staticStyle: { width: "600px", margin: "auto" },
+          staticStyle: { width: "1000px" },
           model: {
             value: _vm.el,
             callback: function($$v) {
@@ -10657,64 +11629,23 @@ var render = function() {
                 { attrs: { step: "1" } },
                 [
                   _c(
-                    "v-card",
+                    "v-btn",
                     {
-                      staticClass: "mb-12",
-                      attrs: { color: "grey lighten-1", height: "600px" }
+                      staticClass: "align-self-start mr-2",
+                      attrs: { id: "eraser-button" },
+                      on: { click: _vm.eraser }
                     },
-                    [
-                      _c(
-                        "button",
-                        {
-                          attrs: { id: "eraser-button" },
-                          on: { click: _vm.eraser }
-                        },
-                        [_vm._v("消しゴム")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "button",
-                        {
-                          attrs: { id: "clear-button" },
-                          on: { click: _vm.clear }
-                        },
-                        [_vm._v("クリア")]
-                      ),
-                      _vm._v(" "),
-                      _c("v-subheader", { staticClass: "pl-0" }, [
-                        _vm._v("\n          太さ\n          ")
-                      ]),
-                      _vm._v(" "),
-                      _c("v-slider", {
-                        attrs: { max: "40", min: "1" },
-                        model: {
-                          value: _vm.context.lineWidth,
-                          callback: function($$v) {
-                            _vm.$set(_vm.context, "lineWidth", $$v)
-                          },
-                          expression: "context.lineWidth"
-                        }
-                      }),
-                      _vm._v(
-                        "\n          Options\n          Dot Size\n          Swatches Max Height\n          Mode\n          "
-                      ),
-                      _c("v-subheader", { staticClass: "pl-0" }, [
-                        _vm._v("\n          カラー\n          ")
-                      ]),
-                      _vm._v(" "),
-                      _c("v-color-picker", {
-                        staticClass: "ma-2",
-                        attrs: { "hide-mode-switch": "" },
-                        model: {
-                          value: _vm.context.strokeStyle,
-                          callback: function($$v) {
-                            _vm.$set(_vm.context, "strokeStyle", $$v)
-                          },
-                          expression: "context.strokeStyle"
-                        }
-                      })
-                    ],
-                    1
+                    [_vm._v("消しゴム")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "align-self-start mr-2",
+                      attrs: { id: "clear-button" },
+                      on: { click: _vm.clear }
+                    },
+                    [_vm._v("クリア")]
                   )
                 ],
                 1
@@ -10725,123 +11656,265 @@ var render = function() {
                 { attrs: { step: "2" } },
                 [
                   _c(
-                    "v-card",
-                    {
-                      staticClass: "mb-12",
-                      attrs: { color: "grey lighten-1", height: "200px" }
-                    },
+                    "v-col",
+                    { staticClass: "d-flex", attrs: { cols: "12", sm: "12" } },
                     [
-                      _c("input", { attrs: { id: "theText", type: "text" } }),
-                      _vm._v(" "),
                       _c(
-                        "button",
-                        {
-                          attrs: { id: "submit" },
-                          on: {
-                            click: function($event) {
-                              return _vm.submit()
-                            }
-                          }
-                        },
-                        [_vm._v("Draw text on canvas")]
-                      )
-                    ]
+                        "v-row",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "pink" },
+                              on: { click: _vm.reset }
+                            },
+                            [_vm._v("reset")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "purple" },
+                              on: { click: _vm.rotate }
+                            },
+                            [_vm._v("rotate")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "black" },
+                              on: { click: _vm.back }
+                            },
+                            [_vm._v("back")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-sheet",
+                            {
+                              attrs: {
+                                elevation: "8",
+                                "max-width": "520",
+                                height: "136"
+                              }
+                            },
+                            [
+                              _c(
+                                "v-slide-group",
+                                {
+                                  staticClass: "pa-4",
+                                  attrs: {
+                                    "center-active": "",
+                                    "show-arrows": ""
+                                  },
+                                  model: {
+                                    value: _vm.model,
+                                    callback: function($$v) {
+                                      _vm.model = $$v
+                                    },
+                                    expression: "model"
+                                  }
+                                },
+                                _vm._l(13, function(n) {
+                                  return _c("v-slide-item", {
+                                    key: n,
+                                    scopedSlots: _vm._u(
+                                      [
+                                        {
+                                          key: "default",
+                                          fn: function(ref) {
+                                            var active = ref.active
+                                            var toggle = ref.toggle
+                                            return [
+                                              _c(
+                                                "v-card",
+                                                {
+                                                  staticClass: "ma-1",
+                                                  attrs: {
+                                                    color: active
+                                                      ? "primary"
+                                                      : "grey lighten-1",
+                                                    height: "117.3",
+                                                    width: "113.3"
+                                                  },
+                                                  on: { click: _vm.click }
+                                                },
+                                                [
+                                                  _c("canvas", {
+                                                    attrs: {
+                                                      id: "pic" + n,
+                                                      height: "113.3",
+                                                      width: "113.3"
+                                                    },
+                                                    on: { click: toggle }
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "v-row",
+                                                    {
+                                                      staticClass:
+                                                        "fill-height",
+                                                      attrs: {
+                                                        align: "center",
+                                                        justify: "center"
+                                                      }
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "v-scale-transition",
+                                                        [
+                                                          active
+                                                            ? _c("v-icon", {
+                                                                attrs: {
+                                                                  color:
+                                                                    "white",
+                                                                  size: "48"
+                                                                },
+                                                                domProps: {
+                                                                  textContent: _vm._s(
+                                                                    "mdi-close-circle-outline"
+                                                                  )
+                                                                }
+                                                              })
+                                                            : _vm._e()
+                                                        ],
+                                                        1
+                                                      )
+                                                    ],
+                                                    1
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      null,
+                                      true
+                                    )
+                                  })
+                                }),
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-color-picker", {
+                        attrs: { "hide-inputs": "" },
+                        on: { input: _vm.searchTimeOut2 },
+                        model: {
+                          value: _vm.color,
+                          callback: function($$v) {
+                            _vm.color = $$v
+                          },
+                          expression: "color"
+                        }
+                      })
+                    ],
+                    1
                   )
                 ],
                 1
               ),
               _vm._v(" "),
-              _c(
-                "v-stepper-content",
-                { attrs: { step: "3" } },
-                [
-                  _c("v-card", {
-                    staticClass: "mb-12",
-                    attrs: { color: "grey lighten-1", height: "200px" }
-                  })
-                ],
-                1
-              )
+              _c("v-stepper-content", { attrs: { step: "3" } }, [
+                _vm.isActive
+                  ? _c(
+                      "div",
+                      [
+                        _c("v-slider", {
+                          attrs: {
+                            min: "10",
+                            max: "64",
+                            "thumb-label": "always",
+                            "thumb-size": 30
+                          },
+                          model: {
+                            value: _vm.fontSize,
+                            callback: function($$v) {
+                              _vm.fontSize = $$v
+                            },
+                            expression: "fontSize"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("v-color-picker", {
+                          model: {
+                            value: _vm.inputPosition.color,
+                            callback: function($$v) {
+                              _vm.$set(_vm.inputPosition, "color", $$v)
+                            },
+                            expression: "inputPosition.color"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn-toggle",
+                          {
+                            attrs: {
+                              dense: "",
+                              "background-color": "primary",
+                              dark: "",
+                              multiple: ""
+                            },
+                            model: {
+                              value: _vm.toggle_multiple,
+                              callback: function($$v) {
+                                _vm.toggle_multiple = $$v
+                              },
+                              expression: "toggle_multiple"
+                            }
+                          },
+                          [_c("v-btn", [_vm._v("Bold")])],
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.isActiveEditText
+                  ? _c(
+                      "div",
+                      [
+                        _c("v-slider", {
+                          attrs: {
+                            min: "10",
+                            max: "64",
+                            "thumb-label": "always",
+                            "thumb-size": 30
+                          },
+                          model: {
+                            value: _vm.selectedFontSize,
+                            callback: function($$v) {
+                              _vm.selectedFontSize = $$v
+                            },
+                            expression: "selectedFontSize"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("v-color-picker", {
+                          model: {
+                            value: _vm.selectedInputPosition.color,
+                            callback: function($$v) {
+                              _vm.$set(_vm.selectedInputPosition, "color", $$v)
+                            },
+                            expression: "selectedInputPosition.color"
+                          }
+                        }),
+                        _vm._v("aaa\n                ")
+                      ],
+                      1
+                    )
+                  : _vm._e()
+              ])
             ],
             1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticStyle: { position: "relative" }, attrs: { id: "tool-area" } },
-        [
-          _c("v-subheader", { staticClass: "pl-0" }, [
-            _vm._v("\n          太さ\n          ")
-          ]),
-          _vm._v(" "),
-          _c("v-slider", {
-            attrs: { max: "40", min: "1" },
-            model: {
-              value: _vm.context.lineWidth,
-              callback: function($$v) {
-                _vm.$set(_vm.context, "lineWidth", $$v)
-              },
-              expression: "context.lineWidth"
-            }
-          }),
-          _vm._v(
-            "\n          Options\n          Dot Size\n          Swatches Max Height\n          Mode\n          "
-          ),
-          _c("v-subheader", { staticClass: "pl-0" }, [
-            _vm._v("\n          カラー\n          ")
-          ]),
-          _vm._v(" "),
-          _c(
-            "button",
-            { attrs: { id: "pen-button" }, on: { click: _vm.pen } },
-            [_vm._v("ペン")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            { attrs: { id: "text-button" }, on: { click: _vm.text } },
-            [_vm._v("テキスト")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              attrs: { id: "rotate-button" },
-              on: {
-                click: function($event) {
-                  return _vm.gray()
-                }
-              }
-            },
-            [_vm._v("反転")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              attrs: { id: "reflection-button" },
-              on: {
-                click: function($event) {
-                  return _vm.reflection()
-                }
-              }
-            },
-            [_vm._v("反映")]
-          ),
-          _vm._v(" "),
-          _c(
-            "v-btn",
-            {
-              on: {
-                click: function($event) {
-                  return _vm.$emit("abcd", _vm.concatImg)
-                }
-              }
-            },
-            [_vm._v("保存")]
           )
         ],
         1
@@ -10919,75 +11992,6 @@ var render = function() {
           click: _vm.btnclick
         }
       })
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=template&id=847a52e8&":
-/*!************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/molecules/JSaccordion.vue?vue&type=template&id=847a52e8& ***!
-  \************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "js-accordion" },
-    [
-      _c(
-        "button",
-        {
-          staticClass: "js-accordion--trigger",
-          on: {
-            click: function($event) {
-              return _vm.accordionToggle()
-            }
-          }
-        },
-        [_vm._t("title")],
-        2
-      ),
-      _vm._v(" "),
-      _c(
-        "transition",
-        {
-          attrs: { name: "js-accordion" },
-          on: {
-            "before-enter": _vm.beforeEnter,
-            enter: _vm.enter,
-            "before-leave": _vm.beforeLeave,
-            leave: _vm.leave
-          }
-        },
-        [
-          _vm.isOpened
-            ? _c(
-                "div",
-                {
-                  staticClass: "js-accordion--target",
-                  class: { "_state-open": _vm.isOpened }
-                },
-                [_vm._t("body")],
-                2
-              )
-            : _vm._e()
-        ]
-      )
     ],
     1
   )
@@ -12113,6 +13117,19 @@ var render = function() {
                   attrs: { color: "primary" },
                   on: {
                     click: function($event) {
+                      return _vm.getImage()
+                    }
+                  }
+                },
+                [_vm._v("実験")]
+              ),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  attrs: { color: "primary" },
+                  on: {
+                    click: function($event) {
                       _vm.e1 = 3
                       _vm.submit()
                     }
@@ -12132,7 +13149,20 @@ var render = function() {
                   }
                 },
                 [_vm._v("戻る")]
-              )
+              ),
+              _vm._v(" "),
+              _c("canvas", {
+                attrs: { id: "concat", width: "500", height: "500" }
+              }),
+              _vm._v(" "),
+              _c("img", {
+                attrs: {
+                  id: "concat",
+                  src: _vm.concatImg[0],
+                  width: "500",
+                  height: "500"
+                }
+              })
             ],
             1
           )
@@ -73135,9 +74165,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true&");
-/* harmony import */ var _DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=script&lang=ts& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&");
-/* empty/unused harmony star reexport *//* harmony import */ var _DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css&");
+/* harmony import */ var _DrawCanvas_vue_vue_type_template_id_41c4207f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=template&id=41c4207f& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&");
+/* harmony import */ var _DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=script&lang=js& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _DrawCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DrawCanvas.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -73148,12 +74178,12 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _DrawCanvas_vue_vue_type_template_id_41c4207f___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _DrawCanvas_vue_vue_type_template_id_41c4207f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "41c4207f",
+  null,
   null
   
 )
@@ -73165,49 +74195,49 @@ component.options.__file = "resources/ts/components/molecules/DrawCanvas.vue"
 
 /***/ }),
 
-/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&":
+/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************!*\
-  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts& ***!
+  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js& ***!
   \***********************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/ts-loader??ref--5!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=script&lang=ts& */ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=ts&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
-/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css&":
-/*!*******************************************************************************************************************!*\
-  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css& ***!
-  \*******************************************************************************************************************/
+/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&id=41c4207f&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
- /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_id_41c4207f_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
-/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true&":
-/*!*****************************************************************************************************!*\
-  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true& ***!
-  \*****************************************************************************************************/
+/***/ "./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f& ***!
+  \*****************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_template_id_41c4207f___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./DrawCanvas.vue?vue&type=template&id=41c4207f& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/DrawCanvas.vue?vue&type=template&id=41c4207f&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_template_id_41c4207f___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_template_id_41c4207f_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DrawCanvas_vue_vue_type_template_id_41c4207f___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
@@ -73346,93 +74376,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_InputFile_vue_vue_type_template_id_5d0a8a73_molecules_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_InputFile_vue_vue_type_template_id_5d0a8a73_molecules_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/ts/components/molecules/JSaccordion.vue":
-/*!***********************************************************!*\
-  !*** ./resources/ts/components/molecules/JSaccordion.vue ***!
-  \***********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _JSaccordion_vue_vue_type_template_id_847a52e8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./JSaccordion.vue?vue&type=template&id=847a52e8& */ "./resources/ts/components/molecules/JSaccordion.vue?vue&type=template&id=847a52e8&");
-/* harmony import */ var _JSaccordion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./JSaccordion.vue?vue&type=script&lang=js& */ "./resources/ts/components/molecules/JSaccordion.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _JSaccordion_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./JSaccordion.vue?vue&type=style&index=0&lang=scss& */ "./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _JSaccordion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _JSaccordion_vue_vue_type_template_id_847a52e8___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _JSaccordion_vue_vue_type_template_id_847a52e8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/ts/components/molecules/JSaccordion.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/ts/components/molecules/JSaccordion.vue?vue&type=script&lang=js&":
-/*!************************************************************************************!*\
-  !*** ./resources/ts/components/molecules/JSaccordion.vue?vue&type=script&lang=js& ***!
-  \************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./JSaccordion.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss&":
-/*!*********************************************************************************************!*\
-  !*** ./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss& ***!
-  \*********************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_2_node_modules_sass_loader_dist_cjs_js_ref_8_3_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--8-2!../../../../node_modules/sass-loader/dist/cjs.js??ref--8-3!../../../../node_modules/vue-loader/lib??vue-loader-options!./JSaccordion.vue?vue&type=style&index=0&lang=scss& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/sass-loader/dist/cjs.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=style&index=0&lang=scss&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_2_node_modules_sass_loader_dist_cjs_js_ref_8_3_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_2_node_modules_sass_loader_dist_cjs_js_ref_8_3_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_2_node_modules_sass_loader_dist_cjs_js_ref_8_3_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_2_node_modules_sass_loader_dist_cjs_js_ref_8_3_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
- /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_8_2_node_modules_sass_loader_dist_cjs_js_ref_8_3_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_style_index_0_lang_scss___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
-/***/ "./resources/ts/components/molecules/JSaccordion.vue?vue&type=template&id=847a52e8&":
-/*!******************************************************************************************!*\
-  !*** ./resources/ts/components/molecules/JSaccordion.vue?vue&type=template&id=847a52e8& ***!
-  \******************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_template_id_847a52e8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./JSaccordion.vue?vue&type=template&id=847a52e8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/molecules/JSaccordion.vue?vue&type=template&id=847a52e8&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_template_id_847a52e8___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_JSaccordion_vue_vue_type_template_id_847a52e8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

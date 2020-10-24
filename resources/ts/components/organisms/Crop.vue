@@ -80,7 +80,7 @@ export default {
     },
     cropImage () {
         const cropImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
-        var canvas = document.getElementById("photo");
+        var canvas = document.getElementById("cover");
         var ctx = canvas.getContext("2d");
         var background = new Image();
         background.src = cropImage;
@@ -89,6 +89,7 @@ export default {
         background.onload = function(){
                 ctx.drawImage(background,0,0,600,600);
             }
+        this.$store.dispatch('cropImage', cropImage);
         },
     croppedInfo(){
         // var croppedInfo = this.cropImg.toDataURL();

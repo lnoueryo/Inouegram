@@ -27,9 +27,13 @@
                     <post-canvas></post-canvas>
                     <post-all></post-all>
                         <!-- <input id="cropped-image" type="hidden" name="cropped-image" :value="cropImg"> -->
+                        
                 </div>
+                <v-btn color="primary" @click="getImage()">実験</v-btn>
                 <v-btn color="primary" @click="e1 = 3; submit()">トリミング</v-btn>
                 <v-btn color="red" @click="e1 = 1">戻る</v-btn>
+                <canvas id="concat" width="500" height="500" />
+                <img id="concat" :src="concatImg[0]" width="500" height="500" />
             </v-stepper-content>
 
             <!-- <v-stepper-content step="3">
@@ -61,6 +65,7 @@ export default {
             e1: 1,
             filename: '',
             data: null,
+            concatImg: [],
         }
     },
     computed: {
@@ -71,9 +76,10 @@ export default {
     },
     methods: {
         submit(){
+            console.log(JSON.stringify(this.concatImg));
             let fd= new FormData();
-            fd.append("cropped_image", JSON.stringify(this.$store.state.post.cropImage));
-            fd.append("message", this.$store.state.post.message);
+            fd.append("cropped_image", JSON.stringify(this.concatImg));
+            fd.append("message", 'hello');
             axios.post('/api/create', fd)
             .then(
                 // response => (this.followed = response.data)
@@ -81,6 +87,41 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        // submit(){
+        //     let fd= new FormData();
+        //     fd.append("cropped_image", JSON.stringify(this.$store.state.post.cropImage));
+        //     fd.append("message", this.$store.state.post.message);
+        //     axios.post('/api/create', fd)
+        //     .then(
+        //         // response => (this.followed = response.data)
+        //     )
+        //     .catch(function (error) {
+        //         console.log(error);
+        //     });
+        // },
+        getImage(){
+            var concat = document.getElementById('concat');
+            var concatCxt = concat.getContext("2d");
+            var cover = this.createImage(document.getElementById("cover"));
+            var text = this.createImage(document.getElementById("text"));
+            var drawCanvas = this.createImage(document.getElementById("drawCanvas"));
+            // var image = this.createImage(this.canvas);
+            drawCanvas.onload = function(){
+                concatCxt.drawImage(cover,0,0,500,500);
+                concatCxt.drawImage(text,0,0,500,500);
+                concatCxt.drawImage(drawCanvas,0,0,500,500);
+            };
+            let that = this;
+            setTimeout(function(){
+                var abc = document.getElementById('concat').toDataURL('image/png');
+                that.concatImg.push(abc);
+            }, 200);
+        },
+        createImage(context){
+            var image = new Image;
+            image.src = context.toDataURL();
+            return image;
         },
         //     submit () {
         //     document.getElementById('cropped-image').value = this.$store.state.add.cropImage;
