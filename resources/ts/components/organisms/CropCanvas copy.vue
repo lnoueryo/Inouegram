@@ -218,6 +218,7 @@ export default {
         color: '#00000080',
         timer: '',
         filters: '',
+        croppedImage: '',
         toggle_multiple: [],
         textCanvas: '',
         textCanvasctx: '',
@@ -236,7 +237,6 @@ export default {
         selectedEditTextMessage: '',
         inputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
         selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
-        abc: '',
       };
     },
     computed: {
@@ -278,37 +278,37 @@ export default {
         this.drawCanvasctx.miterLimit  = 50;
         this.drawCanvasctx.strokeStyle = '#000000';
 
-        this.cover = document.getElementById('cover');
-        this.coverctx = this.cover.getContext('2d');
-        var image = new Image();
-        image.src = '/storage/image/panda.png';
-        var that = this;
-        image.onload = function(){
-          that.coverctx.drawImage(image,0,0,500,500);
-        };
+        // this.cover = document.getElementById('cover');
+        // this.coverctx = this.cover.getContext('2d');
+        // var image = new Image();
+        // image.src = '/storage/image/panda.png';
+        // var that = this;
+        // image.onload = function(){
+        //   that.coverctx.drawImage(image,0,0,500,500);
+        // };
 
-        var that = this;
-        setTimeout(function () {
-            that.abc = that.cover.toDataURL();
-        }, 500)
-        var canvas = [];
-        var canvasCtx = [];
-        var coverImage = [];
-        var that = this;
-        setTimeout(function () {
-            for (let i = 1; i < 14; i++) {
-                canvas[i] = document.getElementById("pic" + i);
-                canvasCtx[i] = canvas[i].getContext('2d');
-                canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-                canvasCtx[i].globalAlpha = 1;
-                coverImage[i] = new Image();
-                coverImage[i].src = image.src;
-                coverImage[i].onload = function () {
-                    canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-                };
-            }
-        }, 500);
-        this.coverctx.save();
+        // var that = this;
+        // setTimeout(function () {
+        //     that.abc = that.cover.toDataURL();
+        // }, 500)
+        // var canvas = [];
+        // var canvasCtx = [];
+        // var coverImage = [];
+        // var that = this;
+        // setTimeout(function () {
+        //     for (let i = 1; i < 14; i++) {
+        //         canvas[i] = document.getElementById("pic" + i);
+        //         canvasCtx[i] = canvas[i].getContext('2d');
+        //         canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+        //         canvasCtx[i].globalAlpha = 1;
+        //         coverImage[i] = new Image();
+        //         coverImage[i].src = image.src;
+        //         coverImage[i].onload = function () {
+        //             canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+        //         };
+        //     }
+        // }, 500);
+        // this.coverctx.save();
         // text
         this.textCanvas = document.getElementById("text");
         this.textCanvasctx = this.textCanvas.getContext("2d");
@@ -319,19 +319,6 @@ export default {
         this.scrollY = this.textCanvas.scrollTop;
     },
     methods: {
-        cropImage(){
-            const cropImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
-            var canvas = document.getElementById("cover");
-            var ctx = canvas.getContext("2d");
-            var background = new Image();
-            background.src = cropImage;
-            var width = background.naturalWidth;
-            var height = background.naturalHeight;
-            background.onload = function(){
-                    ctx.drawImage(background,0,0,500,500);
-                }
-            this.$store.dispatch('cropImage', cropImage);
-        },
         searchTimeOut() {
             if (this.timer) {
                 clearTimeout(this.timer);
@@ -380,11 +367,41 @@ export default {
         clear() {
           this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
         },
+        cropImage(){
+            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+            this.cover = document.getElementById("cover");
+            this.coverctx = this.cover.getContext("2d");
+            var background = new Image();
+            background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+            var that = this;
+            background.onload = function(){
+                    that.coverctx.drawImage(background,0,0,500,500);
+                }
+            var that = this;
+            var canvas = [];
+            var canvasCtx = [];
+            var coverImage = [];
+            var that = this;
+            setTimeout(function () {
+                for (let i = 1; i < 14; i++) {
+                    canvas[i] = document.getElementById("pic" + i);
+                    canvasCtx[i] = canvas[i].getContext('2d');
+                    canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+                    canvasCtx[i].globalAlpha = 1;
+                    coverImage[i] = new Image();
+                    coverImage[i].src = background.src;
+                    coverImage[i].onload = function () {
+                        canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+                    };
+                }
+            }, 500);
+            this.coverctx.save();
+        },
         back() {
             this.coverctx.clearRect(0, 0, 500, 500);
             this.coverctx.restore();
             var picImage = new Image();
-            picImage.src = this.abc;
+            picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
                 that.coverctx.drawImage(picImage, 0, 0, 500, 500);
@@ -400,7 +417,7 @@ export default {
             this.coverctx.fillRect(0, 0, 500, 500);
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             var picImage = new Image();
-            picImage.src = this.abc;
+            picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
                 that.coverctx.drawImage(picImage, 0, 0, 500, 500);
@@ -414,7 +431,7 @@ export default {
             this.coverctx.fillRect(0, 0, 500, 500);
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             var picImage = new Image();
-            picImage.src = this.abc;
+            picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
                 that.coverctx.drawImage(picImage, 0, 0, 500, 500);
@@ -429,10 +446,8 @@ export default {
             this.coverctx.globalCompositeOperation = 'source-over';
             this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
             this.coverctx.clearRect(0, 0, 500, 500);
-            this.cover = document.getElementById('cover');
-            this.coverctx = this.cover.getContext('2d');
             var myImage = new Image();
-            myImage.src = this.abc;
+            myImage.src = this.croppedImage;
             var that = this;
             myImage.onload = function () {
                 that.coverctx.drawImage(myImage, 0, 0, 500, 500);
@@ -476,7 +491,7 @@ export default {
                     canvasCtx[i].filter = that.filters;
                     canvasCtx[i].fillRect(0, 0, 500, 500);
                     coverImage[i] = new Image();
-                    coverImage[i].src = that.abc;
+                    coverImage[i].src = that.croppedImage;
                     coverImage[i].onload = function () {
                         canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
                     };
@@ -509,7 +524,7 @@ export default {
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             this.coverctx.fillRect(0, 0, 500, 500);
             var picImage = new Image();
-            picImage.src = this.abc;
+            picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
                 that.coverctx.drawImage(picImage, 0, 0, 500, 500);
