@@ -1,100 +1,61 @@
 
 <template>
     <div>
-  <!-- <v-stepper v-model="e1">
+  <v-stepper v-model="e1">
     <v-stepper-header>
-      <v-stepper-step
-        :complete="e1 > 1"
-        step="1"
-      >
-        Name of step 1
+      <v-stepper-step :complete="e1 > 1" step="1">
+        画像のトリミング
       </v-stepper-step>
-
       <v-divider></v-divider>
-
-      <v-stepper-step
-        :complete="e1 > 2"
-        step="2"
-      >
-        Name of step 2
+      <v-stepper-step :complete="e1 > 2" step="2">
+        画像の加工
       </v-stepper-step>
-
       <v-divider></v-divider>
-
       <v-stepper-step step="3">
-        Name of step 3
+        保存
       </v-stepper-step>
     </v-stepper-header>
 
     <v-stepper-items>
-      <v-stepper-content step="1">
-        <v-card
-          class="mb-12"
-          color="grey lighten-1"
-          height="200px"
-        ></v-card>
+    <v-stepper-content step="1">
+        <v-container>
+            <v-layout justify-space-around wrap>
+                <div v-if="imgSrc !== ''">
+                    <vue-cropper
+                        ref="cropper"
+                        :guides="true"
+                        :view-mode="2"
+                        :auto-crop-area="0.5"
+                        :min-container-width="500"
+                        :min-container-height="500"
+                        :background="true"
+                        :rotatable="false"
+                        :src="imgSrc"
+                        :img-style="{ 'width': '500px', 'height': '500px' }"
+                        :aspect-ratio="1 / 1"
+                        drag-mode="crop"
+                        preview=".preview"
+                    />
+                </div>
+                <div>
+                <div class="preview" />
+                <input-file @selectedImage="loadImage($event)"></input-file>
+                </div>
+            </v-layout>
+        </v-container>
+        <v-btn @click="cropImage" color="primary">トリミング</v-btn>
+    </v-stepper-content>
 
-        <v-btn
-          color="primary"
-          @click="e1 = 2"
-        >
-          Continue
-        </v-btn>
-
-        <v-btn text>
-          Cancel
-        </v-btn>
-      </v-stepper-content>
-
-      <v-stepper-content step="2">
-        <v-card
-          class="mb-12"
-          color="grey lighten-1"
-          height="200px"
-        ></v-card>
-
-        <v-btn
-          color="primary"
-          @click="e1 = 3"
-        >
-          Continue
-        </v-btn>
-
-        <v-btn text>
-          Cancel
-        </v-btn>
-      </v-stepper-content>
-
-      <v-stepper-content step="3">
-        <v-card
-          class="mb-12"
-          color="grey lighten-1"
-          height="200px"
-        ></v-card>
-
-        <v-btn
-          color="primary"
-          @click="e1 = 1"
-        >
-          Continue
-        </v-btn>
-
-        <v-btn text>
-          Cancel
-        </v-btn>
-      </v-stepper-content>
-    </v-stepper-items>
-  </v-stepper> -->
-    <v-btn @click="cropImage"></v-btn>
+    <v-stepper-content step="2">
         <v-layout>
+        <div v-if="isActive">
+            <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
+        </div>
+        <div v-if="isActiveEditText">
+            <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
+        </div>
         <v-card class="overflow-hidden" height="550" width="500">
             <div id="canvas-area" style="position: relative">
-                <div v-if="isActive">
-                    <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
-                </div>
-                <div v-if="isActiveEditText">
-                    <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
-                </div>
                 <canvas id="drawCanvas" style="position: absolute; z-index: 1;top: 0; left: 0;" v-bind:class="{eraser: canvasMode === 'eraser'}" width="500" height="500" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
                 <canvas id="cover" class="preview" style="position: absolute; top: 0; left: 0;" width="500" height="500"></canvas>
                 <!-- <canvas id="text" style="z-index: 0; position: absolute;" width=500 height=500 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas> -->
@@ -237,53 +198,36 @@
                 </v-stepper-content>
             </v-stepper-items>
         </v-stepper>
-        <v-btn color="primary" @click="getImage">実験</v-btn>
-        <v-btn color="primary" @click="submit">トリミング</v-btn>
-        <canvas id="concat" width="500" height="500" />
-    <h2>画像のトリミング</h2>
-    <hr>
-    <h3>画像を選択</h3>
-    <input-file @selectedImage="loadImage($event)"></input-file>
-    <br>
-    <v-container>
-      <v-layout>
-        <div v-if="imgSrc !== ''">
-        <vue-cropper
-            ref="cropper"
-            :guides="true"
-            :view-mode="2"
-            :auto-crop-area="0.5"
-            :min-container-width="500"
-            :min-container-height="500"
-            :background="true"
-            :rotatable="false"
-            :src="imgSrc"
-            :img-style="{ 'width': '500px', 'height': '500px' }"
-            :aspect-ratio="1 / 1"
-            drag-mode="crop"
-            preview=".preview"
-        /></div>
-        <br>
-            <p>Preview</p>
-            <div class="preview" />
-        </v-layout>
-    </v-container>
-    <br>
-    <br>
-    <br>
-    <!-- <cropping-btn @clickCroppingBtn="clickCroppingBtn($event)"></cropping-btn> -->
+        <v-btn color="primary" @click="getImage">決定</v-btn>
+        <v-btn text @click="e1 = 1">戻る</v-btn>
+    </v-stepper-content>
+
+    <v-stepper-content step="3">
+            <canvas id="concat" class="mx-auto" width="500" height="500"></canvas><div>
+            <v-btn color="primary" @click="submit">トリミング</v-btn>
+            <v-btn text @click="e1=2">
+            戻る
+            </v-btn></div>
+    </v-stepper-content>
+        </v-stepper-items>
+    </v-stepper>
     </div>
 </template>
 
 <script>
 import VueCropper from 'vue-cropperjs'
+import InputFile from '../molecules/InputFile.vue'
+import ImageEditer from '../organisms/ImageEditer.vue'
 export default {
     name: "DrawTool",
     components: {
         VueCropper,
+        'input-file': InputFile,
+        'image-editer': ImageEditer,
     },
     data() {
       return {
+        e1: 1,
         concatImg: [],
         imgSrc: 'storage/image/panda.png',
         value: 0,
@@ -377,6 +321,10 @@ export default {
         this.scrollY = this.textCanvas.scrollTop;
     },
     methods: {
+        loadImage(e){
+            this.$refs.cropper.replace(e);
+            this.imgSrc = e;
+        },
         submit(){
             console.log(JSON.stringify(this.concatImg));
             let fd= new FormData();
@@ -391,6 +339,7 @@ export default {
             });
         },
         getImage(){
+            this.e1 = 3;
             var concat = document.getElementById('concat');
             var concatCxt = concat.getContext("2d");
             var cover = this.createImage(document.getElementById("cover"));
@@ -462,6 +411,7 @@ export default {
           this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
         },
         cropImage(){
+            this.e1 = 2;
             this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             this.cover = document.getElementById("cover");
             this.coverctx = this.cover.getContext("2d");
@@ -625,66 +575,11 @@ export default {
                 that.coverctx.save();
             };
         },
-        blur(e){
-          e.target.blur();
-        },
-        create(e){
-              this.isActive = true;
-              var that = this;
-              setTimeout(function(){
-              that.startX = parseInt(e.clientX - that.offsetX);
-              that.startY = parseInt(e.clientY - that.offsetY);
-              var currentDiv = document.getElementById("abc");
-              that.inputPosition.top = that.startY + 20 + 'px';
-              that.inputPosition.left = that.startX + 77 + 'px';
-              document.getElementById('newText').focus();
-              },100)
-        },
-        discribeNew(){
-          this.isActive = false;
-          var text = {
-              text: document.getElementById('newText').value,
-              x: this.startX,
-              y: this.startY,
-              font: `bold ${this.inputPosition.fontSize} normal`,
-              fillStyle: this.inputPosition.color,
-          };
-          this.textCanvasctx.font = text.font;
-          this.textCanvasctx.fillStyle = text.fillStyle;
-          text.width = this.textCanvasctx.measureText(text.text).width;
-          text.height = this.inputPosition.fontSize.replace( /px/g , "" );
-          this.texts.push(text);
-          this.drawText();
-
-        },
-        edit(){
-          this.isActiveEditText = false;
-          var editText = this.texts[this.selectedEditText];
-          editText.text = this.selectedEditTextMessage;
-          editText.width = this.textCanvasctx.measureText(this.selectedEditTextMessage).width;
-          editText.fillStyle = this.selectedInputPosition.color;
-          editText.font = `${this.selectedInputPosition.fontWeight} ${this.selectedInputPosition.fontSize} ${this.selectedInputPosition.fontStyle}`;
-          this.drawText();
-          this.selectedEditText = -1;
-        },
-        drawText() {
-          this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
-            for (var i = 0; i < this.texts.length; i++) {
-              var text = this.texts[i];
-              if(text.text == ''){
-                this.texts.splice(i, 1);
-              }
-          }
-          for (var i = 0; i < this.texts.length; i++) {
-              var text = this.texts[i];
-              this.textCanvasctx.font = text.font;
-              this.textCanvasctx.fillStyle = text.fillStyle;
-              this.textCanvasctx.fillText(text.text, text.x, text.y);
-          }
-        },
         selectText(event){
             this.startX = parseInt(event.clientX - this.offsetX);
-            this.startY = parseInt(event.clientY - this.offsetY);
+            this.startY = event.pageY - 188;
+            this.inputPosition.width = 500 - this.startX + 'px';
+            this.selectedInputPosition.width = 500 - this.startX + 'px';
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
                   this.isActiveEditText = true;
@@ -695,8 +590,8 @@ export default {
                   },100)
                   // var selectedInput = document.getElementById('selectedText');
                   // selectedInput.focus();
-                  this.selectedInputPosition.top = this.texts[i].y + 20 + 'px';
-                  this.selectedInputPosition.left = this.texts[i].x + 80 + 'px';
+                  this.selectedInputPosition.top = this.texts[i].y - 45 + 'px';
+                  this.selectedInputPosition.left = this.texts[i].x + 15 + 'px';
                   this.selectedInputPosition.color = this.texts[i].fillStyle;
                   this.texts[i].fillStyle = 'transparent';
                   var fontArray = this.texts[i].font.split(/\s+/);
@@ -716,6 +611,65 @@ export default {
             var text = this.texts[textIndex];
             return (x >= text.x-20 && x <= text.x + text.width+20 && y >= text.y - text.height-10 && y <= text.y+10);
         },
+        blur(e){
+          e.target.blur();
+        },
+        create(e){
+              this.isActive = true;
+              var that = this;
+              setTimeout(function(){
+              that.startX = parseInt(e.clientX - that.offsetX);
+              that.startY = e.pageY - 188;
+              that.inputPosition.top = e.pageY - 220 + 'px';
+              that.inputPosition.left = e.pageX - 10 + 'px';
+              document.getElementById('newText').focus();
+            },100)
+            console.log(this.textCanvasctx.font)
+        },
+        discribeNew(){
+            this.isActive = false;
+            var text = {
+                text: document.getElementById('newText').value,
+                x: this.startX,
+                y: this.startY + (this.inputPosition.fontSize.replace( /px/g , "" )/2)-5,
+                font: `bold ${this.inputPosition.fontSize} normal`,
+                fillStyle: this.inputPosition.color,
+            };
+            this.textCanvasctx.font = `bold ${this.inputPosition.fontSize} normal`;
+            this.textCanvasctx.fillStyle = text.fillStyle;
+            text.width = this.textCanvasctx.measureText(text.text).width;
+            text.height = this.inputPosition.fontSize.replace( /px/g , "" );
+            this.texts.push(text);
+            this.drawText();
+        },
+        edit(){
+            this.isActiveEditText = false;
+            var editText = this.texts[this.selectedEditText];
+            editText.text = this.selectedEditTextMessage;
+            editText.font = `${this.selectedInputPosition.fontWeight} ${this.selectedInputPosition.fontSize} ${this.selectedInputPosition.fontStyle}`;
+            editText.fillStyle = this.selectedInputPosition.color;
+            var that = this;
+            setTimeout(function(){
+                editText.width = that.textCanvasctx.measureText(that.selectedEditTextMessage).width;
+            },100)
+            this.drawText();
+            this.selectedEditText = -1;
+        },
+        drawText() {
+          this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
+            for (var i = 0; i < this.texts.length; i++) {
+              var text = this.texts[i];
+              if(text.text == ''){
+                this.texts.splice(i, 1);
+              }
+          }
+          for (var i = 0; i < this.texts.length; i++) {
+              var text = this.texts[i];
+              this.textCanvasctx.font = text.font;
+              this.textCanvasctx.fillStyle = text.fillStyle;
+              this.textCanvasctx.fillText(text.text, text.x, text.y);
+          }
+        },
         handleMouseDown(event) {
           var newText = document.getElementById('newText');
           var selectedText = document.getElementById('selectedText');
@@ -725,8 +679,9 @@ export default {
           // if(selectedText == document.activeElement){
           //   selectedText.blur();
           // }
+          this.pageY = event.pageY;
             this.startX = parseInt(event.clientX - this.offsetX);
-            this.startY = parseInt(event.clientY - this.offsetY);
+            this.startY = event.pageY - 188;
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
                     this.selectedText = i;
@@ -744,7 +699,7 @@ export default {
                 return;
             }
             var mouseX = parseInt(e.clientX - this.offsetX);
-            var mouseY = parseInt(e.clientY - this.offsetY);
+            var mouseY = event.pageY - 188;
             var dx = mouseX - this.startX;
             var dy = mouseY - this.startY;
             this.startX = mouseX;
@@ -767,7 +722,7 @@ export default {
 }
 #newText {
 　outline: none!important;
-  height: 64px;
+  /* height: 64px; */
 }
 #newText:focus {
   outline: none!important;
@@ -785,10 +740,7 @@ export default {
 .index2{
   z-index: 2;
 }
-#canvas-area .preview{
-    width: 500px!important;
-    height: 500px!important;
-}
+
 </style>
     <!-- 写真アップロードの紫ボタン -->
     <!-- project://resources/js/components/organisms/Crop.vue#line[3] -->

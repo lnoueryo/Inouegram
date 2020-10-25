@@ -67,7 +67,7 @@ export default {
     }
   },
   methods: {
-        loadImage(e){
+    loadImage(e){
       this.$refs.cropper.replace(e);
       this.imgSrc = e;
     },

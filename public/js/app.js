@@ -2200,18 +2200,608 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-//
-//
-//
-//
-//
-//
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+// import VueCropper from 'vue-cropperjs'
+// import InputFile from '../molecules/InputFile.vue'
+// import ImageEditer from '../organisms/ImageEditer.vue'
 /* harmony default export */ __webpack_exports__["default"] = ({
+  // name: "DrawTool",
+  // components: {
+  //     VueCropper,
+  //     'input-file': InputFile,
+  //     'image-editer': ImageEditer,
+  // },
+  data: function data() {
+    var _ref;
+
+    return _ref = {
+      e1: 1,
+      concatImg: [],
+      imgSrc: 'storage/image/panda.png',
+      value: 0,
+      canvasMode: 'penBlack',
+      drawCanvas: null,
+      drawCanvasctx: null,
+      isDrag: false,
+      cover: null,
+      coverctx: null,
+      penColor: '#000000',
+      lineWidth: 5,
+      lineCaps: ['square', 'butt', 'round'],
+      lineCap: 'round',
+      lineJoins: ['bebel', 'miter', 'round'],
+      lineJoin: 'round',
+      filterObject: {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      },
+      globalCompositeOperation: ['lighter', 'darken', 'overlay', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity']
+    }, _defineProperty(_ref, "isDrag", false), _defineProperty(_ref, "model", null), _defineProperty(_ref, "globalAlpha", 1), _defineProperty(_ref, "color", '#00000080'), _defineProperty(_ref, "timer", ''), _defineProperty(_ref, "filters", ''), _defineProperty(_ref, "croppedImage", ''), _defineProperty(_ref, "toggle_multiple", []), _defineProperty(_ref, "textCanvas", ''), _defineProperty(_ref, "textCanvasctx", ''), _defineProperty(_ref, "texts", []), _defineProperty(_ref, "selectedText", -1), _defineProperty(_ref, "selectedEditText", -1), _defineProperty(_ref, "offsetX", ''), _defineProperty(_ref, "offsetY", ''), _defineProperty(_ref, "scrollX", ''), _defineProperty(_ref, "scrollY", ''), _defineProperty(_ref, "startX", ''), _defineProperty(_ref, "startY", ''), _defineProperty(_ref, "isActive", false), _defineProperty(_ref, "isActiveEditText", false), _defineProperty(_ref, "dialog", false), _defineProperty(_ref, "selectedEditTextMessage", ''), _defineProperty(_ref, "inputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '500',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _defineProperty(_ref, "selectedInputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '500',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _ref;
+  },
   computed: {
-    hello: function hello() {
-      return this.$store.state.header.hello;
+    toolStepper: function toolStepper() {
+      return Number(this.value) + 1;
+    },
+    opacity: {
+      get: function get() {
+        return this.globalAlpha * 10;
+      },
+      set: function set(newValue) {
+        this.globalAlpha = newValue / 10;
+      }
+    },
+    fontSize: {
+      get: function get() {
+        return this.inputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.inputPosition.fontSize = newValue + 'px';
+      }
+    },
+    selectedFontSize: {
+      get: function get() {
+        return this.selectedInputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.selectedInputPosition.fontSize = newValue + 'px';
+      }
+    }
+  },
+  mounted: function mounted() {
+    // canvas
+    this.drawCanvas = document.getElementById('drawCanvas');
+    this.drawCanvasctx = this.drawCanvas.getContext('2d');
+    this.drawCanvasctx.lineCap = 'round';
+    this.drawCanvasctx.lineJoin = 'round';
+    this.drawCanvasctx.lineWidth = 5;
+    this.drawCanvasctx.miterLimit = 50;
+    this.drawCanvasctx.strokeStyle = '#000000';
+  },
+  methods: {
+    loadImage: function loadImage(e) {
+      this.$refs.cropper.replace(e);
+      this.imgSrc = e;
+    },
+    submit: function submit() {
+      console.log(JSON.stringify(this.concatImg));
+      var fd = new FormData();
+      fd.append("cropped_image", JSON.stringify(this.concatImg));
+      fd.append("message", 'hello');
+      axios.post('/api/create', fd).then()["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getImage: function getImage() {
+      this.e1 = 3;
+      var concat = document.getElementById('concat');
+      var concatCxt = concat.getContext("2d");
+      var cover = this.createImage(document.getElementById("cover"));
+      var text = this.createImage(document.getElementById("text"));
+      var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
+
+      drawCanvas.onload = function () {
+        concatCxt.drawImage(cover, 0, 0, 500, 500);
+        concatCxt.drawImage(text, 0, 0, 500, 500);
+        concatCxt.drawImage(drawCanvas, 0, 0, 500, 500);
+      };
+
+      var that = this;
+      setTimeout(function () {
+        var abc = document.getElementById('concat').toDataURL('image/png');
+        that.concatImg.push(abc);
+      }, 200);
+    },
+    createImage: function createImage(context) {
+      var image = new Image();
+      image.src = context.toDataURL();
+      return image;
+    },
+    searchTimeOut: function searchTimeOut() {
+      var _this = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this.pen();
+      }, 200);
+    },
+    pen: function pen() {
+      this.canvasMode = 'pen';
+      this.drawCanvasctx.globalCompositeOperation = 'source-over';
+      this.drawCanvasctx.lineCap = this.lineCap;
+      this.drawCanvasctx.lineJoin = this.lineJoin;
+      this.drawCanvasctx.lineWidth = this.lineWidth;
+      this.drawCanvasctx.strokeStyle = this.penColor;
+    },
+    eraser: function eraser() {
+      this.canvasMode = 'eraser';
+      this.drawCanvasctx.lineCap = 'square';
+      this.drawCanvasctx.lineJoin = 'square';
+      this.drawCanvasctx.lineWidth = 30;
+      this.drawCanvasctx.globalCompositeOperation = 'destination-out';
+    },
+    draw: function draw(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+
+      if (!this.isDrag) {
+        return;
+      }
+
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+    },
+    dragStart: function dragStart(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+      this.drawCanvasctx.beginPath();
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+      this.isDrag = true;
+    },
+    dragEnd: function dragEnd() {
+      this.drawCanvasctx.closePath();
+      this.isDrag = false;
+    },
+    clear: function clear() {
+      this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+    },
+    cropImage: function cropImage() {
+      this.e1 = 2;
+      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      this.cover = document.getElementById("cover");
+      this.coverctx = this.cover.getContext("2d");
+      var background = new Image();
+      background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      var that = this;
+
+      background.onload = function () {
+        that.coverctx.drawImage(background, 0, 0, 500, 500);
+      };
+
+      var that = this;
+      var canvas = [];
+      var canvasCtx = [];
+      var coverImage = [];
+      var that = this;
+      setTimeout(function () {
+        var _loop = function _loop(i) {
+          canvas[i] = document.getElementById("pic" + i);
+          canvasCtx[i] = canvas[i].getContext('2d');
+          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+          canvasCtx[i].globalAlpha = 1;
+          coverImage[i] = new Image();
+          coverImage[i].src = background.src;
+
+          coverImage[i].onload = function () {
+            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+          };
+        };
+
+        for (var i = 1; i < 14; i++) {
+          _loop(i);
+        }
+      }, 500);
+      this.coverctx.save();
+    },
+    back: function back() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.restore();
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+      };
+
+      this.coverctx.fillRect(0, 0, 500, 500);
+    },
+    rotate: function rotate() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.translate(500, 0);
+      this.coverctx.rotate(90 * Math.PI / 180);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.color;
+      this.coverctx.fillRect(0, 0, 500, 500);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    click: function click() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.color;
+      this.coverctx.fillRect(0, 0, 500, 500);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    reset: function reset() {
+      this.coverctx.filter = 'grayscale(0%)';
+      this.globalAlpha = 1;
+      this.color = 'transparent';
+      this.model = '';
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.filterObject = {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      };
+      this.coverctx.clearRect(0, 0, 500, 500);
+      var myImage = new Image();
+      myImage.src = this.croppedImage;
+      var that = this;
+
+      myImage.onload = function () {
+        that.coverctx.drawImage(myImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+
+      this.color = '#00000080';
+      that.searchTimeOut();
+    },
+    searchTimeOut2: function searchTimeOut2() {
+      var _this2 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this2.colorImage();
+      }, 200);
+    },
+    searchTimeOut3: function searchTimeOut3() {
+      var _this3 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this3.filter();
+
+        _this3.colorImage();
+      }, 200);
+    },
+    colorImage: function colorImage() {
+      var canvas = [];
+      var canvasCtx = [];
+      var coverImage = [];
+      var that = this;
+      setTimeout(function () {
+        var _loop2 = function _loop2(i) {
+          canvas[i] = document.getElementById("pic" + i);
+          canvasCtx[i] = canvas[i].getContext('2d');
+          canvasCtx[i].clearRect(0, 0, 500, 500);
+          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+          canvasCtx[i].globalAlpha = that.globalAlpha;
+          canvasCtx[i].fillStyle = that.color;
+          canvasCtx[i].filter = that.filters;
+          canvasCtx[i].fillRect(0, 0, 500, 500);
+          coverImage[i] = new Image();
+          coverImage[i].src = that.croppedImage;
+
+          coverImage[i].onload = function () {
+            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+          };
+        };
+
+        for (var i = 1; i < 14; i++) {
+          _loop2(i);
+        }
+      }, 500);
+    },
+    filter: function filter() {
+      var filterKeys = Object.keys(this.filterObject);
+      var filterValues = Object.values(this.filterObject);
+      var filtersArray = [];
+      var newValue;
+
+      for (var i = 0; i < filterKeys.length; i++) {
+        if (filterKeys[i] == 'hueRotate') {
+          newValue = "hue-rotate(".concat(filterValues[i], "deg)");
+          filtersArray.push(newValue);
+        } else if (filterKeys[i] == 'blur') {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "px)");
+          filtersArray.push(newValue);
+        } else {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "%)");
+          filtersArray.push(newValue);
+        }
+      }
+
+      ;
+      var filters = filtersArray.join(' ');
+      this.filters = filters;
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillstyle = this.color;
+      this.coverctx.filter = this.filters;
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      this.coverctx.fillRect(0, 0, 500, 500);
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    blur: function blur(e) {
+      e.target.blur();
+    },
+    create: function create(e) {
+      this.isActive = true;
+      var that = this;
+      setTimeout(function () {
+        that.startX = parseInt(e.clientX - that.offsetX);
+        that.startY = e.pageY - 188;
+        that.inputPosition.top = e.pageY - 230 + 'px';
+        that.inputPosition.left = e.pageX - 10 + 'px';
+        document.getElementById('newText').focus();
+      }, 100);
+    },
+    discribeNew: function discribeNew() {
+      this.isActive = false;
+      var text = {
+        text: document.getElementById('newText').value,
+        x: this.startX,
+        y: this.startY + this.inputPosition.fontSize.replace(/px/g, "") / 2 - 5,
+        font: "bold ".concat(this.inputPosition.fontSize, " normal"),
+        fillStyle: this.inputPosition.color
+      };
+      this.textCanvasctx.font = text.font;
+      this.textCanvasctx.fillStyle = text.fillStyle;
+      text.width = this.textCanvasctx.measureText(text.text).width;
+      text.height = this.inputPosition.fontSize.replace(/px/g, "");
+      this.texts.push(text);
+      this.drawText();
+    },
+    edit: function edit() {
+      this.isActiveEditText = false;
+      var editText = this.texts[this.selectedEditText];
+      editText.text = this.selectedEditTextMessage;
+      editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
+      editText.fillStyle = this.selectedInputPosition.color;
+      var that = this;
+      setTimeout(function () {
+        editText.width = that.textCanvasctx.measureText(that.selectedEditTextMessage).width;
+      }, 100);
+      this.drawText();
+      this.selectedEditText = -1;
+    },
+    drawText: function drawText() {
+      this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+
+        if (text.text == '') {
+          this.texts.splice(i, 1);
+        }
+      }
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+        this.textCanvasctx.font = text.font;
+        this.textCanvasctx.fillStyle = text.fillStyle;
+        this.textCanvasctx.fillText(text.text, text.x, text.y);
+      }
+    },
+    selectText: function selectText(event) {
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = event.pageY - 188;
+      this.inputPosition.width = 500 - this.startX + 'px';
+      this.selectedInputPosition.width = 500 - this.startX + 'px';
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.isActiveEditText = true;
+          this.isActive = false;
+          this.selectedEditText = i;
+          setTimeout(function () {
+            document.getElementById('selectedText').focus();
+          }, 100); // var selectedInput = document.getElementById('selectedText');
+          // selectedInput.focus();
+
+          this.selectedInputPosition.top = this.texts[i].y - 45 + 'px';
+          this.selectedInputPosition.left = this.texts[i].x + 15 + 'px';
+          this.selectedInputPosition.color = this.texts[i].fillStyle;
+          this.texts[i].fillStyle = 'transparent';
+          var fontArray = this.texts[i].font.split(/\s+/);
+          this.selectedInputPosition.fontWeight = fontArray[0];
+          this.selectedInputPosition.fontSize = fontArray[1];
+          this.selectedInputPosition.fontStyle = fontArray[2];
+          var that = this;
+          setTimeout(that.drawText(), 100);
+          this.selectedEditTextMessage = this.texts[i].text;
+        }
+      }
+
+      if (this.selectedEditText == -1) {
+        this.create(event);
+      }
+    },
+    textHittest: function textHittest(x, y, textIndex) {
+      var text = this.texts[textIndex];
+      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
+    },
+    handleMouseDown: function handleMouseDown(event) {
+      var newText = document.getElementById('newText');
+      var selectedText = document.getElementById('selectedText'); // if(newText == document.activeElement){
+      //   newText.blur();
+      // }
+      // if(selectedText == document.activeElement){
+      //   selectedText.blur();
+      // }
+
+      this.pageY = event.pageY;
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = event.pageY - 188;
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.selectedText = i;
+        }
+      }
+    },
+    handleMouseUp: function handleMouseUp(e) {
+      this.selectedText = -1;
+    },
+    handleMouseOut: function handleMouseOut(e) {
+      this.selectedText = -1;
+    },
+    handleMouseMove: function handleMouseMove(e) {
+      if (this.selectedText < 0) {
+        return;
+      }
+
+      var mouseX = parseInt(e.clientX - this.offsetX);
+      var mouseY = event.pageY - 188;
+      var dx = mouseX - this.startX;
+      var dy = mouseY - this.startY;
+      this.startX = mouseX;
+      this.startY = mouseY;
+      var text = this.texts[this.selectedText];
+      text.x += dx;
+      text.y += dy;
+      this.drawText();
     }
   }
 });
@@ -2678,10 +3268,42 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&":
-/*!*******************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js& ***!
-  \*******************************************************************************************************************************************************************************/
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/Drawer.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/Drawer.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _molecules_ListItem_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../molecules/ListItem.vue */ "./resources/ts/components/molecules/ListItem.vue");
+//
+//
+//
+//
+//
+//
+//
+//
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  components: {
+    'list-items': _molecules_ListItem_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  data: function data() {
+    return {
+      group: null
+    };
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/ImageEditer.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -2691,189 +3313,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__);
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 //
 //
 //
@@ -3378,38 +3817,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/Drawer.vue?vue&type=script&lang=js&":
-/*!***************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/Drawer.vue?vue&type=script&lang=js& ***!
-  \***************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _molecules_ListItem_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../molecules/ListItem.vue */ "./resources/ts/components/molecules/ListItem.vue");
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  components: {
-    'list-items': _molecules_ListItem_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  data: function data() {
-    return {
-      group: null
-    };
-  }
-});
-
-/***/ }),
-
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Index.vue?vue&type=script&lang=js&":
 /*!**********************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/pages/Index.vue?vue&type=script&lang=js& ***!
@@ -3871,6 +4278,8 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-cropperjs */ "./node_modules/vue-cropperjs/dist/VueCropper.js");
 /* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../molecules/InputFile.vue */ "./resources/ts/components/molecules/InputFile.vue");
+/* harmony import */ var _organisms_ImageEditer_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../organisms/ImageEditer.vue */ "./resources/ts/components/organisms/ImageEditer.vue");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -4089,77 +4498,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "DrawTool",
   components: {
-    VueCropper: vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default.a
+    VueCropper: vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default.a,
+    'input-file': _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    'image-editer': _organisms_ImageEditer_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     var _ref;
 
     return _ref = {
+      e1: 1,
       concatImg: [],
       imgSrc: 'storage/image/panda.png',
       value: 0,
@@ -4254,6 +4607,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.scrollY = this.textCanvas.scrollTop;
   },
   methods: {
+    loadImage: function loadImage(e) {
+      this.$refs.cropper.replace(e);
+      this.imgSrc = e;
+    },
     submit: function submit() {
       console.log(JSON.stringify(this.concatImg));
       var fd = new FormData();
@@ -4264,6 +4621,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       });
     },
     getImage: function getImage() {
+      this.e1 = 3;
       var concat = document.getElementById('concat');
       var concatCxt = concat.getContext("2d");
       var cover = this.createImage(document.getElementById("cover"));
@@ -4341,6 +4699,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
     },
     cropImage: function cropImage() {
+      this.e1 = 2;
       this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       this.cover = document.getElementById("cover");
       this.coverctx = this.cover.getContext("2d");
@@ -4542,6 +4901,44 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         that.coverctx.save();
       };
     },
+    selectText: function selectText(event) {
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = event.pageY - 188;
+      this.inputPosition.width = 500 - this.startX + 'px';
+      this.selectedInputPosition.width = 500 - this.startX + 'px';
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.isActiveEditText = true;
+          this.isActive = false;
+          this.selectedEditText = i;
+          setTimeout(function () {
+            document.getElementById('selectedText').focus();
+          }, 100); // var selectedInput = document.getElementById('selectedText');
+          // selectedInput.focus();
+
+          this.selectedInputPosition.top = this.texts[i].y - 45 + 'px';
+          this.selectedInputPosition.left = this.texts[i].x + 15 + 'px';
+          this.selectedInputPosition.color = this.texts[i].fillStyle;
+          this.texts[i].fillStyle = 'transparent';
+          var fontArray = this.texts[i].font.split(/\s+/);
+          this.selectedInputPosition.fontWeight = fontArray[0];
+          this.selectedInputPosition.fontSize = fontArray[1];
+          this.selectedInputPosition.fontStyle = fontArray[2];
+          var that = this;
+          setTimeout(that.drawText(), 100);
+          this.selectedEditTextMessage = this.texts[i].text;
+        }
+      }
+
+      if (this.selectedEditText == -1) {
+        this.create(event);
+      }
+    },
+    textHittest: function textHittest(x, y, textIndex) {
+      var text = this.texts[textIndex];
+      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
+    },
     blur: function blur(e) {
       e.target.blur();
     },
@@ -4550,23 +4947,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var that = this;
       setTimeout(function () {
         that.startX = parseInt(e.clientX - that.offsetX);
-        that.startY = parseInt(e.clientY - that.offsetY);
-        var currentDiv = document.getElementById("abc");
-        that.inputPosition.top = that.startY + 20 + 'px';
-        that.inputPosition.left = that.startX + 77 + 'px';
+        that.startY = e.pageY - 188;
+        that.inputPosition.top = e.pageY - 220 + 'px';
+        that.inputPosition.left = e.pageX - 10 + 'px';
         document.getElementById('newText').focus();
       }, 100);
+      console.log(this.textCanvasctx.font);
     },
     discribeNew: function discribeNew() {
       this.isActive = false;
       var text = {
         text: document.getElementById('newText').value,
         x: this.startX,
-        y: this.startY,
+        y: this.startY + this.inputPosition.fontSize.replace(/px/g, "") / 2 - 5,
         font: "bold ".concat(this.inputPosition.fontSize, " normal"),
         fillStyle: this.inputPosition.color
       };
-      this.textCanvasctx.font = text.font;
+      this.textCanvasctx.font = "bold ".concat(this.inputPosition.fontSize, " normal");
       this.textCanvasctx.fillStyle = text.fillStyle;
       text.width = this.textCanvasctx.measureText(text.text).width;
       text.height = this.inputPosition.fontSize.replace(/px/g, "");
@@ -4577,9 +4974,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.isActiveEditText = false;
       var editText = this.texts[this.selectedEditText];
       editText.text = this.selectedEditTextMessage;
-      editText.width = this.textCanvasctx.measureText(this.selectedEditTextMessage).width;
-      editText.fillStyle = this.selectedInputPosition.color;
       editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
+      editText.fillStyle = this.selectedInputPosition.color;
+      var that = this;
+      setTimeout(function () {
+        editText.width = that.textCanvasctx.measureText(that.selectedEditTextMessage).width;
+      }, 100);
       this.drawText();
       this.selectedEditText = -1;
     },
@@ -4601,42 +5001,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.textCanvasctx.fillText(text.text, text.x, text.y);
       }
     },
-    selectText: function selectText(event) {
-      this.startX = parseInt(event.clientX - this.offsetX);
-      this.startY = parseInt(event.clientY - this.offsetY);
-
-      for (var i = 0; i < this.texts.length; i++) {
-        if (this.textHittest(this.startX, this.startY, i)) {
-          this.isActiveEditText = true;
-          this.isActive = false;
-          this.selectedEditText = i;
-          setTimeout(function () {
-            document.getElementById('selectedText').focus();
-          }, 100); // var selectedInput = document.getElementById('selectedText');
-          // selectedInput.focus();
-
-          this.selectedInputPosition.top = this.texts[i].y + 20 + 'px';
-          this.selectedInputPosition.left = this.texts[i].x + 80 + 'px';
-          this.selectedInputPosition.color = this.texts[i].fillStyle;
-          this.texts[i].fillStyle = 'transparent';
-          var fontArray = this.texts[i].font.split(/\s+/);
-          this.selectedInputPosition.fontWeight = fontArray[0];
-          this.selectedInputPosition.fontSize = fontArray[1];
-          this.selectedInputPosition.fontStyle = fontArray[2];
-          var that = this;
-          setTimeout(that.drawText(), 100);
-          this.selectedEditTextMessage = this.texts[i].text;
-        }
-      }
-
-      if (this.selectedEditText == -1) {
-        this.create(event);
-      }
-    },
-    textHittest: function textHittest(x, y, textIndex) {
-      var text = this.texts[textIndex];
-      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
-    },
     handleMouseDown: function handleMouseDown(event) {
       var newText = document.getElementById('newText');
       var selectedText = document.getElementById('selectedText'); // if(newText == document.activeElement){
@@ -4646,8 +5010,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       //   selectedText.blur();
       // }
 
+      this.pageY = event.pageY;
       this.startX = parseInt(event.clientX - this.offsetX);
-      this.startY = parseInt(event.clientY - this.offsetY);
+      this.startY = event.pageY - 188;
 
       for (var i = 0; i < this.texts.length; i++) {
         if (this.textHittest(this.startX, this.startY, i)) {
@@ -4667,7 +5032,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       var mouseX = parseInt(e.clientX - this.offsetX);
-      var mouseY = parseInt(e.clientY - this.offsetY);
+      var mouseY = event.pageY - 188;
       var dx = mouseX - this.startX;
       var dy = mouseY - this.startY;
       this.startX = mouseX;
@@ -8424,6 +8789,25 @@ exports.push([module.i, "@charset \"UTF-8\";\n/*!\n* Vuetify v2.3.10\n* Forged b
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.eraser {\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\n    z-index: 5\n}\n#newText {\n　outline: none!important;\n  /* height: 64px; */\n}\n#newText:focus {\n  outline: none!important;\n  border: none!important;\n}\n#selectedText {\n　outline: none!important;\n  height: 64px;\n}\n#selectedText:focus {\n  outline: none!important;\n  border: none!important;\n}\n.index2{\n  z-index: 2;\n}\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css&":
 /*!************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css& ***!
@@ -8481,10 +8865,10 @@ exports.push([module.i, "\nh2 {\n  font-size: 25px;\n  margin-top: 20px;\n}\nh3 
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&":
-/*!**************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css& ***!
-  \**************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css&":
+/*!***************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css& ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -8531,7 +8915,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.eraser {\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\n    z-index: 5\n}\n#newText {\n　outline: none!important;\n  height: 64px;\n}\n#newText:focus {\n  outline: none!important;\n  border: none!important;\n}\n#selectedText {\n　outline: none!important;\n  height: 64px;\n}\n#selectedText:focus {\n  outline: none!important;\n  border: none!important;\n}\n.index2{\n  z-index: 2;\n}\n#canvas-area .preview{\n    width: 500px!important;\n    height: 500px!important;\n}\n", ""]);
+exports.push([module.i, "\n.eraser {\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\n    z-index: 5\n}\n#newText {\n　outline: none!important;\n  /* height: 64px; */\n}\n#newText:focus {\n  outline: none!important;\n  border: none!important;\n}\n#selectedText {\n　outline: none!important;\n  height: 64px;\n}\n#selectedText:focus {\n  outline: none!important;\n  border: none!important;\n}\n.index2{\n  z-index: 2;\n}\n\n", ""]);
 
 // exports
 
@@ -9804,6 +10188,36 @@ try {
 
 /***/ }),
 
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--7-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css&":
 /*!****************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css& ***!
@@ -9894,15 +10308,15 @@ if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&":
-/*!******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css& ***!
-  \******************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 
-var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&");
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./ImageEditer.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -10624,8 +11038,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0__["default"].extend({
     props: {
-        iconButtonIcons: Object,
-        iconButtonUrl: Object,
+        iconButtonIcons: Array,
+        iconButtonUrl: Array,
     }
     // props: ['iconButtonIcons', 'iconButtonUrl'],
 }));
@@ -10963,9 +11377,196 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticStyle: { "margin-top": "200px" } }, [
-    _vm._v("\n    " + _vm._s(_vm.hello) + "\n")
-  ])
+  return _c(
+    "div",
+    [
+      _c(
+        "v-stepper",
+        {
+          model: {
+            value: _vm.e1,
+            callback: function($$v) {
+              _vm.e1 = $$v
+            },
+            expression: "e1"
+          }
+        },
+        [
+          _c(
+            "v-stepper-header",
+            [
+              _c(
+                "v-stepper-step",
+                { attrs: { complete: _vm.e1 > 1, step: "1" } },
+                [_vm._v("\n      画像のトリミング\n    ")]
+              ),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c(
+                "v-stepper-step",
+                { attrs: { complete: _vm.e1 > 2, step: "2" } },
+                [_vm._v("\n      画像の加工\n    ")]
+              ),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c("v-stepper-step", { attrs: { step: "3" } }, [
+                _vm._v("\n      保存\n    ")
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-stepper-items",
+            [
+              _c(
+                "v-stepper-content",
+                { attrs: { step: "1" } },
+                [
+                  _c(
+                    "v-container",
+                    [
+                      _c(
+                        "v-layout",
+                        { attrs: { "justify-space-around": "", wrap: "" } },
+                        [
+                          _vm.imgSrc !== ""
+                            ? _c(
+                                "div",
+                                [
+                                  _c("vue-cropper", {
+                                    ref: "cropper",
+                                    attrs: {
+                                      guides: true,
+                                      "view-mode": 2,
+                                      "auto-crop-area": 0.5,
+                                      "min-container-width": 500,
+                                      "min-container-height": 500,
+                                      background: true,
+                                      rotatable: false,
+                                      src: _vm.imgSrc,
+                                      "img-style": {
+                                        width: "500px",
+                                        height: "500px"
+                                      },
+                                      "aspect-ratio": 1 / 1,
+                                      "drag-mode": "crop",
+                                      preview: ".preview"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            [
+                              _c("div", { staticClass: "preview" }),
+                              _vm._v(" "),
+                              _c("input-file", {
+                                on: {
+                                  selectedImage: function($event) {
+                                    return _vm.loadImage($event)
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ]
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary" },
+                      on: { click: _vm.cropImage }
+                    },
+                    [_vm._v("トリミング")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-stepper-content",
+                { attrs: { step: "2" } },
+                [
+                  _c("image-editer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary" },
+                      on: { click: _vm.getImage }
+                    },
+                    [_vm._v("決定")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.e1 = 1
+                        }
+                      }
+                    },
+                    [_vm._v("戻る")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-stepper-content", { attrs: { step: "3" } }, [
+                _c("canvas", {
+                  staticClass: "mx-auto",
+                  attrs: { id: "concat", width: "500", height: "500" }
+                }),
+                _c(
+                  "div",
+                  [
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { color: "primary" },
+                        on: { click: _vm.submit }
+                      },
+                      [_vm._v("トリミング")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.e1 = 2
+                          }
+                        }
+                      },
+                      [_vm._v("\n          戻る\n          ")]
+                    )
+                  ],
+                  1
+                )
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -11685,1189 +12286,6 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&":
-/*!***********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2& ***!
-  \***********************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c("h2", [_vm._v("画像のトリミング")]),
-      _vm._v(" "),
-      _c("hr"),
-      _vm._v(" "),
-      _c("h3", [_vm._v("画像を選択")]),
-      _vm._v(" "),
-      _c("input-file", {
-        on: {
-          selectedImage: function($event) {
-            return _vm.loadImage($event)
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c(
-        "v-container",
-        [
-          _c("v-layout", [
-            _vm.imgSrc !== ""
-              ? _c(
-                  "div",
-                  [
-                    _c("vue-cropper", {
-                      ref: "cropper",
-                      attrs: {
-                        guides: true,
-                        "view-mode": 2,
-                        "auto-crop-area": 0.5,
-                        "min-container-width": 500,
-                        "min-container-height": 500,
-                        background: true,
-                        rotatable: false,
-                        src: _vm.imgSrc,
-                        "img-style": { width: "500px", height: "500px" },
-                        "aspect-ratio": 1 / 1,
-                        "drag-mode": "crop",
-                        preview: ".preview"
-                      }
-                    })
-                  ],
-                  1
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("p", [_vm._v("Preview")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "preview" })
-          ])
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("v-btn", { on: { click: _vm.cropImage } }),
-      _vm._v(" "),
-      _c(
-        "v-layout",
-        [
-          _vm.isActive
-            ? _c("div", [
-                _c("input", {
-                  style: _vm.inputPosition,
-                  attrs: { id: "newText", type: "text" },
-                  on: {
-                    keyup: function($event) {
-                      if (
-                        !$event.type.indexOf("key") &&
-                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                      ) {
-                        return null
-                      }
-                      return _vm.discribeNew($event)
-                    }
-                  }
-                })
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _vm.isActiveEditText
-            ? _c("div", [
-                _c("input", {
-                  directives: [
-                    {
-                      name: "model",
-                      rawName: "v-model",
-                      value: _vm.selectedEditTextMessage,
-                      expression: "selectedEditTextMessage"
-                    }
-                  ],
-                  style: _vm.selectedInputPosition,
-                  attrs: { id: "selectedText", type: "text" },
-                  domProps: { value: _vm.selectedEditTextMessage },
-                  on: {
-                    blur: _vm.edit,
-                    keyup: function($event) {
-                      if (
-                        !$event.type.indexOf("key") &&
-                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                      ) {
-                        return null
-                      }
-                      return _vm.blur($event)
-                    },
-                    input: function($event) {
-                      if ($event.target.composing) {
-                        return
-                      }
-                      _vm.selectedEditTextMessage = $event.target.value
-                    }
-                  }
-                })
-              ])
-            : _vm._e(),
-          _vm._v(" "),
-          _c(
-            "v-card",
-            {
-              staticClass: "overflow-hidden",
-              attrs: { height: "550", width: "500" }
-            },
-            [
-              _c(
-                "div",
-                {
-                  staticStyle: { position: "relative" },
-                  attrs: { id: "canvas-area" }
-                },
-                [
-                  _c("canvas", {
-                    class: { eraser: _vm.canvasMode === "eraser" },
-                    staticStyle: {
-                      position: "absolute",
-                      "z-index": "1",
-                      top: "0",
-                      left: "0"
-                    },
-                    attrs: { id: "drawCanvas", width: "500", height: "500" },
-                    on: {
-                      mousedown: _vm.dragStart,
-                      mouseup: _vm.dragEnd,
-                      mouseout: _vm.dragEnd,
-                      mousemove: _vm.draw
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("canvas", {
-                    staticClass: "preview",
-                    staticStyle: { position: "absolute", top: "0", left: "0" },
-                    attrs: { id: "cover", width: "500", height: "500" }
-                  }),
-                  _vm._v(" "),
-                  _c("canvas", {
-                    class: { index2: _vm.value == 2 },
-                    staticStyle: { position: "absolute", top: "0", left: "0" },
-                    attrs: { id: "text", width: "500", height: "500" },
-                    on: {
-                      dblclick: _vm.selectText,
-                      mousedown: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseDown($event)
-                      },
-                      mousemove: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseMove($event)
-                      },
-                      mouseup: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseUp($event)
-                      },
-                      mouseout: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseOut($event)
-                      }
-                    }
-                  })
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "v-bottom-navigation",
-                {
-                  attrs: {
-                    absolute: "",
-                    "hide-on-scroll": "",
-                    "scroll-target": "#hide-on-scroll-example"
-                  },
-                  model: {
-                    value: _vm.value,
-                    callback: function($$v) {
-                      _vm.value = $$v
-                    },
-                    expression: "value"
-                  }
-                },
-                [
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: {
-                        color: "deep-purple accent-4",
-                        text: "",
-                        value: "0"
-                      },
-                      on: { click: _vm.pen }
-                    },
-                    [
-                      _c("span", [_vm._v("ペン")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-draw")])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    { attrs: { color: "deep-purple accent-4", text: "" } },
-                    [
-                      _c("span", [_vm._v("エフェクト")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-checkerboard")])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    { attrs: { color: "deep-purple accent-4", text: "" } },
-                    [
-                      _c("span", [_vm._v("テキスト")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-format-color-text")])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    { attrs: { color: "deep-purple accent-4", text: "" } },
-                    [
-                      _c("span", [_vm._v("ダウンロード")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-briefcase-download")])
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-card",
-            {
-              staticClass: "overflow-hidden",
-              attrs: { height: "550", width: "500" }
-            },
-            [
-              _c(
-                "v-stepper",
-                {
-                  staticStyle: { width: "500px" },
-                  model: {
-                    value: _vm.toolStepper,
-                    callback: function($$v) {
-                      _vm.toolStepper = $$v
-                    },
-                    expression: "toolStepper"
-                  }
-                },
-                [
-                  _c(
-                    "v-stepper-items",
-                    [
-                      _c(
-                        "v-stepper-content",
-                        { attrs: { step: "1" } },
-                        [
-                          _c("v-card-title", [_vm._v("Pen")]),
-                          _vm._v(" "),
-                          _c("v-color-picker", {
-                            staticClass: "mb-5 ml-3",
-                            on: { input: _vm.searchTimeOut },
-                            model: {
-                              value: _vm.penColor,
-                              callback: function($$v) {
-                                _vm.penColor = $$v
-                              },
-                              expression: "penColor"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "v-col",
-                            { attrs: { cols: "12", sm: "11" } },
-                            [
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "lineWidth",
-                                  min: "4",
-                                  max: "25",
-                                  "thumb-label": "always",
-                                  "thumb-color": "pink",
-                                  color: "pink"
-                                },
-                                on: { input: _vm.searchTimeOut },
-                                model: {
-                                  value: _vm.lineWidth,
-                                  callback: function($$v) {
-                                    _vm.lineWidth = $$v
-                                  },
-                                  expression: "lineWidth"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-col",
-                            {
-                              staticClass: "d-flex",
-                              attrs: { cols: "12", sm: "12" }
-                            },
-                            [
-                              _c("v-select", {
-                                staticClass: "px-1",
-                                attrs: {
-                                  items: _vm.lineCaps,
-                                  label: "lineCap",
-                                  outlined: ""
-                                },
-                                on: { input: _vm.searchTimeOut },
-                                model: {
-                                  value: _vm.lineCap,
-                                  callback: function($$v) {
-                                    _vm.lineCap = $$v
-                                  },
-                                  expression: "lineCap"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("v-select", {
-                                staticClass: "px-1",
-                                attrs: {
-                                  items: _vm.lineJoins,
-                                  label: "lineJoin",
-                                  outlined: ""
-                                },
-                                on: { input: _vm.searchTimeOut },
-                                model: {
-                                  value: _vm.lineJoin,
-                                  callback: function($$v) {
-                                    _vm.lineJoin = $$v
-                                  },
-                                  expression: "lineJoin "
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-stepper-content",
-                        { attrs: { step: "2" } },
-                        [
-                          _c("v-card-title", { staticClass: "headline" }, [
-                            _vm._v(
-                              "\n                    Filters\n                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "opacity",
-                              min: "4",
-                              max: "10",
-                              "thumb-label": "always",
-                              "thumb-color": "pink",
-                              color: "pink"
-                            },
-                            on: { input: _vm.searchTimeOut2 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.opacity,
-                                        callback: function($$v) {
-                                          _vm.opacity = $$v
-                                        },
-                                        expression: "opacity"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.opacity,
-                              callback: function($$v) {
-                                _vm.opacity = $$v
-                              },
-                              expression: "opacity"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "blur",
-                              min: "0",
-                              max: "10",
-                              "thumb-label": "always",
-                              "thumb-color": "purple",
-                              color: "purple"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.blur,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "blur",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.blur"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.blur,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "blur", $$v)
-                              },
-                              expression: "filterObject.blur"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "brightness",
-                              min: "35",
-                              max: "250",
-                              "thumb-label": "always",
-                              "thumb-color": "red",
-                              color: "red"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.brightness,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "brightness",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.brightness"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.brightness,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "brightness", $$v)
-                              },
-                              expression: "filterObject.brightness"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "contrast",
-                              min: "0",
-                              max: "400",
-                              "thumb-label": "always",
-                              "thumb-color": "orange",
-                              color: "orange"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.contrast,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "contrast",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.contrast"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.contrast,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "contrast", $$v)
-                              },
-                              expression: "filterObject.contrast"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "grayscale",
-                              min: "0",
-                              max: "100",
-                              "thumb-label": "always",
-                              "thumb-color": "indigo",
-                              color: "indigo"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.grayscale,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "grayscale",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.grayscale"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.grayscale,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "grayscale", $$v)
-                              },
-                              expression: "filterObject.grayscale"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "hue-rotate",
-                              min: "0",
-                              max: "359",
-                              "thumb-label": "always",
-                              "thumb-color": "green",
-                              color: "green"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.hueRotate,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "hueRotate",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.hueRotate"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.hueRotate,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "hueRotate", $$v)
-                              },
-                              expression: "filterObject.hueRotate"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "invert",
-                              min: "0",
-                              max: "100",
-                              "thumb-label": "always",
-                              "thumb-color": "deep-purple",
-                              color: "deep-purple"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.invert,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "invert",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.invert"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.invert,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "invert", $$v)
-                              },
-                              expression: "filterObject.invert"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "saturate",
-                              min: "0",
-                              max: "300",
-                              "thumb-label": "always",
-                              "thumb-color": "light-blue",
-                              color: "light-blue"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.saturate,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "saturate",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.saturate"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.saturate,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "saturate", $$v)
-                              },
-                              expression: "filterObject.saturate"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "sepia",
-                              min: "0",
-                              max: "100",
-                              "thumb-label": "always",
-                              "thumb-color": "lime",
-                              color: "lime"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.sepia,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "sepia",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.sepia"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.sepia,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "sepia", $$v)
-                              },
-                              expression: "filterObject.sepia"
-                            }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-stepper-content",
-                        { attrs: { step: "3" } },
-                        [
-                          _c("v-card", {
-                            staticClass: "mb-12",
-                            attrs: { color: "grey lighten-1", height: "200px" }
-                          })
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-stepper",
-        {
-          staticStyle: { width: "1000px" },
-          model: {
-            value: _vm.toolStepper,
-            callback: function($$v) {
-              _vm.toolStepper = $$v
-            },
-            expression: "toolStepper"
-          }
-        },
-        [
-          _c(
-            "v-stepper-items",
-            [
-              _c(
-                "v-stepper-content",
-                { attrs: { step: "1" } },
-                [
-                  _c(
-                    "v-btn",
-                    {
-                      staticClass: "align-self-start mr-2",
-                      attrs: { id: "eraser-button" },
-                      on: { click: _vm.eraser }
-                    },
-                    [_vm._v("消しゴム")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      staticClass: "align-self-start mr-2",
-                      attrs: { id: "clear-button" },
-                      on: { click: _vm.clear }
-                    },
-                    [_vm._v("クリア")]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-stepper-content",
-                { attrs: { step: "2" } },
-                [
-                  _c(
-                    "v-col",
-                    { staticClass: "d-flex", attrs: { cols: "12", sm: "12" } },
-                    [
-                      _c(
-                        "v-row",
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { color: "pink" },
-                              on: { click: _vm.reset }
-                            },
-                            [_vm._v("reset")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { color: "purple" },
-                              on: { click: _vm.rotate }
-                            },
-                            [_vm._v("rotate")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { color: "black" },
-                              on: { click: _vm.back }
-                            },
-                            [_vm._v("back")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-sheet",
-                            { attrs: { elevation: "8", "max-width": "520" } },
-                            [
-                              _c(
-                                "v-slide-group",
-                                {
-                                  staticClass: "pa-4",
-                                  attrs: {
-                                    "center-active": "",
-                                    "show-arrows": ""
-                                  },
-                                  model: {
-                                    value: _vm.model,
-                                    callback: function($$v) {
-                                      _vm.model = $$v
-                                    },
-                                    expression: "model"
-                                  }
-                                },
-                                _vm._l(13, function(n) {
-                                  return _c("v-slide-item", {
-                                    key: n,
-                                    scopedSlots: _vm._u(
-                                      [
-                                        {
-                                          key: "default",
-                                          fn: function(ref) {
-                                            var active = ref.active
-                                            var toggle = ref.toggle
-                                            return [
-                                              _c(
-                                                "v-card",
-                                                {
-                                                  staticClass: "ma-1",
-                                                  attrs: {
-                                                    color: active
-                                                      ? "primary"
-                                                      : "grey lighten-1",
-                                                    height: "117.3",
-                                                    width: "113.3"
-                                                  },
-                                                  on: { click: _vm.click }
-                                                },
-                                                [
-                                                  _c("canvas", {
-                                                    attrs: {
-                                                      id: "pic" + n,
-                                                      height: "113.3",
-                                                      width: "113.3"
-                                                    },
-                                                    on: { click: toggle }
-                                                  }),
-                                                  _vm._v(" "),
-                                                  _c(
-                                                    "v-row",
-                                                    {
-                                                      staticClass:
-                                                        "fill-height",
-                                                      attrs: {
-                                                        align: "center",
-                                                        justify: "center"
-                                                      }
-                                                    },
-                                                    [
-                                                      _c(
-                                                        "v-scale-transition",
-                                                        [
-                                                          active
-                                                            ? _c("v-icon", {
-                                                                attrs: {
-                                                                  color:
-                                                                    "white",
-                                                                  size: "48"
-                                                                },
-                                                                domProps: {
-                                                                  textContent: _vm._s(
-                                                                    "mdi-close-circle-outline"
-                                                                  )
-                                                                }
-                                                              })
-                                                            : _vm._e()
-                                                        ],
-                                                        1
-                                                      )
-                                                    ],
-                                                    1
-                                                  )
-                                                ],
-                                                1
-                                              )
-                                            ]
-                                          }
-                                        }
-                                      ],
-                                      null,
-                                      true
-                                    )
-                                  })
-                                }),
-                                1
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c("v-color-picker", {
-                        attrs: { "hide-inputs": "" },
-                        on: { input: _vm.searchTimeOut2 },
-                        model: {
-                          value: _vm.color,
-                          callback: function($$v) {
-                            _vm.color = $$v
-                          },
-                          expression: "color"
-                        }
-                      })
-                    ],
-                    1
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("v-stepper-content", { attrs: { step: "3" } }, [
-                _vm.isActive
-                  ? _c(
-                      "div",
-                      [
-                        _c("v-slider", {
-                          attrs: {
-                            min: "10",
-                            max: "64",
-                            "thumb-label": "always",
-                            "thumb-size": 30
-                          },
-                          model: {
-                            value: _vm.fontSize,
-                            callback: function($$v) {
-                              _vm.fontSize = $$v
-                            },
-                            expression: "fontSize"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-color-picker", {
-                          model: {
-                            value: _vm.inputPosition.color,
-                            callback: function($$v) {
-                              _vm.$set(_vm.inputPosition, "color", $$v)
-                            },
-                            expression: "inputPosition.color"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c(
-                          "v-btn-toggle",
-                          {
-                            attrs: {
-                              dense: "",
-                              "background-color": "primary",
-                              dark: "",
-                              multiple: ""
-                            },
-                            model: {
-                              value: _vm.toggle_multiple,
-                              callback: function($$v) {
-                                _vm.toggle_multiple = $$v
-                              },
-                              expression: "toggle_multiple"
-                            }
-                          },
-                          [_c("v-btn", [_vm._v("Bold")])],
-                          1
-                        )
-                      ],
-                      1
-                    )
-                  : _vm._e(),
-                _vm._v(" "),
-                _vm.isActiveEditText
-                  ? _c(
-                      "div",
-                      [
-                        _c("v-slider", {
-                          attrs: {
-                            min: "10",
-                            max: "64",
-                            "thumb-label": "always",
-                            "thumb-size": 30
-                          },
-                          model: {
-                            value: _vm.selectedFontSize,
-                            callback: function($$v) {
-                              _vm.selectedFontSize = $$v
-                            },
-                            expression: "selectedFontSize"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-color-picker", {
-                          model: {
-                            value: _vm.selectedInputPosition.color,
-                            callback: function($$v) {
-                              _vm.$set(_vm.selectedInputPosition, "color", $$v)
-                            },
-                            expression: "selectedInputPosition.color"
-                          }
-                        }),
-                        _vm._v("aaa\n                ")
-                      ],
-                      1
-                    )
-                  : _vm._e()
-              ])
-            ],
-            1
-          )
-        ],
-        1
-      )
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/Drawer.vue?vue&type=template&id=6ba3ed00&":
 /*!*******************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/Drawer.vue?vue&type=template&id=6ba3ed00& ***!
@@ -12905,6 +12323,30 @@ var render = function() {
     ],
     1
   )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=template&id=e79fa11a&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/ImageEditer.vue?vue&type=template&id=e79fa11a& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div")
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -13414,818 +12856,44 @@ var render = function() {
   return _c(
     "div",
     [
-      _c("v-btn", { on: { click: _vm.cropImage } }),
-      _vm._v(" "),
       _c(
-        "v-layout",
+        "v-stepper",
+        {
+          model: {
+            value: _vm.e1,
+            callback: function($$v) {
+              _vm.e1 = $$v
+            },
+            expression: "e1"
+          }
+        },
         [
           _c(
-            "v-card",
-            {
-              staticClass: "overflow-hidden",
-              attrs: { height: "550", width: "500" }
-            },
+            "v-stepper-header",
             [
               _c(
-                "div",
-                {
-                  staticStyle: { position: "relative" },
-                  attrs: { id: "canvas-area" }
-                },
-                [
-                  _vm.isActive
-                    ? _c("div", [
-                        _c("input", {
-                          style: _vm.inputPosition,
-                          attrs: { id: "newText", type: "text" },
-                          on: {
-                            keyup: function($event) {
-                              if (
-                                !$event.type.indexOf("key") &&
-                                _vm._k(
-                                  $event.keyCode,
-                                  "enter",
-                                  13,
-                                  $event.key,
-                                  "Enter"
-                                )
-                              ) {
-                                return null
-                              }
-                              return _vm.discribeNew($event)
-                            }
-                          }
-                        })
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _vm.isActiveEditText
-                    ? _c("div", [
-                        _c("input", {
-                          directives: [
-                            {
-                              name: "model",
-                              rawName: "v-model",
-                              value: _vm.selectedEditTextMessage,
-                              expression: "selectedEditTextMessage"
-                            }
-                          ],
-                          style: _vm.selectedInputPosition,
-                          attrs: { id: "selectedText", type: "text" },
-                          domProps: { value: _vm.selectedEditTextMessage },
-                          on: {
-                            blur: _vm.edit,
-                            keyup: function($event) {
-                              if (
-                                !$event.type.indexOf("key") &&
-                                _vm._k(
-                                  $event.keyCode,
-                                  "enter",
-                                  13,
-                                  $event.key,
-                                  "Enter"
-                                )
-                              ) {
-                                return null
-                              }
-                              return _vm.blur($event)
-                            },
-                            input: function($event) {
-                              if ($event.target.composing) {
-                                return
-                              }
-                              _vm.selectedEditTextMessage = $event.target.value
-                            }
-                          }
-                        })
-                      ])
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c("canvas", {
-                    class: { eraser: _vm.canvasMode === "eraser" },
-                    staticStyle: {
-                      position: "absolute",
-                      "z-index": "1",
-                      top: "0",
-                      left: "0"
-                    },
-                    attrs: { id: "drawCanvas", width: "500", height: "500" },
-                    on: {
-                      mousedown: _vm.dragStart,
-                      mouseup: _vm.dragEnd,
-                      mouseout: _vm.dragEnd,
-                      mousemove: _vm.draw
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c("canvas", {
-                    staticClass: "preview",
-                    staticStyle: { position: "absolute", top: "0", left: "0" },
-                    attrs: { id: "cover", width: "500", height: "500" }
-                  }),
-                  _vm._v(" "),
-                  _c("canvas", {
-                    class: { index2: _vm.value == 2 },
-                    staticStyle: { position: "absolute", top: "0", left: "0" },
-                    attrs: { id: "text", width: "500", height: "500" },
-                    on: {
-                      dblclick: _vm.selectText,
-                      mousedown: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseDown($event)
-                      },
-                      mousemove: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseMove($event)
-                      },
-                      mouseup: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseUp($event)
-                      },
-                      mouseout: function($event) {
-                        $event.preventDefault()
-                        return _vm.handleMouseOut($event)
-                      }
-                    }
-                  })
-                ]
+                "v-stepper-step",
+                { attrs: { complete: _vm.e1 > 1, step: "1" } },
+                [_vm._v("\n      画像のトリミング\n    ")]
               ),
               _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
               _c(
-                "v-bottom-navigation",
-                {
-                  attrs: {
-                    absolute: "",
-                    "hide-on-scroll": "",
-                    "scroll-target": "#hide-on-scroll-example"
-                  },
-                  model: {
-                    value: _vm.value,
-                    callback: function($$v) {
-                      _vm.value = $$v
-                    },
-                    expression: "value"
-                  }
-                },
-                [
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: {
-                        color: "deep-purple accent-4",
-                        text: "",
-                        value: "0"
-                      },
-                      on: { click: _vm.pen }
-                    },
-                    [
-                      _c("span", [_vm._v("ペン")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-draw")])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    { attrs: { color: "deep-purple accent-4", text: "" } },
-                    [
-                      _c("span", [_vm._v("エフェクト")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-checkerboard")])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    { attrs: { color: "deep-purple accent-4", text: "" } },
-                    [
-                      _c("span", [_vm._v("テキスト")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-format-color-text")])
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    { attrs: { color: "deep-purple accent-4", text: "" } },
-                    [
-                      _c("span", [_vm._v("ダウンロード")]),
-                      _vm._v(" "),
-                      _c("v-icon", [_vm._v("mdi-briefcase-download")])
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
+                "v-stepper-step",
+                { attrs: { complete: _vm.e1 > 2, step: "2" } },
+                [_vm._v("\n      画像の加工\n    ")]
+              ),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c("v-stepper-step", { attrs: { step: "3" } }, [
+                _vm._v("\n      保存\n    ")
+              ])
             ],
             1
           ),
           _vm._v(" "),
-          _c(
-            "v-card",
-            {
-              staticClass: "overflow-hidden",
-              attrs: { height: "550", width: "500" }
-            },
-            [
-              _c(
-                "v-stepper",
-                {
-                  staticStyle: { width: "500px" },
-                  model: {
-                    value: _vm.toolStepper,
-                    callback: function($$v) {
-                      _vm.toolStepper = $$v
-                    },
-                    expression: "toolStepper"
-                  }
-                },
-                [
-                  _c(
-                    "v-stepper-items",
-                    [
-                      _c(
-                        "v-stepper-content",
-                        { attrs: { step: "1" } },
-                        [
-                          _c("v-card-title", [_vm._v("Pen")]),
-                          _vm._v(" "),
-                          _c("v-color-picker", {
-                            staticClass: "mb-5 ml-3",
-                            on: { input: _vm.searchTimeOut },
-                            model: {
-                              value: _vm.penColor,
-                              callback: function($$v) {
-                                _vm.penColor = $$v
-                              },
-                              expression: "penColor"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "v-col",
-                            { attrs: { cols: "12", sm: "11" } },
-                            [
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "lineWidth",
-                                  min: "4",
-                                  max: "25",
-                                  "thumb-label": "always",
-                                  "thumb-color": "pink",
-                                  color: "pink"
-                                },
-                                on: { input: _vm.searchTimeOut },
-                                model: {
-                                  value: _vm.lineWidth,
-                                  callback: function($$v) {
-                                    _vm.lineWidth = $$v
-                                  },
-                                  expression: "lineWidth"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-col",
-                            {
-                              staticClass: "d-flex",
-                              attrs: { cols: "12", sm: "12" }
-                            },
-                            [
-                              _c("v-select", {
-                                staticClass: "px-1",
-                                attrs: {
-                                  items: _vm.lineCaps,
-                                  label: "lineCap",
-                                  outlined: ""
-                                },
-                                on: { input: _vm.searchTimeOut },
-                                model: {
-                                  value: _vm.lineCap,
-                                  callback: function($$v) {
-                                    _vm.lineCap = $$v
-                                  },
-                                  expression: "lineCap"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("v-select", {
-                                staticClass: "px-1",
-                                attrs: {
-                                  items: _vm.lineJoins,
-                                  label: "lineJoin",
-                                  outlined: ""
-                                },
-                                on: { input: _vm.searchTimeOut },
-                                model: {
-                                  value: _vm.lineJoin,
-                                  callback: function($$v) {
-                                    _vm.lineJoin = $$v
-                                  },
-                                  expression: "lineJoin "
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-stepper-content",
-                        { attrs: { step: "2" } },
-                        [
-                          _c("v-card-title", { staticClass: "headline" }, [
-                            _vm._v(
-                              "\n                      Filters\n                  "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "opacity",
-                              min: "4",
-                              max: "10",
-                              "thumb-label": "always",
-                              "thumb-color": "pink",
-                              color: "pink"
-                            },
-                            on: { input: _vm.searchTimeOut2 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.opacity,
-                                        callback: function($$v) {
-                                          _vm.opacity = $$v
-                                        },
-                                        expression: "opacity"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.opacity,
-                              callback: function($$v) {
-                                _vm.opacity = $$v
-                              },
-                              expression: "opacity"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "blur",
-                              min: "0",
-                              max: "10",
-                              "thumb-label": "always",
-                              "thumb-color": "purple",
-                              color: "purple"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.blur,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "blur",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.blur"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.blur,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "blur", $$v)
-                              },
-                              expression: "filterObject.blur"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "brightness",
-                              min: "35",
-                              max: "250",
-                              "thumb-label": "always",
-                              "thumb-color": "red",
-                              color: "red"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.brightness,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "brightness",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.brightness"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.brightness,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "brightness", $$v)
-                              },
-                              expression: "filterObject.brightness"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "contrast",
-                              min: "0",
-                              max: "400",
-                              "thumb-label": "always",
-                              "thumb-color": "orange",
-                              color: "orange"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.contrast,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "contrast",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.contrast"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.contrast,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "contrast", $$v)
-                              },
-                              expression: "filterObject.contrast"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "grayscale",
-                              min: "0",
-                              max: "100",
-                              "thumb-label": "always",
-                              "thumb-color": "indigo",
-                              color: "indigo"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.grayscale,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "grayscale",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.grayscale"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.grayscale,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "grayscale", $$v)
-                              },
-                              expression: "filterObject.grayscale"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "hue-rotate",
-                              min: "0",
-                              max: "359",
-                              "thumb-label": "always",
-                              "thumb-color": "green",
-                              color: "green"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.hueRotate,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "hueRotate",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.hueRotate"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.hueRotate,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "hueRotate", $$v)
-                              },
-                              expression: "filterObject.hueRotate"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "invert",
-                              min: "0",
-                              max: "100",
-                              "thumb-label": "always",
-                              "thumb-color": "deep-purple",
-                              color: "deep-purple"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.invert,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "invert",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.invert"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.invert,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "invert", $$v)
-                              },
-                              expression: "filterObject.invert"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "saturate",
-                              min: "0",
-                              max: "300",
-                              "thumb-label": "always",
-                              "thumb-color": "light-blue",
-                              color: "light-blue"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.saturate,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "saturate",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.saturate"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.saturate,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "saturate", $$v)
-                              },
-                              expression: "filterObject.saturate"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c("v-slider", {
-                            attrs: {
-                              label: "sepia",
-                              min: "0",
-                              max: "100",
-                              "thumb-label": "always",
-                              "thumb-color": "lime",
-                              color: "lime"
-                            },
-                            on: { input: _vm.searchTimeOut3 },
-                            scopedSlots: _vm._u([
-                              {
-                                key: "append",
-                                fn: function() {
-                                  return [
-                                    _c("v-text-field", {
-                                      staticClass: "mt-0 pt-0",
-                                      staticStyle: { width: "60px" },
-                                      attrs: {
-                                        "hide-details": "",
-                                        "single-line": "",
-                                        type: "number"
-                                      },
-                                      model: {
-                                        value: _vm.filterObject.sepia,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.filterObject,
-                                            "sepia",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "filterObject.sepia"
-                                      }
-                                    })
-                                  ]
-                                },
-                                proxy: true
-                              }
-                            ]),
-                            model: {
-                              value: _vm.filterObject.sepia,
-                              callback: function($$v) {
-                                _vm.$set(_vm.filterObject, "sepia", $$v)
-                              },
-                              expression: "filterObject.sepia"
-                            }
-                          })
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-stepper-content",
-                        { attrs: { step: "3" } },
-                        [
-                          _c("v-card", {
-                            staticClass: "mb-12",
-                            attrs: { color: "grey lighten-1", height: "200px" }
-                          })
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-stepper",
-        {
-          staticStyle: { width: "1000px" },
-          model: {
-            value: _vm.toolStepper,
-            callback: function($$v) {
-              _vm.toolStepper = $$v
-            },
-            expression: "toolStepper"
-          }
-        },
-        [
           _c(
             "v-stepper-items",
             [
@@ -14234,23 +12902,69 @@ var render = function() {
                 { attrs: { step: "1" } },
                 [
                   _c(
-                    "v-btn",
-                    {
-                      staticClass: "align-self-start mr-2",
-                      attrs: { id: "eraser-button" },
-                      on: { click: _vm.eraser }
-                    },
-                    [_vm._v("消しゴム")]
+                    "v-container",
+                    [
+                      _c(
+                        "v-layout",
+                        { attrs: { "justify-space-around": "", wrap: "" } },
+                        [
+                          _vm.imgSrc !== ""
+                            ? _c(
+                                "div",
+                                [
+                                  _c("vue-cropper", {
+                                    ref: "cropper",
+                                    attrs: {
+                                      guides: true,
+                                      "view-mode": 2,
+                                      "auto-crop-area": 0.5,
+                                      "min-container-width": 500,
+                                      "min-container-height": 500,
+                                      background: true,
+                                      rotatable: false,
+                                      src: _vm.imgSrc,
+                                      "img-style": {
+                                        width: "500px",
+                                        height: "500px"
+                                      },
+                                      "aspect-ratio": 1 / 1,
+                                      "drag-mode": "crop",
+                                      preview: ".preview"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            [
+                              _c("div", { staticClass: "preview" }),
+                              _vm._v(" "),
+                              _c("input-file", {
+                                on: {
+                                  selectedImage: function($event) {
+                                    return _vm.loadImage($event)
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ]
+                      )
+                    ],
+                    1
                   ),
                   _vm._v(" "),
                   _c(
                     "v-btn",
                     {
-                      staticClass: "align-self-start mr-2",
-                      attrs: { id: "clear-button" },
-                      on: { click: _vm.clear }
+                      attrs: { color: "primary" },
+                      on: { click: _vm.cropImage }
                     },
-                    [_vm._v("クリア")]
+                    [_vm._v("トリミング")]
                   )
                 ],
                 1
@@ -14261,139 +12975,245 @@ var render = function() {
                 { attrs: { step: "2" } },
                 [
                   _c(
-                    "v-col",
-                    { staticClass: "d-flex", attrs: { cols: "12", sm: "12" } },
+                    "v-layout",
                     [
+                      _vm.isActive
+                        ? _c("div", [
+                            _c("input", {
+                              style: _vm.inputPosition,
+                              attrs: { id: "newText", type: "text" },
+                              on: {
+                                keyup: function($event) {
+                                  if (
+                                    !$event.type.indexOf("key") &&
+                                    _vm._k(
+                                      $event.keyCode,
+                                      "enter",
+                                      13,
+                                      $event.key,
+                                      "Enter"
+                                    )
+                                  ) {
+                                    return null
+                                  }
+                                  return _vm.discribeNew($event)
+                                }
+                              }
+                            })
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
+                      _vm.isActiveEditText
+                        ? _c("div", [
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "model",
+                                  rawName: "v-model",
+                                  value: _vm.selectedEditTextMessage,
+                                  expression: "selectedEditTextMessage"
+                                }
+                              ],
+                              style: _vm.selectedInputPosition,
+                              attrs: { id: "selectedText", type: "text" },
+                              domProps: { value: _vm.selectedEditTextMessage },
+                              on: {
+                                blur: _vm.edit,
+                                keyup: function($event) {
+                                  if (
+                                    !$event.type.indexOf("key") &&
+                                    _vm._k(
+                                      $event.keyCode,
+                                      "enter",
+                                      13,
+                                      $event.key,
+                                      "Enter"
+                                    )
+                                  ) {
+                                    return null
+                                  }
+                                  return _vm.blur($event)
+                                },
+                                input: function($event) {
+                                  if ($event.target.composing) {
+                                    return
+                                  }
+                                  _vm.selectedEditTextMessage =
+                                    $event.target.value
+                                }
+                              }
+                            })
+                          ])
+                        : _vm._e(),
+                      _vm._v(" "),
                       _c(
-                        "v-row",
+                        "v-card",
+                        {
+                          staticClass: "overflow-hidden",
+                          attrs: { height: "550", width: "500" }
+                        },
                         [
                           _c(
-                            "v-btn",
+                            "div",
                             {
-                              attrs: { color: "pink" },
-                              on: { click: _vm.reset }
+                              staticStyle: { position: "relative" },
+                              attrs: { id: "canvas-area" }
                             },
-                            [_vm._v("reset")]
+                            [
+                              _c("canvas", {
+                                class: { eraser: _vm.canvasMode === "eraser" },
+                                staticStyle: {
+                                  position: "absolute",
+                                  "z-index": "1",
+                                  top: "0",
+                                  left: "0"
+                                },
+                                attrs: {
+                                  id: "drawCanvas",
+                                  width: "500",
+                                  height: "500"
+                                },
+                                on: {
+                                  mousedown: _vm.dragStart,
+                                  mouseup: _vm.dragEnd,
+                                  mouseout: _vm.dragEnd,
+                                  mousemove: _vm.draw
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("canvas", {
+                                staticClass: "preview",
+                                staticStyle: {
+                                  position: "absolute",
+                                  top: "0",
+                                  left: "0"
+                                },
+                                attrs: {
+                                  id: "cover",
+                                  width: "500",
+                                  height: "500"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("canvas", {
+                                class: { index2: _vm.value == 2 },
+                                staticStyle: {
+                                  position: "absolute",
+                                  top: "0",
+                                  left: "0"
+                                },
+                                attrs: {
+                                  id: "text",
+                                  width: "500",
+                                  height: "500"
+                                },
+                                on: {
+                                  dblclick: _vm.selectText,
+                                  mousedown: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.handleMouseDown($event)
+                                  },
+                                  mousemove: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.handleMouseMove($event)
+                                  },
+                                  mouseup: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.handleMouseUp($event)
+                                  },
+                                  mouseout: function($event) {
+                                    $event.preventDefault()
+                                    return _vm.handleMouseOut($event)
+                                  }
+                                }
+                              })
+                            ]
                           ),
                           _vm._v(" "),
                           _c(
-                            "v-btn",
+                            "v-bottom-navigation",
                             {
-                              attrs: { color: "purple" },
-                              on: { click: _vm.rotate }
+                              attrs: {
+                                absolute: "",
+                                "hide-on-scroll": "",
+                                "scroll-target": "#hide-on-scroll-example"
+                              },
+                              model: {
+                                value: _vm.value,
+                                callback: function($$v) {
+                                  _vm.value = $$v
+                                },
+                                expression: "value"
+                              }
                             },
-                            [_vm._v("rotate")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { color: "black" },
-                              on: { click: _vm.back }
-                            },
-                            [_vm._v("back")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-sheet",
-                            { attrs: { elevation: "8", "max-width": "520" } },
                             [
                               _c(
-                                "v-slide-group",
+                                "v-btn",
                                 {
-                                  staticClass: "pa-4",
                                   attrs: {
-                                    "center-active": "",
-                                    "show-arrows": ""
+                                    color: "deep-purple accent-4",
+                                    text: "",
+                                    value: "0"
                                   },
-                                  model: {
-                                    value: _vm.model,
-                                    callback: function($$v) {
-                                      _vm.model = $$v
-                                    },
-                                    expression: "model"
+                                  on: { click: _vm.pen }
+                                },
+                                [
+                                  _c("span", [_vm._v("ペン")]),
+                                  _vm._v(" "),
+                                  _c("v-icon", [_vm._v("mdi-draw")])
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: {
+                                    color: "deep-purple accent-4",
+                                    text: ""
                                   }
                                 },
-                                _vm._l(13, function(n) {
-                                  return _c("v-slide-item", {
-                                    key: n,
-                                    scopedSlots: _vm._u(
-                                      [
-                                        {
-                                          key: "default",
-                                          fn: function(ref) {
-                                            var active = ref.active
-                                            var toggle = ref.toggle
-                                            return [
-                                              _c(
-                                                "v-card",
-                                                {
-                                                  staticClass: "ma-1",
-                                                  attrs: {
-                                                    color: active
-                                                      ? "primary"
-                                                      : "grey lighten-1",
-                                                    height: "117.3",
-                                                    width: "113.3"
-                                                  },
-                                                  on: { click: _vm.click }
-                                                },
-                                                [
-                                                  _c("canvas", {
-                                                    attrs: {
-                                                      id: "pic" + n,
-                                                      height: "113.3",
-                                                      width: "113.3"
-                                                    },
-                                                    on: { click: toggle }
-                                                  }),
-                                                  _vm._v(" "),
-                                                  _c(
-                                                    "v-row",
-                                                    {
-                                                      staticClass:
-                                                        "fill-height",
-                                                      attrs: {
-                                                        align: "center",
-                                                        justify: "center"
-                                                      }
-                                                    },
-                                                    [
-                                                      _c(
-                                                        "v-scale-transition",
-                                                        [
-                                                          active
-                                                            ? _c("v-icon", {
-                                                                attrs: {
-                                                                  color:
-                                                                    "white",
-                                                                  size: "48"
-                                                                },
-                                                                domProps: {
-                                                                  textContent: _vm._s(
-                                                                    "mdi-close-circle-outline"
-                                                                  )
-                                                                }
-                                                              })
-                                                            : _vm._e()
-                                                        ],
-                                                        1
-                                                      )
-                                                    ],
-                                                    1
-                                                  )
-                                                ],
-                                                1
-                                              )
-                                            ]
-                                          }
-                                        }
-                                      ],
-                                      null,
-                                      true
-                                    )
-                                  })
-                                }),
+                                [
+                                  _c("span", [_vm._v("エフェクト")]),
+                                  _vm._v(" "),
+                                  _c("v-icon", [_vm._v("mdi-checkerboard")])
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: {
+                                    color: "deep-purple accent-4",
+                                    text: ""
+                                  }
+                                },
+                                [
+                                  _c("span", [_vm._v("テキスト")]),
+                                  _vm._v(" "),
+                                  _c("v-icon", [
+                                    _vm._v("mdi-format-color-text")
+                                  ])
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: {
+                                    color: "deep-purple accent-4",
+                                    text: ""
+                                  }
+                                },
+                                [
+                                  _c("span", [_vm._v("ダウンロード")]),
+                                  _vm._v(" "),
+                                  _c("v-icon", [
+                                    _vm._v("mdi-briefcase-download")
+                                  ])
+                                ],
                                 1
                               )
                             ],
@@ -14403,195 +13223,1069 @@ var render = function() {
                         1
                       ),
                       _vm._v(" "),
-                      _c("v-color-picker", {
-                        attrs: { "hide-inputs": "" },
-                        on: { input: _vm.searchTimeOut2 },
-                        model: {
-                          value: _vm.color,
-                          callback: function($$v) {
-                            _vm.color = $$v
-                          },
-                          expression: "color"
-                        }
-                      })
+                      _c(
+                        "v-card",
+                        {
+                          staticClass: "overflow-hidden",
+                          attrs: { height: "550", width: "500" }
+                        },
+                        [
+                          _c(
+                            "v-stepper",
+                            {
+                              staticStyle: { width: "500px" },
+                              model: {
+                                value: _vm.toolStepper,
+                                callback: function($$v) {
+                                  _vm.toolStepper = $$v
+                                },
+                                expression: "toolStepper"
+                              }
+                            },
+                            [
+                              _c(
+                                "v-stepper-items",
+                                [
+                                  _c(
+                                    "v-stepper-content",
+                                    { attrs: { step: "1" } },
+                                    [
+                                      _c("v-card-title", [_vm._v("Pen")]),
+                                      _vm._v(" "),
+                                      _c("v-color-picker", {
+                                        staticClass: "mb-5 ml-3",
+                                        on: { input: _vm.searchTimeOut },
+                                        model: {
+                                          value: _vm.penColor,
+                                          callback: function($$v) {
+                                            _vm.penColor = $$v
+                                          },
+                                          expression: "penColor"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        { attrs: { cols: "12", sm: "11" } },
+                                        [
+                                          _c("v-slider", {
+                                            attrs: {
+                                              label: "lineWidth",
+                                              min: "4",
+                                              max: "25",
+                                              "thumb-label": "always",
+                                              "thumb-color": "pink",
+                                              color: "pink"
+                                            },
+                                            on: { input: _vm.searchTimeOut },
+                                            model: {
+                                              value: _vm.lineWidth,
+                                              callback: function($$v) {
+                                                _vm.lineWidth = $$v
+                                              },
+                                              expression: "lineWidth"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-col",
+                                        {
+                                          staticClass: "d-flex",
+                                          attrs: { cols: "12", sm: "12" }
+                                        },
+                                        [
+                                          _c("v-select", {
+                                            staticClass: "px-1",
+                                            attrs: {
+                                              items: _vm.lineCaps,
+                                              label: "lineCap",
+                                              outlined: ""
+                                            },
+                                            on: { input: _vm.searchTimeOut },
+                                            model: {
+                                              value: _vm.lineCap,
+                                              callback: function($$v) {
+                                                _vm.lineCap = $$v
+                                              },
+                                              expression: "lineCap"
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c("v-select", {
+                                            staticClass: "px-1",
+                                            attrs: {
+                                              items: _vm.lineJoins,
+                                              label: "lineJoin",
+                                              outlined: ""
+                                            },
+                                            on: { input: _vm.searchTimeOut },
+                                            model: {
+                                              value: _vm.lineJoin,
+                                              callback: function($$v) {
+                                                _vm.lineJoin = $$v
+                                              },
+                                              expression: "lineJoin "
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-stepper-content",
+                                    { attrs: { step: "2" } },
+                                    [
+                                      _c(
+                                        "v-card-title",
+                                        { staticClass: "headline" },
+                                        [
+                                          _vm._v(
+                                            "\n                      Filters\n                  "
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "opacity",
+                                          min: "4",
+                                          max: "10",
+                                          "thumb-label": "always",
+                                          "thumb-color": "pink",
+                                          color: "pink"
+                                        },
+                                        on: { input: _vm.searchTimeOut2 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value: _vm.opacity,
+                                                    callback: function($$v) {
+                                                      _vm.opacity = $$v
+                                                    },
+                                                    expression: "opacity"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.opacity,
+                                          callback: function($$v) {
+                                            _vm.opacity = $$v
+                                          },
+                                          expression: "opacity"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "blur",
+                                          min: "0",
+                                          max: "10",
+                                          "thumb-label": "always",
+                                          "thumb-color": "purple",
+                                          color: "purple"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject.blur,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "blur",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.blur"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.blur,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "blur",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.blur"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "brightness",
+                                          min: "35",
+                                          max: "250",
+                                          "thumb-label": "always",
+                                          "thumb-color": "red",
+                                          color: "red"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject
+                                                        .brightness,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "brightness",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.brightness"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.brightness,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "brightness",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.brightness"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "contrast",
+                                          min: "0",
+                                          max: "400",
+                                          "thumb-label": "always",
+                                          "thumb-color": "orange",
+                                          color: "orange"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject.contrast,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "contrast",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.contrast"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.contrast,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "contrast",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.contrast"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "grayscale",
+                                          min: "0",
+                                          max: "100",
+                                          "thumb-label": "always",
+                                          "thumb-color": "indigo",
+                                          color: "indigo"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject
+                                                        .grayscale,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "grayscale",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.grayscale"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.grayscale,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "grayscale",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.grayscale"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "hue-rotate",
+                                          min: "0",
+                                          max: "359",
+                                          "thumb-label": "always",
+                                          "thumb-color": "green",
+                                          color: "green"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject
+                                                        .hueRotate,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "hueRotate",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.hueRotate"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.hueRotate,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "hueRotate",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.hueRotate"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "invert",
+                                          min: "0",
+                                          max: "100",
+                                          "thumb-label": "always",
+                                          "thumb-color": "deep-purple",
+                                          color: "deep-purple"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject.invert,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "invert",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.invert"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.invert,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "invert",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.invert"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "saturate",
+                                          min: "0",
+                                          max: "300",
+                                          "thumb-label": "always",
+                                          "thumb-color": "light-blue",
+                                          color: "light-blue"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject.saturate,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "saturate",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.saturate"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.saturate,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "saturate",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.saturate"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "sepia",
+                                          min: "0",
+                                          max: "100",
+                                          "thumb-label": "always",
+                                          "thumb-color": "lime",
+                                          color: "lime"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        scopedSlots: _vm._u([
+                                          {
+                                            key: "append",
+                                            fn: function() {
+                                              return [
+                                                _c("v-text-field", {
+                                                  staticClass: "mt-0 pt-0",
+                                                  staticStyle: {
+                                                    width: "60px"
+                                                  },
+                                                  attrs: {
+                                                    "hide-details": "",
+                                                    "single-line": "",
+                                                    type: "number"
+                                                  },
+                                                  model: {
+                                                    value:
+                                                      _vm.filterObject.sepia,
+                                                    callback: function($$v) {
+                                                      _vm.$set(
+                                                        _vm.filterObject,
+                                                        "sepia",
+                                                        $$v
+                                                      )
+                                                    },
+                                                    expression:
+                                                      "filterObject.sepia"
+                                                  }
+                                                })
+                                              ]
+                                            },
+                                            proxy: true
+                                          }
+                                        ]),
+                                        model: {
+                                          value: _vm.filterObject.sepia,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "sepia",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.sepia"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-stepper-content",
+                                    { attrs: { step: "3" } },
+                                    [
+                                      _c("v-card", {
+                                        staticClass: "mb-12",
+                                        attrs: {
+                                          color: "grey lighten-1",
+                                          height: "200px"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
                     ],
                     1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-stepper",
+                    {
+                      staticStyle: { width: "1000px" },
+                      model: {
+                        value: _vm.toolStepper,
+                        callback: function($$v) {
+                          _vm.toolStepper = $$v
+                        },
+                        expression: "toolStepper"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-stepper-items",
+                        [
+                          _c(
+                            "v-stepper-content",
+                            { attrs: { step: "1" } },
+                            [
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "align-self-start mr-2",
+                                  attrs: { id: "eraser-button" },
+                                  on: { click: _vm.eraser }
+                                },
+                                [_vm._v("消しゴム")]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "align-self-start mr-2",
+                                  attrs: { id: "clear-button" },
+                                  on: { click: _vm.clear }
+                                },
+                                [_vm._v("クリア")]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-stepper-content",
+                            { attrs: { step: "2" } },
+                            [
+                              _c(
+                                "v-col",
+                                {
+                                  staticClass: "d-flex",
+                                  attrs: { cols: "12", sm: "12" }
+                                },
+                                [
+                                  _c(
+                                    "v-row",
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { color: "pink" },
+                                          on: { click: _vm.reset }
+                                        },
+                                        [_vm._v("reset")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { color: "purple" },
+                                          on: { click: _vm.rotate }
+                                        },
+                                        [_vm._v("rotate")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { color: "black" },
+                                          on: { click: _vm.back }
+                                        },
+                                        [_vm._v("back")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-sheet",
+                                        {
+                                          attrs: {
+                                            elevation: "8",
+                                            "max-width": "520"
+                                          }
+                                        },
+                                        [
+                                          _c(
+                                            "v-slide-group",
+                                            {
+                                              staticClass: "pa-4",
+                                              attrs: {
+                                                "center-active": "",
+                                                "show-arrows": ""
+                                              },
+                                              model: {
+                                                value: _vm.model,
+                                                callback: function($$v) {
+                                                  _vm.model = $$v
+                                                },
+                                                expression: "model"
+                                              }
+                                            },
+                                            _vm._l(13, function(n) {
+                                              return _c("v-slide-item", {
+                                                key: n,
+                                                scopedSlots: _vm._u(
+                                                  [
+                                                    {
+                                                      key: "default",
+                                                      fn: function(ref) {
+                                                        var active = ref.active
+                                                        var toggle = ref.toggle
+                                                        return [
+                                                          _c(
+                                                            "v-card",
+                                                            {
+                                                              staticClass:
+                                                                "ma-1",
+                                                              attrs: {
+                                                                color: active
+                                                                  ? "primary"
+                                                                  : "grey lighten-1",
+                                                                height: "117.3",
+                                                                width: "113.3"
+                                                              },
+                                                              on: {
+                                                                click: _vm.click
+                                                              }
+                                                            },
+                                                            [
+                                                              _c("canvas", {
+                                                                attrs: {
+                                                                  id: "pic" + n,
+                                                                  height:
+                                                                    "113.3",
+                                                                  width: "113.3"
+                                                                },
+                                                                on: {
+                                                                  click: toggle
+                                                                }
+                                                              }),
+                                                              _vm._v(" "),
+                                                              _c(
+                                                                "v-row",
+                                                                {
+                                                                  staticClass:
+                                                                    "fill-height",
+                                                                  attrs: {
+                                                                    align:
+                                                                      "center",
+                                                                    justify:
+                                                                      "center"
+                                                                  }
+                                                                },
+                                                                [
+                                                                  _c(
+                                                                    "v-scale-transition",
+                                                                    [
+                                                                      active
+                                                                        ? _c(
+                                                                            "v-icon",
+                                                                            {
+                                                                              attrs: {
+                                                                                color:
+                                                                                  "white",
+                                                                                size:
+                                                                                  "48"
+                                                                              },
+                                                                              domProps: {
+                                                                                textContent: _vm._s(
+                                                                                  "mdi-close-circle-outline"
+                                                                                )
+                                                                              }
+                                                                            }
+                                                                          )
+                                                                        : _vm._e()
+                                                                    ],
+                                                                    1
+                                                                  )
+                                                                ],
+                                                                1
+                                                              )
+                                                            ],
+                                                            1
+                                                          )
+                                                        ]
+                                                      }
+                                                    }
+                                                  ],
+                                                  null,
+                                                  true
+                                                )
+                                              })
+                                            }),
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-color-picker", {
+                                    attrs: { "hide-inputs": "" },
+                                    on: { input: _vm.searchTimeOut2 },
+                                    model: {
+                                      value: _vm.color,
+                                      callback: function($$v) {
+                                        _vm.color = $$v
+                                      },
+                                      expression: "color"
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-stepper-content", { attrs: { step: "3" } }, [
+                            _vm.isActive
+                              ? _c(
+                                  "div",
+                                  [
+                                    _c("v-slider", {
+                                      attrs: {
+                                        min: "10",
+                                        max: "64",
+                                        "thumb-label": "always",
+                                        "thumb-size": 30
+                                      },
+                                      model: {
+                                        value: _vm.fontSize,
+                                        callback: function($$v) {
+                                          _vm.fontSize = $$v
+                                        },
+                                        expression: "fontSize"
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("v-color-picker", {
+                                      model: {
+                                        value: _vm.inputPosition.color,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.inputPosition,
+                                            "color",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "inputPosition.color"
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-btn-toggle",
+                                      {
+                                        attrs: {
+                                          dense: "",
+                                          "background-color": "primary",
+                                          dark: "",
+                                          multiple: ""
+                                        },
+                                        model: {
+                                          value: _vm.toggle_multiple,
+                                          callback: function($$v) {
+                                            _vm.toggle_multiple = $$v
+                                          },
+                                          expression: "toggle_multiple"
+                                        }
+                                      },
+                                      [_c("v-btn", [_vm._v("Bold")])],
+                                      1
+                                    )
+                                  ],
+                                  1
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _vm.isActiveEditText
+                              ? _c(
+                                  "div",
+                                  [
+                                    _c("v-slider", {
+                                      attrs: {
+                                        min: "10",
+                                        max: "64",
+                                        "thumb-label": "always",
+                                        "thumb-size": 30
+                                      },
+                                      model: {
+                                        value: _vm.selectedFontSize,
+                                        callback: function($$v) {
+                                          _vm.selectedFontSize = $$v
+                                        },
+                                        expression: "selectedFontSize"
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("v-color-picker", {
+                                      model: {
+                                        value: _vm.selectedInputPosition.color,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.selectedInputPosition,
+                                            "color",
+                                            $$v
+                                          )
+                                        },
+                                        expression:
+                                          "selectedInputPosition.color"
+                                      }
+                                    }),
+                                    _vm._v("aaa\n                  ")
+                                  ],
+                                  1
+                                )
+                              : _vm._e()
+                          ])
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary" },
+                      on: { click: _vm.getImage }
+                    },
+                    [_vm._v("決定")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.e1 = 1
+                        }
+                      }
+                    },
+                    [_vm._v("戻る")]
                   )
                 ],
                 1
               ),
               _vm._v(" "),
               _c("v-stepper-content", { attrs: { step: "3" } }, [
-                _vm.isActive
-                  ? _c(
-                      "div",
-                      [
-                        _c("v-slider", {
-                          attrs: {
-                            min: "10",
-                            max: "64",
-                            "thumb-label": "always",
-                            "thumb-size": 30
-                          },
-                          model: {
-                            value: _vm.fontSize,
-                            callback: function($$v) {
-                              _vm.fontSize = $$v
-                            },
-                            expression: "fontSize"
+                _c("canvas", {
+                  staticClass: "mx-auto",
+                  attrs: { id: "concat", width: "500", height: "500" }
+                }),
+                _c(
+                  "div",
+                  [
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { color: "primary" },
+                        on: { click: _vm.submit }
+                      },
+                      [_vm._v("トリミング")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.e1 = 2
                           }
-                        }),
-                        _vm._v(" "),
-                        _c("v-color-picker", {
-                          model: {
-                            value: _vm.inputPosition.color,
-                            callback: function($$v) {
-                              _vm.$set(_vm.inputPosition, "color", $$v)
-                            },
-                            expression: "inputPosition.color"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c(
-                          "v-btn-toggle",
-                          {
-                            attrs: {
-                              dense: "",
-                              "background-color": "primary",
-                              dark: "",
-                              multiple: ""
-                            },
-                            model: {
-                              value: _vm.toggle_multiple,
-                              callback: function($$v) {
-                                _vm.toggle_multiple = $$v
-                              },
-                              expression: "toggle_multiple"
-                            }
-                          },
-                          [_c("v-btn", [_vm._v("Bold")])],
-                          1
-                        )
-                      ],
-                      1
+                        }
+                      },
+                      [_vm._v("\n          戻る\n          ")]
                     )
-                  : _vm._e(),
-                _vm._v(" "),
-                _vm.isActiveEditText
-                  ? _c(
-                      "div",
-                      [
-                        _c("v-slider", {
-                          attrs: {
-                            min: "10",
-                            max: "64",
-                            "thumb-label": "always",
-                            "thumb-size": 30
-                          },
-                          model: {
-                            value: _vm.selectedFontSize,
-                            callback: function($$v) {
-                              _vm.selectedFontSize = $$v
-                            },
-                            expression: "selectedFontSize"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-color-picker", {
-                          model: {
-                            value: _vm.selectedInputPosition.color,
-                            callback: function($$v) {
-                              _vm.$set(_vm.selectedInputPosition, "color", $$v)
-                            },
-                            expression: "selectedInputPosition.color"
-                          }
-                        }),
-                        _vm._v("aaa\n                  ")
-                      ],
-                      1
-                    )
-                  : _vm._e()
+                  ],
+                  1
+                )
               ])
             ],
             1
           )
         ],
         1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-btn",
-        { attrs: { color: "primary" }, on: { click: _vm.getImage } },
-        [_vm._v("実験")]
-      ),
-      _vm._v(" "),
-      _c("v-btn", { attrs: { color: "primary" }, on: { click: _vm.submit } }, [
-        _vm._v("トリミング")
-      ]),
-      _vm._v(" "),
-      _c("canvas", { attrs: { id: "concat", width: "500", height: "500" } }),
-      _vm._v(" "),
-      _c("h2", [_vm._v("画像のトリミング")]),
-      _vm._v(" "),
-      _c("hr"),
-      _vm._v(" "),
-      _c("h3", [_vm._v("画像を選択")]),
-      _vm._v(" "),
-      _c("input-file", {
-        on: {
-          selectedImage: function($event) {
-            return _vm.loadImage($event)
-          }
-        }
-      }),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c(
-        "v-container",
-        [
-          _c("v-layout", [
-            _vm.imgSrc !== ""
-              ? _c(
-                  "div",
-                  [
-                    _c("vue-cropper", {
-                      ref: "cropper",
-                      attrs: {
-                        guides: true,
-                        "view-mode": 2,
-                        "auto-crop-area": 0.5,
-                        "min-container-width": 500,
-                        "min-container-height": 500,
-                        background: true,
-                        rotatable: false,
-                        src: _vm.imgSrc,
-                        "img-style": { width: "500px", height: "500px" },
-                        "aspect-ratio": 1 / 1,
-                        "drag-mode": "crop",
-                        preview: ".preview"
-                      }
-                    })
-                  ],
-                  1
-                )
-              : _vm._e(),
-            _vm._v(" "),
-            _c("br"),
-            _vm._v(" "),
-            _c("p", [_vm._v("Preview")]),
-            _vm._v(" "),
-            _c("div", { staticClass: "preview" })
-          ])
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("br"),
-      _vm._v(" "),
-      _c("br")
+      )
     ],
     1
   )
@@ -74896,7 +74590,6 @@ vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('post', __webpack_require_
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('practice', __webpack_require__(/*! ./components/pages/Practice.vue */ "./resources/ts/components/pages/Practice.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('crop', __webpack_require__(/*! ./components/organisms/Crop.vue */ "./resources/ts/components/organisms/Crop.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('header-bar', __webpack_require__(/*! ./components/globals/Header.vue */ "./resources/ts/components/globals/Header.vue").default);
-vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('crop-canvas', __webpack_require__(/*! ./components/organisms/CropCanvas.vue */ "./resources/ts/components/organisms/CropCanvas.vue").default);
 const app = new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
     el: '#app',
     router: _routes__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -74950,7 +74643,9 @@ function bootstrap() {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ExampleComponent_vue_vue_type_template_id_e6486658___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=template&id=e6486658& */ "./resources/ts/components/ExampleComponent.vue?vue&type=template&id=e6486658&");
 /* harmony import */ var _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=script&lang=js& */ "./resources/ts/components/ExampleComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
 
 
 
@@ -74958,7 +74653,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _ExampleComponent_vue_vue_type_template_id_e6486658___WEBPACK_IMPORTED_MODULE_0__["render"],
   _ExampleComponent_vue_vue_type_template_id_e6486658___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -74987,6 +74682,22 @@ component.options.__file = "resources/ts/components/ExampleComponent.vue"
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&":
+/*!***************************************************************************************!*\
+  !*** ./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css& ***!
+  \***************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--7-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
 
 /***/ }),
 
@@ -76012,93 +75723,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/ts/components/organisms/CropCanvas.vue":
-/*!**********************************************************!*\
-  !*** ./resources/ts/components/organisms/CropCanvas.vue ***!
-  \**********************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CropCanvas.vue?vue&type=template&id=1b90a5d2& */ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&");
-/* harmony import */ var _CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CropCanvas.vue?vue&type=script&lang=js& */ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CropCanvas.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
-  _CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  null,
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/ts/components/organisms/CropCanvas.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&":
-/*!***********************************************************************************!*\
-  !*** ./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js& ***!
-  \***********************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&":
-/*!*******************************************************************************************!*\
-  !*** ./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css& ***!
-  \*******************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
- /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
-
-/***/ }),
-
-/***/ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&":
-/*!*****************************************************************************************!*\
-  !*** ./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2& ***!
-  \*****************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=template&id=1b90a5d2& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
 /***/ "./resources/ts/components/organisms/Drawer.vue":
 /*!******************************************************!*\
   !*** ./resources/ts/components/organisms/Drawer.vue ***!
@@ -76163,6 +75787,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Drawer_vue_vue_type_template_id_6ba3ed00___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Drawer_vue_vue_type_template_id_6ba3ed00___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/ImageEditer.vue":
+/*!***********************************************************!*\
+  !*** ./resources/ts/components/organisms/ImageEditer.vue ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ImageEditer_vue_vue_type_template_id_e79fa11a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ImageEditer.vue?vue&type=template&id=e79fa11a& */ "./resources/ts/components/organisms/ImageEditer.vue?vue&type=template&id=e79fa11a&");
+/* harmony import */ var _ImageEditer_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ImageEditer.vue?vue&type=script&lang=js& */ "./resources/ts/components/organisms/ImageEditer.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _ImageEditer_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ImageEditer.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _ImageEditer_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ImageEditer_vue_vue_type_template_id_e79fa11a___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ImageEditer_vue_vue_type_template_id_e79fa11a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/ts/components/organisms/ImageEditer.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/ImageEditer.vue?vue&type=script&lang=js&":
+/*!************************************************************************************!*\
+  !*** ./resources/ts/components/organisms/ImageEditer.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./ImageEditer.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css&":
+/*!********************************************************************************************!*\
+  !*** ./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css& ***!
+  \********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./ImageEditer.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/ImageEditer.vue?vue&type=template&id=e79fa11a&":
+/*!******************************************************************************************!*\
+  !*** ./resources/ts/components/organisms/ImageEditer.vue?vue&type=template&id=e79fa11a& ***!
+  \******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_template_id_e79fa11a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./ImageEditer.vue?vue&type=template&id=e79fa11a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/ImageEditer.vue?vue&type=template&id=e79fa11a&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_template_id_e79fa11a___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ImageEditer_vue_vue_type_template_id_e79fa11a___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

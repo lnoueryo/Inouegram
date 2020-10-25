@@ -10,8 +10,8 @@
 import Vue, { PropType } from 'vue'
 export default Vue.extend({
     props: {
-        iconButtonIcons: Object as PropType<{icons: string}>,
-        iconButtonUrl: Object as PropType<{url: string}>,
+        iconButtonIcons: Array as PropType<{icons: string}>,
+        iconButtonUrl: Array as PropType<{url: string}>,
     }
     // props: ['iconButtonIcons', 'iconButtonUrl'],
 })
