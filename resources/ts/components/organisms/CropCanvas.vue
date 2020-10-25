@@ -118,7 +118,7 @@
                     <v-btn color="pink" @click="reset">reset</v-btn>
                     <v-btn color="purple" @click="rotate">rotate</v-btn>
                     <v-btn color="black" @click="back">back</v-btn>
-                    <v-sheet elevation="8" max-width="520" height="136">
+                    <v-sheet elevation="8" max-width="520">
                         <v-slide-group v-model="model" class="pa-4" center-active show-arrows>
                             <v-slide-item v-for="n in 13" :key="n" v-slot:default="{ active, toggle }">
                                 <v-card :color="active ? 'primary' : 'grey lighten-1'" class="ma-1" height="117.3" width="113.3" @click="click">
@@ -158,7 +158,6 @@ export default {
     data() {
       return {
         value: 0,
-        photo: '',
         canvasMode: 'penBlack',
         drawCanvas: null,
         drawCanvasctx: null,
@@ -191,13 +190,13 @@ export default {
         scrollY: '',
         startX: '',
         startY: '',
-        photoctx: '',
         isActive: false,
         isActiveEditText: false,
         dialog: false,
         selectedEditTextMessage: '',
         inputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
         selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+        abc: '',
       };
     },
     computed: {
@@ -239,38 +238,37 @@ export default {
         this.drawCanvasctx.miterLimit  = 50;
         this.drawCanvasctx.strokeStyle = '#000000';
 
-        // this.cover = document.getElementById('cover');
-        // this.coverctx = this.cover.getContext('2d');
-        // var image = new Image();
-        // image.src = '/storage/image/panda.png';
-        // var that = this;
-        // image.onload = function(){
-        //   that.coverctx.drawImage(image,0,0,500,500);
-        // };
+        this.cover = document.getElementById('cover');
+        this.coverctx = this.cover.getContext('2d');
+        var image = new Image();
+        image.src = '/storage/image/panda.png';
+        var that = this;
+        image.onload = function(){
+          that.coverctx.drawImage(image,0,0,500,500);
+        };
 
-        // var that = this;
-        // setTimeout(function () {
-        //     that.abc = that.cover.toDataURL();
-        // }, 500)
-        // var canvas = [];
-        // var canvasCtx = [];
-        // var coverImage = [];
-        // var that = this;
-        // setTimeout(function () {
-        //     for (let i = 1; i < 14; i++) {
-        //         canvas[i] = document.getElementById("pic" + i);
-        //         canvasCtx[i] = canvas[i].getContext('2d');
-        //         canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-        //         canvasCtx[i].globalAlpha = 1;
-        //         coverImage[i] = new Image();
-        //         coverImage[i].src = that.abc;
-        //         coverImage[i].onload = function () {
-        //             canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-        //         };
-        //     }
-        // }, 500);
+        var that = this;
+        setTimeout(function () {
+            that.abc = that.cover.toDataURL();
+        }, 500)
+        var canvas = [];
+        var canvasCtx = [];
+        var coverImage = [];
+        var that = this;
+        setTimeout(function () {
+            for (let i = 1; i < 14; i++) {
+                canvas[i] = document.getElementById("pic" + i);
+                canvasCtx[i] = canvas[i].getContext('2d');
+                canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+                canvasCtx[i].globalAlpha = 1;
+                coverImage[i] = new Image();
+                coverImage[i].src = image.src;
+                coverImage[i].onload = function () {
+                    canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+                };
+            }
+        }, 500);
         this.coverctx.save();
-
         // text
         this.textCanvas = document.getElementById("text");
         this.textCanvasctx = this.textCanvas.getContext("2d");

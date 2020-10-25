@@ -6,7 +6,8 @@
 <br>
 <br>
 {{--  <form id="image_form" action="{{ url('/api/create') }}" method="POST">  --}}
-<post></post>
+{{--  <post></post>  --}}
+<crop-canvas></crop-canvas>
     {{--  @csrf  --}}
     {{--  <input id="image" type="hidden" name="image" value="">  --}}
     {{--  <input id="submit_image" type="submit" name="submit" value="送信">

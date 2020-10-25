@@ -2420,7 +2420,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       drawCanvasctx: null,
       isDrag: false,
       cover: null,
-      coverctx: this.$store.state.post.cropImage[0],
+      coverctx: null,
       penColor: '#000000',
       lineWidth: 5,
       lineCaps: ['square', 'butt', 'round'],
@@ -2495,45 +2495,36 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.drawCanvasctx.lineJoin = 'round';
     this.drawCanvasctx.lineWidth = 5;
     this.drawCanvasctx.miterLimit = 50;
-    this.drawCanvasctx.strokeStyle = '#000000';
-    this.cover = document.getElementById('cover');
-    this.coverctx = this.cover.getContext('2d');
-    var image = new Image();
-    image.src = this.$store.state.post.cropImage[0];
-    image.src = '/storage/image/panda.png';
-    var that = this;
+    this.drawCanvasctx.strokeStyle = '#000000'; // this.cover = document.getElementById('cover');
+    // this.coverctx = this.cover.getContext('2d');
+    // var image = new Image();
+    // image.src = '/storage/image/panda.png';
+    // var that = this;
+    // image.onload = function(){
+    //   that.coverctx.drawImage(image,0,0,500,500);
+    // };
+    // var that = this;
+    // setTimeout(function () {
+    //     that.abc = that.cover.toDataURL();
+    // }, 500)
+    // var canvas = [];
+    // var canvasCtx = [];
+    // var coverImage = [];
+    // var that = this;
+    // setTimeout(function () {
+    //     for (let i = 1; i < 14; i++) {
+    //         canvas[i] = document.getElementById("pic" + i);
+    //         canvasCtx[i] = canvas[i].getContext('2d');
+    //         canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+    //         canvasCtx[i].globalAlpha = 1;
+    //         coverImage[i] = new Image();
+    //         coverImage[i].src = that.abc;
+    //         coverImage[i].onload = function () {
+    //             canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+    //         };
+    //     }
+    // }, 500);
 
-    image.onload = function () {
-      that.coverctx.drawImage(image, 0, 0, 500, 500);
-    };
-
-    console.log(this.$store.state.post.cropImage[0]);
-    var that = this;
-    setTimeout(function () {
-      that.$store.state.post.cropImage = that.cover.toDataURL();
-    }, 500);
-    var canvas = [];
-    var canvasCtx = [];
-    var coverImage = [];
-    var that = this;
-    setTimeout(function () {
-      var _loop = function _loop(i) {
-        canvas[i] = document.getElementById("pic" + i);
-        canvasCtx[i] = canvas[i].getContext('2d');
-        canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-        canvasCtx[i].globalAlpha = 1;
-        coverImage[i] = new Image();
-        coverImage[i].src = that.$store.state.post.cropImage;
-
-        coverImage[i].onload = function () {
-          canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-        };
-      };
-
-      for (var i = 1; i < 14; i++) {
-        _loop(i);
-      }
-    }, 500);
     this.coverctx.save(); // text
 
     this.textCanvas = document.getElementById("text");
@@ -2554,8 +2545,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.timer = setTimeout(function () {
-        console.log(_this.penColor);
-
         _this.pen();
       }, 200);
     },
@@ -2604,7 +2593,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx.clearRect(0, 0, 500, 500);
       this.coverctx.restore();
       var picImage = new Image();
-      picImage.src = this.$store.state.post.cropImage;
+      picImage.src = this.abc;
       var that = this;
 
       picImage.onload = function () {
@@ -2622,7 +2611,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx.fillRect(0, 0, 500, 500);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
-      picImage.src = this.$store.state.post.cropImage;
+      picImage.src = this.abc;
       var that = this;
 
       picImage.onload = function () {
@@ -2637,7 +2626,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx.fillRect(0, 0, 500, 500);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
-      picImage.src = this.$store.state.post.cropImage;
+      picImage.src = this.abc;
       var that = this;
 
       picImage.onload = function () {
@@ -2665,7 +2654,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.cover = document.getElementById('cover');
       this.coverctx = this.cover.getContext('2d');
       var myImage = new Image();
-      myImage.src = this.$store.state.post.cropImage;
+      myImage.src = this.abc;
       var that = this;
 
       myImage.onload = function () {
@@ -2674,7 +2663,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
 
       this.color = '#00000080';
-      that.searchTimeOut2();
+      that.searchTimeOut();
     },
     searchTimeOut2: function searchTimeOut2() {
       var _this2 = this;
@@ -2708,7 +2697,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var coverImage = [];
       var that = this;
       setTimeout(function () {
-        var _loop2 = function _loop2(i) {
+        var _loop = function _loop(i) {
           canvas[i] = document.getElementById("pic" + i);
           canvasCtx[i] = canvas[i].getContext('2d');
           canvasCtx[i].clearRect(0, 0, 500, 500);
@@ -2718,7 +2707,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           canvasCtx[i].filter = that.filters;
           canvasCtx[i].fillRect(0, 0, 500, 500);
           coverImage[i] = new Image();
-          coverImage[i].src = that.$store.state.post.cropImage;
+          coverImage[i].src = that.abc;
 
           coverImage[i].onload = function () {
             canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
@@ -2726,7 +2715,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         };
 
         for (var i = 1; i < 14; i++) {
-          _loop2(i);
+          _loop(i);
         }
       }, 500);
     },
@@ -2756,11 +2745,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillstyle = this.color;
       this.coverctx.filter = this.filters;
-      console.log(this.coverctx.filter);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       this.coverctx.fillRect(0, 0, 500, 500);
       var picImage = new Image();
-      picImage.src = this.$store.state.post.cropImage;
+      picImage.src = this.abc;
       var that = this;
 
       picImage.onload = function () {
@@ -2808,7 +2796,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
       this.drawText();
       this.selectedEditText = -1;
-      console.log(editText.width);
     },
     drawText: function drawText() {
       this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
@@ -3327,15 +3314,701 @@ __webpack_require__.r(__webpack_exports__);
       var height = background.naturalHeight;
 
       background.onload = function () {
-        ctx.drawImage(background, 0, 0, 600, 600);
+        ctx.drawImage(background, 0, 0, 500, 500);
       };
 
       this.$store.dispatch('cropImage', cropImage);
+      var that = this;
+      setTimeout(function () {
+        that.abc = cropImage;
+        console.log(that.abc);
+      }, 500);
+      var canvas = [];
+      var canvasCtx = [];
+      var coverImage = [];
+      var that = this;
+      setTimeout(function () {
+        var _loop = function _loop(i) {
+          canvas[i] = document.getElementById("pic" + i);
+          canvasCtx[i] = canvas[i].getContext('2d');
+          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+          canvasCtx[i].globalAlpha = 1;
+          coverImage[i] = new Image();
+          coverImage[i].src = that.abc;
+
+          coverImage[i].onload = function () {
+            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+          };
+        };
+
+        for (var i = 1; i < 14; i++) {
+          _loop(i);
+        }
+      }, 500);
     },
     croppedInfo: function croppedInfo() {
       // var croppedInfo = this.cropImg.toDataURL();
-      document.getElementById('cropped-image').value = this.cropImg;
-      console.log(document.getElementById('cropped-image').value);
+      document.getElementById('cropped-image').value = this.cropImg; // console.log(document.getElementById('cropped-image').value);
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "DrawTool",
+  data: function data() {
+    var _ref;
+
+    return _ref = {
+      value: 0,
+      canvasMode: 'penBlack',
+      drawCanvas: null,
+      drawCanvasctx: null,
+      isDrag: false,
+      cover: null,
+      coverctx: null,
+      penColor: '#000000',
+      lineWidth: 5,
+      lineCaps: ['square', 'butt', 'round'],
+      lineCap: 'round',
+      lineJoins: ['bebel', 'miter', 'round'],
+      lineJoin: 'round',
+      filterObject: {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      },
+      globalCompositeOperation: ['lighter', 'darken', 'overlay', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity']
+    }, _defineProperty(_ref, "isDrag", false), _defineProperty(_ref, "model", null), _defineProperty(_ref, "globalAlpha", 1), _defineProperty(_ref, "color", '#00000080'), _defineProperty(_ref, "timer", ''), _defineProperty(_ref, "filters", ''), _defineProperty(_ref, "toggle_multiple", []), _defineProperty(_ref, "textCanvas", ''), _defineProperty(_ref, "textCanvasctx", ''), _defineProperty(_ref, "texts", []), _defineProperty(_ref, "selectedText", -1), _defineProperty(_ref, "selectedEditText", -1), _defineProperty(_ref, "offsetX", ''), _defineProperty(_ref, "offsetY", ''), _defineProperty(_ref, "scrollX", ''), _defineProperty(_ref, "scrollY", ''), _defineProperty(_ref, "startX", ''), _defineProperty(_ref, "startY", ''), _defineProperty(_ref, "isActive", false), _defineProperty(_ref, "isActiveEditText", false), _defineProperty(_ref, "dialog", false), _defineProperty(_ref, "selectedEditTextMessage", ''), _defineProperty(_ref, "inputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '500',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _defineProperty(_ref, "selectedInputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '500',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _defineProperty(_ref, "abc", ''), _ref;
+  },
+  computed: {
+    el: function el() {
+      return Number(this.value) + 1;
+    },
+    opacity: {
+      get: function get() {
+        return this.globalAlpha * 10;
+      },
+      set: function set(newValue) {
+        this.globalAlpha = newValue / 10;
+      }
+    },
+    fontSize: {
+      get: function get() {
+        return this.inputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.inputPosition.fontSize = newValue + 'px';
+      }
+    },
+    selectedFontSize: {
+      get: function get() {
+        return this.selectedInputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.selectedInputPosition.fontSize = newValue + 'px';
+      }
+    }
+  },
+  mounted: function mounted() {
+    // canvas
+    this.drawCanvas = document.getElementById('drawCanvas');
+    this.drawCanvasctx = this.drawCanvas.getContext('2d');
+    this.drawCanvasctx.lineCap = 'round';
+    this.drawCanvasctx.lineJoin = 'round';
+    this.drawCanvasctx.lineWidth = 5;
+    this.drawCanvasctx.miterLimit = 50;
+    this.drawCanvasctx.strokeStyle = '#000000';
+    this.cover = document.getElementById('cover');
+    this.coverctx = this.cover.getContext('2d');
+    var image = new Image();
+    image.src = '/storage/image/panda.png';
+    var that = this;
+
+    image.onload = function () {
+      that.coverctx.drawImage(image, 0, 0, 500, 500);
+    };
+
+    var that = this;
+    setTimeout(function () {
+      that.abc = that.cover.toDataURL();
+    }, 500);
+    var canvas = [];
+    var canvasCtx = [];
+    var coverImage = [];
+    var that = this;
+    setTimeout(function () {
+      var _loop = function _loop(i) {
+        canvas[i] = document.getElementById("pic" + i);
+        canvasCtx[i] = canvas[i].getContext('2d');
+        canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+        canvasCtx[i].globalAlpha = 1;
+        coverImage[i] = new Image();
+        coverImage[i].src = image.src;
+
+        coverImage[i].onload = function () {
+          canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+        };
+      };
+
+      for (var i = 1; i < 14; i++) {
+        _loop(i);
+      }
+    }, 500);
+    this.coverctx.save(); // text
+
+    this.textCanvas = document.getElementById("text");
+    this.textCanvasctx = this.textCanvas.getContext("2d");
+    var canvasOffset = this.textCanvas.getBoundingClientRect();
+    this.offsetX = canvasOffset.left;
+    this.offsetY = canvasOffset.top;
+    this.scrollX = this.textCanvas.scrollLeft;
+    this.scrollY = this.textCanvas.scrollTop;
+  },
+  methods: {
+    searchTimeOut: function searchTimeOut() {
+      var _this = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this.pen();
+      }, 200);
+    },
+    pen: function pen() {
+      this.canvasMode = 'pen';
+      this.drawCanvasctx.globalCompositeOperation = 'source-over';
+      this.drawCanvasctx.lineCap = this.lineCap;
+      this.drawCanvasctx.lineJoin = this.lineJoin;
+      this.drawCanvasctx.lineWidth = this.lineWidth;
+      this.drawCanvasctx.strokeStyle = this.penColor;
+    },
+    eraser: function eraser() {
+      this.canvasMode = 'eraser';
+      this.drawCanvasctx.lineCap = 'square';
+      this.drawCanvasctx.lineJoin = 'square';
+      this.drawCanvasctx.lineWidth = 30;
+      this.drawCanvasctx.globalCompositeOperation = 'destination-out';
+    },
+    draw: function draw(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+
+      if (!this.isDrag) {
+        return;
+      }
+
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+    },
+    dragStart: function dragStart(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+      this.drawCanvasctx.beginPath();
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+      this.isDrag = true;
+    },
+    dragEnd: function dragEnd() {
+      this.drawCanvasctx.closePath();
+      this.isDrag = false;
+    },
+    clear: function clear() {
+      this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+    },
+    back: function back() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.restore();
+      var picImage = new Image();
+      picImage.src = this.abc;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+      };
+
+      this.coverctx.fillRect(0, 0, 500, 500);
+    },
+    rotate: function rotate() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.translate(500, 0);
+      this.coverctx.rotate(90 * Math.PI / 180);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.color;
+      this.coverctx.fillRect(0, 0, 500, 500);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.abc;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    click: function click() {
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.color;
+      this.coverctx.fillRect(0, 0, 500, 500);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.abc;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    reset: function reset() {
+      this.coverctx.filter = 'grayscale(0%)';
+      this.globalAlpha = 1;
+      this.color = 'transparent';
+      this.model = '';
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.filterObject = {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      };
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.cover = document.getElementById('cover');
+      this.coverctx = this.cover.getContext('2d');
+      var myImage = new Image();
+      myImage.src = this.abc;
+      var that = this;
+
+      myImage.onload = function () {
+        that.coverctx.drawImage(myImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+
+      this.color = '#00000080';
+      that.searchTimeOut();
+    },
+    searchTimeOut2: function searchTimeOut2() {
+      var _this2 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this2.colorImage();
+      }, 200);
+    },
+    searchTimeOut3: function searchTimeOut3() {
+      var _this3 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this3.filter();
+
+        _this3.colorImage();
+      }, 200);
+    },
+    colorImage: function colorImage() {
+      var canvas = [];
+      var canvasCtx = [];
+      var coverImage = [];
+      var that = this;
+      setTimeout(function () {
+        var _loop2 = function _loop2(i) {
+          canvas[i] = document.getElementById("pic" + i);
+          canvasCtx[i] = canvas[i].getContext('2d');
+          canvasCtx[i].clearRect(0, 0, 500, 500);
+          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+          canvasCtx[i].globalAlpha = that.globalAlpha;
+          canvasCtx[i].fillStyle = that.color;
+          canvasCtx[i].filter = that.filters;
+          canvasCtx[i].fillRect(0, 0, 500, 500);
+          coverImage[i] = new Image();
+          coverImage[i].src = that.abc;
+
+          coverImage[i].onload = function () {
+            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+          };
+        };
+
+        for (var i = 1; i < 14; i++) {
+          _loop2(i);
+        }
+      }, 500);
+    },
+    filter: function filter() {
+      var filterKeys = Object.keys(this.filterObject);
+      var filterValues = Object.values(this.filterObject);
+      var filtersArray = [];
+      var newValue;
+
+      for (var i = 0; i < filterKeys.length; i++) {
+        if (filterKeys[i] == 'hueRotate') {
+          newValue = "hue-rotate(".concat(filterValues[i], "deg)");
+          filtersArray.push(newValue);
+        } else if (filterKeys[i] == 'blur') {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "px)");
+          filtersArray.push(newValue);
+        } else {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "%)");
+          filtersArray.push(newValue);
+        }
+      }
+
+      ;
+      var filters = filtersArray.join(' ');
+      this.filters = filters;
+      this.coverctx.clearRect(0, 0, 500, 500);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillstyle = this.color;
+      this.coverctx.filter = this.filters;
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      this.coverctx.fillRect(0, 0, 500, 500);
+      var picImage = new Image();
+      picImage.src = this.abc;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+        that.coverctx.save();
+      };
+    },
+    blur: function blur(e) {
+      e.target.blur();
+    },
+    create: function create(e) {
+      this.isActive = true;
+      var that = this;
+      setTimeout(function () {
+        that.startX = parseInt(e.clientX - that.offsetX);
+        that.startY = parseInt(e.clientY - that.offsetY);
+        var currentDiv = document.getElementById("abc");
+        that.inputPosition.top = that.startY + 20 + 'px';
+        that.inputPosition.left = that.startX + 77 + 'px';
+        document.getElementById('newText').focus();
+      }, 100);
+    },
+    discribeNew: function discribeNew() {
+      this.isActive = false;
+      var text = {
+        text: document.getElementById('newText').value,
+        x: this.startX,
+        y: this.startY,
+        font: "bold ".concat(this.inputPosition.fontSize, " normal"),
+        fillStyle: this.inputPosition.color
+      };
+      this.textCanvasctx.font = text.font;
+      this.textCanvasctx.fillStyle = text.fillStyle;
+      text.width = this.textCanvasctx.measureText(text.text).width;
+      text.height = this.inputPosition.fontSize.replace(/px/g, "");
+      this.texts.push(text);
+      this.drawText();
+    },
+    edit: function edit() {
+      this.isActiveEditText = false;
+      var editText = this.texts[this.selectedEditText];
+      editText.text = this.selectedEditTextMessage;
+      editText.width = this.textCanvasctx.measureText(this.selectedEditTextMessage).width;
+      editText.fillStyle = this.selectedInputPosition.color;
+      editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
+      this.drawText();
+      this.selectedEditText = -1;
+    },
+    drawText: function drawText() {
+      this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+
+        if (text.text == '') {
+          this.texts.splice(i, 1);
+        }
+      }
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+        this.textCanvasctx.font = text.font;
+        this.textCanvasctx.fillStyle = text.fillStyle;
+        this.textCanvasctx.fillText(text.text, text.x, text.y);
+      }
+    },
+    selectText: function selectText(event) {
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = parseInt(event.clientY - this.offsetY);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.isActiveEditText = true;
+          this.isActive = false;
+          this.selectedEditText = i;
+          setTimeout(function () {
+            document.getElementById('selectedText').focus();
+          }, 100); // var selectedInput = document.getElementById('selectedText');
+          // selectedInput.focus();
+
+          this.selectedInputPosition.top = this.texts[i].y + 20 + 'px';
+          this.selectedInputPosition.left = this.texts[i].x + 80 + 'px';
+          this.selectedInputPosition.color = this.texts[i].fillStyle;
+          this.texts[i].fillStyle = 'transparent';
+          var fontArray = this.texts[i].font.split(/\s+/);
+          this.selectedInputPosition.fontWeight = fontArray[0];
+          this.selectedInputPosition.fontSize = fontArray[1];
+          this.selectedInputPosition.fontStyle = fontArray[2];
+          var that = this;
+          setTimeout(that.drawText(), 100);
+          this.selectedEditTextMessage = this.texts[i].text;
+        }
+      }
+
+      if (this.selectedEditText == -1) {
+        this.create(event);
+      }
+    },
+    textHittest: function textHittest(x, y, textIndex) {
+      var text = this.texts[textIndex];
+      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
+    },
+    handleMouseDown: function handleMouseDown(event) {
+      var newText = document.getElementById('newText');
+      var selectedText = document.getElementById('selectedText'); // if(newText == document.activeElement){
+      //   newText.blur();
+      // }
+      // if(selectedText == document.activeElement){
+      //   selectedText.blur();
+      // }
+
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = parseInt(event.clientY - this.offsetY);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.selectedText = i;
+        }
+      }
+    },
+    handleMouseUp: function handleMouseUp(e) {
+      this.selectedText = -1;
+    },
+    handleMouseOut: function handleMouseOut(e) {
+      this.selectedText = -1;
+    },
+    handleMouseMove: function handleMouseMove(e) {
+      if (this.selectedText < 0) {
+        return;
+      }
+
+      var mouseX = parseInt(e.clientX - this.offsetX);
+      var mouseY = parseInt(e.clientY - this.offsetY);
+      var dx = mouseX - this.startX;
+      var dy = mouseY - this.startY;
+      this.startX = mouseX;
+      this.startY = mouseY;
+      var text = this.texts[this.selectedText];
+      text.x += dx;
+      text.y += dy;
+      this.drawText();
     }
   }
 });
@@ -7882,7 +8555,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.eraser {\n    cursor: url('/image/eraser.png') 15 15,auto;\n    z-index: 2\n}\n#newText {\n　outline: none!important;\n  height: 64px;\n}\n#newText:focus {\n  outline: none!important;\n  border: none!important;\n}\n#selectedText {\n　outline: none!important;\n  height: 64px;\n}\n#selectedText:focus {\n  outline: none!important;\n  border: none!important;\n}\n.index2{\n  z-index: 2;\n}\n", ""]);
+exports.push([module.i, "\n.eraser {\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\n    z-index: 2\n}\n#newText {\n　outline: none!important;\n  height: 64px;\n}\n#newText:focus {\n  outline: none!important;\n  border: none!important;\n}\n#selectedText {\n　outline: none!important;\n  height: 64px;\n}\n#selectedText:focus {\n  outline: none!important;\n  border: none!important;\n}\n.index2{\n  z-index: 2;\n}\n", ""]);
 
 // exports
 
@@ -7940,6 +8613,25 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 // module
 exports.push([module.i, "\nh2 {\n  font-size: 25px;\n  margin-top: 20px;\n}\nh3 {\n  font-size: 20px;\n}\n.c_cropped_image {\n  width: 500px;\n  height: 500px;\n  border: 1px solid gray;\n}\n.l_cropper_container {\n  width: 500px;\n  height: 500px;\n  border: 1px solid gray;\n  display: inline-block;\n}\n.preview {\n  width: 300px;\n  height: 300px;\n  border: solid 1px black;\n  overflow: hidden;\n}\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&":
+/*!**************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css& ***!
+  \**************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 2\n}\n#newText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\r\n", ""]);
 
 // exports
 
@@ -9409,6 +10101,36 @@ if(false) {}
 
 
 var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./Crop.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/Crop.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -12394,6 +13116,1124 @@ var render = function() {
             _c("br")
           ])
         : _vm._e()
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "v-layout",
+        [
+          _vm.isActive
+            ? _c("div", [
+                _c("input", {
+                  style: _vm.inputPosition,
+                  attrs: { id: "newText", type: "text" },
+                  on: {
+                    keyup: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.discribeNew($event)
+                    }
+                  }
+                })
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.isActiveEditText
+            ? _c("div", [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.selectedEditTextMessage,
+                      expression: "selectedEditTextMessage"
+                    }
+                  ],
+                  style: _vm.selectedInputPosition,
+                  attrs: { id: "selectedText", type: "text" },
+                  domProps: { value: _vm.selectedEditTextMessage },
+                  on: {
+                    blur: _vm.edit,
+                    keyup: function($event) {
+                      if (
+                        !$event.type.indexOf("key") &&
+                        _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                      ) {
+                        return null
+                      }
+                      return _vm.blur($event)
+                    },
+                    input: function($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.selectedEditTextMessage = $event.target.value
+                    }
+                  }
+                })
+              ])
+            : _vm._e(),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            {
+              staticClass: "overflow-hidden",
+              attrs: { height: "550", width: "500" }
+            },
+            [
+              _c(
+                "div",
+                {
+                  staticStyle: { position: "relative" },
+                  attrs: { id: "canvas-area" }
+                },
+                [
+                  _c("canvas", {
+                    class: { eraser: _vm.canvasMode === "eraser" },
+                    staticStyle: {
+                      position: "absolute",
+                      "z-index": "1",
+                      top: "0",
+                      left: "0"
+                    },
+                    attrs: { id: "drawCanvas", width: "500", height: "500" },
+                    on: {
+                      mousedown: _vm.dragStart,
+                      mouseup: _vm.dragEnd,
+                      mouseout: _vm.dragEnd,
+                      mousemove: _vm.draw
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("canvas", {
+                    staticStyle: { position: "absolute", top: "0", left: "0" },
+                    attrs: { id: "cover", width: "500", height: "500" }
+                  }),
+                  _vm._v(" "),
+                  _c("canvas", {
+                    class: { index2: _vm.value == 2 },
+                    staticStyle: { position: "absolute", top: "0", left: "0" },
+                    attrs: { id: "text", width: "500", height: "500" },
+                    on: {
+                      dblclick: _vm.selectText,
+                      mousedown: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseDown($event)
+                      },
+                      mousemove: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseMove($event)
+                      },
+                      mouseup: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseUp($event)
+                      },
+                      mouseout: function($event) {
+                        $event.preventDefault()
+                        return _vm.handleMouseOut($event)
+                      }
+                    }
+                  })
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "v-bottom-navigation",
+                {
+                  attrs: {
+                    absolute: "",
+                    "hide-on-scroll": "",
+                    "scroll-target": "#hide-on-scroll-example"
+                  },
+                  model: {
+                    value: _vm.value,
+                    callback: function($$v) {
+                      _vm.value = $$v
+                    },
+                    expression: "value"
+                  }
+                },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: {
+                        color: "deep-purple accent-4",
+                        text: "",
+                        value: "0"
+                      },
+                      on: { click: _vm.pen }
+                    },
+                    [
+                      _c("span", [_vm._v("ペン")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-draw")])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    { attrs: { color: "deep-purple accent-4", text: "" } },
+                    [
+                      _c("span", [_vm._v("エフェクト")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-checkerboard")])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    { attrs: { color: "deep-purple accent-4", text: "" } },
+                    [
+                      _c("span", [_vm._v("テキスト")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-format-color-text")])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    { attrs: { color: "deep-purple accent-4", text: "" } },
+                    [
+                      _c("span", [_vm._v("ダウンロード")]),
+                      _vm._v(" "),
+                      _c("v-icon", [_vm._v("mdi-briefcase-download")])
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-card",
+            {
+              staticClass: "overflow-hidden",
+              attrs: { height: "550", width: "500" }
+            },
+            [
+              _c(
+                "v-stepper",
+                {
+                  staticStyle: { width: "500px" },
+                  model: {
+                    value: _vm.el,
+                    callback: function($$v) {
+                      _vm.el = $$v
+                    },
+                    expression: "el"
+                  }
+                },
+                [
+                  _c(
+                    "v-stepper-items",
+                    [
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "1" } },
+                        [
+                          _c("v-card-title", [_vm._v("Pen")]),
+                          _vm._v(" "),
+                          _c("v-color-picker", {
+                            staticClass: "mb-5 ml-3",
+                            on: { input: _vm.searchTimeOut },
+                            model: {
+                              value: _vm.penColor,
+                              callback: function($$v) {
+                                _vm.penColor = $$v
+                              },
+                              expression: "penColor"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            { attrs: { cols: "12", sm: "11" } },
+                            [
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "lineWidth",
+                                  min: "4",
+                                  max: "25",
+                                  "thumb-label": "always",
+                                  "thumb-color": "pink",
+                                  color: "pink"
+                                },
+                                on: { input: _vm.searchTimeOut },
+                                model: {
+                                  value: _vm.lineWidth,
+                                  callback: function($$v) {
+                                    _vm.lineWidth = $$v
+                                  },
+                                  expression: "lineWidth"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            {
+                              staticClass: "d-flex",
+                              attrs: { cols: "12", sm: "12" }
+                            },
+                            [
+                              _c("v-select", {
+                                staticClass: "px-1",
+                                attrs: {
+                                  items: _vm.lineCaps,
+                                  label: "lineCap",
+                                  outlined: ""
+                                },
+                                on: { input: _vm.searchTimeOut },
+                                model: {
+                                  value: _vm.lineCap,
+                                  callback: function($$v) {
+                                    _vm.lineCap = $$v
+                                  },
+                                  expression: "lineCap"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-select", {
+                                staticClass: "px-1",
+                                attrs: {
+                                  items: _vm.lineJoins,
+                                  label: "lineJoin",
+                                  outlined: ""
+                                },
+                                on: { input: _vm.searchTimeOut },
+                                model: {
+                                  value: _vm.lineJoin,
+                                  callback: function($$v) {
+                                    _vm.lineJoin = $$v
+                                  },
+                                  expression: "lineJoin "
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "2" } },
+                        [
+                          _c("v-card-title", { staticClass: "headline" }, [
+                            _vm._v(
+                              "\n                    Filters\n                "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "opacity",
+                              min: "4",
+                              max: "10",
+                              "thumb-label": "always",
+                              "thumb-color": "pink",
+                              color: "pink"
+                            },
+                            on: { input: _vm.searchTimeOut2 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.opacity,
+                                        callback: function($$v) {
+                                          _vm.opacity = $$v
+                                        },
+                                        expression: "opacity"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.opacity,
+                              callback: function($$v) {
+                                _vm.opacity = $$v
+                              },
+                              expression: "opacity"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "blur",
+                              min: "0",
+                              max: "10",
+                              "thumb-label": "always",
+                              "thumb-color": "purple",
+                              color: "purple"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.blur,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "blur",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.blur"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.blur,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "blur", $$v)
+                              },
+                              expression: "filterObject.blur"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "brightness",
+                              min: "35",
+                              max: "250",
+                              "thumb-label": "always",
+                              "thumb-color": "red",
+                              color: "red"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.brightness,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "brightness",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.brightness"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.brightness,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "brightness", $$v)
+                              },
+                              expression: "filterObject.brightness"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "contrast",
+                              min: "0",
+                              max: "400",
+                              "thumb-label": "always",
+                              "thumb-color": "orange",
+                              color: "orange"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.contrast,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "contrast",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.contrast"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.contrast,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "contrast", $$v)
+                              },
+                              expression: "filterObject.contrast"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "grayscale",
+                              min: "0",
+                              max: "100",
+                              "thumb-label": "always",
+                              "thumb-color": "indigo",
+                              color: "indigo"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.grayscale,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "grayscale",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.grayscale"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.grayscale,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "grayscale", $$v)
+                              },
+                              expression: "filterObject.grayscale"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "hue-rotate",
+                              min: "0",
+                              max: "359",
+                              "thumb-label": "always",
+                              "thumb-color": "green",
+                              color: "green"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.hueRotate,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "hueRotate",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.hueRotate"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.hueRotate,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "hueRotate", $$v)
+                              },
+                              expression: "filterObject.hueRotate"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "invert",
+                              min: "0",
+                              max: "100",
+                              "thumb-label": "always",
+                              "thumb-color": "deep-purple",
+                              color: "deep-purple"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.invert,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "invert",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.invert"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.invert,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "invert", $$v)
+                              },
+                              expression: "filterObject.invert"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "saturate",
+                              min: "0",
+                              max: "300",
+                              "thumb-label": "always",
+                              "thumb-color": "light-blue",
+                              color: "light-blue"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.saturate,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "saturate",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.saturate"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.saturate,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "saturate", $$v)
+                              },
+                              expression: "filterObject.saturate"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("v-slider", {
+                            attrs: {
+                              label: "sepia",
+                              min: "0",
+                              max: "100",
+                              "thumb-label": "always",
+                              "thumb-color": "lime",
+                              color: "lime"
+                            },
+                            on: { input: _vm.searchTimeOut3 },
+                            scopedSlots: _vm._u([
+                              {
+                                key: "append",
+                                fn: function() {
+                                  return [
+                                    _c("v-text-field", {
+                                      staticClass: "mt-0 pt-0",
+                                      staticStyle: { width: "60px" },
+                                      attrs: {
+                                        "hide-details": "",
+                                        "single-line": "",
+                                        type: "number"
+                                      },
+                                      model: {
+                                        value: _vm.filterObject.sepia,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.filterObject,
+                                            "sepia",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "filterObject.sepia"
+                                      }
+                                    })
+                                  ]
+                                },
+                                proxy: true
+                              }
+                            ]),
+                            model: {
+                              value: _vm.filterObject.sepia,
+                              callback: function($$v) {
+                                _vm.$set(_vm.filterObject, "sepia", $$v)
+                              },
+                              expression: "filterObject.sepia"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-stepper-content",
+                        { attrs: { step: "3" } },
+                        [
+                          _c("v-card", {
+                            staticClass: "mb-12",
+                            attrs: { color: "grey lighten-1", height: "200px" }
+                          })
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-stepper",
+        {
+          staticStyle: { width: "1000px" },
+          model: {
+            value: _vm.el,
+            callback: function($$v) {
+              _vm.el = $$v
+            },
+            expression: "el"
+          }
+        },
+        [
+          _c(
+            "v-stepper-items",
+            [
+              _c(
+                "v-stepper-content",
+                { attrs: { step: "1" } },
+                [
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "align-self-start mr-2",
+                      attrs: { id: "eraser-button" },
+                      on: { click: _vm.eraser }
+                    },
+                    [_vm._v("消しゴム")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "align-self-start mr-2",
+                      attrs: { id: "clear-button" },
+                      on: { click: _vm.clear }
+                    },
+                    [_vm._v("クリア")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-stepper-content",
+                { attrs: { step: "2" } },
+                [
+                  _c(
+                    "v-col",
+                    { staticClass: "d-flex", attrs: { cols: "12", sm: "12" } },
+                    [
+                      _c(
+                        "v-row",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "pink" },
+                              on: { click: _vm.reset }
+                            },
+                            [_vm._v("reset")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "purple" },
+                              on: { click: _vm.rotate }
+                            },
+                            [_vm._v("rotate")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { color: "black" },
+                              on: { click: _vm.back }
+                            },
+                            [_vm._v("back")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-sheet",
+                            { attrs: { elevation: "8", "max-width": "520" } },
+                            [
+                              _c(
+                                "v-slide-group",
+                                {
+                                  staticClass: "pa-4",
+                                  attrs: {
+                                    "center-active": "",
+                                    "show-arrows": ""
+                                  },
+                                  model: {
+                                    value: _vm.model,
+                                    callback: function($$v) {
+                                      _vm.model = $$v
+                                    },
+                                    expression: "model"
+                                  }
+                                },
+                                _vm._l(13, function(n) {
+                                  return _c("v-slide-item", {
+                                    key: n,
+                                    scopedSlots: _vm._u(
+                                      [
+                                        {
+                                          key: "default",
+                                          fn: function(ref) {
+                                            var active = ref.active
+                                            var toggle = ref.toggle
+                                            return [
+                                              _c(
+                                                "v-card",
+                                                {
+                                                  staticClass: "ma-1",
+                                                  attrs: {
+                                                    color: active
+                                                      ? "primary"
+                                                      : "grey lighten-1",
+                                                    height: "117.3",
+                                                    width: "113.3"
+                                                  },
+                                                  on: { click: _vm.click }
+                                                },
+                                                [
+                                                  _c("canvas", {
+                                                    attrs: {
+                                                      id: "pic" + n,
+                                                      height: "113.3",
+                                                      width: "113.3"
+                                                    },
+                                                    on: { click: toggle }
+                                                  }),
+                                                  _vm._v(" "),
+                                                  _c(
+                                                    "v-row",
+                                                    {
+                                                      staticClass:
+                                                        "fill-height",
+                                                      attrs: {
+                                                        align: "center",
+                                                        justify: "center"
+                                                      }
+                                                    },
+                                                    [
+                                                      _c(
+                                                        "v-scale-transition",
+                                                        [
+                                                          active
+                                                            ? _c("v-icon", {
+                                                                attrs: {
+                                                                  color:
+                                                                    "white",
+                                                                  size: "48"
+                                                                },
+                                                                domProps: {
+                                                                  textContent: _vm._s(
+                                                                    "mdi-close-circle-outline"
+                                                                  )
+                                                                }
+                                                              })
+                                                            : _vm._e()
+                                                        ],
+                                                        1
+                                                      )
+                                                    ],
+                                                    1
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ]
+                                          }
+                                        }
+                                      ],
+                                      null,
+                                      true
+                                    )
+                                  })
+                                }),
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-color-picker", {
+                        attrs: { "hide-inputs": "" },
+                        on: { input: _vm.searchTimeOut2 },
+                        model: {
+                          value: _vm.color,
+                          callback: function($$v) {
+                            _vm.color = $$v
+                          },
+                          expression: "color"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-stepper-content", { attrs: { step: "3" } }, [
+                _vm.isActive
+                  ? _c(
+                      "div",
+                      [
+                        _c("v-slider", {
+                          attrs: {
+                            min: "10",
+                            max: "64",
+                            "thumb-label": "always",
+                            "thumb-size": 30
+                          },
+                          model: {
+                            value: _vm.fontSize,
+                            callback: function($$v) {
+                              _vm.fontSize = $$v
+                            },
+                            expression: "fontSize"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("v-color-picker", {
+                          model: {
+                            value: _vm.inputPosition.color,
+                            callback: function($$v) {
+                              _vm.$set(_vm.inputPosition, "color", $$v)
+                            },
+                            expression: "inputPosition.color"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn-toggle",
+                          {
+                            attrs: {
+                              dense: "",
+                              "background-color": "primary",
+                              dark: "",
+                              multiple: ""
+                            },
+                            model: {
+                              value: _vm.toggle_multiple,
+                              callback: function($$v) {
+                                _vm.toggle_multiple = $$v
+                              },
+                              expression: "toggle_multiple"
+                            }
+                          },
+                          [_c("v-btn", [_vm._v("Bold")])],
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e(),
+                _vm._v(" "),
+                _vm.isActiveEditText
+                  ? _c(
+                      "div",
+                      [
+                        _c("v-slider", {
+                          attrs: {
+                            min: "10",
+                            max: "64",
+                            "thumb-label": "always",
+                            "thumb-size": 30
+                          },
+                          model: {
+                            value: _vm.selectedFontSize,
+                            callback: function($$v) {
+                              _vm.selectedFontSize = $$v
+                            },
+                            expression: "selectedFontSize"
+                          }
+                        }),
+                        _vm._v(" "),
+                        _c("v-color-picker", {
+                          model: {
+                            value: _vm.selectedInputPosition.color,
+                            callback: function($$v) {
+                              _vm.$set(_vm.selectedInputPosition, "color", $$v)
+                            },
+                            expression: "selectedInputPosition.color"
+                          }
+                        }),
+                        _vm._v("aaa\n                ")
+                      ],
+                      1
+                    )
+                  : _vm._e()
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      )
     ],
     1
   )
@@ -73473,6 +75313,7 @@ vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('post', __webpack_require_
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('practice', __webpack_require__(/*! ./components/pages/Practice.vue */ "./resources/ts/components/pages/Practice.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('crop', __webpack_require__(/*! ./components/organisms/Crop.vue */ "./resources/ts/components/organisms/Crop.vue").default);
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('header-bar', __webpack_require__(/*! ./components/globals/Header.vue */ "./resources/ts/components/globals/Header.vue").default);
+vue__WEBPACK_IMPORTED_MODULE_0__["default"].component('crop-canvas', __webpack_require__(/*! ./components/organisms/CropCanvas.vue */ "./resources/ts/components/organisms/CropCanvas.vue").default);
 const app = new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
     el: '#app',
     router: _routes__WEBPACK_IMPORTED_MODULE_3__["default"],
@@ -74844,6 +76685,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Crop_vue_vue_type_template_id_326fd8df___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Crop_vue_vue_type_template_id_326fd8df___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/CropCanvas.vue":
+/*!**********************************************************!*\
+  !*** ./resources/ts/components/organisms/CropCanvas.vue ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CropCanvas.vue?vue&type=template&id=1b90a5d2& */ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&");
+/* harmony import */ var _CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CropCanvas.vue?vue&type=script&lang=js& */ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CropCanvas.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/ts/components/organisms/CropCanvas.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************!*\
+  !*** ./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2& ***!
+  \*****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./CropCanvas.vue?vue&type=template&id=1b90a5d2& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/CropCanvas.vue?vue&type=template&id=1b90a5d2&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CropCanvas_vue_vue_type_template_id_1b90a5d2___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

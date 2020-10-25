@@ -28,6 +28,7 @@ Vue.component('post', require('./components/pages/Post.vue').default);
 Vue.component('practice', require('./components/pages/Practice.vue').default);
 Vue.component('crop', require('./components/organisms/Crop.vue').default);
 Vue.component('header-bar', require('./components/globals/Header.vue').default);
+Vue.component('crop-canvas', require('./components/organisms/CropCanvas.vue').default);
 
 
 

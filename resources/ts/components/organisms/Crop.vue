@@ -87,14 +87,37 @@ export default {
         var width = background.naturalWidth;
         var height = background.naturalHeight;
         background.onload = function(){
-                ctx.drawImage(background,0,0,600,600);
+                ctx.drawImage(background,0,0,500,500);
             }
         this.$store.dispatch('cropImage', cropImage);
+
+        var that = this;
+        setTimeout(function () {
+            that.abc = cropImage;
+            console.log(that.abc)
+        }, 500)
+        var canvas = [];
+        var canvasCtx = [];
+        var coverImage = [];
+        var that = this;
+        setTimeout(function () {
+            for (let i = 1; i < 14; i++) {
+                canvas[i] = document.getElementById("pic" + i);
+                canvasCtx[i] = canvas[i].getContext('2d');
+                canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+                canvasCtx[i].globalAlpha = 1;
+                coverImage[i] = new Image();
+                coverImage[i].src = that.abc;
+                coverImage[i].onload = function () {
+                    canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+                };
+            }
+        }, 500);
         },
     croppedInfo(){
         // var croppedInfo = this.cropImg.toDataURL();
         document.getElementById('cropped-image').value = this.cropImg;
-        console.log(document.getElementById('cropped-image').value);
+        // console.log(document.getElementById('cropped-image').value);
     },
   }
 }
