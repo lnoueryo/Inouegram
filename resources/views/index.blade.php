@@ -4,6 +4,6 @@
 <br>
 <br>
 <br>
-<profile></profile>
-{{--  <post></post>  --}}
+{{--  <profile></profile>  --}}
+<post></post>
 @endsection

@@ -26,11 +26,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $latest_posts = Post::latest()->take(20);
-        $latest_posted_users = User::whereIn('id', $latest_posts->get('user_id'));
-
-        return view('index',['latest_posts' => $latest_posts->get('user_id'), 'latest_posted_users' => $latest_posted_users->get()]);
+        return view('index');
     }
+    // public function index()
+    // {
+    //     $latest_posts = Post::latest()->take(20);
+    //     $latest_posted_users = User::whereIn('id', $latest_posts->get('user_id'));
+    //     return view('index',['latest_posts' => $latest_posts->get('user_id'), 'latest_posted_users' => $latest_posted_users->get()]);
+    // }
 
     public function create(Request $request)
     {

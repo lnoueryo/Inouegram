@@ -8,10 +8,19 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue'
+
+  export type PropArrType = {
+    url: string
+  }
+
 export default Vue.extend({
     props: {
-        iconButtonIcons: Array as PropType<{icons: string}>,
-        iconButtonUrl: Array as PropType<{url: string}>,
+        iconButtonIcons: {
+            type: Array,
+        },
+        iconButtonUrl: {
+            type: Array,
+        },
     }
     // props: ['iconButtonIcons', 'iconButtonUrl'],
 })
