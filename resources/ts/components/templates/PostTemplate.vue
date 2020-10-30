@@ -51,14 +51,14 @@
 
     <v-stepper-content step="2">
         <v-layout>
-        <div v-if="isActive">
-            <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
-        </div>
-        <div v-if="isActiveEditText">
-            <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
-        </div>
         <v-card class="overflow-hidden" height="550" width="500">
             <div id="canvas-area" style="position: relative">
+                <div v-if="isActive">
+                    <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
+                </div>
+                <div v-if="isActiveEditText">
+                    <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
+                </div>
                 <canvas id="drawCanvas" style="position: absolute; z-index: 1;top: 0; left: 0;" v-bind:class="{eraser: canvasMode === 'eraser'}" width="500" height="500" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
                 <canvas id="cover" class="preview" style="position: absolute; top: 0; left: 0;" width="500" height="500"></canvas>
                 <!-- <canvas id="text" style="z-index: 0; position: absolute;" width=500 height=500 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas> -->
@@ -320,11 +320,6 @@ export default {
         // text
         this.textCanvas = document.getElementById("text");
         this.textCanvasctx = this.textCanvas.getContext("2d");
-        var canvasOffset = this.textCanvas.getBoundingClientRect();
-        this.offsetX = canvasOffset.left;
-        this.offsetY = canvasOffset.top;
-        this.scrollX = this.textCanvas.scrollLeft;
-        this.scrollY = this.textCanvas.scrollTop;
     },
     methods: {
         loadImage(e){
@@ -618,8 +613,13 @@ export default {
             };
         },
         selectText(event){
-            this.startX = parseInt(event.clientX - this.offsetX);
-            this.startY = event.pageY - 188;
+            var clickX = event.pageX ;
+            var clickY = event.pageY ;
+            var clientRect = this.textCanvas.getBoundingClientRect()
+            var positionX = clientRect.left + window.pageXOffset ;
+            var positionY = clientRect.top + window.pageYOffset ;
+            this.startX = clickX - positionX ;
+            this.startY = clickY - positionY ;
             this.inputPosition.width = 500 - this.startX + 'px';
             this.selectedInputPosition.width = 500 - this.startX + 'px';
             for (var i = 0; i < this.texts.length; i++) {
@@ -660,13 +660,10 @@ export default {
               this.isActive = true;
               var that = this;
               setTimeout(function(){
-              that.startX = parseInt(e.clientX - that.offsetX);
-              that.startY = e.pageY - 188;
-              that.inputPosition.top = e.pageY - 220 + 'px';
+              that.inputPosition.top = e.pageY - 210 + 'px';
               that.inputPosition.left = e.pageX - 10 + 'px';
               document.getElementById('newText').focus();
             },100)
-            console.log(this.textCanvasctx.font)
         },
         discribeNew(){
             this.isActive = false;

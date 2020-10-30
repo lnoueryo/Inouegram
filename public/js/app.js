@@ -4819,11 +4819,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     this.textCanvas = document.getElementById("text");
     this.textCanvasctx = this.textCanvas.getContext("2d");
-    var canvasOffset = this.textCanvas.getBoundingClientRect();
-    this.offsetX = canvasOffset.left;
-    this.offsetY = canvasOffset.top;
-    this.scrollX = this.textCanvas.scrollLeft;
-    this.scrollY = this.textCanvas.scrollTop;
   },
   methods: {
     loadImage: function loadImage(e) {
@@ -5161,8 +5156,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
     },
     selectText: function selectText(event) {
-      this.startX = parseInt(event.clientX - this.offsetX);
-      this.startY = event.pageY - 188;
+      var clickX = event.pageX;
+      var clickY = event.pageY;
+      var clientRect = this.textCanvas.getBoundingClientRect();
+      var positionX = clientRect.left + window.pageXOffset;
+      var positionY = clientRect.top + window.pageYOffset;
+      this.startX = clickX - positionX;
+      this.startY = clickY - positionY;
       this.inputPosition.width = 500 - this.startX + 'px';
       this.selectedInputPosition.width = 500 - this.startX + 'px';
 
@@ -5205,13 +5205,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.isActive = true;
       var that = this;
       setTimeout(function () {
-        that.startX = parseInt(e.clientX - that.offsetX);
-        that.startY = e.pageY - 188;
-        that.inputPosition.top = e.pageY - 220 + 'px';
+        that.inputPosition.top = e.pageY - 210 + 'px';
         that.inputPosition.left = e.pageX - 10 + 'px';
         document.getElementById('newText').focus();
       }, 100);
-      console.log(this.textCanvasctx.font);
     },
     discribeNew: function discribeNew() {
       this.isActive = false;
@@ -13513,75 +13510,6 @@ var render = function() {
                   _c(
                     "v-layout",
                     [
-                      _vm.isActive
-                        ? _c("div", [
-                            _c("input", {
-                              style: _vm.inputPosition,
-                              attrs: { id: "newText", type: "text" },
-                              on: {
-                                keyup: function($event) {
-                                  if (
-                                    !$event.type.indexOf("key") &&
-                                    _vm._k(
-                                      $event.keyCode,
-                                      "enter",
-                                      13,
-                                      $event.key,
-                                      "Enter"
-                                    )
-                                  ) {
-                                    return null
-                                  }
-                                  return _vm.discribeNew($event)
-                                }
-                              }
-                            })
-                          ])
-                        : _vm._e(),
-                      _vm._v(" "),
-                      _vm.isActiveEditText
-                        ? _c("div", [
-                            _c("input", {
-                              directives: [
-                                {
-                                  name: "model",
-                                  rawName: "v-model",
-                                  value: _vm.selectedEditTextMessage,
-                                  expression: "selectedEditTextMessage"
-                                }
-                              ],
-                              style: _vm.selectedInputPosition,
-                              attrs: { id: "selectedText", type: "text" },
-                              domProps: { value: _vm.selectedEditTextMessage },
-                              on: {
-                                blur: _vm.edit,
-                                keyup: function($event) {
-                                  if (
-                                    !$event.type.indexOf("key") &&
-                                    _vm._k(
-                                      $event.keyCode,
-                                      "enter",
-                                      13,
-                                      $event.key,
-                                      "Enter"
-                                    )
-                                  ) {
-                                    return null
-                                  }
-                                  return _vm.blur($event)
-                                },
-                                input: function($event) {
-                                  if ($event.target.composing) {
-                                    return
-                                  }
-                                  _vm.selectedEditTextMessage =
-                                    $event.target.value
-                                }
-                              }
-                            })
-                          ])
-                        : _vm._e(),
-                      _vm._v(" "),
                       _c(
                         "v-card",
                         {
@@ -13596,6 +13524,80 @@ var render = function() {
                               attrs: { id: "canvas-area" }
                             },
                             [
+                              _vm.isActive
+                                ? _c("div", [
+                                    _c("input", {
+                                      style: _vm.inputPosition,
+                                      attrs: { id: "newText", type: "text" },
+                                      on: {
+                                        keyup: function($event) {
+                                          if (
+                                            !$event.type.indexOf("key") &&
+                                            _vm._k(
+                                              $event.keyCode,
+                                              "enter",
+                                              13,
+                                              $event.key,
+                                              "Enter"
+                                            )
+                                          ) {
+                                            return null
+                                          }
+                                          return _vm.discribeNew($event)
+                                        }
+                                      }
+                                    })
+                                  ])
+                                : _vm._e(),
+                              _vm._v(" "),
+                              _vm.isActiveEditText
+                                ? _c("div", [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.selectedEditTextMessage,
+                                          expression: "selectedEditTextMessage"
+                                        }
+                                      ],
+                                      style: _vm.selectedInputPosition,
+                                      attrs: {
+                                        id: "selectedText",
+                                        type: "text"
+                                      },
+                                      domProps: {
+                                        value: _vm.selectedEditTextMessage
+                                      },
+                                      on: {
+                                        blur: _vm.edit,
+                                        keyup: function($event) {
+                                          if (
+                                            !$event.type.indexOf("key") &&
+                                            _vm._k(
+                                              $event.keyCode,
+                                              "enter",
+                                              13,
+                                              $event.key,
+                                              "Enter"
+                                            )
+                                          ) {
+                                            return null
+                                          }
+                                          return _vm.blur($event)
+                                        },
+                                        input: function($event) {
+                                          if ($event.target.composing) {
+                                            return
+                                          }
+                                          _vm.selectedEditTextMessage =
+                                            $event.target.value
+                                        }
+                                      }
+                                    })
+                                  ])
+                                : _vm._e(),
+                              _vm._v(" "),
                               _c("canvas", {
                                 class: { eraser: _vm.canvasMode === "eraser" },
                                 staticStyle: {
