@@ -207,13 +207,15 @@
 
     <v-stepper-content step="3">
             <canvas id="concat" class="mx-auto" width="500" height="500"></canvas><div>
-            <v-btn color="primary" @click="submit">トリミング</v-btn>
+            <v-btn color="primary" @click="submit">保存</v-btn>
+            <v-btn color="primary" @click="oneMoreImage">もう一枚投稿</v-btn>
             <v-btn text @click="e1=2">
             戻る
             </v-btn></div>
     </v-stepper-content>
         </v-stepper-items>
     </v-stepper>
+    <div id="concatImages" class="d-flex justify-content-start"></div><v-btn color="primary" @click="submit" v-if="concatImageBtn">保存</v-btn>
     </div>
 </template>
 
@@ -232,6 +234,7 @@ export default {
     },
     data() {
       return {
+        concatImageBtn: false,
         stepBtn1: true,
         e1: 1,
         concatImg: [],
@@ -322,6 +325,21 @@ export default {
         this.textCanvasctx = this.textCanvas.getContext("2d");
     },
     methods: {
+        oneMoreImage(){
+            this.e1 = 1;
+            this.imgSrc = '';
+            this.stepBtn1 = true;
+            this.concatImageBtn = true;
+            var preview = document.getElementsByClassName('preview');
+            var img = preview[0].getElementsByTagName('img');
+            img[0].src = '';
+            var newImg = document.createElement("img");
+            newImg.src = this.concatImg[this.concatImg.length-1];
+            newImg.width = 250;
+            newImg.height = 250;
+            var concatImages = document.getElementById('concatImages')
+            concatImages.appendChild(newImg);
+        },
         loadImage(e){
             this.stepBtn1 = false;
             this.imgSrc = e;
@@ -355,8 +373,8 @@ export default {
             };
             let that = this;
             setTimeout(function(){
-                var abc = document.getElementById('concat').toDataURL('image/png');
-                that.concatImg.push(abc);
+                var concatSrc = document.getElementById('concat').toDataURL('image/png');
+                that.concatImg.push(concatSrc);
             }, 200);
         },
         createImage(context){
@@ -416,6 +434,8 @@ export default {
             this.e1 = 2;
             this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             this.cover = document.getElementById("cover");
+            this.drawCanvasctx.clearRect(0, 0, 500, 500);
+            this.textCanvasctx.clearRect(0, 0, 500, 500);
             this.coverctx = this.cover.getContext("2d");
             this.coverctx.globalAlpha = 1;
             this.coverctx.globalCompositeOperation = 'source-over';

@@ -4714,6 +4714,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -4730,6 +4732,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      concatImageBtn: false,
       stepBtn1: true,
       e1: 1,
       concatImg: [],
@@ -4821,6 +4824,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.textCanvasctx = this.textCanvas.getContext("2d");
   },
   methods: {
+    oneMoreImage: function oneMoreImage() {
+      this.e1 = 1;
+      this.imgSrc = '';
+      this.stepBtn1 = true;
+      this.concatImageBtn = true;
+      var preview = document.getElementsByClassName('preview');
+      var img = preview[0].getElementsByTagName('img');
+      img[0].src = '';
+      var newImg = document.createElement("img");
+      newImg.src = this.concatImg[this.concatImg.length - 1];
+      newImg.width = 250;
+      newImg.height = 250;
+      var concatImages = document.getElementById('concatImages');
+      concatImages.appendChild(newImg);
+    },
     loadImage: function loadImage(e) {
       this.stepBtn1 = false;
       this.imgSrc = e;
@@ -4851,8 +4869,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       var that = this;
       setTimeout(function () {
-        var abc = document.getElementById('concat').toDataURL('image/png');
-        that.concatImg.push(abc);
+        var concatSrc = document.getElementById('concat').toDataURL('image/png');
+        that.concatImg.push(concatSrc);
       }, 200);
     },
     createImage: function createImage(context) {
@@ -4917,6 +4935,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.e1 = 2;
       this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       this.cover = document.getElementById("cover");
+      this.drawCanvasctx.clearRect(0, 0, 500, 500);
+      this.textCanvasctx.clearRect(0, 0, 500, 500);
       this.coverctx = this.cover.getContext("2d");
       this.coverctx.globalAlpha = 1;
       this.coverctx.globalCompositeOperation = 'source-over';
@@ -14799,7 +14819,16 @@ var render = function() {
                         attrs: { color: "primary" },
                         on: { click: _vm.submit }
                       },
-                      [_vm._v("トリミング")]
+                      [_vm._v("保存")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { color: "primary" },
+                        on: { click: _vm.oneMoreImage }
+                      },
+                      [_vm._v("もう一枚投稿")]
                     ),
                     _vm._v(" "),
                     _c(
@@ -14823,7 +14852,19 @@ var render = function() {
           )
         ],
         1
-      )
+      ),
+      _vm._v(" "),
+      _c("div", {
+        staticClass: "d-flex justify-content-start",
+        attrs: { id: "concatImages" }
+      }),
+      _vm.concatImageBtn
+        ? _c(
+            "v-btn",
+            { attrs: { color: "primary" }, on: { click: _vm.submit } },
+            [_vm._v("保存")]
+          )
+        : _vm._e()
     ],
     1
   )
