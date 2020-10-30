@@ -37,13 +37,16 @@
                         preview=".preview"
                     />
                 </div>
+                <div v-else>
+                    <input-file-image @selectedImage="loadImage($event)"></input-file-image>
+                </div>
                 <div>
                 <div class="preview" />
                 <input-file @selectedImage="loadImage($event)"></input-file>
                 </div>
             </v-layout>
         </v-container>
-        <v-btn @click="cropImage" color="primary">トリミング</v-btn>
+        <v-btn @click="cropImage" color="primary" :disabled="stepBtn1">トリミング</v-btn>
     </v-stepper-content>
 
     <v-stepper-content step="2">
@@ -199,7 +202,7 @@
             </v-stepper-items>
         </v-stepper>
         <v-btn color="primary" @click="getImage">決定</v-btn>
-        <v-btn text @click="e1 = 1">戻る</v-btn>
+        <v-btn text @click="e1 = 1;">戻る</v-btn>
     </v-stepper-content>
 
     <v-stepper-content step="3">
@@ -217,19 +220,22 @@
 <script>
 import VueCropper from 'vue-cropperjs'
 import InputFile from '../molecules/InputFile.vue'
+import InputFileImage from '../molecules/InputFileImage.vue'
 import ImageEditer from '../organisms/ImageEditer.vue'
 export default {
     name: "DrawTool",
     components: {
         VueCropper,
         'input-file': InputFile,
+        'input-file-image': InputFileImage,
         'image-editer': ImageEditer,
     },
     data() {
       return {
+        stepBtn1: true,
         e1: 1,
         concatImg: [],
-        imgSrc: '/storage/image/panda.png',
+        imgSrc: '',
         value: 0,
         canvasMode: 'penBlack',
         drawCanvas: null,
@@ -322,8 +328,9 @@ export default {
     },
     methods: {
         loadImage(e){
-            this.$refs.cropper.replace(e);
+            this.stepBtn1 = false;
             this.imgSrc = e;
+            this.$refs.cropper.replace(e);
         },
         submit(){
             console.log(JSON.stringify(this.concatImg));
@@ -415,6 +422,10 @@ export default {
             this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             this.cover = document.getElementById("cover");
             this.coverctx = this.cover.getContext("2d");
+            this.coverctx.globalAlpha = 1;
+            this.coverctx.globalCompositeOperation = 'source-over';
+            this.coverctx.filter = 'grayscale(0%)';
+            this.coverctx.clearRect(0, 0, 500, 500);
             var background = new Image();
             background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             var that = this;
@@ -432,6 +443,9 @@ export default {
                     canvasCtx[i] = canvas[i].getContext('2d');
                     canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
                     canvasCtx[i].globalAlpha = 1;
+                    canvasCtx[i].globalCompositeOperation = 'source-over';
+                    canvasCtx[i].filter = 'grayscale(0%)';
+                    canvasCtx[i].clearRect(0, 0, 500, 500);
                     coverImage[i] = new Image();
                     coverImage[i].src = background.src;
                     coverImage[i].onload = function () {
@@ -487,18 +501,46 @@ export default {
             this.globalAlpha = 1;
             this.color = 'transparent';
             this.model = '';
+            this.filters = '';
             this.coverctx.globalCompositeOperation = 'source-over';
             this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
+            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+            this.cover = document.getElementById("cover");
+            this.coverctx = this.cover.getContext("2d");
+            this.coverctx.globalAlpha = 1;
+            this.coverctx.globalCompositeOperation = 'source-over';
+            this.coverctx.filter = 'grayscale(0%)';
             this.coverctx.clearRect(0, 0, 500, 500);
-            var myImage = new Image();
-            myImage.src = this.croppedImage;
+            var background = new Image();
+            background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             var that = this;
-            myImage.onload = function () {
-                that.coverctx.drawImage(myImage, 0, 0, 500, 500);
-                that.coverctx.save();
-            };
+            background.onload = function(){
+                    that.coverctx.drawImage(background,0,0,500,500);
+                }
+            var that = this;
+            var canvas = [];
+            var canvasCtx = [];
+            var coverImage = [];
+            var that = this;
+            setTimeout(function () {
+                for (let i = 1; i < 14; i++) {
+                    canvas[i] = document.getElementById("pic" + i);
+                    canvasCtx[i] = canvas[i].getContext('2d');
+                    canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+                    canvasCtx[i].globalAlpha = 1;
+                    canvasCtx[i].globalCompositeOperation = 'source-over';
+                    canvasCtx[i].filter = 'grayscale(0%)';
+                    canvasCtx[i].clearRect(0, 0, 500, 500);
+                    coverImage[i] = new Image();
+                    coverImage[i].src = background.src;
+                    coverImage[i].onload = function () {
+                        canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+                    };
+                }
+            }, 500);
+            this.coverctx.save();
             this.color = '#00000080';
-            that.searchTimeOut();
+            // that.searchTimeOut();
         },
         searchTimeOut2() {
             if (this.timer) {
