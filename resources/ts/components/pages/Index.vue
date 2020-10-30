@@ -1,19 +1,12 @@
 <template>
-    <div><br><br><br><br>
-        {{ latestPosts }}<br><br>
-        {{ latestPostedUsers }}
-    </div>
+    <index-template></index-template>
 </template>
 
 <script>
+import IndexTemplate from '../templates/IndexTemplate'
 export default {
-    props: {
-        latestPosts: {
-            type: Object,
-        },
-        latestPostedUsers: {
-            type: Object,
-        }
+    components: {
+        'index-template': IndexTemplate,
     }
 }
 </script>

@@ -28,7 +28,7 @@
     <div id="app" v-cloak>
         <v-app>
             <header-bar></header-bar>
-            <main class="py-5">
+            <main style="padding-top: 70px">
                 @yield('content')
             </main>
         </v-app>

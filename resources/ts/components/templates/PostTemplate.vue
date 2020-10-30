@@ -229,7 +229,7 @@ export default {
       return {
         e1: 1,
         concatImg: [],
-        imgSrc: 'storage/image/panda.png',
+        imgSrc: '/storage/image/panda.png',
         value: 0,
         canvasMode: 'penBlack',
         drawCanvas: null,

@@ -18,7 +18,7 @@ const state: object = {
         url: [
             '/home',
             '/home',
-            '/add',
+            '/post',
             '',
         ],
     },
