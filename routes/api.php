@@ -31,5 +31,7 @@ Route::post('/logout',function(){
 	return Auth::logout();
 });
 
+Route::post('/delete_post','ProfileController@deletePost');
+
 Route::post('/create', 'HomeController@create')->name('create');
 Route::post('/store', 'HomeController@store')->name('store');

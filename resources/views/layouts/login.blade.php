@@ -17,7 +17,6 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    {{--  <link href="{{ asset('css/app.css') }}" rel="stylesheet">  --}}
     <style>
         [v-cloak] {
             opacity: 0;
@@ -27,13 +26,7 @@
 <body>
     <div id="app" v-cloak>
         <v-app>
-            @auth
-            <header-bar :user="@json(Auth::user())"></header-bar>
-            @endauth
-            @guest
-            <header-bar :user="null"></header-bar>
-            @endguest
-            <main style="padding-top: 70px">
+            <main>
                 @yield('content')
             </main>
         </v-app>

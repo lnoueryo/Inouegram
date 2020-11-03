@@ -1,7 +1,9 @@
-@extends('layouts.app')
+@extends('layouts.login')
 
 @section('content')
-<div class="container">
+{{--  <div style="background-image: url(/image/login1.png); width: 100%; max-width: 3000px; height: 900px">  --}}
+<img src="/image/login1.png" style="width: 100%; position: relative">
+{{--  <div class="container" style="position: absolute">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -69,5 +71,6 @@
             </div>
         </div>
     </div>
-</div>
+</div>  --}}
+<ajax-auth style="position: absolute"></ajax-auth>
 @endsection

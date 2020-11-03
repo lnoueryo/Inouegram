@@ -10,14 +10,15 @@ use App\Comment;
 use App\Post;
 use App\Follower;
 use App\Http\Resources\UserCollection;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     public function index() {
 
@@ -36,8 +37,9 @@ class ProfileController extends Controller
         // } else {
         //     $followed = 1;
         // }
+        $user = User::all();
 
-        return view('profile',['this_user_posts' => $this_user_posts->get()]);
+        return view('profile',['this_user_posts' => $this_user_posts->get(), 'user' => $user]);
     }
 
     // public function index(Request $request) {
@@ -73,6 +75,19 @@ class ProfileController extends Controller
             $follower->delete();
             return  0;
         }
+    }
+
+    public function deletePost(Request $request) {
+        $request = json_decode($request->post);
+        $post = Post::find($request->id);
+        $image =$request->image;
+        $exists = [];
+        for($i=0; $i<count($image); $i++){
+            Storage::delete($request->image[$i]->src);
+        };
+        $post->delete();
+        $posts = Post::where('user_id', $request->user_id)->orderBy('updated_at', 'desc')->get();
+        return $posts;
     }
 
     public function delete(Request $request) {

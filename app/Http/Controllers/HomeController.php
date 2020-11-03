@@ -26,7 +26,9 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('index');
+        $my_info = User::find(1)->first();
+        $my_posts = Post::where('user_id', $my_info->id)->get();
+        return view('index', ['my_info' => $my_info, 'my_posts' => $my_posts]);
     }
     // public function index()
     // {

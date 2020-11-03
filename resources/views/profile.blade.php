@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-{{--  <profile :this-user-posts="{{ $this_user_posts }}"></profile>  --}}
+<profile :this-user-posts='@json($this_user_posts)'></profile>
 @endsection

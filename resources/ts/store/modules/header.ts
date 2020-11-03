@@ -19,7 +19,7 @@ const state: object = {
             '/home',
             '/home',
             '/post',
-            '',
+            '/profile',
         ],
     },
     // ドロワー内のアイテム
