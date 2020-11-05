@@ -28,7 +28,7 @@
     <div id="app" v-cloak>
         <v-app>
             @auth
-            <header-bar :user="@json(Auth::user())"></header-bar>
+            <header-bar :user='@json(Auth::user())'></header-bar>
             @endauth
             @guest
             <header-bar :user="null"></header-bar>

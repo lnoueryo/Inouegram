@@ -95,4 +95,8 @@ class ProfileController extends Controller
         $follower->delete();
         return  redirect()->route('profile', ['id' => $request->id]);
     }
+
+    public function uploadBg(Request $request) {
+        dd($request->bgData);
+    }
 }

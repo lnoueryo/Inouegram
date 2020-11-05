@@ -1,5 +1,34 @@
 <template>
-    <v-layout row wrap class="justify-end" style="margin: auto;">
+  <div>
+        <v-card class="mx-auto" color="grey lighten-4" style="width: 100%" max-width="700">
+            <div v-if="myInfo.bg_image">
+                <v-img :aspect-ratio="16/9" :src="'storage/image/' + myInfo.bg_image" @click="btnclick"></v-img>
+            </div>
+            <div v-else>
+                <v-img :aspect-ratio="16/9" :src="'storage/image/' + myMainImage" @click="btnclick"></v-img>
+            </div>
+            <input style="display: none" ref="input" type="file" accept="image/jpeg, image/jpg, image/png" @input="upload">
+          <v-col>
+            <v-avatar size="150" style="position:absolute; top: 230px">
+              <v-img :src="'/storage/image/' + myInfo.profile_image"></v-img>
+            </v-avatar>
+          </v-col>
+            <v-list-item color="rgba(0, 0, 0, .4)">
+              <v-list-item-content>
+                <v-list-item-title class="title">Marcus Obrien</v-list-item-title>
+                <v-list-item-subtitle>Network Engineer</v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+          <v-card-text class="pt-6" style="position: relative;">
+            <h3 class="display-1 font-weight-light orange--text mb-2">
+              QW cooking utensils
+            </h3>
+            <div class="font-weight-light grey--text title mb-2">
+              <v-btn @click="logout">ログアウト</v-btn>
+            </div>
+          </v-card-text>
+        </v-card>
+      <v-layout row wrap class="justify-end" style="margin: auto;">
       <v-hover v-for="(thisUserPost, index) in newPosts" :key="index" v-slot="{ hover }">
         <v-card class="mx-auto" color="grey lighten-4" max-width="350">
           <v-img :aspect-ratio="14/12" :src="'storage/image/' + thisUserPost.image[0].src" @click="openDialog(index)">
@@ -86,7 +115,41 @@
         </v-btn>
       </template>
     </v-snackbar>
+        <v-dialog
+      v-model="changeBgDialog"
+      max-width="290"
+      @click:outside="outside"
+    >
+      <v-card>
+          <v-img :src="changingBgData"></v-img>
+
+        <v-card-text>
+          Do you wanna change to this image??
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn
+            color="green darken-1"
+            text
+            @click="changeBgDialog = false"
+          >
+            No
+          </v-btn>
+
+          <v-btn
+            color="green darken-1"
+            text
+            @click="changeBg()"
+          >
+            Yes
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </v-layout>
+  </div>
 </template>
 
 <script>
@@ -102,6 +165,9 @@
         snackbar: false,
         text: 'deleted',
         timeout: 2000,
+        myMainImage: 'kobe.jpg',
+        changeBgDialog: false,
+        changingBgData: '',
       }
     },
     computed:{
@@ -114,6 +180,37 @@
         }
     },
     methods: {
+        changeBg(){
+            var bgData = this.changingBgData;
+            let fd= new FormData();
+            fd.append("bgData", bgData);
+            axios.post('/api/upload', JSON.stringify(fd))
+            .then(
+                response => {
+                    console.log('hello');
+                }
+            )
+            .catch(function (error) {
+                console.log(error);
+            });
+        },
+        upload(event){
+            if(event.target.value == ''){
+                this.changeBgDialog = false;
+            } else {
+            var file = event.target.files[0];
+            var reader = new FileReader();
+            var that = this;
+                reader.onload = function(e) {
+                    that.changingBgData = e.target.result;
+                    that.changeBgDialog = true;
+                }
+                reader.readAsDataURL(file);
+            }
+        },
+        btnclick() {
+            this.$refs.input.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+        },
       openDialog(key){
         this.dialog = true;
         this.postKey = key;
@@ -173,7 +270,14 @@
             this.dialog = true;
             this.images = event;
             this.thisImageComments = this.thisUserComments.filter((v) => v.post_id === event.id);
-        }
+        },
+        logout() {
+          axios.post('/logout')
+          .then(() => location.href = '/home')
+          .catch(function (error) {
+              location.href = '/home';
+          });
+        },
     }
 }
 </script>

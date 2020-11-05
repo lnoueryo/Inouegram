@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\User;
+use Illuminate\Support\Facades\Auth;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
@@ -35,3 +36,4 @@ Route::post('/delete_post','ProfileController@deletePost');
 
 Route::post('/create', 'HomeController@create')->name('create');
 Route::post('/store', 'HomeController@store')->name('store');
+Route::post('/upload', 'ProfileController@uploadBg');
