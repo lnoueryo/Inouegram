@@ -9,9 +9,5 @@ export default {
     components: {
         IndexTemplate,
     },
-    mounted(){
-        console.log(this.myInfo);
-        console.log(this.myPosts);
-    }
 }
 </script>

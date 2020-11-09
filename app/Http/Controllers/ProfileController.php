@@ -97,6 +97,22 @@ class ProfileController extends Controller
     }
 
     public function uploadBg(Request $request) {
-        dd($request->bgData);
+        $user = User::find(1)->first();
+        Storage::delete($user->bg_image);
+        $image = $request->bgData;
+        if(strpos($image,'data:image/png;') !== false){
+            $image = str_replace('data:image/png;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+            $imageName = str_random(10).'.'.'png';
+            Storage::disk('local')->put($imageName, base64_decode($image));
+        } else {
+            $image = str_replace('data:image/jpeg;base64,', '', $image);
+            $image = str_replace(' ', '+', $image);
+            $imageName = str_random(10).'.'.'jpg';
+        }
+        Storage::disk('local')->put($imageName, base64_decode($image));
+        $user->bg_image = $imageName;
+        $user->save();
+        return $user;
     }
 }

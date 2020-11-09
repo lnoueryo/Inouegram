@@ -3009,15 +3009,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
                 if (typeof FileReader === 'function') {
-                  reader = new FileReader();
+                  if (file.size < 2500000) {
+                    reader = new FileReader();
 
-                  reader.onload = function (event) {
-                    var imgSrc = event.target.result;
+                    reader.onload = function (event) {
+                      var imgSrc = event.target.result;
 
-                    _this.$emit('selectedImage', imgSrc);
-                  };
+                      _this.$emit('selectedImage', imgSrc);
+                    };
 
-                  reader.readAsDataURL(file);
+                    reader.readAsDataURL(file);
+                  } else {
+                    _this.$emit('selectedImage', '');
+                  }
                 } else {
                   alert('Sorry, FileReader API not supported');
                 } // 最初のif文はfileimageファイルかどうかのvalidation
@@ -3092,15 +3096,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
                 if (typeof FileReader === 'function') {
-                  reader = new FileReader();
+                  if (file.size < 2500000) {
+                    reader = new FileReader();
 
-                  reader.onload = function (event) {
-                    var imgSrc = event.target.result;
+                    reader.onload = function (event) {
+                      var imgSrc = event.target.result;
 
-                    _this.$emit('selectedImage', imgSrc);
-                  };
+                      _this.$emit('selectedImage', imgSrc);
+                    };
 
-                  reader.readAsDataURL(file);
+                    reader.readAsDataURL(file);
+                  } else {
+                    _this.$emit('selectedImage', '');
+                  }
                 } else {
                   alert('Sorry, FileReader API not supported');
                 } // 最初のif文はfileimageファイルかどうかのvalidation
@@ -4086,10 +4094,6 @@ __webpack_require__.r(__webpack_exports__);
   props: ['my-info', 'my-posts'],
   components: {
     IndexTemplate: _templates_IndexTemplate__WEBPACK_IMPORTED_MODULE_0__["default"]
-  },
-  mounted: function mounted() {
-    console.log(this.myInfo);
-    console.log(this.myPosts);
   }
 });
 
@@ -4471,8 +4475,41 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var _this = undefined;
-
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4551,15 +4588,16 @@ var _this = undefined;
   props: ['myInfo', 'myPosts'],
   data: function data() {
     return {
-      show: false,
-      thisUser: _this.myInfo,
-      thisPosts: _this.myPosts,
-      def: 'ryo',
+      // show: false,
+      thisUser: this.myInfo,
+      thisPosts: this.myPosts,
+      // def: 'ryo',
       followingUser: [{
         following_id: 2,
         followed_id: 1
       }],
-      postKey: 0
+      postKey: 0,
+      menu: false
     };
   },
   computed: {
@@ -4573,8 +4611,23 @@ var _this = undefined;
       return posts;
     }
   },
-  mounted: function mounted() {
-    console.log(this.myInfo);
+  methods: {
+    like: function like(thisPostId, num) {
+      var _this = this;
+
+      axios.get('/api/like', {
+        params: {
+          postId: thisPostId,
+          postingUserId: this.myInfo.id,
+          reaction: num
+        }
+      }).then(function (response) {
+        _this.menu = false;
+        console.log('hello');
+      })["catch"](function (error) {
+        console.log('fail');
+      });
+    }
   }
 });
 
@@ -4876,6 +4929,34 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4892,6 +4973,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      sizeDialog: false,
       show: false,
       title: '',
       message: '',
@@ -5003,9 +5085,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       concatImages.appendChild(newImg);
     },
     loadImage: function loadImage(e) {
-      this.stepBtn1 = false;
-      this.imgSrc = e;
-      this.$refs.cropper.replace(e);
+      var preview = document.getElementById('preview');
+
+      if (e == '') {
+        this.sizeDialog = true;
+        this.imgSrc = '';
+        this.stepBtn1 = true;
+        var preview = document.getElementsByClassName('preview');
+        var img = preview[0].getElementsByTagName('img');
+        img[0].src = '';
+      } else {
+        preview.classList.add('preview');
+        this.stepBtn1 = false;
+        this.imgSrc = e;
+        this.$refs.cropper.replace(e);
+        var img = preview[0].getElementsByTagName('img');
+        img[0].src = '';
+        var newImg = document.createElement("img");
+        newImg.src = this.concatImg[this.concatImg.length - 1];
+        newImg.width = 250;
+        newImg.height = 250;
+        var concatImages = document.getElementById('concatImages');
+        concatImages.appendChild(newImg);
+      }
     },
     submit: function submit() {
       var fd = new FormData();
@@ -5496,6 +5598,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 //
 //
 //
@@ -5655,6 +5765,7 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       userPosts: this.thisUserPosts,
+      userData: this.myInfo,
       dialog: false,
       deleteDialog: false,
       postKey: 0,
@@ -5675,18 +5786,38 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return this.userPosts;
+    },
+    userInfo: function userInfo() {
+      return this.userData;
     }
   },
   methods: {
     changeBg: function changeBg() {
-      var bgData = this.changingBgData;
-      var fd = new FormData();
-      fd.append("bgData", bgData);
-      axios.post('/api/upload', JSON.stringify(fd)).then(function (response) {
-        console.log('hello');
-      })["catch"](function (error) {
-        console.log(error);
-      });
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var bgData, fd;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                bgData = _this.changingBgData;
+                fd = new FormData();
+                fd.append("bgData", bgData);
+                axios.post('/api/upload', fd).then(function (response) {
+                  _this.changeBgDialog = false;
+                  _this.userData = response.data;
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
     },
     upload: function upload(event) {
       if (event.target.value == '') {
@@ -5722,7 +5853,7 @@ __webpack_require__.r(__webpack_exports__);
       this.showUp = false;
     },
     submit: function submit() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('/api/comment', {
         params: {
@@ -5731,22 +5862,22 @@ __webpack_require__.r(__webpack_exports__);
           'text': this.comment
         }
       }).then(function (response) {
-        return _this.thisUserComments = response.data;
+        return _this2.thisUserComments = response.data;
       }, this.$refs.carouselPost.remove(), this.snackbar = true, this.destroy())["catch"](function (error) {
         console.log(error);
       });
     },
     deletePost: function deletePost() {
-      var _this2 = this;
+      var _this3 = this;
 
       var thisPost = this.userPosts[this.postKey];
       var fd = new FormData();
       fd.append("post", JSON.stringify(thisPost));
       console.log(fd.get('post'));
       axios.post('/api/delete_post', fd).then(function (response) {
-        _this2.userPosts = response.data;
-        _this2.deleteDialog = false;
-        _this2.snackbar = true;
+        _this3.userPosts = response.data;
+        _this3.deleteDialog = false;
+        _this3.snackbar = true;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -14086,16 +14217,6 @@ var render = function() {
                       })
                     ],
                     1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-list-item-content",
-                    [
-                      _c("v-list-item-title", {
-                        domProps: { textContent: _vm._s(_vm.def) }
-                      })
-                    ],
-                    1
                   )
                 ],
                 1
@@ -14120,9 +14241,136 @@ var render = function() {
           ),
           _vm._v(" "),
           _c(
-            "v-btn",
-            { attrs: { icon: "" } },
-            [_c("v-icon", [_vm._v("mdi-heart")])],
+            "v-menu",
+            {
+              attrs: {
+                "close-on-content-click": false,
+                "nudge-width": 200,
+                "offset-y": "",
+                top: ""
+              },
+              scopedSlots: _vm._u(
+                [
+                  {
+                    key: "activator",
+                    fn: function(ref) {
+                      var on = ref.on
+                      var attrs = ref.attrs
+                      return [
+                        _c(
+                          "v-btn",
+                          _vm._g(
+                            _vm._b(
+                              { attrs: { icon: "" } },
+                              "v-btn",
+                              attrs,
+                              false
+                            ),
+                            on
+                          ),
+                          [_c("v-icon", [_vm._v("mdi-heart")])],
+                          1
+                        )
+                      ]
+                    }
+                  }
+                ],
+                null,
+                true
+              ),
+              model: {
+                value: _vm.menu,
+                callback: function($$v) {
+                  _vm.menu = $$v
+                },
+                expression: "menu"
+              }
+            },
+            [
+              _vm._v(" "),
+              _c(
+                "v-card",
+                { key: newPost.id },
+                [
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.like(newPost.id, 0)
+                            }
+                          }
+                        },
+                        [_c("v-icon", [_vm._v("mdi-heart")])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.like(newPost.id, 1)
+                            }
+                          }
+                        },
+                        [_c("v-icon", [_vm._v("mdi-heart")])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.like(newPost.id, 2)
+                            }
+                          }
+                        },
+                        [_c("v-icon", [_vm._v("mdi-heart")])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.like(newPost.id, 3)
+                            }
+                          }
+                        },
+                        [_c("v-icon", [_vm._v("mdi-heart")])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "" },
+                          on: {
+                            click: function($event) {
+                              return _vm.like(newPost.id, 4)
+                            }
+                          }
+                        },
+                        [_c("v-icon", [_vm._v("mdi-heart")])],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
             1
           ),
           _vm._v(" "),
@@ -14153,56 +14401,10 @@ var render = function() {
                 _vm._v("\n        Explore\n      ")
               ]),
               _vm._v(" "),
-              _c("v-spacer"),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  attrs: { icon: "" },
-                  on: {
-                    click: function($event) {
-                      _vm.show = !_vm.show
-                    }
-                  }
-                },
-                [
-                  _c("v-icon", [
-                    _vm._v(
-                      _vm._s(_vm.show ? "mdi-chevron-up" : "mdi-chevron-down")
-                    )
-                  ])
-                ],
-                1
-              )
+              _c("v-spacer")
             ],
             1
           ),
-          _vm._v(" "),
-          _c("v-expand-transition", [
-            _c(
-              "div",
-              {
-                directives: [
-                  {
-                    name: "show",
-                    rawName: "v-show",
-                    value: _vm.show,
-                    expression: "show"
-                  }
-                ]
-              },
-              [
-                _c("v-divider"),
-                _vm._v(" "),
-                _c("v-card-text", [
-                  _vm._v(
-                    "\n          I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.\n        "
-                  )
-                ])
-              ],
-              1
-            )
-          ]),
           _vm._v(" "),
           _c("v-divider"),
           _vm._v(" "),
@@ -14355,7 +14557,10 @@ var render = function() {
                           _c(
                             "div",
                             [
-                              _c("div", { staticClass: "preview" }),
+                              _c("div", {
+                                staticClass: "preview",
+                                attrs: { id: "preview" }
+                              }),
                               _vm._v(" "),
                               _c("input-file", {
                                 on: {
@@ -15806,11 +16011,7 @@ var render = function() {
                                 _vm._v(" "),
                                 _c(
                                   "v-list-item-content",
-                                  [
-                                    _c("v-list-item-title", {
-                                      domProps: { textContent: _vm._s(_vm.def) }
-                                    })
-                                  ],
+                                  [_c("v-list-item-title")],
                                   1
                                 )
                               ],
@@ -15838,17 +16039,7 @@ var render = function() {
                         _c(
                           "v-btn",
                           { attrs: { icon: "" } },
-                          [
-                            _c(
-                              "v-icon",
-                              {
-                                directives: [
-                                  { name: "icon", rawName: "v-icon" }
-                                ]
-                              },
-                              [_vm._v("mdi-heart")]
-                            )
-                          ],
+                          [_c("v-icon", [_vm._v("mdi-heart")])],
                           1
                         ),
                         _vm._v(" "),
@@ -15933,7 +16124,62 @@ var render = function() {
             { attrs: { color: "primary" }, on: { click: _vm.submit } },
             [_vm._v("保存")]
           )
-        : _vm._e()
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "500" },
+          model: {
+            value: _vm.sizeDialog,
+            callback: function($$v) {
+              _vm.sizeDialog = $$v
+            },
+            expression: "sizeDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "headline grey lighten-2" }, [
+                _vm._v("\n      Error\n    ")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v(
+                  "\n      Filesize is over. Less than 2.5M is allowed.\n    "
+                )
+              ]),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.sizeDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("\n        I accept\n      ")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
     ],
     1
   )
@@ -15971,14 +16217,14 @@ var render = function() {
           attrs: { color: "grey lighten-4", "max-width": "700" }
         },
         [
-          _vm.myInfo.bg_image
+          _vm.userInfo.bg_image
             ? _c(
                 "div",
                 [
                   _c("v-img", {
                     attrs: {
                       "aspect-ratio": 16 / 9,
-                      src: "storage/image/" + _vm.myInfo.bg_image
+                      src: "storage/image/" + _vm.userInfo.bg_image
                     },
                     on: { click: _vm.btnclick }
                   })
@@ -16017,7 +16263,9 @@ var render = function() {
                 },
                 [
                   _c("v-img", {
-                    attrs: { src: "/storage/image/" + _vm.myInfo.profile_image }
+                    attrs: {
+                      src: "/storage/image/" + _vm.userInfo.profile_image
+                    }
                   })
                 ],
                 1

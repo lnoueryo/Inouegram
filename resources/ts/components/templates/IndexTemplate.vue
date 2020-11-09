@@ -10,9 +10,9 @@
           ></v-img>
         </v-list-item-avatar>
 
-        <v-list-item-content>
+        <!-- <v-list-item-content>
           <v-list-item-title v-text="def"></v-list-item-title>
-        </v-list-item-content>
+        </v-list-item-content> -->
 
       </v-list-item>
     </v-list>
@@ -24,9 +24,44 @@
         <v-carousel-item v-for="(image,i) in newPost.image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
       </v-carousel>
     <!-- </div> -->
-    <v-btn icon>
-    <v-icon>mdi-heart</v-icon>
-    </v-btn>
+
+        <v-menu
+      v-model="menu"
+      :close-on-content-click="false"
+      :nudge-width="200"
+      offset-y
+      top
+    >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn icon v-bind="attrs" v-on="on">
+        <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        <!-- <v-btn icon @click="like(newPost.id)" v-bind="attrs" v-on="on">
+        <v-icon>mdi-heart</v-icon>
+        </v-btn> -->
+      </template>
+
+      <v-card :key="newPost.id">
+
+        <v-card-actions>
+        <v-btn icon @click="like(newPost.id, 0)">
+        <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        <v-btn icon @click="like(newPost.id, 1)">
+        <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        <v-btn icon @click="like(newPost.id, 2)">
+        <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        <v-btn icon @click="like(newPost.id, 3)">
+        <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        <v-btn icon @click="like(newPost.id, 4)">
+        <v-icon>mdi-heart</v-icon>
+        </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-menu>
     <v-btn icon>
     <v-icon>mdi-comment</v-icon>
     </v-btn>
@@ -46,19 +81,19 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn icon @click="show = !show">
+      <!-- <v-btn icon @click="show = !show">
         <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-      </v-btn>
+      </v-btn> -->
     </v-card-actions>
 
-    <v-expand-transition>
+    <!-- <v-expand-transition>
       <div v-show="show">
         <v-divider></v-divider>
         <v-card-text>
           I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
         </v-card-text>
       </div>
-    </v-expand-transition>
+    </v-expand-transition> -->
     <v-divider></v-divider>
     <div class="d-flex align-center justify-space-around">
     <v-col cols="12" md="9">
@@ -75,16 +110,19 @@
 <script>
   export default {
       props: ['myInfo', 'myPosts'],
-    data: () => ({
-      show: false,
+    data() {
+      return {
+      // show: false,
       thisUser: this.myInfo,
       thisPosts: this.myPosts,
-      def: 'ryo',
+      // def: 'ryo',
       followingUser: [
         {following_id: 2, followed_id: 1}
       ],
       postKey: 0,
-    }),
+      menu: false,
+      }
+    },
     computed: {
         newPosts(){
             var posts = this.myPosts;
@@ -94,8 +132,23 @@
             return posts;
         }
     },
-    mounted(){
-        console.log(this.myInfo)
+    methods:{
+      like(thisPostId, num){
+        axios.get('/api/like', {
+          params: {
+            postId: thisPostId,
+            postingUserId: this.myInfo.id,
+            reaction: num,
+          }
+        })
+        .then(response => {
+          this.menu = false;
+          console.log('hello');
+        })
+        .catch(error => {
+          console.log('fail')
+        })
+      }
     }
   }
 </script>

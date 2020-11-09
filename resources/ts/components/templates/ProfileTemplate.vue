@@ -1,8 +1,8 @@
 <template>
   <div>
         <v-card class="mx-auto" color="grey lighten-4" style="width: 100%" max-width="700">
-            <div v-if="myInfo.bg_image">
-                <v-img :aspect-ratio="16/9" :src="'storage/image/' + myInfo.bg_image" @click="btnclick"></v-img>
+            <div v-if="userInfo.bg_image">
+                <v-img :aspect-ratio="16/9" :src="'storage/image/' + userInfo.bg_image" @click="btnclick"></v-img>
             </div>
             <div v-else>
                 <v-img :aspect-ratio="16/9" :src="'storage/image/' + myMainImage" @click="btnclick"></v-img>
@@ -10,7 +10,7 @@
             <input style="display: none" ref="input" type="file" accept="image/jpeg, image/jpg, image/png" @input="upload">
           <v-col>
             <v-avatar size="150" style="position:absolute; top: 230px">
-              <v-img :src="'/storage/image/' + myInfo.profile_image"></v-img>
+              <v-img :src="'/storage/image/' + userInfo.profile_image"></v-img>
             </v-avatar>
           </v-col>
             <v-list-item color="rgba(0, 0, 0, .4)">
@@ -159,6 +159,7 @@
     data () {
       return {
         userPosts: this.thisUserPosts,
+        userData: this.myInfo,
         dialog: false,
         deleteDialog: false,
         postKey: 0,
@@ -177,17 +178,21 @@
                 userPosts[i].image = JSON.parse(userPosts[i].image);
             }
             return this.userPosts;
+        },
+        userInfo(){
+            return this.userData;
         }
     },
     methods: {
-        changeBg(){
+      async changeBg(){
             var bgData = this.changingBgData;
             let fd= new FormData();
             fd.append("bgData", bgData);
-            axios.post('/api/upload', JSON.stringify(fd))
+            axios.post('/api/upload', fd)
             .then(
                 response => {
-                    console.log('hello');
+                    this.changeBgDialog = false;
+                    this.userData = response.data;
                 }
             )
             .catch(function (error) {

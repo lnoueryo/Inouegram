@@ -45,7 +45,7 @@
                                 <input-file-image @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                             <div>
-                            <div class="preview" />
+                            <div id="preview" class="preview" />
                             <input-file @selectedImage="loadImage($event)"></input-file>
                             </div>
                         </v-layout>
@@ -241,7 +241,7 @@
                                     </v-list-item-avatar>
 
                                     <v-list-item-content>
-                                        <v-list-item-title v-text="def"></v-list-item-title>
+                                        <v-list-item-title></v-list-item-title>
                                     </v-list-item-content>
 
                                 </v-list-item>
@@ -250,7 +250,7 @@
                                 <v-carousel-item v-for="(image,i) in concatImg" :key="i" :src="image" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                             </v-carousel>
                             <v-btn icon>
-                                <v-icon   v-icon>mdi-heart</v-icon>
+                                <v-icon>mdi-heart</v-icon>
                             </v-btn>
                             <v-btn icon>
                                 <v-icon>mdi-comment</v-icon>
@@ -275,6 +275,34 @@
             </v-stepper-items>
         </v-stepper>
     <div id="concatImages" class="d-flex justify-content-start"></div><v-btn color="primary" @click="submit" v-if="concatImageBtn">保存</v-btn>
+    <v-dialog
+      v-model="sizeDialog"
+      width="500"
+    >
+
+      <v-card>
+        <v-card-title class="headline grey lighten-2">
+          Error
+        </v-card-title>
+
+        <v-card-text>
+          Filesize is over. Less than 2.5M is allowed.
+        </v-card-text>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            text
+            @click="sizeDialog = false"
+          >
+            I accept
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </div>
 </template>
 
@@ -293,6 +321,7 @@ export default {
     },
     data() {
       return {
+        sizeDialog: false,
         show: false,
         title: '',
         message: '',
@@ -403,9 +432,28 @@ export default {
             concatImages.appendChild(newImg);
         },
         loadImage(e){
-            this.stepBtn1 = false;
-            this.imgSrc = e;
-            this.$refs.cropper.replace(e);
+            var preview = document.getElementById('preview');
+            if(e == ''){
+            this.sizeDialog = true;
+            this.imgSrc = '';
+            this.stepBtn1 = true;
+            var preview = document.getElementsByClassName('preview');
+            var img = preview[0].getElementsByTagName('img');
+            img[0].src = '';
+            } else {
+                preview.classList.add('preview');
+                this.stepBtn1 = false;
+                this.imgSrc = e;
+                this.$refs.cropper.replace(e);
+                var img = preview[0].getElementsByTagName('img');
+                img[0].src = '';
+                var newImg = document.createElement("img");
+                newImg.src = this.concatImg[this.concatImg.length-1];
+                newImg.width = 250;
+                newImg.height = 250;
+                var concatImages = document.getElementById('concatImages')
+                concatImages.appendChild(newImg);
+            }
         },
         submit(){
             let fd= new FormData();

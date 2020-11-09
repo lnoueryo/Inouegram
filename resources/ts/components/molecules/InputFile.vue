@@ -22,12 +22,16 @@ export default {
                     return
                 }
             if (typeof FileReader === 'function') {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const imgSrc = event.target.result;
-                    this.$emit('selectedImage', imgSrc);
+                if(file.size<2500000){
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const imgSrc = event.target.result;
+                        this.$emit('selectedImage', imgSrc);
+                    }
+                    reader.readAsDataURL(file)
+                } else {
+                    this.$emit('selectedImage', '');
                 }
-                reader.readAsDataURL(file)
             } else {
                 alert('Sorry, FileReader API not supported')
             }
