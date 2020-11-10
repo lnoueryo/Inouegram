@@ -26,38 +26,41 @@
     <!-- </div> -->
 
         <v-menu
-      v-model="menu"
-      :close-on-content-click="false"
+      v-model="menu[index]"
+      :close-on-content-click="true"
       :nudge-width="200"
       offset-y
       top
+      
     >
       <template v-slot:activator="{ on, attrs }">
-        <v-btn icon v-bind="attrs" v-on="on">
+        <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[index].like === true) ? 'pink' : ''">
         <v-icon>mdi-heart</v-icon>
         </v-btn>
         <!-- <v-btn icon @click="like(newPost.id)" v-bind="attrs" v-on="on">
         <v-icon>mdi-heart</v-icon>
         </v-btn> -->
       </template>
-
-      <v-card :key="newPost.id">
+      <v-card>
 
         <v-card-actions>
-        <v-btn icon @click="like(newPost.id, 0)">
-        <v-icon>mdi-heart</v-icon>
+        <v-btn icon @click="like(newPost.id, 0, index)" :color="(likeArray[index].reaction === 0) ? 'yellow' : ''">
+        <v-icon>mdi-emoticon</v-icon>
         </v-btn>
-        <v-btn icon @click="like(newPost.id, 1)">
-        <v-icon>mdi-heart</v-icon>
+        <v-btn icon @click="like(newPost.id, 1, index)"  :color="(likeArray[index].reaction === 1) ? 'blue' : ''">
+        <v-icon>mdi-emoticon-cry</v-icon>
         </v-btn>
-        <v-btn icon @click="like(newPost.id, 2)">
-        <v-icon>mdi-heart</v-icon>
+        <v-btn icon @click="like(newPost.id, 2, index)"  :color="(likeArray[index].reaction === 2) ? 'orange' : ''">
+        <v-icon>mdi-emoticon-lol</v-icon>
         </v-btn>
-        <v-btn icon @click="like(newPost.id, 3)">
-        <v-icon>mdi-heart</v-icon>
+        <v-btn icon @click="like(newPost.id, 3, index)" :color="(likeArray[index].reaction === 3) ? 'red' : ''">
+        <v-icon>mdi-emoticon-angry</v-icon>
         </v-btn>
-        <v-btn icon @click="like(newPost.id, 4)">
-        <v-icon>mdi-heart</v-icon>
+        <v-btn icon @click="like(newPost.id, 4, index)" :color="(likeArray[index].reaction === 4) ? 'pink' : ''">
+        <v-icon>mdi-emoticon-kiss</v-icon>
+        </v-btn>
+        <v-btn icon @click="deleteLike(newPost.id, index)" v-if="likeArray[index].like">
+        <v-icon>mdi-minus-circle</v-icon>
         </v-btn>
         </v-card-actions>
       </v-card>
@@ -104,23 +107,43 @@
     </v-btn>
     </div>
   </v-card>
+      <v-snackbar
+      v-model="snackbar"
+    >
+      {{ text }}
+
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="pink"
+          text
+          v-bind="attrs"
+          @click="deleteLike(lastPostId, lastIndex)"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
 <script>
   export default {
-      props: ['myInfo', 'myPosts'],
+      props: ['myInfo', 'myPosts', 'myLikes'],
     data() {
       return {
-      // show: false,
+      snackbar: false,
+      text: `Hello, I'm a snackbar`,
       thisUser: this.myInfo,
       thisPosts: this.myPosts,
-      // def: 'ryo',
+      thisLikes: this.myLikes,
+      likeArray: [],
       followingUser: [
         {following_id: 2, followed_id: 1}
       ],
       postKey: 0,
-      menu: false,
+      menu: [],
+      lastPostId: '',
+      lastIndex: '',
       }
     },
     computed: {
@@ -132,8 +155,24 @@
             return posts;
         }
     },
+    created(){
+      var thisPosts = this.thisPosts;
+      var thisLikes = this.thisLikes;
+      for(var i=0; i<thisPosts.length; i++){
+        this.likeArray.push({like: false, reaction: ''})
+        for(var j=0; j<thisLikes.length; j++){
+          if(thisPosts[i].id == thisLikes[j].post_id){
+            this.likeArray[i].like = true;
+            this.likeArray[i].reaction = thisLikes[j].reaction;
+          }
+        }
+      }
+    },
     methods:{
-      like(thisPostId, num){
+      like(thisPostId, num, index){
+          this.menu[index] = false;
+          this.likeArray[index].like = true;
+          this.likeArray[index].reaction = num;
         axios.get('/api/like', {
           params: {
             postId: thisPostId,
@@ -142,13 +181,29 @@
           }
         })
         .then(response => {
-          this.menu = false;
-          console.log('hello');
+         this.snackbar = true;
+        this.lastPostId = thisPostId;
+        this.lastIndex = index;
         })
         .catch(error => {
           console.log('fail')
         })
-      }
+      },
+      deleteLike(thisPostId, index){
+          this.likeArray[index].like = false;
+          this.likeArray[index].reaction = '';
+          axios.get('/api/delete_like', {
+          params: {
+            postId: thisPostId,
+            postingUserId: this.myInfo.id,
+          }
+        })
+        .then(response => {
+        })
+        .catch(error => {
+          console.log('fail')
+        })
+      },
     }
   }
 </script>

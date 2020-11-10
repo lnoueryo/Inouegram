@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\User;
 use App\Post;
 use App\Photo;
+use App\Like;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
 {
     /**
@@ -26,9 +28,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $my_info = User::find(1)->first();
+        $my_info = Auth::user();
         $my_posts = Post::where('user_id', $my_info->id)->orderBy('updated_at', 'desc')->get();
-        return view('index', ['my_info' => $my_info, 'my_posts' => $my_posts]);
+        $my_likes = Like::where('user_id', Auth::id())->get();
+        return view('index', ['my_info' => $my_info, 'my_posts' => $my_posts, 'my_likes' => $my_likes]);
     }
     // public function index()
     // {

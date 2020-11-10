@@ -52,4 +52,9 @@ Route::get('/like', function(Request $request){
     }
     return Like::all();
 });
+Route::get('/delete_like', function(Request $request){
+    $like = Like::where('post_id', $request->postId)->where('user_id', $request->postingUserId)->first();
+    $like->delete();
+    return Like::all();
+});
 Route::post('/upload', 'ProfileController@uploadBg');
