@@ -278,9 +278,9 @@
         },
         logout() {
           axios.post('/logout')
-          .then(() => location.href = '/home')
+          .then(() => location.href = '/')
           .catch(function (error) {
-              location.href = '/home';
+              location.href = '/';
           });
         },
     }

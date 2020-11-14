@@ -1,150 +1,158 @@
 <template>
-<div>
-  <v-card class="mx-auto my-5" max-width="500" v-for="(newPost,index) in newPosts" :key="index">
-    <v-list>
-      <v-list-item
-      >
-        <v-list-item-avatar>
-          <v-img
-            :src="'storage/image/' + myInfo.profile_image"
-          ></v-img>
-        </v-list-item-avatar>
+    <div>
+    <v-card class="mx-auto my-5" max-width="500" v-for="(newPost,index) in newPosts" :key="index">
+        <v-list>
+        <v-list-item>
+            <v-list-item-avatar>
+            <v-img :src="'storage/image/' + myInfo.profile_image"></v-img>
+            </v-list-item-avatar>
 
-        <!-- <v-list-item-content>
-          <v-list-item-title v-text="def"></v-list-item-title>
-        </v-list-item-content> -->
+            <!-- <v-list-item-content>
+            <v-list-item-title v-text="def"></v-list-item-title>
+            </v-list-item-content> -->
 
-      </v-list-item>
-    </v-list>
-    <!-- <div v-if="followingUserPost.image.length == 1">
-      <v-img :src="followingUserPost.image.src"></v-img>
-    </div>
-    <div v-else> -->
-      <v-carousel>
-        <v-carousel-item v-for="(image,i) in newPost.image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
-      </v-carousel>
-    <!-- </div> -->
+            </v-list-item>
+        </v-list>
+        <!-- <div v-if="followingUserPost.image.length == 1">
+        <v-img :src="followingUserPost.image.src"></v-img>
+        </div>
+        <div v-else> -->
+        <v-carousel>
+            <v-carousel-item v-for="(image,i) in newPost.image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
+        </v-carousel>
+        <!-- </div> -->
 
-        <v-menu
-      v-model="menu[index]"
-      :close-on-content-click="true"
-      :nudge-width="200"
-      offset-y
-      top
-      
-    >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[index].like === true) ? 'pink' : ''">
-        <v-icon>mdi-heart</v-icon>
+            <v-menu
+        v-model="menu[index]"
+        :close-on-content-click="true"
+        :nudge-width="200"
+        offset-y
+        top
+
+        >
+        <template v-slot:activator="{ on, attrs }">
+            <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[index].like === true) ? 'pink' : ''">
+            <v-icon>mdi-heart</v-icon>
+            </v-btn>
+            <!-- <v-btn icon @click="like(newPost.id)" v-bind="attrs" v-on="on">
+            <v-icon>mdi-heart</v-icon>
+            </v-btn> -->
+        </template>
+        <v-card>
+            <v-card-actions>
+            <v-btn icon @click="like(newPost.id, 0, index)" :color="(likeArray[index].reaction === 0) ? 'yellow' : ''">
+            <v-icon>mdi-emoticon</v-icon>
+            </v-btn>
+            <v-btn icon @click="like(newPost.id, 1, index)"  :color="(likeArray[index].reaction === 1) ? 'blue' : ''">
+            <v-icon>mdi-emoticon-cry</v-icon>
+            </v-btn>
+            <v-btn icon @click="like(newPost.id, 2, index)"  :color="(likeArray[index].reaction === 2) ? 'orange' : ''">
+            <v-icon>mdi-emoticon-lol</v-icon>
+            </v-btn>
+            <v-btn icon @click="like(newPost.id, 3, index)" :color="(likeArray[index].reaction === 3) ? 'red' : ''">
+            <v-icon>mdi-emoticon-angry</v-icon>
+            </v-btn>
+            <v-btn icon @click="like(newPost.id, 4, index)" :color="(likeArray[index].reaction === 4) ? 'pink' : ''">
+            <v-icon>mdi-emoticon-kiss</v-icon>
+            </v-btn>
+            <v-btn icon @click="deleteLike(newPost.id, index)" v-if="likeArray[index].like">
+            <v-icon>mdi-minus-circle</v-icon>
+            </v-btn>
+            </v-card-actions>
+        </v-card>
+        </v-menu>
+        <v-btn icon>
+        <v-icon>mdi-comment</v-icon>
         </v-btn>
-        <!-- <v-btn icon @click="like(newPost.id)" v-bind="attrs" v-on="on">
-        <v-icon>mdi-heart</v-icon>
-        </v-btn> -->
-      </template>
-      <v-card>
-
+        <v-btn icon>
+        <v-icon>mdi-bookmark</v-icon>
+        </v-btn>
+            <v-card-title>
+        Top western road trips
+        </v-card-title>
+        <v-card-subtitle>
+        {{ newPost.text }}
+        </v-card-subtitle>
         <v-card-actions>
-        <v-btn icon @click="like(newPost.id, 0, index)" :color="(likeArray[index].reaction === 0) ? 'yellow' : ''">
-        <v-icon>mdi-emoticon</v-icon>
-        </v-btn>
-        <v-btn icon @click="like(newPost.id, 1, index)"  :color="(likeArray[index].reaction === 1) ? 'blue' : ''">
-        <v-icon>mdi-emoticon-cry</v-icon>
-        </v-btn>
-        <v-btn icon @click="like(newPost.id, 2, index)"  :color="(likeArray[index].reaction === 2) ? 'orange' : ''">
-        <v-icon>mdi-emoticon-lol</v-icon>
-        </v-btn>
-        <v-btn icon @click="like(newPost.id, 3, index)" :color="(likeArray[index].reaction === 3) ? 'red' : ''">
-        <v-icon>mdi-emoticon-angry</v-icon>
-        </v-btn>
-        <v-btn icon @click="like(newPost.id, 4, index)" :color="(likeArray[index].reaction === 4) ? 'pink' : ''">
-        <v-icon>mdi-emoticon-kiss</v-icon>
-        </v-btn>
-        <v-btn icon @click="deleteLike(newPost.id, index)" v-if="likeArray[index].like">
-        <v-icon>mdi-minus-circle</v-icon>
+
+        <v-spacer></v-spacer>
+        <v-btn icon @click="show = !show">
+            <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
         </v-btn>
         </v-card-actions>
-      </v-card>
-    </v-menu>
-    <v-btn icon>
-    <v-icon>mdi-comment</v-icon>
-    </v-btn>
-    <v-btn icon>
-    <v-icon>mdi-bookmark</v-icon>
-    </v-btn>
-        <v-card-title>
-      Top western road trips
-    </v-card-title>
-    <v-card-subtitle>
-      {{ newPost.text }}
-    </v-card-subtitle>
-    <v-card-actions>
-      <v-btn color="orange lighten-2" text>
-        Explore
-      </v-btn>
 
-      <v-spacer></v-spacer>
-
-      <!-- <v-btn icon @click="show = !show">
-        <v-icon>{{ show ? 'mdi-chevron-up' : 'mdi-chevron-down' }}</v-icon>
-      </v-btn> -->
-    </v-card-actions>
-
-    <!-- <v-expand-transition>
-      <div v-show="show">
+        <v-expand-transition>
+            <div v-show="show">
+                <!-- <v-divider></v-divider>
+                <v-card-text>
+                I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
+                </v-card-text> -->
+                <v-list two-line>
+                <template v-for="(item) in items">
+                    <v-list-item :key="item.title">
+                    <v-list-item-avatar>
+                        <v-img :src="item.avatar"></v-img>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                        <v-list-item-title v-html="item.title"></v-list-item-title>
+                        <v-list-item-subtitle v-html="item.subtitle"></v-list-item-subtitle>
+                    </v-list-item-content>
+                    </v-list-item>
+                </template>
+                </v-list>
+            </div>
+        </v-expand-transition>
         <v-divider></v-divider>
-        <v-card-text>
-          I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
-        </v-card-text>
-      </div>
-    </v-expand-transition> -->
-    <v-divider></v-divider>
-    <div class="d-flex align-center justify-space-around">
-    <v-col cols="12" md="9">
-        <v-text-field></v-text-field>
-            </v-col>
-    <v-btn>
-    投稿する
-    </v-btn>
+        <div class="d-flex align-center justify-space-around">
+        <v-col cols="12" md="9">
+            <v-text-field></v-text-field>
+        </v-col>
+        <v-btn>投稿する</v-btn>
+        </div>
+        </v-card>
+            <v-snackbar v-model="snackbar">
+            {{ text }}
+            <template v-slot:action="{ attrs }">
+                <v-btn color="pink" text v-bind="attrs" @click="deleteLike(lastPostId, lastIndex)">
+                Close
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
-  </v-card>
-      <v-snackbar
-      v-model="snackbar"
-    >
-      {{ text }}
-
-      <template v-slot:action="{ attrs }">
-        <v-btn
-          color="pink"
-          text
-          v-bind="attrs"
-          @click="deleteLike(lastPostId, lastIndex)"
-        >
-          Close
-        </v-btn>
-      </template>
-    </v-snackbar>
-  </div>
 </template>
 
 <script>
-  export default {
-      props: ['myInfo', 'myPosts', 'myLikes'],
+export default {
+    props: ['myInfo', 'myPosts', 'myLikes','comments'],
     data() {
-      return {
-      snackbar: false,
-      text: `Hello, I'm a snackbar`,
-      thisUser: this.myInfo,
-      thisPosts: this.myPosts,
-      thisLikes: this.myLikes,
-      likeArray: [],
-      followingUser: [
-        {following_id: 2, followed_id: 1}
-      ],
-      postKey: 0,
-      menu: [],
-      lastPostId: '',
-      lastIndex: '',
-      }
+        return {
+            items: [
+            {
+                avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+                name: 'Brunch this weekend?',
+                subtitle: `<span class="text--primary">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?`,
+            },
+            {
+                avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+                title: 'Summer BBQ <span class="grey--text text--lighten-1">4</span>',
+                subtitle: `<span class="text--primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`,
+            },
+            ],
+            show: false,
+            snackbar: false,
+            text: `Hello, I'm a snackbar`,
+            thisUser: this.myInfo,
+            thisPosts: this.myPosts,
+            thisLikes: this.myLikes,
+            likeArray: [],
+            followingUser: [
+                {following_id: 2, followed_id: 1}
+            ],
+            postKey: 0,
+            menu: [],
+            lastPostId: '',
+            lastIndex: '',
+        }
     },
     computed: {
         newPosts(){
@@ -156,54 +164,55 @@
         }
     },
     created(){
-      var thisPosts = this.thisPosts;
-      var thisLikes = this.thisLikes;
-      for(var i=0; i<thisPosts.length; i++){
-        this.likeArray.push({like: false, reaction: ''})
-        for(var j=0; j<thisLikes.length; j++){
-          if(thisPosts[i].id == thisLikes[j].post_id){
-            this.likeArray[i].like = true;
-            this.likeArray[i].reaction = thisLikes[j].reaction;
-          }
+        var thisPosts = this.thisPosts;
+        var thisLikes = this.thisLikes;
+        for(var i=0; i<thisPosts.length; i++){
+            this.likeArray.push({like: false, reaction: ''})
+            for(var j=0; j<thisLikes.length; j++){
+                if(thisPosts[i].id == thisLikes[j].post_id){
+                    this.likeArray[i].like = true;
+                    this.likeArray[i].reaction = thisLikes[j].reaction;
+                }
+            }
         }
-      }
     },
     methods:{
-      like(thisPostId, num, index){
-          this.menu[index] = false;
-          this.likeArray[index].like = true;
-          this.likeArray[index].reaction = num;
+    like(thisPostId, num, index){
+        this.menu[index] = false;
+        this.likeArray[index].like = true;
+        this.likeArray[index].reaction = num;
         axios.get('/api/like', {
-          params: {
-            postId: thisPostId,
-            postingUserId: this.myInfo.id,
-            reaction: num,
-          }
+            params: {
+                postId: thisPostId,
+                postingUserId: this.myInfo.id,
+                reaction: num,
+            }
         })
         .then(response => {
-         this.snackbar = true;
-        this.lastPostId = thisPostId;
-        this.lastIndex = index;
+            this.snackbar = true;
+            this.lastPostId = thisPostId;
+            this.lastIndex = index;
         })
         .catch(error => {
-          console.log('fail')
+            console.log('fail')
         })
-      },
-      deleteLike(thisPostId, index){
-          this.likeArray[index].like = false;
-          this.likeArray[index].reaction = '';
-          axios.get('/api/delete_like', {
-          params: {
-            postId: thisPostId,
-            postingUserId: this.myInfo.id,
-          }
-        })
-        .then(response => {
-        })
-        .catch(error => {
-          console.log('fail')
-        })
-      },
+    },
+    deleteLike(thisPostId, index){
+            this.likeArray[index].like = false;
+            this.likeArray[index].reaction = '';
+            axios.get('/api/delete_like', {
+            params: {
+                postId: thisPostId,
+                postingUserId: this.myInfo.id,
+            }
+            })
+            .then(response => {
+
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
     }
-  }
+}
 </script>
