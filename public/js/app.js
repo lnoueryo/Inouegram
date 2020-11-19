@@ -4598,15 +4598,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['myInfo', 'myPosts', 'myLikes'],
+  props: ['myInfo', 'myPosts', 'myLikes', 'comments'],
   data: function data() {
     return {
+      items: [{
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/1.jpg',
+        name: 'Brunch this weekend?',
+        subtitle: "<span class=\"text--primary\">Ali Connors</span> &mdash; I'll be in your neighborhood doing errands this weekend. Do you want to hang out?"
+      }, {
+        avatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+        title: 'Summer BBQ <span class="grey--text text--lighten-1">4</span>',
+        subtitle: "<span class=\"text--primary\">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend."
+      }],
+      show: false,
       snackbar: false,
       text: "Hello, I'm a snackbar",
       thisUser: this.myInfo,
@@ -5955,9 +5960,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     logout: function logout() {
       axios.post('/logout').then(function () {
-        return location.href = '/home';
+        return location.href = '/';
       })["catch"](function (error) {
-        location.href = '/home';
+        location.href = '/';
       });
     }
   }
@@ -9757,7 +9762,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.example {\n  position: relative;\n  overflow: hidden;\n}\n.example .hello {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  padding:0;\n  width: 100%;\n  max-width: 400px;\n  background-color: white;\n  /*文字の装飾は省略*/\n}\n.example #main {\n  width: 100%;\n  min-width: 1185px;\n}\n.example #logo {\n  width: 100%;\n  max-width: 757px;\n}\n#login input {\n      margin: 0;\n}\n#login input:-webkit-autofill {\n    background-color: white!important;\n    color: white!important;\n        -webkit-animation-name: onAutoFillStart;\n                animation-name: onAutoFillStart;\n    -webkit-transition: background-color 50000s ease-in-out 0s;\n    transition: background-color 50000s ease-in-out 0s;\n}\n  ", ""]);
+exports.push([module.i, "\n.example {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.example .hello {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%,-50%);\r\n  padding:0;\r\n  width: 100%;\r\n  max-width: 400px;\r\n  background-color: white;\r\n  /*文字の装飾は省略*/\n}\n.example #main {\r\n  width: 100%;\r\n  min-width: 1185px;\n}\n.example #logo {\r\n  width: 100%;\r\n  max-width: 757px;\n}\n#login input {\r\n      margin: 0;\n}\n#login input:-webkit-autofill {\r\n    background-color: white!important;\r\n    color: white!important;\r\n        -webkit-animation-name: onAutoFillStart;\r\n                animation-name: onAutoFillStart;\r\n    -webkit-transition: background-color 50000s ease-in-out 0s;\r\n    transition: background-color 50000s ease-in-out 0s;\n}\r\n  ", ""]);
 
 // exports
 
@@ -14497,27 +14502,97 @@ var render = function() {
               1
             ),
             _vm._v(" "),
-            _c("v-card-title", [
-              _vm._v("\n      Top western road trips\n    ")
-            ]),
+            _c("v-card-title", [_vm._v("\n    Top western road trips\n    ")]),
             _vm._v(" "),
             _c("v-card-subtitle", [
-              _vm._v("\n      " + _vm._s(newPost.text) + "\n    ")
+              _vm._v("\n    " + _vm._s(newPost.text) + "\n    ")
             ]),
             _vm._v(" "),
             _c(
               "v-card-actions",
               [
+                _c("v-spacer"),
+                _vm._v(" "),
                 _c(
                   "v-btn",
-                  { attrs: { color: "orange lighten-2", text: "" } },
-                  [_vm._v("\n        Explore\n      ")]
-                ),
-                _vm._v(" "),
-                _c("v-spacer")
+                  {
+                    attrs: { icon: "" },
+                    on: {
+                      click: function($event) {
+                        _vm.show = !_vm.show
+                      }
+                    }
+                  },
+                  [
+                    _c("v-icon", [
+                      _vm._v(
+                        _vm._s(_vm.show ? "mdi-chevron-up" : "mdi-chevron-down")
+                      )
+                    ])
+                  ],
+                  1
+                )
               ],
               1
             ),
+            _vm._v(" "),
+            _c("v-expand-transition", [
+              _c(
+                "div",
+                {
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: _vm.show,
+                      expression: "show"
+                    }
+                  ]
+                },
+                [
+                  _c(
+                    "v-list",
+                    { attrs: { "two-line": "" } },
+                    [
+                      _vm._l(_vm.items, function(item) {
+                        return [
+                          _c(
+                            "v-list-item",
+                            { key: item.title },
+                            [
+                              _c(
+                                "v-list-item-avatar",
+                                [_c("v-img", { attrs: { src: item.avatar } })],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-list-item-content",
+                                [
+                                  _c("v-list-item-title", {
+                                    domProps: { innerHTML: _vm._s(item.title) }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("v-list-item-subtitle", {
+                                    domProps: {
+                                      innerHTML: _vm._s(item.subtitle)
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ]
+                      })
+                    ],
+                    2
+                  )
+                ],
+                1
+              )
+            ]),
             _vm._v(" "),
             _c("v-divider"),
             _vm._v(" "),
@@ -14532,7 +14607,7 @@ var render = function() {
                   1
                 ),
                 _vm._v(" "),
-                _c("v-btn", [_vm._v("\n    投稿する\n    ")])
+                _c("v-btn", [_vm._v("投稿する")])
               ],
               1
             )
@@ -14565,7 +14640,7 @@ var render = function() {
                       attrs,
                       false
                     ),
-                    [_vm._v("\n          Close\n        ")]
+                    [_vm._v("\n            Close\n            ")]
                   )
                 ]
               }
@@ -14579,7 +14654,7 @@ var render = function() {
             expression: "snackbar"
           }
         },
-        [_vm._v("\n      " + _vm._s(_vm.text) + "\n\n      ")]
+        [_vm._v("\n        " + _vm._s(_vm.text) + "\n        ")]
       )
     ],
     2

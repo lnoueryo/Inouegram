@@ -1,10 +1,11 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Comment;
 use App\Post;
 use Faker\Factory as Faker;
-use App\Lib\my_func;
-class PostsTableSeeder extends Seeder
+
+class CommentsTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,25 +15,23 @@ class PostsTableSeeder extends Seeder
     public function run()
     {
         //一括削除
-        Post::truncate();
+        Comment::truncate();
 
         //特定のデータを追加
-        Post::create([
+        Comment::create([
             'user_id' => '1',
-            'text' => 'I am learning Chinese!!',
-            'image' => '[{"src":"chinese.jpg"}]'
+            'post_id' => '1',
+            'text' => '加油',
         ]);
 
         //必要ならfaker利用
         $faker = Faker::create('en_US');
-        // $faker = Faker::create('ja_JP');
-        // $json = my_func::SelectJson($faker->numberBetween(1,10));
-        //必要ならループ（ここをFactory使う）
-        for($i = 0; $i < 200; $i++){
-            Post::create([
+            $posts_length = Post::all()->count();
+        for($i = 0; $i < 600; $i++){
+            Comment::create([
                 'user_id' => $faker->numberBetween(1,21),
+                'post_id' => $faker->numberBetween(1,$posts_length-1),
                 'text' => $faker->text(),
-                'image' => my_func::SelectJson($faker->numberBetween(1,9)),
             ]);
         }
 
