@@ -148,6 +148,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+<img src="/storage/image/37xywPsD8U.png">
     </v-layout>
   </div>
 </template>

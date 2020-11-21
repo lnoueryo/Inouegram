@@ -10,8 +10,8 @@ use App\Post;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
+use App\User;
+Route::get('/public', function () {
     // $users = User::all();
     // $this_user_posts = Post::where('user_id', 1)->orderBy('updated_at', 'desc');
     // $index = (object) [
@@ -23,7 +23,7 @@ Route::get('/', function () {
     $my_info = User::find(1);
     $my_posts = Post::where('user_id', $my_info->id)->get();
     return view('index', ['my_info' => $my_info, 'my_posts' => $my_posts]);
-});
+})->middleware('auth');
 
 Auth::routes();
 

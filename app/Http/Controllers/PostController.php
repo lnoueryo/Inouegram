@@ -13,7 +13,6 @@ class PostController extends Controller
 
     public function create(Request $request)
     {
-        // dd($request->all());
         $post = new Post;
         $post->user_id = 1;
         $post->text = $request->message;
