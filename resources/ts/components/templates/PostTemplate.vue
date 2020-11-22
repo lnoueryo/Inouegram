@@ -313,6 +313,7 @@ import InputFileImage from '../molecules/InputFileImage.vue'
 import ImageEditer from '../organisms/ImageEditer.vue'
 export default {
     name: "DrawTool",
+    props: ['user'],
     components: {
         VueCropper,
         InputFile,
@@ -410,7 +411,6 @@ export default {
         this.drawCanvasctx.lineWidth = 5;
         this.drawCanvasctx.miterLimit  = 50;
         this.drawCanvasctx.strokeStyle = '#000000';
-
         // text
         this.textCanvas = document.getElementById("text");
         this.textCanvasctx = this.textCanvas.getContext("2d");
@@ -459,10 +459,15 @@ export default {
             let fd= new FormData();
             fd.append("cropped_image", JSON.stringify(this.concatImg));
             fd.append("message", this.message);
+            fd.append("userId", this.user.id);
+            console.log(this.user.id)
             axios.post('/api/create', fd)
             .then(
-                response => (window.location.href = '/')
+                response => console.log(response.data)
             )
+            // .then(
+            //     response => (window.location.href = '/')
+            // )
             .catch(function (error) {
                 console.log(error);
             });

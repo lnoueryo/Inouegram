@@ -14,7 +14,7 @@ class PostController extends Controller
     public function create(Request $request)
     {
         $post = new Post;
-        $post->user_id = 1;
+        $post->user_id = $request->userId;
         $post->text = $request->message;
         $post->save();
         $decoded_images = json_decode($request->cropped_image);

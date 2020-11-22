@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-<post></post>
+<post :user='@json(Auth::user())'></post>
 @endsection

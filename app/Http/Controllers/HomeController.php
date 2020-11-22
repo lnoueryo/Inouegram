@@ -43,7 +43,7 @@ class HomeController extends Controller
     public function create(Request $request)
     {
         $post = new Post;
-        $post->user_id = 1;
+        $post->user_id = $request->userId;
         $post->text = $request->message;
         $post->save();
         $decoded_images = json_decode($request->cropped_image);
@@ -61,7 +61,7 @@ class HomeController extends Controller
         $photos = Photo::where('post_id', $post->id)->get('src');
         $post->image = $photos;
         $post->save();
-        return 'hello';
+        // return 'hello';
     }
 
     public function createdes(Request $request)
