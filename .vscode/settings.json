@@ -1,0 +1,18 @@
+"shellLauncher.shells.windows": [
+    {
+        "shell": "C:\\Windows\\sysnative\\cmd.exe",
+        "label": "cmd"
+    },
+    {
+        "shell": "C:\\Windows\\sysnative\\WindowsPowerShell\\v1.0\\powershell.exe",
+        "label": "PowerShell"
+    },
+    {
+        "shell": "C:\\Program Files\\Git\\bin\\bash.exe",
+        "label": "Git bash"
+    },
+    {
+        "shell": "C:\\Windows\\sysnative\\bash.exe",
+        "label": "WSL Bash"
+    }
+]

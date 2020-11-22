@@ -13237,7 +13237,17 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "example", attrs: { id: "login" } }, [
-    _vm._m(0),
+    _c(
+      "div",
+      [
+        _c("v-img", {
+          staticClass: "px-5 py-5",
+          staticStyle: { position: "absolute", "z-index": "1" },
+          attrs: { id: "logo", src: "/image/mymemories.png" }
+        })
+      ],
+      1
+    ),
     _vm._v(" "),
     _c("img", {
       staticStyle: { width: "100%", position: "relative" },
@@ -13335,20 +13345,7 @@ var render = function() {
     )
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("img", {
-        staticClass: "px-5 py-5",
-        staticStyle: { position: "absolute", "z-index": "1" },
-        attrs: { id: "logo", src: "/image/mymemories.png" }
-      })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -79659,8 +79656,8 @@ const actions = {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /var/www/html/my_project/resources/ts/app.ts */"./resources/ts/app.ts");
-module.exports = __webpack_require__(/*! /var/www/html/my_project/resources/sass/app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! D:\project\instagram\resources\ts\app.ts */"./resources/ts/app.ts");
+module.exports = __webpack_require__(/*! D:\project\instagram\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
