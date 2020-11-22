@@ -1,3 +1,8 @@
+/bootstrap
+/database
+/tests
+/storage
+/config
 /node_modules
 /public/hot
 /public/storage
@@ -10,5 +15,16 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
-/
+webpack.mix.js
+tsconfig.json
 server.php
+README.md
+php.unit
+package.json
+package-lock.json
+composer.lock
+composer.json
+.styleci.yml
+
+
+
