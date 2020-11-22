@@ -463,11 +463,8 @@ export default {
             console.log(this.user.id)
             axios.post('/api/create', fd)
             .then(
-                response => console.log(response.data)
+                response => (window.location.href = '/')
             )
-            // .then(
-            //     response => (window.location.href = '/')
-            // )
             .catch(function (error) {
                 console.log(error);
             });

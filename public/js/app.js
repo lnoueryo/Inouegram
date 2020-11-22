@@ -3364,7 +3364,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -5347,6 +5346,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.textCanvas = document.getElementById("text");
     this.textCanvasctx = this.textCanvas.getContext("2d");
   },
+  // TODO:
   methods: {
     oneMoreImage: function oneMoreImage() {
       this.e1 = 1;
@@ -5395,11 +5395,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       fd.append("userId", this.user.id);
       console.log(this.user.id);
       axios.post('/api/create', fd).then(function (response) {
-        return console.log(response.data);
-      }) // .then(
-      //     response => (window.location.href = '/')
-      // )
-      ["catch"](function (error) {
+        return window.location.href = '/';
+      })["catch"](function (error) {
         console.log(error);
       });
     },
@@ -6045,6 +6042,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['thisUserPosts', 'thisUser', 'thisUserLikes', 'thisUserComments', 'myInfo', 'commentUsers'],
   data: function data() {
@@ -6089,6 +6094,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 bgData = _this.changingBgData;
                 fd = new FormData();
                 fd.append("bgData", bgData);
+                fd.append("userId", _this.myInfo.id);
                 axios.post('/api/upload', fd).then(function (response) {
                   _this.changeBgDialog = false;
                   _this.userData = response.data;
@@ -6096,7 +6102,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   console.log(error);
                 });
 
-              case 4:
+              case 5:
               case "end":
                 return _context.stop();
             }
@@ -6130,6 +6136,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     openDeleteDialog: function openDeleteDialog(key) {
       this.deleteDialog = true;
       this.postKey = key;
+      console.log(key);
     },
     outside: function outside() {
       // this.$refs.carouselPost.remove();
@@ -9985,7 +9992,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.example {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.example .hello {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%,-50%);\r\n  padding:0;\r\n  width: 100%;\r\n  max-width: 400px;\r\n  background-color: white;\r\n  /*文字の装飾は省略*/\n}\n.example #main {\r\n  width: 100%;\r\n  min-width: 1185px;\n}\n.example #logo {\r\n  width: 100%;\r\n  max-width: 757px;\n}\n#login input {\r\n      margin: 0;\n}\n#login input:-webkit-autofill {\r\n    background-color: white!important;\r\n    color: white!important;\r\n        -webkit-animation-name: onAutoFillStart;\r\n                animation-name: onAutoFillStart;\r\n    -webkit-transition: background-color 50000s ease-in-out 0s;\r\n    transition: background-color 50000s ease-in-out 0s;\n}\r\n  ", ""]);
+exports.push([module.i, "\n.example {\n  position: relative;\n  overflow: hidden;\n}\n.example .hello {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  padding:0;\n  width: 100%;\n  max-width: 400px;\n  background-color: white;\n  /*文字の装飾は省略*/\n}\n.example #main {\n  width: 100%;\n  min-width: 1185px;\n}\n.example #logo {\n  width: 100%;\n  max-width: 757px;\n}\n#login input {\n      margin: 0;\n}\n#login input:-webkit-autofill {\n    background-color: white!important;\n    color: white!important;\n        -webkit-animation-name: onAutoFillStart;\n                animation-name: onAutoFillStart;\n    -webkit-transition: background-color 50000s ease-in-out 0s;\n    transition: background-color 50000s ease-in-out 0s;\n}\n  ", ""]);
 
 // exports
 
@@ -16992,27 +16999,49 @@ var render = function() {
             on: { input: _vm.upload }
           }),
           _vm._v(" "),
-          _c(
-            "v-col",
-            [
-              _c(
-                "v-avatar",
-                {
-                  staticStyle: { position: "absolute", top: "230px" },
-                  attrs: { size: "150" }
-                },
-                [
-                  _c("v-img", {
-                    attrs: {
-                      src: "/storage/image/" + _vm.userInfo.profile_image
-                    }
-                  })
-                ],
-                1
-              )
-            ],
-            1
-          ),
+          _c("v-col", [
+            _vm.userInfo.profile_image
+              ? _c(
+                  "div",
+                  [
+                    _c(
+                      "v-avatar",
+                      {
+                        staticStyle: { position: "absolute", top: "250px" },
+                        attrs: { size: "120" }
+                      },
+                      [
+                        _c("v-img", {
+                          attrs: {
+                            src: "/storage/image/" + _vm.userInfo.profile_image
+                          }
+                        })
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+              : _c(
+                  "div",
+                  [
+                    _c(
+                      "v-avatar",
+                      {
+                        staticStyle: { position: "absolute", top: "250px" },
+                        attrs: { size: "120", color: "purple" }
+                      },
+                      [
+                        _c("v-icon", { attrs: { size: "64" } }, [
+                          _vm._v("mdi-account-circle")
+                        ])
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                )
+          ]),
           _vm._v(" "),
           _c(
             "v-list-item",

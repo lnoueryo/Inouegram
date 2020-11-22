@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div><!-- FIXME:投稿したことない人の処理 -->
         <v-card class="mx-auto" color="grey lighten-4" style="width: 100%" max-width="700">
             <div v-if="userInfo.bg_image">
                 <v-img :aspect-ratio="16/9" :src="'storage/image/' + userInfo.bg_image" @click="btnclick"></v-img>
@@ -9,9 +9,16 @@
             </div>
             <input style="display: none" ref="input" type="file" accept="image/jpeg, image/jpg, image/png" @input="upload">
           <v-col>
-            <v-avatar size="150" style="position:absolute; top: 230px">
-              <v-img :src="'/storage/image/' + userInfo.profile_image"></v-img>
+        <div v-if="userInfo.profile_image">
+            <v-avatar size="120" style="position:absolute; top: 250px">
+                <v-img :src="'/storage/image/' + userInfo.profile_image"></v-img>
             </v-avatar>
+        </div>
+        <div v-else>
+            <v-avatar size="120" style="position:absolute; top: 250px" color="purple">
+                <v-icon size="64">mdi-account-circle</v-icon>
+            </v-avatar>
+        </div>
           </v-col>
             <v-list-item color="rgba(0, 0, 0, .4)">
               <v-list-item-content>
@@ -189,6 +196,7 @@
             var bgData = this.changingBgData;
             let fd= new FormData();
             fd.append("bgData", bgData);
+            fd.append("userId", this.myInfo.id);
             axios.post('/api/upload', fd)
             .then(
                 response => {
@@ -224,6 +232,7 @@
       openDeleteDialog(key){
         this.deleteDialog = true;
         this.postKey = key;
+        console.log(key)
       },
         outside(){
             // this.$refs.carouselPost.remove();

@@ -143,7 +143,6 @@
                 登録
                 </v-btn>
                 </div>
-            </v-form>
                 </v-window-item>
 
                 <v-window-item :value="3">
@@ -161,7 +160,7 @@
                     </div>
                 </v-window-item>
                 </v-window>
-<!-- 
+<!--
                 <v-divider></v-divider>
 
                 <v-card-actions>

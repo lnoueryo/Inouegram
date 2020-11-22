@@ -25,7 +25,7 @@ class ProfileController extends Controller
         // $id = $request->id;
         // $this_user = User::find(1);
         // $my_info = User::find(Auth::id());
-        $this_user_posts = Post::where('user_id', 1)->orderBy('updated_at', 'desc');
+        $this_user_posts = Post::where('user_id', Auth::id())->orderBy('updated_at', 'desc');
         // $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
         // $this_user_comments = Comment::whereIn('post_id', $this_user_posts->get('id'))->latest();
         // $comment_users = User::whereIn('id', $this_user_comments->get('user_id'))->get();
@@ -97,7 +97,7 @@ class ProfileController extends Controller
     }
 
     public function uploadBg(Request $request) {
-        $user = User::find(1)->first();
+        $user = User::find($request->userId);
         Storage::delete($user->bg_image);
         $image = $request->bgData;
         if(strpos($image,'data:image/png;') !== false){
