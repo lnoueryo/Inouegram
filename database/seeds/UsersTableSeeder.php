@@ -35,7 +35,7 @@ class UsersTableSeeder extends Seeder
             User::create([
                 'name' => $faker->name,
                 'screen_name' => $faker->name,
-                'profile_image' => $faker->image('/var/www/html/my_project/public/storage',640,480, null, false),
+                'profile_image' => $faker->image('/var/www/html/my_project/public/storage/image',640,480, null, false),
                 'email' => $faker->email,
                 'password' => Hash::make('123456789')
             ]);
