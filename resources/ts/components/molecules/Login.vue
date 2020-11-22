@@ -1,10 +1,10 @@
 <template>
     <div id="login" class="example">
         <div>
-        <v-img  class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 1;"></v-img>
+        <img  class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 1;"/>
         </div>
-        <img id="main" src="/image/login2.png" style="width: 100%; position: relative">
-        <div class="hello">
+        <img id="main" :src="'/image/login'+randomNumber+'.png'" style="width: 100%; position: relative">
+        <div class="hello" style="background-color: black;opacity: 0.95">
             <v-card class="mx-1 my-1 px-5 py-5" max-width="400" tile>
               <v-form ref="form" lazy-validation>
                 <h4 class="py-2">ログイン</h4>
@@ -30,6 +30,12 @@
                 password: '',
                 remember: '',
                 errors: {},
+            }
+        },
+        computed: {
+            randomNumber(){
+                var randomNumber =  Math.floor( Math.random () * 5)+1;
+                return randomNumber;
             }
         },
         mounted() {
