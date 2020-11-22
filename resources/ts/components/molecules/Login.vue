@@ -1,7 +1,7 @@
 <template>
     <div id="login" class="example">
         <div>
-        <img  class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 1;">
+        <v-img  class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 1;"></v-img>
         </div>
         <img id="main" src="/image/login2.png" style="width: 100%; position: relative">
         <div class="hello">
