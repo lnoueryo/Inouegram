@@ -9985,7 +9985,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.example {\n  position: relative;\n  overflow: hidden;\n}\n.example .hello {\n  position: absolute;\n  top: 50%;\n  left: 50%;\n  transform: translate(-50%,-50%);\n  padding:0;\n  width: 100%;\n  max-width: 400px;\n  background-color: white;\n  /*文字の装飾は省略*/\n}\n.example #main {\n  width: 100%;\n  min-width: 1185px;\n}\n.example #logo {\n  width: 100%;\n  max-width: 757px;\n}\n#login input {\n      margin: 0;\n}\n#login input:-webkit-autofill {\n    background-color: white!important;\n    color: white!important;\n        -webkit-animation-name: onAutoFillStart;\n                animation-name: onAutoFillStart;\n    -webkit-transition: background-color 50000s ease-in-out 0s;\n    transition: background-color 50000s ease-in-out 0s;\n}\n  ", ""]);
+exports.push([module.i, "\n.example {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.example .hello {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%,-50%);\r\n  padding:0;\r\n  width: 100%;\r\n  max-width: 400px;\r\n  background-color: white;\r\n  /*文字の装飾は省略*/\n}\n.example #main {\r\n  width: 100%;\r\n  min-width: 1185px;\n}\n.example #logo {\r\n  width: 100%;\r\n  max-width: 757px;\n}\n#login input {\r\n      margin: 0;\n}\n#login input:-webkit-autofill {\r\n    background-color: white!important;\r\n    color: white!important;\r\n        -webkit-animation-name: onAutoFillStart;\r\n                animation-name: onAutoFillStart;\r\n    -webkit-transition: background-color 50000s ease-in-out 0s;\r\n    transition: background-color 50000s ease-in-out 0s;\n}\r\n  ", ""]);
 
 // exports
 
