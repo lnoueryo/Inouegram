@@ -5465,11 +5465,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       fd.append("userId", this.user.id);
       console.log(this.user.id);
       axios.post('/api/create', fd).then(function (response) {
-        return console.log(response.data);
-      }) // .then(
-      //     response => (window.location.href = '/')
-      // )
-      ["catch"](function (error) {
+        return window.location.href = '/';
+      })["catch"](function (error) {
         console.log(error);
       });
     },
@@ -6086,6 +6083,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['thisUserPosts', 'thisUser', 'thisUserLikes', 'thisUserComments', 'myInfo', 'commentUsers'],
   data: function data() {
@@ -6108,11 +6111,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     newPosts: function newPosts() {
       var userPosts = this.userPosts;
 
-      for (var i = 0; i < userPosts.length; i++) {
-        userPosts[i].image = JSON.parse(userPosts[i].image);
-      }
+      if (userPosts.length == 0) {
+        return false;
+      } else {
+        for (var i = 0; i < userPosts.length; i++) {
+          userPosts[i].image = JSON.parse(userPosts[i].image);
+        }
 
-      return this.userPosts;
+        return this.userPosts;
+      }
     },
     userInfo: function userInfo() {
       return this.userData;
@@ -10162,7 +10169,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.eraser {\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\n    z-index: 5\n}\n#newText {\n　outline: none!important;\n  /* height: 64px; */\n}\n#newText:focus {\n  outline: none!important;\n  border: none!important;\n}\n#selectedText {\n　outline: none!important;\n  height: 64px;\n}\n#selectedText:focus {\n  outline: none!important;\n  border: none!important;\n}\n.index2{\n  z-index: 2;\n}\n\n", ""]);
+exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\r\n\r\n", ""]);
 
 // exports
 
@@ -17276,412 +17283,467 @@ var render = function() {
         on: { input: _vm.changeAvatar }
       }),
       _vm._v(" "),
-      _c(
-        "v-layout",
-        {
-          staticClass: "justify-end",
-          staticStyle: { margin: "auto" },
-          attrs: { row: "", wrap: "" }
-        },
-        [
-          _vm._l(_vm.newPosts, function(thisUserPost, index) {
-            return _c("v-hover", {
-              key: index,
-              scopedSlots: _vm._u(
+      _vm.newPosts
+        ? _c(
+            "div",
+            [
+              _c(
+                "v-layout",
+                {
+                  staticClass: "justify-end",
+                  staticStyle: { margin: "auto" },
+                  attrs: { row: "", wrap: "" }
+                },
                 [
-                  {
-                    key: "default",
-                    fn: function(ref) {
-                      var hover = ref.hover
-                      return [
-                        _c(
-                          "v-card",
+                  _vm._l(_vm.newPosts, function(thisUserPost, index) {
+                    return _c("v-hover", {
+                      key: index,
+                      scopedSlots: _vm._u(
+                        [
                           {
-                            staticClass: "mx-auto my-4",
-                            staticStyle: { width: "100%" },
-                            attrs: {
-                              color: "grey lighten-4",
-                              "max-width": "350"
-                            }
-                          },
-                          [
-                            _c(
-                              "v-img",
-                              {
-                                attrs: {
-                                  "aspect-ratio": 14 / 12,
-                                  src:
-                                    "storage/image/" + thisUserPost.image[0].src
-                                },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.openDialog(index)
-                                  }
-                                }
-                              },
-                              [
-                                _c("v-expand-transition", [
-                                  hover
-                                    ? _c(
-                                        "div",
-                                        {
-                                          staticClass:
-                                            "d-flex transition-fast-in-fast-out black darken-2 v-card--reveal display-3 white--text",
-                                          staticStyle: { height: "100%" }
-                                        },
-                                        [
-                                          _c(
-                                            "p",
-                                            {
-                                              staticStyle: {
-                                                "font-size": "25px"
-                                              }
-                                            },
-                                            [
-                                              _vm._v(
-                                                _vm._s(
-                                                  thisUserPost.image.length
-                                                ) + "枚"
-                                              )
-                                            ]
-                                          )
-                                        ]
-                                      )
-                                    : _vm._e()
-                                ])
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-card-text",
-                              {
-                                staticClass: "pt-6",
-                                staticStyle: {
-                                  position: "relative",
-                                  "max-width": "340px"
-                                }
-                              },
-                              [
+                            key: "default",
+                            fn: function(ref) {
+                              var hover = ref.hover
+                              return [
                                 _c(
-                                  "v-btn",
+                                  "v-card",
                                   {
-                                    staticClass: "white--text",
+                                    staticClass: "mx-auto my-4",
+                                    staticStyle: { width: "100%" },
                                     attrs: {
-                                      absolute: "",
-                                      color: "black",
-                                      fab: "",
-                                      large: "",
-                                      right: "",
-                                      top: ""
-                                    },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.openDeleteDialog(index)
-                                      }
+                                      color: "grey lighten-4",
+                                      "max-width": "350"
                                     }
                                   },
-                                  [_c("v-icon", [_vm._v("mdi-delete")])],
-                                  1
-                                ),
-                                _vm._v(" "),
-                                _c(
-                                  "p",
-                                  {
-                                    staticClass:
-                                      "text-h6 font-weight-light orange--text mb-2"
-                                  },
                                   [
-                                    _vm._v(
-                                      "\n                    " +
-                                        _vm._s(thisUserPost.title) +
-                                        "\n                    "
+                                    _c(
+                                      "v-img",
+                                      {
+                                        attrs: {
+                                          "aspect-ratio": 14 / 12,
+                                          src:
+                                            "storage/image/" +
+                                            thisUserPost.image[0].src
+                                        },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.openDialog(index)
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("v-expand-transition", [
+                                          hover
+                                            ? _c(
+                                                "div",
+                                                {
+                                                  staticClass:
+                                                    "d-flex transition-fast-in-fast-out black darken-2 v-card--reveal display-3 white--text",
+                                                  staticStyle: {
+                                                    height: "100%"
+                                                  }
+                                                },
+                                                [
+                                                  _c(
+                                                    "p",
+                                                    {
+                                                      staticStyle: {
+                                                        "font-size": "25px"
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(
+                                                        _vm._s(
+                                                          thisUserPost.image
+                                                            .length
+                                                        ) + "枚"
+                                                      )
+                                                    ]
+                                                  )
+                                                ]
+                                              )
+                                            : _vm._e()
+                                        ])
+                                      ],
+                                      1
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-card-text",
+                                      {
+                                        staticClass: "pt-6",
+                                        staticStyle: {
+                                          position: "relative",
+                                          "max-width": "340px"
+                                        }
+                                      },
+                                      [
+                                        _c(
+                                          "v-btn",
+                                          {
+                                            staticClass: "white--text",
+                                            attrs: {
+                                              absolute: "",
+                                              color: "black",
+                                              fab: "",
+                                              large: "",
+                                              right: "",
+                                              top: ""
+                                            },
+                                            on: {
+                                              click: function($event) {
+                                                return _vm.openDeleteDialog(
+                                                  index
+                                                )
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _c("v-icon", [_vm._v("mdi-delete")])
+                                          ],
+                                          1
+                                        ),
+                                        _vm._v(" "),
+                                        _c(
+                                          "p",
+                                          {
+                                            staticClass:
+                                              "text-h6 font-weight-light orange--text mb-2"
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                    " +
+                                                _vm._s(thisUserPost.title) +
+                                                "\n                    "
+                                            )
+                                          ]
+                                        ),
+                                        _c(
+                                          "div",
+                                          {
+                                            staticClass:
+                                              "text-subtitle-1 font-weight-light grey--text title mb-2"
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                    " +
+                                                _vm._s(thisUserPost.text) +
+                                                "\n                    "
+                                            )
+                                          ]
+                                        )
+                                      ],
+                                      1
                                     )
-                                  ]
-                                ),
+                                  ],
+                                  1
+                                )
+                              ]
+                            }
+                          }
+                        ],
+                        null,
+                        true
+                      )
+                    })
+                  }),
+                  _vm._v(" "),
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "500px" },
+                      on: { "click:outside": _vm.outside },
+                      model: {
+                        value: _vm.dialog,
+                        callback: function($$v) {
+                          _vm.dialog = $$v
+                        },
+                        expression: "dialog"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-carousel",
+                        _vm._l(_vm.newPosts[_vm.postKey].image, function(
+                          image,
+                          i
+                        ) {
+                          return _c("v-carousel-item", {
+                            key: i,
+                            attrs: {
+                              src: "storage/image/" + image.src,
+                              "reverse-transition": "fade-transition",
+                              transition: "fade-transition"
+                            }
+                          })
+                        }),
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "290" },
+                      on: { "click:outside": _vm.outside },
+                      model: {
+                        value: _vm.deleteDialog,
+                        callback: function($$v) {
+                          _vm.deleteDialog = $$v
+                        },
+                        expression: "deleteDialog"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-card-title", { staticClass: "headline" }, [
+                            _vm._v(
+                              "\n                Make sure!!\n                "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("v-card-text", [
+                            _vm._v(
+                              "\n                Are you sure you are gonna delete this post??\n                "
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-actions",
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { color: "green darken-1", text: "" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.deleteDialog = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                    Disagree\n                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { color: "green darken-1", text: "" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.deletePost()
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                    Agree\n                "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-snackbar",
+                    {
+                      attrs: { timeout: _vm.timeout },
+                      scopedSlots: _vm._u(
+                        [
+                          {
+                            key: "action",
+                            fn: function(ref) {
+                              var attrs = ref.attrs
+                              return [
                                 _c(
-                                  "div",
-                                  {
-                                    staticClass:
-                                      "text-subtitle-1 font-weight-light grey--text title mb-2"
-                                  },
+                                  "v-btn",
+                                  _vm._b(
+                                    {
+                                      attrs: { color: "blue", text: "" },
+                                      on: {
+                                        click: function($event) {
+                                          _vm.snackbar = false
+                                        }
+                                      }
+                                    },
+                                    "v-btn",
+                                    attrs,
+                                    false
+                                  ),
                                   [
                                     _vm._v(
-                                      "\n                    " +
-                                        _vm._s(thisUserPost.text) +
-                                        "\n                    "
+                                      "\n                Close\n                "
                                     )
                                   ]
                                 )
-                              ],
-                              1
+                              ]
+                            }
+                          }
+                        ],
+                        null,
+                        false,
+                        3726381388
+                      ),
+                      model: {
+                        value: _vm.snackbar,
+                        callback: function($$v) {
+                          _vm.snackbar = $$v
+                        },
+                        expression: "snackbar"
+                      }
+                    },
+                    [_vm._v("\n        " + _vm._s(_vm.text) + "\n            ")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "290" },
+                      on: { "click:outside": _vm.outside },
+                      model: {
+                        value: _vm.changeBgDialog,
+                        callback: function($$v) {
+                          _vm.changeBgDialog = $$v
+                        },
+                        expression: "changeBgDialog"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-card",
+                        [
+                          _c("v-img", { attrs: { src: _vm.changingBgData } }),
+                          _vm._v(" "),
+                          _c("v-card-text", [
+                            _vm._v(
+                              "\n                Do you wanna change to this image??\n                "
                             )
-                          ],
-                          1
-                        )
-                      ]
-                    }
-                  }
-                ],
-                null,
-                true
-              )
-            })
-          }),
-          _vm._v(" "),
-          _c(
-            "v-dialog",
-            {
-              attrs: { "max-width": "500px" },
-              on: { "click:outside": _vm.outside },
-              model: {
-                value: _vm.dialog,
-                callback: function($$v) {
-                  _vm.dialog = $$v
-                },
-                expression: "dialog"
-              }
-            },
-            [
-              _c(
-                "v-carousel",
-                _vm._l(_vm.newPosts[_vm.postKey].image, function(image, i) {
-                  return _c("v-carousel-item", {
-                    key: i,
-                    attrs: {
-                      src: "storage/image/" + image.src,
-                      "reverse-transition": "fade-transition",
-                      transition: "fade-transition"
-                    }
-                  })
-                }),
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-dialog",
-            {
-              attrs: { "max-width": "290" },
-              on: { "click:outside": _vm.outside },
-              model: {
-                value: _vm.deleteDialog,
-                callback: function($$v) {
-                  _vm.deleteDialog = $$v
-                },
-                expression: "deleteDialog"
-              }
-            },
-            [
-              _c(
-                "v-card",
-                [
-                  _c("v-card-title", { staticClass: "headline" }, [
-                    _vm._v("\n                Make sure!!\n                ")
-                  ]),
-                  _vm._v(" "),
-                  _c("v-card-text", [
-                    _vm._v(
-                      "\n                Are you sure you are gonna delete this post??\n                "
-                    )
-                  ]),
+                          ]),
+                          _vm._v(" "),
+                          _c(
+                            "v-card-actions",
+                            [
+                              _c("v-spacer"),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { color: "green darken-1", text: "" },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.changeBgDialog = false
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                    No\n                "
+                                  )
+                                ]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: { color: "green darken-1", text: "" },
+                                  on: {
+                                    click: function($event) {
+                                      return _vm.changeBg()
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                    Yes\n                "
+                                  )
+                                ]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
                   _vm._v(" "),
                   _c(
-                    "v-card-actions",
+                    "v-bottom-navigation",
+                    {
+                      attrs: {
+                        value: _vm.value,
+                        color: "teal",
+                        grow: "",
+                        fixed: ""
+                      }
+                    },
                     [
-                      _c("v-spacer"),
-                      _vm._v(" "),
                       _c(
                         "v-btn",
-                        {
-                          attrs: { color: "green darken-1", text: "" },
-                          on: {
-                            click: function($event) {
-                              _vm.deleteDialog = false
-                            }
-                          }
-                        },
                         [
-                          _vm._v(
-                            "\n                    Disagree\n                "
-                          )
-                        ]
+                          _c("span", [_vm._v("Recents")]),
+                          _vm._v(" "),
+                          _c("v-icon", [_vm._v("mdi-history")])
+                        ],
+                        1
                       ),
                       _vm._v(" "),
                       _c(
                         "v-btn",
-                        {
-                          attrs: { color: "green darken-1", text: "" },
-                          on: {
-                            click: function($event) {
-                              return _vm.deletePost()
-                            }
-                          }
-                        },
                         [
-                          _vm._v(
-                            "\n                    Agree\n                "
-                          )
-                        ]
+                          _c("span", [_vm._v("Favorites")]),
+                          _vm._v(" "),
+                          _c("v-icon", [_vm._v("mdi-heart")])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        [
+                          _c("span", [_vm._v("Nearby")]),
+                          _vm._v(" "),
+                          _c("v-icon", [_vm._v("mdi-map-marker")])
+                        ],
+                        1
                       )
                     ],
                     1
                   )
                 ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-snackbar",
-            {
-              attrs: { timeout: _vm.timeout },
-              scopedSlots: _vm._u([
-                {
-                  key: "action",
-                  fn: function(ref) {
-                    var attrs = ref.attrs
-                    return [
-                      _c(
-                        "v-btn",
-                        _vm._b(
-                          {
-                            attrs: { color: "blue", text: "" },
-                            on: {
-                              click: function($event) {
-                                _vm.snackbar = false
-                              }
-                            }
-                          },
-                          "v-btn",
-                          attrs,
-                          false
-                        ),
-                        [_vm._v("\n                Close\n                ")]
-                      )
-                    ]
-                  }
-                }
-              ]),
-              model: {
-                value: _vm.snackbar,
-                callback: function($$v) {
-                  _vm.snackbar = $$v
-                },
-                expression: "snackbar"
-              }
-            },
-            [_vm._v("\n        " + _vm._s(_vm.text) + "\n            ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "v-dialog",
-            {
-              attrs: { "max-width": "290" },
-              on: { "click:outside": _vm.outside },
-              model: {
-                value: _vm.changeBgDialog,
-                callback: function($$v) {
-                  _vm.changeBgDialog = $$v
-                },
-                expression: "changeBgDialog"
-              }
-            },
-            [
-              _c(
-                "v-card",
-                [
-                  _c("v-img", { attrs: { src: _vm.changingBgData } }),
-                  _vm._v(" "),
-                  _c("v-card-text", [
-                    _vm._v(
-                      "\n                Do you wanna change to this image??\n                "
-                    )
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "v-card-actions",
-                    [
-                      _c("v-spacer"),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { color: "green darken-1", text: "" },
-                          on: {
-                            click: function($event) {
-                              _vm.changeBgDialog = false
-                            }
-                          }
-                        },
-                        [_vm._v("\n                    No\n                ")]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { color: "green darken-1", text: "" },
-                          on: {
-                            click: function($event) {
-                              return _vm.changeBg()
-                            }
-                          }
-                        },
-                        [_vm._v("\n                    Yes\n                ")]
-                      )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-bottom-navigation",
-            { attrs: { value: _vm.value, color: "teal", grow: "", fixed: "" } },
-            [
-              _c(
-                "v-btn",
-                [
-                  _c("span", [_vm._v("Recents")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-history")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                [
-                  _c("span", [_vm._v("Favorites")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-heart")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                [
-                  _c("span", [_vm._v("Nearby")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-map-marker")])
-                ],
-                1
+                2
               )
             ],
             1
           )
-        ],
-        2
-      )
+        : _c(
+            "div",
+            { staticClass: "text-center", staticStyle: { margin: "auto" } },
+            [
+              _vm._v("\n        まだ投稿はありません"),
+              _c("br"),
+              _vm._v(" "),
+              _c("v-btn", { attrs: { href: "/post" } }, [_vm._v("投稿する")])
+            ],
+            1
+          )
     ],
     1
   )

@@ -1,5 +1,5 @@
 <template>
-    <div><!-- FIXME:投稿したことない人の処理 -->
+    <div>
         <v-card class="mx-auto" max-width="1000" tile>
             <div v-if="userInfo.bg_image">
                 <v-img height="300" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image" @click="btnclick"></v-img>
@@ -25,6 +25,7 @@
         </v-card>
         <input style="display: none" ref="bg" type="file" accept="image/jpeg, image/jpg, image/png" @input="upload">
         <input style="display: none" ref="avatar" type="file" accept="image/jpeg, image/jpg, image/png" @input="changeAvatar">
+        <div v-if="newPosts">
         <v-layout row wrap class="justify-end" style="margin: auto;">
             <v-hover v-for="(thisUserPost, index) in newPosts" :key="index" v-slot="{ hover }">
                 <v-card class="mx-auto my-4" color="grey lighten-4" max-width="350" style="width: 100%">
@@ -121,6 +122,11 @@
                 </v-btn>
             </v-bottom-navigation>
         </v-layout>
+        </div>
+        <div v-else class="text-center" style="margin: auto;">
+            まだ投稿はありません<br>
+            <v-btn href="/post">投稿する</v-btn>
+        </div>
     </div>
 </template>
 
@@ -147,10 +153,14 @@
     computed:{
         newPosts(){
             var userPosts = this.userPosts;
-            for(var i=0; i<userPosts.length; i++){
-                userPosts[i].image = JSON.parse(userPosts[i].image);
+            if(userPosts.length == 0){
+                return false;
+                } else {
+                for(var i=0; i<userPosts.length; i++){
+                    userPosts[i].image = JSON.parse(userPosts[i].image);
+                }
+                return this.userPosts;
             }
-            return this.userPosts;
         },
         userInfo(){
             return this.userData;
