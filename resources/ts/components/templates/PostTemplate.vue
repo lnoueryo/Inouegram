@@ -458,6 +458,7 @@ export default {
         submit(){
             let fd= new FormData();
             fd.append("cropped_image", JSON.stringify(this.concatImg));
+            fd.append("title", this.title);
             fd.append("message", this.message);
             fd.append("userId", this.user.id);
             console.log(this.user.id)

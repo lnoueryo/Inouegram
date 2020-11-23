@@ -45,6 +45,7 @@ class HomeController extends Controller
         $post = new Post;
         $post->user_id = $request->userId;
         $post->text = $request->message;
+        $post->title = $request->title;
         $post->save();
         $decoded_images = json_decode($request->cropped_image);
         for ($i=0; $i<count($decoded_images); $i++) {
