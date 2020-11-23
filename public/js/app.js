@@ -4994,9 +4994,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../molecules/InputFile.vue */ "./resources/ts/components/molecules/InputFile.vue");
 /* harmony import */ var _molecules_InputFileImage_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../molecules/InputFileImage.vue */ "./resources/ts/components/molecules/InputFileImage.vue");
 /* harmony import */ var _organisms_ImageEditer_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../organisms/ImageEditer.vue */ "./resources/ts/components/organisms/ImageEditer.vue");
+var _computed;
+
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-//
 //
 //
 //
@@ -5321,6 +5322,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      basicSize: '',
+      mediaSize: '',
+      spSize: window.matchMedia('(max-width: 480px)'),
       sizeDialog: false,
       show: false,
       title: '',
@@ -5374,7 +5378,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       zIndex: 1
     }), _ref;
   },
-  computed: {
+  computed: (_computed = {
     toolStepper: function toolStepper() {
       return Number(this.value) + 1;
     },
@@ -5401,8 +5405,41 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       set: function set(newValue) {
         this.selectedInputPosition.fontSize = newValue + 'px';
       }
+    },
+    preview: function preview() {
+      var mql = window.matchMedia('(max-width: 480px)');
+
+      if (mql.matches) {
+        return false;
+      } else {
+        return true;
+      }
     }
-  },
+  }, _defineProperty(_computed, "preview", function preview() {
+    if (this.spSize.matches) {
+      return false;
+    } else {
+      return true;
+    }
+  }), _defineProperty(_computed, "cropperWidth", function cropperWidth() {
+    if (this.spSize.matches) {
+      return 300;
+    } else {
+      return 500;
+    }
+  }), _defineProperty(_computed, "cropperHeight", function cropperHeight() {
+    if (this.spSize.matches) {
+      return 300;
+    } else {
+      return 500;
+    }
+  }), _defineProperty(_computed, "editHeight", function editHeight() {
+    if (this.spSize.matches) {
+      return 300;
+    } else {
+      return 500;
+    }
+  }), _computed),
   mounted: function mounted() {
     // canvas
     this.drawCanvas = document.getElementById('drawCanvas');
@@ -5415,6 +5452,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
     this.textCanvas = document.getElementById("text");
     this.textCanvasctx = this.textCanvas.getContext("2d");
+    this.mediaSize = window.innerWidth;
+    var img = document.getElementById("select");
+
+    if (this.spSize.matches) {
+      img.style.width = '300px';
+      this.basicSize = 300;
+    } else {
+      this.basicSize = 500;
+      return true;
+    }
   },
   methods: {
     oneMoreImage: function oneMoreImage() {
@@ -10169,7 +10216,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\r\n\r\n\r\n", ""]);
 
 // exports
 
@@ -13111,7 +13158,11 @@ var render = function(_h, _vm) {
         [
           _c("v-flex", { attrs: { xs12: "" } }, [
             _c("input", {
-              attrs: { type: "image", src: "/image/select-image.png" },
+              attrs: {
+                id: "select",
+                type: "image",
+                src: "/image/select-image.png"
+              },
               on: { click: _vm.listeners.click }
             })
           ])
@@ -15487,14 +15538,14 @@ var render = function() {
                                       guides: true,
                                       "view-mode": 2,
                                       "auto-crop-area": 0.5,
-                                      "min-container-width": 500,
-                                      "min-container-height": 500,
+                                      "min-container-width": _vm.cropperWidth,
+                                      "min-container-height": _vm.cropperHeight,
                                       background: true,
                                       rotatable: false,
                                       src: _vm.imgSrc,
                                       "img-style": {
-                                        width: "500px",
-                                        height: "500px"
+                                        width: _vm.basicSize + "px",
+                                        height: _vm.basicSize + "px"
                                       },
                                       "aspect-ratio": 1 / 1,
                                       "drag-mode": "crop",
@@ -15522,6 +15573,14 @@ var render = function() {
                             "div",
                             [
                               _c("div", {
+                                directives: [
+                                  {
+                                    name: "show",
+                                    rawName: "v-show",
+                                    value: _vm.preview,
+                                    expression: "preview"
+                                  }
+                                ],
                                 staticClass: "preview",
                                 attrs: { id: "preview" }
                               }),
@@ -15565,7 +15624,10 @@ var render = function() {
                         "v-card",
                         {
                           staticClass: "overflow-hidden",
-                          attrs: { height: "550", width: "500" }
+                          attrs: {
+                            height: _vm.editHeight,
+                            width: _vm.cropperWidth
+                          }
                         },
                         [
                           _c(
@@ -15815,6 +15877,14 @@ var render = function() {
                       _c(
                         "v-card",
                         {
+                          directives: [
+                            {
+                              name: "show",
+                              rawName: "v-show",
+                              value: _vm.preview,
+                              expression: "preview"
+                            }
+                          ],
                           staticClass: "overflow-hidden",
                           attrs: { height: "550", width: "500" }
                         },
@@ -15834,6 +15904,16 @@ var render = function() {
                             [
                               _c(
                                 "v-stepper-items",
+                                {
+                                  directives: [
+                                    {
+                                      name: "show",
+                                      rawName: "v-show",
+                                      value: _vm.preview,
+                                      expression: "preview"
+                                    }
+                                  ]
+                                },
                                 [
                                   _c(
                                     "v-stepper-content",
@@ -16479,6 +16559,14 @@ var render = function() {
                   _c(
                     "v-stepper",
                     {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: _vm.preview,
+                          expression: "preview"
+                        }
+                      ],
                       staticStyle: { width: "1000px" },
                       model: {
                         value: _vm.toolStepper,

@@ -1,4 +1,3 @@
-
 <template>
     <div>
         <v-stepper v-model="e1">
@@ -30,12 +29,12 @@
                                     :guides="true"
                                     :view-mode="2"
                                     :auto-crop-area="0.5"
-                                    :min-container-width="500"
-                                    :min-container-height="500"
+                                    :min-container-width="cropperWidth"
+                                    :min-container-height="cropperHeight"
                                     :background="true"
                                     :rotatable="false"
                                     :src="imgSrc"
-                                    :img-style="{ 'width': '500px', 'height': '500px' }"
+                                    :img-style="{ 'width': basicSize + 'px', 'height': basicSize + 'px' }"
                                     :aspect-ratio="1 / 1"
                                     drag-mode="crop"
                                     preview=".preview"
@@ -45,7 +44,7 @@
                                 <input-file-image @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                             <div>
-                            <div id="preview" class="preview" />
+                            <div id="preview" class="preview" v-show="preview"/>
                             <input-file @selectedImage="loadImage($event)"></input-file>
                             </div>
                         </v-layout>
@@ -55,7 +54,7 @@
 
                 <v-stepper-content step="2">
                     <v-layout>
-                    <v-card class="overflow-hidden" height="550" width="500">
+                    <v-card class="overflow-hidden" :height="editHeight" :width="cropperWidth">
                         <div id="canvas-area" style="position: relative">
                             <div v-if="isActive">
                                 <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
@@ -87,9 +86,9 @@
                         </v-btn>
                         </v-bottom-navigation>
                     </v-card>
-                    <v-card class="overflow-hidden" height="550" width="500">
+                    <v-card class="overflow-hidden" height="550" width="500" v-show="preview">
                     <v-stepper v-model="toolStepper" style="width: 500px;">
-                        <v-stepper-items>
+                        <v-stepper-items v-show="preview">
                             <v-stepper-content step="1">
                             <v-card-title>Pen</v-card-title>
                                     <v-color-picker class="mb-5 ml-3" v-model="penColor" @input="searchTimeOut"></v-color-picker>
@@ -160,7 +159,7 @@
                     </v-stepper>
                     </v-card>
                     </v-layout>
-                    <v-stepper v-model="toolStepper" style="width: 1000px;">
+                    <v-stepper v-model="toolStepper" style="width: 1000px;" v-show="preview">
                         <v-stepper-items>
                             <v-stepper-content step="1">
                                 <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
@@ -322,6 +321,9 @@ export default {
     },
     data() {
       return {
+          basicSize: '',
+          mediaSize: '',
+          spSize: window.matchMedia('(max-width: 480px)'),
         sizeDialog: false,
         show: false,
         title: '',
@@ -401,6 +403,42 @@ export default {
                 this.selectedInputPosition.fontSize = newValue + 'px';
             }
         },
+        preview(){
+            var mql = window.matchMedia('(max-width: 480px)');
+            if(mql.matches){
+                return false;
+            } else {
+                return true;
+            }
+        },
+        preview(){
+            if(this.spSize.matches){
+                return false;
+            } else {
+                return true;
+            }
+        },
+        cropperWidth(){
+            if(this.spSize.matches){
+                return 300;
+            } else {
+                return 500;
+            }
+        },
+        cropperHeight(){
+            if(this.spSize.matches){
+                return 300;
+            } else {
+                return 500;
+            }
+        },
+        editHeight(){
+            if(this.spSize.matches){
+                return 300;
+            } else {
+                return 500;
+            }
+        },
     },
     mounted(){
       // canvas
@@ -414,6 +452,15 @@ export default {
         // text
         this.textCanvas = document.getElementById("text");
         this.textCanvasctx = this.textCanvas.getContext("2d");
+        this.mediaSize = window.innerWidth;
+        var img = document.getElementById("select");
+        if(this.spSize.matches){
+            img.style.width = '300px';
+            this.basicSize = 300;
+        } else {
+            this.basicSize = 500;
+            return true;
+        }
     },
     methods: {
         oneMoreImage(){
@@ -912,7 +959,9 @@ export default {
   z-index: 2;
 }
 
+
 </style>
+
     <!-- 写真アップロードの紫ボタン -->
     <!-- project://resources/js/components/organisms/Crop.vue#line[3] -->
 
