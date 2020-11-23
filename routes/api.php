@@ -58,3 +58,4 @@ Route::get('/delete_like', function(Request $request){
     return Like::all();
 });
 Route::post('/upload', 'ProfileController@uploadBg');
+Route::post('/upload2', 'ProfileController@uploadAvatar');
