@@ -1,7 +1,6 @@
 /bootstrap
 /database
 /tests
-/storage
 /config
 /node_modules
 /public/hot
