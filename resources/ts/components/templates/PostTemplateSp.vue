@@ -1,7 +1,7 @@
 <template>
     <div>
         <v-stepper v-model="e1">
-            <v-stepper-header>
+            <!-- <v-stepper-header>
                 <v-stepper-step :complete="e1 > 1" step="1">
                     画像のトリミング
                 </v-stepper-step>
@@ -17,7 +17,7 @@
                 <v-stepper-step step="4">
                 確認
                 </v-stepper-step>
-            </v-stepper-header>
+            </v-stepper-header> -->
 
             <v-stepper-items>
                 <v-stepper-content step="1">
@@ -29,32 +29,29 @@
                                     :guides="true"
                                     :view-mode="2"
                                     :auto-crop-area="0.5"
-                                    :min-container-width="500"
-                                    :min-container-height="500"
+                                    :min-container-width="300"
+                                    :min-container-height="300"
                                     :background="true"
                                     :rotatable="false"
                                     :src="imgSrc"
-                                    :img-style="{ 'width': basicSize + 'px', 'height': basicSize + 'px' }"
+                                    :img-style="{ 'width': 300 + 'px', 'height': 300 + 'px' }"
                                     :aspect-ratio="1 / 1"
                                     drag-mode="crop"
-                                    preview=".preview"
                                 />
+                            <div>
+                                <input-file @selectedImage="loadImage($event)"></input-file>
+                            </div>
                             </div>
                             <div v-else>
                                 <input-file-image @selectedImage="loadImage($event)"></input-file-image>
                             </div>
-                            <div>
-                            <div id="preview" class="preview"/>
-                            <input-file @selectedImage="loadImage($event)"></input-file>
-                            </div>
                         </v-layout>
-                    </v-container>
                     <v-btn @click="cropImage" color="primary" :disabled="stepBtn1">トリミング</v-btn>
+                    </v-container>
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
-                    <v-layout>
-                    <v-card class="overflow-hidden" height="500" width="500">
+                    <v-card class="overflow-hidden" height="300" width="300" style="margin: auto;">
                         <div id="canvas-area" style="position: relative">
                             <div v-if="isActive">
                                 <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
@@ -62,12 +59,11 @@
                             <div v-if="isActiveEditText">
                                 <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
                             </div>
-                            <canvas id="drawCanvas" style="position: absolute; z-index: 1;top: 0; left: 0;" v-bind:class="{eraser: canvasMode === 'eraser'}" width="500" height="500" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
-                            <canvas id="cover" class="preview" style="position: absolute; top: 0; left: 0;" width="500" height="500"></canvas>
-                            <!-- <canvas id="text" style="z-index: 0; position: absolute;" width=500 height=500 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas> -->
-                            <canvas id="text" :class="{index2: value == 2}" style="position: absolute;top: 0; left: 0;" width=500 height=500 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
+                            <canvas id="drawCanvas" style="position: absolute; z-index: 0;top: 0; left: 0;" v-bind:class="{eraser: canvasMode === 'eraser'}" width="300" height="300" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
+                            <canvas id="cover" style="position: absolute; top: 0; left: 0;" width="300" height="300"></canvas>
+                            <canvas id="text" :class="{index2: value == 2}" style="position: absolute;top: 0; left: 0;" width=300 height=300 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
                         </div>
-                        <v-bottom-navigation absolute hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
+                        <!-- <v-bottom-navigation absolute hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
                         <v-btn color="deep-purple accent-4" text　@click="pen" value="0">
                             <span>ペン</span>
                             <v-icon>mdi-draw</v-icon>
@@ -84,10 +80,10 @@
                             <span>ダウンロード</span>
                             <v-icon>mdi-briefcase-download</v-icon>
                         </v-btn>
-                        </v-bottom-navigation>
+                        </v-bottom-navigation> -->
                     </v-card>
-                    <v-card class="overflow-hidden" height="550" width="500">
-                    <v-stepper v-model="toolStepper" style="width: 500px;">
+                    <!-- <v-card class="overflow-hidden" height="550" width="300">
+                    <v-stepper v-model="toolStepper" style="width: 300px;">
                         <v-stepper-items>
                             <v-stepper-content step="1">
                             <v-card-title>Pen</v-card-title>
@@ -101,65 +97,13 @@
                                     </v-col>
                             </v-stepper-content>
 
-                            <v-stepper-content step="2">
-                                <v-card-title class="headline">
-                                    Filters
-                                </v-card-title>
-                                <v-slider label="opacity" v-model.lazy="opacity" min="4" max="10" thumb-label="always" @input="searchTimeOut2" thumb-color="pink" color="pink">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="opacity" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3" thumb-color="purple" color="purple">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.blur" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="250" thumb-label="always" @input="searchTimeOut3" thumb-color="red"  color="red">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.brightness" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="contrast" v-model.lazy="filterObject.contrast" min="0" max="400" thumb-label="always" @input="searchTimeOut3" thumb-color="orange" color="orange">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.contrast" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="grayscale" v-model.lazy="filterObject.grayscale" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="indigo" color="indigo">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.grayscale" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="hue-rotate" v-model.lazy="filterObject.hueRotate" min="0" max="359" thumb-label="always" @input="searchTimeOut3" thumb-color="green" color="green">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.hueRotate" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="invert" v-model.lazy="filterObject.invert" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="deep-purple" color="deep-purple">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.invert" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="saturate" v-model.lazy="filterObject.saturate" min="0" max="300" thumb-label="always" @input="searchTimeOut3" thumb-color="light-blue" color="light-blue">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.saturate" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                                <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="lime" color="lime">
-                                    <template v-slot:append>
-                                        <v-text-field v-model="filterObject.sepia" class="mt-0 pt-0" hide-details single-line type="number" style="width: 60px"></v-text-field>
-                                    </template>
-                                </v-slider>
-                            </v-stepper-content>
-
                             <v-stepper-content step="3">
                                 <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
                             </v-stepper-content>
                         </v-stepper-items>
                     </v-stepper>
-                    </v-card>
-                    </v-layout>
-                    <v-stepper v-model="toolStepper" style="width: 1000px;">
+                    </v-card> -->
+                    <!-- <v-stepper v-model="toolStepper" style="width: 1000px;">
                         <v-stepper-items>
                             <v-stepper-content step="1">
                                 <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
@@ -203,17 +147,59 @@
                                 </div>
                             </v-stepper-content>
                         </v-stepper-items>
-                    </v-stepper>
+                    </v-stepper> -->
+                    <v-card flat tile max-width="300" style="margin: auto">
+                        <v-window v-model="onboarding" class="px-2 py-2">
+                            <v-window-item :value="0">
+                                <v-slider label="opacity" v-model.lazy="opacity" min="4" max="10" thumb-label="always" @input="searchTimeOut2" thumb-color="pink" color="pink"></v-slider>
+                                <v-slider label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3" thumb-color="purple" color="purple"></v-slider>
+                                <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="250" thumb-label="always" @input="searchTimeOut3" thumb-color="red"  color="red"></v-slider>
+                            </v-window-item>
+
+                            <v-window-item :value="1">
+                                <v-slider label="contrast" v-model.lazy="filterObject.contrast" min="0" max="400" thumb-label="always" @input="searchTimeOut3" thumb-color="orange" color="orange"></v-slider>
+                                <v-slider label="grayscale" v-model.lazy="filterObject.grayscale" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="indigo" color="indigo"></v-slider>
+                                <v-slider label="hue-rotate" v-model.lazy="filterObject.hueRotate" min="0" max="359" thumb-label="always" @input="searchTimeOut3" thumb-color="green" color="green"></v-slider>
+                            </v-window-item>
+                            <v-window-item :value="2">
+                                <v-slider label="invert" v-model.lazy="filterObject.invert" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="deep-purple" color="deep-purple"></v-slider>
+                                <v-slider label="saturate" v-model.lazy="filterObject.saturate" min="0" max="300" thumb-label="always" @input="searchTimeOut3" thumb-color="light-blue" color="light-blue"></v-slider>
+                                <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="lime" color="lime"></v-slider>
+                            </v-window-item>
+                            <v-window-item :value="3">
+                                <v-color-picker v-model="color" hide-canvas class="ma-2" @input="searchTimeOut2" hide-inputs></v-color-picker>
+                                <v-chip-group column active-class="primary--text">
+                                    <v-chip v-for="(tag, index) in globalCompositeOperation" :key="index" @click="click(index)">
+                                        {{ tag }}
+                                    </v-chip>
+                                </v-chip-group>
+                            </v-window-item>
+                        </v-window>
+                        <v-card-actions class="justify-space-between">
+                            <v-btn text @click="prev">
+                                <v-icon>mdi-chevron-left</v-icon>
+                            </v-btn>
+                            <v-item-group v-model="onboarding" class="text-center" mandatory>
+                                <v-item v-for="n in length" :key="`btn-${n}`" v-slot="{ active, toggle }">
+                                    <v-btn :input-value="active" icon @click="toggle">
+                                        <v-icon>mdi-record</v-icon>
+                                    </v-btn>
+                                </v-item>
+                            </v-item-group>
+                            <v-btn text @click="next">
+                                <v-icon>mdi-chevron-right</v-icon>
+                            </v-btn>
+                        </v-card-actions>
+                    </v-card>
                     <v-btn color="primary" @click="getImage">決定</v-btn>
                     <v-btn text @click="e1 = 1;">戻る</v-btn>
                 </v-stepper-content>
-
+<!--FIXME: タイトルと内容が埋もれる-->
                 <v-stepper-content step="3">
-                        <div class="d-flex pt-4 justify-content-around">
-                            <canvas id="concat" width="500" height="500"></canvas>
+                            <canvas id="concat" width="300" height="300" style="margin: auto;"></canvas>
                             <div class="pt-2 mx-auto"  style="width: 100%;max-width: 600px;">
                              <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
-                            <v-textarea v-model="message" color="teal" counter maxlength="500">
+                            <v-textarea v-model="message" color="teal" rows="3" counter maxlength="300">
                                 <template v-slot:label>
                                     <div>
                                     内容 <small>(content)</small>
@@ -221,7 +207,6 @@
                                 </template>
                             </v-textarea>
                             </div>
-                        </div>
                         <div>
                             <v-btn color="primary" @click="e1=4">確認</v-btn>
                             <v-btn color="primary" @click="oneMoreImage">もう一枚投稿</v-btn>
@@ -232,7 +217,7 @@
                 <v-stepper-content step="4">
                     <div class="d-flex">
                     <!-- <v-img :src="img" max-width="250" v-for="(img, index) in concatImg" :key="index"></v-img> -->
-                        <v-card class="mx-auto my-5" max-width="500">
+                        <v-card class="mx-auto my-5" max-width="300">
                             <v-list>
                                 <v-list-item>
                                     <v-list-item-avatar>
@@ -245,7 +230,7 @@
 
                                 </v-list-item>
                             </v-list>
-                            <v-carousel>
+                            <v-carousel height="300">
                                 <v-carousel-item v-for="(image,i) in concatImg" :key="i" :src="image" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                             </v-carousel>
                             <v-btn icon>
@@ -273,10 +258,13 @@
 
             </v-stepper-items>
         </v-stepper>
-    <div id="concatImages" class="d-flex justify-content-start"></div><v-btn color="primary" @click="submit" v-if="concatImageBtn">保存</v-btn>
+        <div v-show="e1 !== 4">
+    <div id="concatImages" class="d-flex justify-content-start flex-wrap"></div>
+    <v-btn color="primary" @click="submit" v-if="concatImageBtn">保存</v-btn>
+    </div>
     <v-dialog
       v-model="sizeDialog"
-      width="500"
+      width="300"
     >
 
       <v-card>
@@ -321,8 +309,13 @@ export default {
     },
     data() {
       return {
+      type: 'hexa',
+      hexa: '#FF000000',
+      length: 4,
+      onboarding: 0,
           basicSize: '',
           mediaSize: '',
+          spSize: window.matchMedia('(max-width: 480px)'),
         sizeDialog: false,
         show: false,
         title: '',
@@ -350,7 +343,6 @@ export default {
         isDrag: false,
         model: null,
         globalAlpha: 1,
-        color: '#00000080',
         timer: '',
         filters: '',
         croppedImage: '',
@@ -370,8 +362,8 @@ export default {
         isActiveEditText: false,
         dialog: false,
         selectedEditTextMessage: '',
-        inputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
-        selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+        inputPosition: {fontSize: '15px', color: 'black', fontWeght: '300', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+        selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '300', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
       };
     },
     computed: {
@@ -402,6 +394,14 @@ export default {
                 this.selectedInputPosition.fontSize = newValue + 'px';
             }
         },
+      color: {
+        get () {
+          return this[this.type]
+        },
+        set (v) {
+          this[this.type] = v
+        },
+      },
     },
     mounted(){
       // canvas
@@ -416,40 +416,39 @@ export default {
         this.textCanvas = document.getElementById("text");
         this.textCanvasctx = this.textCanvas.getContext("2d");
         this.mediaSize = window.innerWidth;
-        var img = document.getElementById("select");
     },
     methods: {
+      next () {
+        this.onboarding = this.onboarding + 1 === this.length
+          ? 0
+          : this.onboarding + 1
+      },
+      prev () {
+        this.onboarding = this.onboarding - 1 < 0
+          ? this.length - 1
+          : this.onboarding - 1
+      },
         oneMoreImage(){
             this.e1 = 1;
             this.imgSrc = '';
             this.stepBtn1 = true;
             this.concatImageBtn = true;
-            var preview = document.getElementsByClassName('preview');
-            var img = preview[0].getElementsByTagName('img');
-            img[0].src = '';
             var newImg = document.createElement("img");
             newImg.src = this.concatImg[this.concatImg.length-1];
-            newImg.width = 250;
-            newImg.height = 250;
+            newImg.width = 75;
+            newImg.height = 75;
             var concatImages = document.getElementById('concatImages')
             concatImages.appendChild(newImg);
         },
         loadImage(e){
-            var preview = document.getElementById('preview');
             if(e == ''){
             this.sizeDialog = true;
             this.imgSrc = '';
             this.stepBtn1 = true;
-            var preview = document.getElementsByClassName('preview');
-            var img = preview[0].getElementsByTagName('img');
-            img[0].src = '';
             } else {
-                preview.classList.add('preview');
                 this.stepBtn1 = false;
                 this.imgSrc = e;
                 this.$refs.cropper.replace(e);
-                var img = preview[0].getElementsByTagName('img');
-                img[0].src = '';
                 var newImg = document.createElement("img");
                 newImg.src = this.concatImg[this.concatImg.length-1];
                 newImg.width = 250;
@@ -482,9 +481,9 @@ export default {
             var drawCanvas = this.createImage(document.getElementById("drawCanvas"));
             // var image = this.createImage(this.canvas);
             drawCanvas.onload = function(){
-                concatCxt.drawImage(cover,0,0,500,500);
-                concatCxt.drawImage(text,0,0,500,500);
-                concatCxt.drawImage(drawCanvas,0,0,500,500);
+                concatCxt.drawImage(cover,0,0,300,300);
+                concatCxt.drawImage(text,0,0,300,300);
+                concatCxt.drawImage(drawCanvas,0,0,300,300);
             };
             let that = this;
             setTimeout(function(){
@@ -549,18 +548,18 @@ export default {
             this.e1 = 2;
             this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             this.cover = document.getElementById("cover");
-            this.drawCanvasctx.clearRect(0, 0, 500, 500);
-            this.textCanvasctx.clearRect(0, 0, 500, 500);
+            this.drawCanvasctx.clearRect(0, 0, 300, 300);
+            this.textCanvasctx.clearRect(0, 0, 300, 300);
             this.coverctx = this.cover.getContext("2d");
             this.coverctx.globalAlpha = 1;
             this.coverctx.globalCompositeOperation = 'source-over';
             this.coverctx.filter = 'grayscale(0%)';
-            this.coverctx.clearRect(0, 0, 500, 500);
+            this.coverctx.clearRect(0, 0, 300, 300);
             var background = new Image();
             background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             var that = this;
             background.onload = function(){
-                    that.coverctx.drawImage(background,0,0,500,500);
+                    that.coverctx.drawImage(background,0,0,300,300);
                 }
             var that = this;
             var canvas = [];
@@ -575,61 +574,61 @@ export default {
                     canvasCtx[i].globalAlpha = 1;
                     canvasCtx[i].globalCompositeOperation = 'source-over';
                     canvasCtx[i].filter = 'grayscale(0%)';
-                    canvasCtx[i].clearRect(0, 0, 500, 500);
+                    canvasCtx[i].clearRect(0, 0, 300, 300);
                     coverImage[i] = new Image();
                     coverImage[i].src = background.src;
                     coverImage[i].onload = function () {
                         canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
                     };
                 }
-            }, 500);
+            }, 300);
             this.coverctx.save();
         },
         back() {
-            this.coverctx.clearRect(0, 0, 500, 500);
+            this.coverctx.clearRect(0, 0, 300, 300);
             this.coverctx.restore();
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+                that.coverctx.drawImage(picImage, 0, 0, 300, 300);
             };
-            this.coverctx.fillRect(0, 0, 500, 500);
+            this.coverctx.fillRect(0, 0, 300, 300);
         },
         rotate() {
-            this.coverctx.clearRect(0, 0, 500, 500);
-            this.coverctx.translate(500, 0);
+            this.coverctx.clearRect(0, 0, 300, 300);
+            this.coverctx.translate(300, 0);
             this.coverctx.rotate(90 * Math.PI / 180);
             this.coverctx.globalAlpha = this.globalAlpha;
             this.coverctx.fillStyle = this.color;
-            this.coverctx.fillRect(0, 0, 500, 500);
+            this.coverctx.fillRect(0, 0, 300, 300);
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+                that.coverctx.drawImage(picImage, 0, 0, 300, 300);
                 that.coverctx.save();
             };
         },
-        click() {
-            this.coverctx.clearRect(0, 0, 500, 500);
+        click(key) {
+            this.coverctx.clearRect(0, 0, 300, 300);
             this.coverctx.globalAlpha = this.globalAlpha;
-            this.coverctx.fillStyle = this.color;
-            this.coverctx.fillRect(0, 0, 500, 500);
-            this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+            this.coverctx.fillStyle = this.hexa;
+            this.coverctx.fillRect(0, 0, 300, 300);
+            this.coverctx.globalCompositeOperation = this.globalCompositeOperation[key-1];
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+                that.coverctx.drawImage(picImage, 0, 0, 300, 300);
                 that.coverctx.save();
             };
         },
         reset() {
             this.coverctx.filter = 'grayscale(0%)';
             this.globalAlpha = 1;
-            this.color = 'transparent';
+            this.hexa = 'transparent';
             this.model = '';
             this.filters = '';
             this.coverctx.globalCompositeOperation = 'source-over';
@@ -640,12 +639,12 @@ export default {
             this.coverctx.globalAlpha = 1;
             this.coverctx.globalCompositeOperation = 'source-over';
             this.coverctx.filter = 'grayscale(0%)';
-            this.coverctx.clearRect(0, 0, 500, 500);
+            this.coverctx.clearRect(0, 0, 300, 300);
             var background = new Image();
             background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             var that = this;
             background.onload = function(){
-                    that.coverctx.drawImage(background,0,0,500,500);
+                    that.coverctx.drawImage(background,0,0,300,300);
                 }
             var that = this;
             var canvas = [];
@@ -660,14 +659,14 @@ export default {
                     canvasCtx[i].globalAlpha = 1;
                     canvasCtx[i].globalCompositeOperation = 'source-over';
                     canvasCtx[i].filter = 'grayscale(0%)';
-                    canvasCtx[i].clearRect(0, 0, 500, 500);
+                    canvasCtx[i].clearRect(0, 0, 300, 300);
                     coverImage[i] = new Image();
                     coverImage[i].src = background.src;
                     coverImage[i].onload = function () {
                         canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
                     };
                 }
-            }, 500);
+            }, 300);
             this.coverctx.save();
             this.color = '#00000080';
             // that.searchTimeOut();
@@ -692,27 +691,18 @@ export default {
             }, 200);
         },
         colorImage() {
-            var canvas = [];
-            var canvasCtx = [];
-            var coverImage = [];
+            this.coverctx.clearRect(0, 0, 300, 300);
+            this.coverctx.globalAlpha = this.globalAlpha;
+            this.coverctx.fillStyle = this.hexa;
+            this.coverctx.fillRect(0, 0, 300, 300);
+            this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+            var picImage = new Image();
+            picImage.src = this.croppedImage;
             var that = this;
-            setTimeout(function () {
-                for (let i = 1; i < 14; i++) {
-                    canvas[i] = document.getElementById("pic" + i);
-                    canvasCtx[i] = canvas[i].getContext('2d');
-                    canvasCtx[i].clearRect(0, 0, 500, 500);
-                    canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-                    canvasCtx[i].globalAlpha = that.globalAlpha;
-                    canvasCtx[i].fillStyle = that.color;
-                    canvasCtx[i].filter = that.filters;
-                    canvasCtx[i].fillRect(0, 0, 500, 500);
-                    coverImage[i] = new Image();
-                    coverImage[i].src = that.croppedImage;
-                    coverImage[i].onload = function () {
-                        canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-                    };
-                }
-            }, 500)
+            picImage.onload = function () {
+                that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+                that.coverctx.save();
+            };
         },
         filter() {
             var filterKeys = Object.keys(this.filterObject);
@@ -733,17 +723,17 @@ export default {
             };
             var filters = filtersArray.join(' ');
             this.filters = filters;
-            this.coverctx.clearRect(0, 0, 500, 500);
+            this.coverctx.clearRect(0, 0, 300, 300);
             this.coverctx.globalAlpha = this.globalAlpha;
-            this.coverctx.fillstyle = this.color;
+            this.coverctx.fillstyle = this.hexa;
             this.coverctx.filter = this.filters;
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-            this.coverctx.fillRect(0, 0, 500, 500);
+            this.coverctx.fillRect(0, 0, 300, 300);
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 500, 500);
+                that.coverctx.drawImage(picImage, 0, 0, 300, 300);
                 that.coverctx.save();
             };
         },
@@ -755,8 +745,8 @@ export default {
             var positionY = clientRect.top + window.pageYOffset ;
             this.startX = clickX - positionX ;
             this.startY = clickY - positionY ;
-            this.inputPosition.width = 500 - this.startX + 'px';
-            this.selectedInputPosition.width = 500 - this.startX + 'px';
+            this.inputPosition.width = 300 - this.startX + 'px';
+            this.selectedInputPosition.width = 300 - this.startX + 'px';
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
                   this.isActiveEditText = true;
@@ -914,19 +904,10 @@ export default {
 .index2{
   z-index: 2;
 }
-
+#select {
+    margin: auto;
+    max-width: 400px;
+    width: 100%;
+}
 
 </style>
-
-    <!-- 写真アップロードの紫ボタン -->
-    <!-- project://resources/js/components/organisms/Crop.vue#line[3] -->
-
-    <!-- 親コンポーネント -->
-    <!--☆ project://resources/js/components/pages/Post.vue#3 -->
-
-    <!-- 子コンポーネント -->
-    <!--☆ project://resources/js/components/organisms/Crop.vue --><!--☆ project://resources/js/components/molecules/InputFile.vue --><!-- project://resources/js/components/atoms/InputFileBtn.vue -->
-
-    <!-- event -->
-    <!-- secondStep project://resources/js/components/organisms/Crop.vue#60 -->
-    <!--☆ input  project://resources/js/components/organisms/Crop.vue#64 -->

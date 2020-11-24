@@ -4393,6 +4393,12 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _templates_PostTemplate_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../templates/PostTemplate.vue */ "./resources/ts/components/templates/PostTemplate.vue");
+/* harmony import */ var _templates_PostTemplateSp_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../templates/PostTemplateSp.vue */ "./resources/ts/components/templates/PostTemplateSp.vue");
+//
+//
+//
+//
+//
 //
 //
 //
@@ -4400,10 +4406,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['user'],
   components: {
-    'post-template': _templates_PostTemplate_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+    PostTemplate: _templates_PostTemplate_vue__WEBPACK_IMPORTED_MODULE_0__["default"],
+    PostTemplateSp: _templates_PostTemplateSp_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  computed: {
+    screen: function screen() {
+      var mediaSize = window.matchMedia('(max-width: 480px)');
+
+      if (mediaSize.matches) {
+        return false;
+      } else {
+        return true;
+      }
+    }
   }
 });
 
@@ -4994,8 +5013,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../molecules/InputFile.vue */ "./resources/ts/components/molecules/InputFile.vue");
 /* harmony import */ var _molecules_InputFileImage_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../molecules/InputFileImage.vue */ "./resources/ts/components/molecules/InputFileImage.vue");
 /* harmony import */ var _organisms_ImageEditer_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../organisms/ImageEditer.vue */ "./resources/ts/components/organisms/ImageEditer.vue");
-var _computed;
-
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -5324,7 +5341,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     return _ref = {
       basicSize: '',
       mediaSize: '',
-      spSize: window.matchMedia('(max-width: 480px)'),
       sizeDialog: false,
       show: false,
       title: '',
@@ -5378,7 +5394,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       zIndex: 1
     }), _ref;
   },
-  computed: (_computed = {
+  computed: {
     toolStepper: function toolStepper() {
       return Number(this.value) + 1;
     },
@@ -5405,41 +5421,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       set: function set(newValue) {
         this.selectedInputPosition.fontSize = newValue + 'px';
       }
-    },
-    preview: function preview() {
-      var mql = window.matchMedia('(max-width: 480px)');
-
-      if (mql.matches) {
-        return false;
-      } else {
-        return true;
-      }
     }
-  }, _defineProperty(_computed, "preview", function preview() {
-    if (this.spSize.matches) {
-      return false;
-    } else {
-      return true;
-    }
-  }), _defineProperty(_computed, "cropperWidth", function cropperWidth() {
-    if (this.spSize.matches) {
-      return 300;
-    } else {
-      return 500;
-    }
-  }), _defineProperty(_computed, "cropperHeight", function cropperHeight() {
-    if (this.spSize.matches) {
-      return 300;
-    } else {
-      return 500;
-    }
-  }), _defineProperty(_computed, "editHeight", function editHeight() {
-    if (this.spSize.matches) {
-      return 300;
-    } else {
-      return 500;
-    }
-  }), _computed),
+  },
   mounted: function mounted() {
     // canvas
     this.drawCanvas = document.getElementById('drawCanvas');
@@ -5454,14 +5437,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.textCanvasctx = this.textCanvas.getContext("2d");
     this.mediaSize = window.innerWidth;
     var img = document.getElementById("select");
-
-    if (this.spSize.matches) {
-      img.style.width = '300px';
-      this.basicSize = 300;
-    } else {
-      this.basicSize = 500;
-      return true;
-    }
   },
   methods: {
     oneMoreImage: function oneMoreImage() {
@@ -5849,6 +5824,951 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.startY = clickY - positionY;
       this.inputPosition.width = 500 - this.startX + 'px';
       this.selectedInputPosition.width = 500 - this.startX + 'px';
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.isActiveEditText = true;
+          this.isActive = false;
+          this.selectedEditText = i;
+          setTimeout(function () {
+            document.getElementById('selectedText').focus();
+          }, 100); // var selectedInput = document.getElementById('selectedText');
+          // selectedInput.focus();
+
+          this.selectedInputPosition.top = this.texts[i].y - 45 + 'px';
+          this.selectedInputPosition.left = this.texts[i].x + 15 + 'px';
+          this.selectedInputPosition.color = this.texts[i].fillStyle;
+          this.texts[i].fillStyle = 'transparent';
+          var fontArray = this.texts[i].font.split(/\s+/);
+          this.selectedInputPosition.fontWeight = fontArray[0];
+          this.selectedInputPosition.fontSize = fontArray[1];
+          this.selectedInputPosition.fontStyle = fontArray[2];
+          var that = this;
+          setTimeout(that.drawText(), 100);
+          this.selectedEditTextMessage = this.texts[i].text;
+        }
+      }
+
+      if (this.selectedEditText == -1) {
+        this.create(event);
+      }
+    },
+    textHittest: function textHittest(x, y, textIndex) {
+      var text = this.texts[textIndex];
+      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
+    },
+    blur: function blur(e) {
+      e.target.blur();
+    },
+    create: function create(e) {
+      this.isActive = true;
+      var that = this;
+      setTimeout(function () {
+        that.inputPosition.top = e.pageY - 210 + 'px';
+        that.inputPosition.left = e.pageX - 10 + 'px';
+        document.getElementById('newText').focus();
+      }, 100);
+    },
+    discribeNew: function discribeNew() {
+      this.isActive = false;
+      var text = {
+        text: document.getElementById('newText').value,
+        x: this.startX,
+        y: this.startY + this.inputPosition.fontSize.replace(/px/g, "") / 2 - 5,
+        font: "bold ".concat(this.inputPosition.fontSize, " normal"),
+        fillStyle: this.inputPosition.color
+      };
+      this.textCanvasctx.font = "bold ".concat(this.inputPosition.fontSize, " normal");
+      this.textCanvasctx.fillStyle = text.fillStyle;
+      text.width = this.textCanvasctx.measureText(text.text).width;
+      text.height = this.inputPosition.fontSize.replace(/px/g, "");
+      this.texts.push(text);
+      this.drawText();
+    },
+    edit: function edit() {
+      this.isActiveEditText = false;
+      var editText = this.texts[this.selectedEditText];
+      editText.text = this.selectedEditTextMessage;
+      editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
+      editText.fillStyle = this.selectedInputPosition.color;
+      var that = this;
+      setTimeout(function () {
+        editText.width = that.textCanvasctx.measureText(that.selectedEditTextMessage).width;
+      }, 100);
+      this.drawText();
+      this.selectedEditText = -1;
+    },
+    drawText: function drawText() {
+      this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+
+        if (text.text == '') {
+          this.texts.splice(i, 1);
+        }
+      }
+
+      for (var i = 0; i < this.texts.length; i++) {
+        var text = this.texts[i];
+        this.textCanvasctx.font = text.font;
+        this.textCanvasctx.fillStyle = text.fillStyle;
+        this.textCanvasctx.fillText(text.text, text.x, text.y);
+      }
+    },
+    handleMouseDown: function handleMouseDown(event) {
+      var newText = document.getElementById('newText');
+      var selectedText = document.getElementById('selectedText'); // if(newText == document.activeElement){
+      //   newText.blur();
+      // }
+      // if(selectedText == document.activeElement){
+      //   selectedText.blur();
+      // }
+
+      this.pageY = event.pageY;
+      this.startX = parseInt(event.clientX - this.offsetX);
+      this.startY = event.pageY - 188;
+
+      for (var i = 0; i < this.texts.length; i++) {
+        if (this.textHittest(this.startX, this.startY, i)) {
+          this.selectedText = i;
+        }
+      }
+    },
+    handleMouseUp: function handleMouseUp(e) {
+      this.selectedText = -1;
+    },
+    handleMouseOut: function handleMouseOut(e) {
+      this.selectedText = -1;
+    },
+    handleMouseMove: function handleMouseMove(e) {
+      if (this.selectedText < 0) {
+        return;
+      }
+
+      var mouseX = parseInt(e.clientX - this.offsetX);
+      var mouseY = event.pageY - 188;
+      var dx = mouseX - this.startX;
+      var dy = mouseY - this.startY;
+      this.startX = mouseX;
+      this.startY = mouseY;
+      var text = this.texts[this.selectedText];
+      text.x += dx;
+      text.y += dy;
+      this.drawText();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-cropperjs */ "./node_modules/vue-cropperjs/dist/VueCropper.js");
+/* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../molecules/InputFile.vue */ "./resources/ts/components/molecules/InputFile.vue");
+/* harmony import */ var _molecules_InputFileImage_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../molecules/InputFileImage.vue */ "./resources/ts/components/molecules/InputFileImage.vue");
+/* harmony import */ var _organisms_ImageEditer_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../organisms/ImageEditer.vue */ "./resources/ts/components/organisms/ImageEditer.vue");
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  name: "DrawTool",
+  props: ['user'],
+  components: {
+    VueCropper: vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default.a,
+    InputFile: _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    InputFileImage: _molecules_InputFileImage_vue__WEBPACK_IMPORTED_MODULE_2__["default"],
+    ImageEditer: _organisms_ImageEditer_vue__WEBPACK_IMPORTED_MODULE_3__["default"]
+  },
+  data: function data() {
+    var _ref;
+
+    return _ref = {
+      type: 'hexa',
+      hexa: '#FF000000',
+      length: 4,
+      onboarding: 0,
+      basicSize: '',
+      mediaSize: '',
+      spSize: window.matchMedia('(max-width: 480px)'),
+      sizeDialog: false,
+      show: false,
+      title: '',
+      message: '',
+      concatImageBtn: false,
+      stepBtn1: true,
+      e1: 1,
+      concatImg: [],
+      imgSrc: '',
+      value: 0,
+      canvasMode: 'penBlack',
+      drawCanvas: null,
+      drawCanvasctx: null,
+      isDrag: false,
+      cover: null,
+      coverctx: null,
+      penColor: '#000000',
+      lineWidth: 5,
+      lineCaps: ['square', 'butt', 'round'],
+      lineCap: 'round',
+      lineJoins: ['bebel', 'miter', 'round'],
+      lineJoin: 'round',
+      filterObject: {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      },
+      globalCompositeOperation: ['lighter', 'darken', 'overlay', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity']
+    }, _defineProperty(_ref, "isDrag", false), _defineProperty(_ref, "model", null), _defineProperty(_ref, "globalAlpha", 1), _defineProperty(_ref, "timer", ''), _defineProperty(_ref, "filters", ''), _defineProperty(_ref, "croppedImage", ''), _defineProperty(_ref, "toggle_multiple", []), _defineProperty(_ref, "textCanvas", ''), _defineProperty(_ref, "textCanvasctx", ''), _defineProperty(_ref, "texts", []), _defineProperty(_ref, "selectedText", -1), _defineProperty(_ref, "selectedEditText", -1), _defineProperty(_ref, "offsetX", ''), _defineProperty(_ref, "offsetY", ''), _defineProperty(_ref, "scrollX", ''), _defineProperty(_ref, "scrollY", ''), _defineProperty(_ref, "startX", ''), _defineProperty(_ref, "startY", ''), _defineProperty(_ref, "isActive", false), _defineProperty(_ref, "isActiveEditText", false), _defineProperty(_ref, "dialog", false), _defineProperty(_ref, "selectedEditTextMessage", ''), _defineProperty(_ref, "inputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '300',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _defineProperty(_ref, "selectedInputPosition", {
+      fontSize: '15px',
+      color: 'black',
+      fontWeght: '300',
+      fontStyle: 'normal',
+      top: '100px',
+      left: '100px',
+      position: 'absolute',
+      zIndex: 1
+    }), _ref;
+  },
+  computed: {
+    toolStepper: function toolStepper() {
+      return Number(this.value) + 1;
+    },
+    opacity: {
+      get: function get() {
+        return this.globalAlpha * 10;
+      },
+      set: function set(newValue) {
+        this.globalAlpha = newValue / 10;
+      }
+    },
+    fontSize: {
+      get: function get() {
+        return this.inputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.inputPosition.fontSize = newValue + 'px';
+      }
+    },
+    selectedFontSize: {
+      get: function get() {
+        return this.selectedInputPosition.fontSize.replace(/px/g, "");
+      },
+      set: function set(newValue) {
+        this.selectedInputPosition.fontSize = newValue + 'px';
+      }
+    },
+    color: {
+      get: function get() {
+        return this[this.type];
+      },
+      set: function set(v) {
+        this[this.type] = v;
+      }
+    }
+  },
+  mounted: function mounted() {
+    // canvas
+    this.drawCanvas = document.getElementById('drawCanvas');
+    this.drawCanvasctx = this.drawCanvas.getContext('2d');
+    this.drawCanvasctx.lineCap = 'round';
+    this.drawCanvasctx.lineJoin = 'round';
+    this.drawCanvasctx.lineWidth = 5;
+    this.drawCanvasctx.miterLimit = 50;
+    this.drawCanvasctx.strokeStyle = '#000000'; // text
+
+    this.textCanvas = document.getElementById("text");
+    this.textCanvasctx = this.textCanvas.getContext("2d");
+    this.mediaSize = window.innerWidth;
+  },
+  methods: {
+    next: function next() {
+      this.onboarding = this.onboarding + 1 === this.length ? 0 : this.onboarding + 1;
+    },
+    prev: function prev() {
+      this.onboarding = this.onboarding - 1 < 0 ? this.length - 1 : this.onboarding - 1;
+    },
+    oneMoreImage: function oneMoreImage() {
+      this.e1 = 1;
+      this.imgSrc = '';
+      this.stepBtn1 = true;
+      this.concatImageBtn = true;
+      var newImg = document.createElement("img");
+      newImg.src = this.concatImg[this.concatImg.length - 1];
+      newImg.width = 75;
+      newImg.height = 75;
+      var concatImages = document.getElementById('concatImages');
+      concatImages.appendChild(newImg);
+    },
+    loadImage: function loadImage(e) {
+      if (e == '') {
+        this.sizeDialog = true;
+        this.imgSrc = '';
+        this.stepBtn1 = true;
+      } else {
+        this.stepBtn1 = false;
+        this.imgSrc = e;
+        this.$refs.cropper.replace(e);
+        var newImg = document.createElement("img");
+        newImg.src = this.concatImg[this.concatImg.length - 1];
+        newImg.width = 250;
+        newImg.height = 250;
+        var concatImages = document.getElementById('concatImages');
+        concatImages.appendChild(newImg);
+      }
+    },
+    submit: function submit() {
+      var fd = new FormData();
+      fd.append("cropped_image", JSON.stringify(this.concatImg));
+      fd.append("title", this.title);
+      fd.append("message", this.message);
+      fd.append("userId", this.user.id);
+      console.log(this.user.id);
+      axios.post('/api/create', fd).then(function (response) {
+        return window.location.href = '/';
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    getImage: function getImage() {
+      this.e1 = 3;
+      var concat = document.getElementById('concat');
+      var concatCxt = concat.getContext("2d");
+      var cover = this.createImage(document.getElementById("cover"));
+      var text = this.createImage(document.getElementById("text"));
+      var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
+
+      drawCanvas.onload = function () {
+        concatCxt.drawImage(cover, 0, 0, 300, 300);
+        concatCxt.drawImage(text, 0, 0, 300, 300);
+        concatCxt.drawImage(drawCanvas, 0, 0, 300, 300);
+      };
+
+      var that = this;
+      setTimeout(function () {
+        var concatSrc = document.getElementById('concat').toDataURL('image/png');
+        that.concatImg.push(concatSrc);
+      }, 200);
+    },
+    createImage: function createImage(context) {
+      var image = new Image();
+      image.src = context.toDataURL();
+      return image;
+    },
+    searchTimeOut: function searchTimeOut() {
+      var _this = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this.pen();
+      }, 200);
+    },
+    pen: function pen() {
+      this.canvasMode = 'pen';
+      this.drawCanvasctx.globalCompositeOperation = 'source-over';
+      this.drawCanvasctx.lineCap = this.lineCap;
+      this.drawCanvasctx.lineJoin = this.lineJoin;
+      this.drawCanvasctx.lineWidth = this.lineWidth;
+      this.drawCanvasctx.strokeStyle = this.penColor;
+    },
+    eraser: function eraser() {
+      this.canvasMode = 'eraser';
+      this.drawCanvasctx.lineCap = 'square';
+      this.drawCanvasctx.lineJoin = 'square';
+      this.drawCanvasctx.lineWidth = 30;
+      this.drawCanvasctx.globalCompositeOperation = 'destination-out';
+    },
+    draw: function draw(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+
+      if (!this.isDrag) {
+        return;
+      }
+
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+    },
+    dragStart: function dragStart(e) {
+      var x = e.layerX;
+      var y = e.layerY;
+      this.drawCanvasctx.beginPath();
+      this.drawCanvasctx.lineTo(x, y);
+      this.drawCanvasctx.stroke();
+      this.isDrag = true;
+    },
+    dragEnd: function dragEnd() {
+      this.drawCanvasctx.closePath();
+      this.isDrag = false;
+    },
+    clear: function clear() {
+      this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+    },
+    cropImage: function cropImage() {
+      this.e1 = 2;
+      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      this.cover = document.getElementById("cover");
+      this.drawCanvasctx.clearRect(0, 0, 300, 300);
+      this.textCanvasctx.clearRect(0, 0, 300, 300);
+      this.coverctx = this.cover.getContext("2d");
+      this.coverctx.globalAlpha = 1;
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.coverctx.filter = 'grayscale(0%)';
+      this.coverctx.clearRect(0, 0, 300, 300);
+      var background = new Image();
+      background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      var that = this;
+
+      background.onload = function () {
+        that.coverctx.drawImage(background, 0, 0, 300, 300);
+      };
+
+      var that = this;
+      var canvas = [];
+      var canvasCtx = [];
+      var coverImage = [];
+      var that = this;
+      setTimeout(function () {
+        var _loop = function _loop(i) {
+          canvas[i] = document.getElementById("pic" + i);
+          canvasCtx[i] = canvas[i].getContext('2d');
+          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+          canvasCtx[i].globalAlpha = 1;
+          canvasCtx[i].globalCompositeOperation = 'source-over';
+          canvasCtx[i].filter = 'grayscale(0%)';
+          canvasCtx[i].clearRect(0, 0, 300, 300);
+          coverImage[i] = new Image();
+          coverImage[i].src = background.src;
+
+          coverImage[i].onload = function () {
+            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+          };
+        };
+
+        for (var i = 1; i < 14; i++) {
+          _loop(i);
+        }
+      }, 300);
+      this.coverctx.save();
+    },
+    back: function back() {
+      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.restore();
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+      };
+
+      this.coverctx.fillRect(0, 0, 300, 300);
+    },
+    rotate: function rotate() {
+      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.translate(300, 0);
+      this.coverctx.rotate(90 * Math.PI / 180);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.color;
+      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.save();
+      };
+    },
+    click: function click(key) {
+      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.hexa;
+      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[key - 1];
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.save();
+      };
+    },
+    reset: function reset() {
+      this.coverctx.filter = 'grayscale(0%)';
+      this.globalAlpha = 1;
+      this.hexa = 'transparent';
+      this.model = '';
+      this.filters = '';
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.filterObject = {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      };
+      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      this.cover = document.getElementById("cover");
+      this.coverctx = this.cover.getContext("2d");
+      this.coverctx.globalAlpha = 1;
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.coverctx.filter = 'grayscale(0%)';
+      this.coverctx.clearRect(0, 0, 300, 300);
+      var background = new Image();
+      background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      var that = this;
+
+      background.onload = function () {
+        that.coverctx.drawImage(background, 0, 0, 300, 300);
+      };
+
+      var that = this;
+      var canvas = [];
+      var canvasCtx = [];
+      var coverImage = [];
+      var that = this;
+      setTimeout(function () {
+        var _loop2 = function _loop2(i) {
+          canvas[i] = document.getElementById("pic" + i);
+          canvasCtx[i] = canvas[i].getContext('2d');
+          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
+          canvasCtx[i].globalAlpha = 1;
+          canvasCtx[i].globalCompositeOperation = 'source-over';
+          canvasCtx[i].filter = 'grayscale(0%)';
+          canvasCtx[i].clearRect(0, 0, 300, 300);
+          coverImage[i] = new Image();
+          coverImage[i].src = background.src;
+
+          coverImage[i].onload = function () {
+            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
+          };
+        };
+
+        for (var i = 1; i < 14; i++) {
+          _loop2(i);
+        }
+      }, 300);
+      this.coverctx.save();
+      this.color = '#00000080'; // that.searchTimeOut();
+    },
+    searchTimeOut2: function searchTimeOut2() {
+      var _this2 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this2.colorImage();
+      }, 200);
+    },
+    searchTimeOut3: function searchTimeOut3() {
+      var _this3 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this3.filter();
+
+        _this3.colorImage();
+      }, 200);
+    },
+    colorImage: function colorImage() {
+      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillStyle = this.hexa;
+      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.save();
+      };
+    },
+    filter: function filter() {
+      var filterKeys = Object.keys(this.filterObject);
+      var filterValues = Object.values(this.filterObject);
+      var filtersArray = [];
+      var newValue;
+
+      for (var i = 0; i < filterKeys.length; i++) {
+        if (filterKeys[i] == 'hueRotate') {
+          newValue = "hue-rotate(".concat(filterValues[i], "deg)");
+          filtersArray.push(newValue);
+        } else if (filterKeys[i] == 'blur') {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "px)");
+          filtersArray.push(newValue);
+        } else {
+          newValue = filterKeys[i] + "(".concat(filterValues[i], "%)");
+          filtersArray.push(newValue);
+        }
+      }
+
+      ;
+      var filters = filtersArray.join(' ');
+      this.filters = filters;
+      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.globalAlpha = this.globalAlpha;
+      this.coverctx.fillstyle = this.hexa;
+      this.coverctx.filter = this.filters;
+      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      this.coverctx.fillRect(0, 0, 300, 300);
+      var picImage = new Image();
+      picImage.src = this.croppedImage;
+      var that = this;
+
+      picImage.onload = function () {
+        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.save();
+      };
+    },
+    selectText: function selectText(event) {
+      var clickX = event.pageX;
+      var clickY = event.pageY;
+      var clientRect = this.textCanvas.getBoundingClientRect();
+      var positionX = clientRect.left + window.pageXOffset;
+      var positionY = clientRect.top + window.pageYOffset;
+      this.startX = clickX - positionX;
+      this.startY = clickY - positionY;
+      this.inputPosition.width = 300 - this.startX + 'px';
+      this.selectedInputPosition.width = 300 - this.startX + 'px';
 
       for (var i = 0; i < this.texts.length; i++) {
         if (this.textHittest(this.startX, this.startY, i)) {
@@ -10223,6 +11143,25 @@ exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.p
 
 /***/ }),
 
+/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css&":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css& ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
+// imports
+
+
+// module
+exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\n#select {\r\n    margin: auto;\r\n    max-width: 400px;\r\n    width: 100%;\n}\r\n\r\n", ""]);
+
+// exports
+
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/ProfileTemplate.vue?vue&type=style&index=0&id=71c68b9c&scoped=true&lang=css&":
 /*!*******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/ProfileTemplate.vue?vue&type=style&index=0&id=71c68b9c&scoped=true&lang=css& ***!
@@ -11727,6 +12666,36 @@ if(false) {}
 
 
 var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./PostTemplate.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplate.vue?vue&type=style&index=0&lang=css&");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {}
+
+/***/ }),
+
+/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css&":
+/*!**********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css& ***!
+  \**********************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./PostTemplateSp.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -14579,7 +15548,11 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [_c("post-template", { attrs: { user: _vm.user } })], 1)
+  return _c("div", [
+    _vm.screen
+      ? _c("div", [_c("post-template", { attrs: { user: _vm.user } })], 1)
+      : _c("div", [_c("post-template-sp", { attrs: { user: _vm.user } })], 1)
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -15538,8 +16511,8 @@ var render = function() {
                                       guides: true,
                                       "view-mode": 2,
                                       "auto-crop-area": 0.5,
-                                      "min-container-width": _vm.cropperWidth,
-                                      "min-container-height": _vm.cropperHeight,
+                                      "min-container-width": 500,
+                                      "min-container-height": 500,
                                       background: true,
                                       rotatable: false,
                                       src: _vm.imgSrc,
@@ -15573,14 +16546,6 @@ var render = function() {
                             "div",
                             [
                               _c("div", {
-                                directives: [
-                                  {
-                                    name: "show",
-                                    rawName: "v-show",
-                                    value: _vm.preview,
-                                    expression: "preview"
-                                  }
-                                ],
                                 staticClass: "preview",
                                 attrs: { id: "preview" }
                               }),
@@ -15624,10 +16589,7 @@ var render = function() {
                         "v-card",
                         {
                           staticClass: "overflow-hidden",
-                          attrs: {
-                            height: _vm.editHeight,
-                            width: _vm.cropperWidth
-                          }
+                          attrs: { height: "500", width: "500" }
                         },
                         [
                           _c(
@@ -15877,14 +16839,6 @@ var render = function() {
                       _c(
                         "v-card",
                         {
-                          directives: [
-                            {
-                              name: "show",
-                              rawName: "v-show",
-                              value: _vm.preview,
-                              expression: "preview"
-                            }
-                          ],
                           staticClass: "overflow-hidden",
                           attrs: { height: "550", width: "500" }
                         },
@@ -15904,16 +16858,6 @@ var render = function() {
                             [
                               _c(
                                 "v-stepper-items",
-                                {
-                                  directives: [
-                                    {
-                                      name: "show",
-                                      rawName: "v-show",
-                                      value: _vm.preview,
-                                      expression: "preview"
-                                    }
-                                  ]
-                                },
                                 [
                                   _c(
                                     "v-stepper-content",
@@ -16559,14 +17503,6 @@ var render = function() {
                   _c(
                     "v-stepper",
                     {
-                      directives: [
-                        {
-                          name: "show",
-                          rawName: "v-show",
-                          value: _vm.preview,
-                          expression: "preview"
-                        }
-                      ],
                       staticStyle: { width: "1000px" },
                       model: {
                         value: _vm.toolStepper,
@@ -17222,6 +18158,981 @@ var render = function() {
                       }
                     },
                     [_vm._v("\n        I accept\n      ")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=template&id=47d5a224&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=template&id=47d5a224& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    [
+      _c(
+        "v-stepper",
+        {
+          model: {
+            value: _vm.e1,
+            callback: function($$v) {
+              _vm.e1 = $$v
+            },
+            expression: "e1"
+          }
+        },
+        [
+          _c(
+            "v-stepper-items",
+            [
+              _c(
+                "v-stepper-content",
+                { attrs: { step: "1" } },
+                [
+                  _c(
+                    "v-container",
+                    [
+                      _c(
+                        "v-layout",
+                        { attrs: { "justify-space-around": "", wrap: "" } },
+                        [
+                          _vm.imgSrc !== ""
+                            ? _c(
+                                "div",
+                                [
+                                  _c("vue-cropper", {
+                                    ref: "cropper",
+                                    attrs: {
+                                      guides: true,
+                                      "view-mode": 2,
+                                      "auto-crop-area": 0.5,
+                                      "min-container-width": 300,
+                                      "min-container-height": 300,
+                                      background: true,
+                                      rotatable: false,
+                                      src: _vm.imgSrc,
+                                      "img-style": {
+                                        width: 300 + "px",
+                                        height: 300 + "px"
+                                      },
+                                      "aspect-ratio": 1 / 1,
+                                      "drag-mode": "crop"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "div",
+                                    [
+                                      _c("input-file", {
+                                        on: {
+                                          selectedImage: function($event) {
+                                            return _vm.loadImage($event)
+                                          }
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            : _c(
+                                "div",
+                                [
+                                  _c("input-file-image", {
+                                    on: {
+                                      selectedImage: function($event) {
+                                        return _vm.loadImage($event)
+                                      }
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                        ]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "primary", disabled: _vm.stepBtn1 },
+                          on: { click: _vm.cropImage }
+                        },
+                        [_vm._v("トリミング")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "v-stepper-content",
+                { attrs: { step: "2" } },
+                [
+                  _c(
+                    "v-card",
+                    {
+                      staticClass: "overflow-hidden",
+                      staticStyle: { margin: "auto" },
+                      attrs: { height: "300", width: "300" }
+                    },
+                    [
+                      _c(
+                        "div",
+                        {
+                          staticStyle: { position: "relative" },
+                          attrs: { id: "canvas-area" }
+                        },
+                        [
+                          _vm.isActive
+                            ? _c("div", [
+                                _c("input", {
+                                  style: _vm.inputPosition,
+                                  attrs: { id: "newText", type: "text" },
+                                  on: {
+                                    keyup: function($event) {
+                                      if (
+                                        !$event.type.indexOf("key") &&
+                                        _vm._k(
+                                          $event.keyCode,
+                                          "enter",
+                                          13,
+                                          $event.key,
+                                          "Enter"
+                                        )
+                                      ) {
+                                        return null
+                                      }
+                                      return _vm.discribeNew($event)
+                                    }
+                                  }
+                                })
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _vm.isActiveEditText
+                            ? _c("div", [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.selectedEditTextMessage,
+                                      expression: "selectedEditTextMessage"
+                                    }
+                                  ],
+                                  style: _vm.selectedInputPosition,
+                                  attrs: { id: "selectedText", type: "text" },
+                                  domProps: {
+                                    value: _vm.selectedEditTextMessage
+                                  },
+                                  on: {
+                                    blur: _vm.edit,
+                                    keyup: function($event) {
+                                      if (
+                                        !$event.type.indexOf("key") &&
+                                        _vm._k(
+                                          $event.keyCode,
+                                          "enter",
+                                          13,
+                                          $event.key,
+                                          "Enter"
+                                        )
+                                      ) {
+                                        return null
+                                      }
+                                      return _vm.blur($event)
+                                    },
+                                    input: function($event) {
+                                      if ($event.target.composing) {
+                                        return
+                                      }
+                                      _vm.selectedEditTextMessage =
+                                        $event.target.value
+                                    }
+                                  }
+                                })
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          _c("canvas", {
+                            class: { eraser: _vm.canvasMode === "eraser" },
+                            staticStyle: {
+                              position: "absolute",
+                              "z-index": "0",
+                              top: "0",
+                              left: "0"
+                            },
+                            attrs: {
+                              id: "drawCanvas",
+                              width: "300",
+                              height: "300"
+                            },
+                            on: {
+                              mousedown: _vm.dragStart,
+                              mouseup: _vm.dragEnd,
+                              mouseout: _vm.dragEnd,
+                              mousemove: _vm.draw
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c("canvas", {
+                            staticStyle: {
+                              position: "absolute",
+                              top: "0",
+                              left: "0"
+                            },
+                            attrs: { id: "cover", width: "300", height: "300" }
+                          }),
+                          _vm._v(" "),
+                          _c("canvas", {
+                            class: { index2: _vm.value == 2 },
+                            staticStyle: {
+                              position: "absolute",
+                              top: "0",
+                              left: "0"
+                            },
+                            attrs: { id: "text", width: "300", height: "300" },
+                            on: {
+                              dblclick: _vm.selectText,
+                              mousedown: function($event) {
+                                $event.preventDefault()
+                                return _vm.handleMouseDown($event)
+                              },
+                              mousemove: function($event) {
+                                $event.preventDefault()
+                                return _vm.handleMouseMove($event)
+                              },
+                              mouseup: function($event) {
+                                $event.preventDefault()
+                                return _vm.handleMouseUp($event)
+                              },
+                              mouseout: function($event) {
+                                $event.preventDefault()
+                                return _vm.handleMouseOut($event)
+                              }
+                            }
+                          })
+                        ]
+                      )
+                    ]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card",
+                    {
+                      staticStyle: { margin: "auto" },
+                      attrs: { flat: "", tile: "", "max-width": "300" }
+                    },
+                    [
+                      _c(
+                        "v-window",
+                        {
+                          staticClass: "px-2 py-2",
+                          model: {
+                            value: _vm.onboarding,
+                            callback: function($$v) {
+                              _vm.onboarding = $$v
+                            },
+                            expression: "onboarding"
+                          }
+                        },
+                        [
+                          _c(
+                            "v-window-item",
+                            { attrs: { value: 0 } },
+                            [
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "opacity",
+                                  min: "4",
+                                  max: "10",
+                                  "thumb-label": "always",
+                                  "thumb-color": "pink",
+                                  color: "pink"
+                                },
+                                on: { input: _vm.searchTimeOut2 },
+                                model: {
+                                  value: _vm.opacity,
+                                  callback: function($$v) {
+                                    _vm.opacity = $$v
+                                  },
+                                  expression: "opacity"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "blur",
+                                  min: "0",
+                                  max: "10",
+                                  "thumb-label": "always",
+                                  "thumb-color": "purple",
+                                  color: "purple"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.blur,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.filterObject, "blur", $$v)
+                                  },
+                                  expression: "filterObject.blur"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "brightness",
+                                  min: "35",
+                                  max: "250",
+                                  "thumb-label": "always",
+                                  "thumb-color": "red",
+                                  color: "red"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.brightness,
+                                  callback: function($$v) {
+                                    _vm.$set(
+                                      _vm.filterObject,
+                                      "brightness",
+                                      $$v
+                                    )
+                                  },
+                                  expression: "filterObject.brightness"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-window-item",
+                            { attrs: { value: 1 } },
+                            [
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "contrast",
+                                  min: "0",
+                                  max: "400",
+                                  "thumb-label": "always",
+                                  "thumb-color": "orange",
+                                  color: "orange"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.contrast,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.filterObject, "contrast", $$v)
+                                  },
+                                  expression: "filterObject.contrast"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "grayscale",
+                                  min: "0",
+                                  max: "100",
+                                  "thumb-label": "always",
+                                  "thumb-color": "indigo",
+                                  color: "indigo"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.grayscale,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.filterObject, "grayscale", $$v)
+                                  },
+                                  expression: "filterObject.grayscale"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "hue-rotate",
+                                  min: "0",
+                                  max: "359",
+                                  "thumb-label": "always",
+                                  "thumb-color": "green",
+                                  color: "green"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.hueRotate,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.filterObject, "hueRotate", $$v)
+                                  },
+                                  expression: "filterObject.hueRotate"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-window-item",
+                            { attrs: { value: 2 } },
+                            [
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "invert",
+                                  min: "0",
+                                  max: "100",
+                                  "thumb-label": "always",
+                                  "thumb-color": "deep-purple",
+                                  color: "deep-purple"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.invert,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.filterObject, "invert", $$v)
+                                  },
+                                  expression: "filterObject.invert"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "saturate",
+                                  min: "0",
+                                  max: "300",
+                                  "thumb-label": "always",
+                                  "thumb-color": "light-blue",
+                                  color: "light-blue"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.saturate,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.filterObject, "saturate", $$v)
+                                  },
+                                  expression: "filterObject.saturate"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c("v-slider", {
+                                attrs: {
+                                  label: "sepia",
+                                  min: "0",
+                                  max: "100",
+                                  "thumb-label": "always",
+                                  "thumb-color": "lime",
+                                  color: "lime"
+                                },
+                                on: { input: _vm.searchTimeOut3 },
+                                model: {
+                                  value: _vm.filterObject.sepia,
+                                  callback: function($$v) {
+                                    _vm.$set(_vm.filterObject, "sepia", $$v)
+                                  },
+                                  expression: "filterObject.sepia"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-window-item",
+                            { attrs: { value: 3 } },
+                            [
+                              _c("v-color-picker", {
+                                staticClass: "ma-2",
+                                attrs: { "hide-canvas": "", "hide-inputs": "" },
+                                on: { input: _vm.searchTimeOut2 },
+                                model: {
+                                  value: _vm.color,
+                                  callback: function($$v) {
+                                    _vm.color = $$v
+                                  },
+                                  expression: "color"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "v-chip-group",
+                                {
+                                  attrs: {
+                                    column: "",
+                                    "active-class": "primary--text"
+                                  }
+                                },
+                                _vm._l(_vm.globalCompositeOperation, function(
+                                  tag,
+                                  index
+                                ) {
+                                  return _c(
+                                    "v-chip",
+                                    {
+                                      key: index,
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.click(index)
+                                        }
+                                      }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                                        " +
+                                          _vm._s(tag) +
+                                          "\n                                    "
+                                      )
+                                    ]
+                                  )
+                                }),
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-card-actions",
+                        { staticClass: "justify-space-between" },
+                        [
+                          _c(
+                            "v-btn",
+                            { attrs: { text: "" }, on: { click: _vm.prev } },
+                            [_c("v-icon", [_vm._v("mdi-chevron-left")])],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-item-group",
+                            {
+                              staticClass: "text-center",
+                              attrs: { mandatory: "" },
+                              model: {
+                                value: _vm.onboarding,
+                                callback: function($$v) {
+                                  _vm.onboarding = $$v
+                                },
+                                expression: "onboarding"
+                              }
+                            },
+                            _vm._l(_vm.length, function(n) {
+                              return _c("v-item", {
+                                key: "btn-" + n,
+                                scopedSlots: _vm._u(
+                                  [
+                                    {
+                                      key: "default",
+                                      fn: function(ref) {
+                                        var active = ref.active
+                                        var toggle = ref.toggle
+                                        return [
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              attrs: {
+                                                "input-value": active,
+                                                icon: ""
+                                              },
+                                              on: { click: toggle }
+                                            },
+                                            [
+                                              _c("v-icon", [
+                                                _vm._v("mdi-record")
+                                              ])
+                                            ],
+                                            1
+                                          )
+                                        ]
+                                      }
+                                    }
+                                  ],
+                                  null,
+                                  true
+                                )
+                              })
+                            }),
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            { attrs: { text: "" }, on: { click: _vm.next } },
+                            [_c("v-icon", [_vm._v("mdi-chevron-right")])],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary" },
+                      on: { click: _vm.getImage }
+                    },
+                    [_vm._v("決定")]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.e1 = 1
+                        }
+                      }
+                    },
+                    [_vm._v("戻る")]
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c("v-stepper-content", { attrs: { step: "3" } }, [
+                _c("canvas", {
+                  staticStyle: { margin: "auto" },
+                  attrs: { id: "concat", width: "300", height: "300" }
+                }),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  {
+                    staticClass: "pt-2 mx-auto",
+                    staticStyle: { width: "100%", "max-width": "600px" }
+                  },
+                  [
+                    _c("v-text-field", {
+                      attrs: {
+                        label: "タイトル",
+                        value: "Grocery delivery",
+                        hint: "For example, flowers or used cars"
+                      },
+                      model: {
+                        value: _vm.title,
+                        callback: function($$v) {
+                          _vm.title = $$v
+                        },
+                        expression: "title"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("v-textarea", {
+                      attrs: {
+                        color: "teal",
+                        rows: "3",
+                        counter: "",
+                        maxlength: "300"
+                      },
+                      scopedSlots: _vm._u([
+                        {
+                          key: "label",
+                          fn: function() {
+                            return [
+                              _c("div", [
+                                _vm._v(
+                                  "\n                                    内容 "
+                                ),
+                                _c("small", [_vm._v("(content)")])
+                              ])
+                            ]
+                          },
+                          proxy: true
+                        }
+                      ]),
+                      model: {
+                        value: _vm.message,
+                        callback: function($$v) {
+                          _vm.message = $$v
+                        },
+                        expression: "message"
+                      }
+                    })
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  [
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { color: "primary" },
+                        on: {
+                          click: function($event) {
+                            _vm.e1 = 4
+                          }
+                        }
+                      },
+                      [_vm._v("確認")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { color: "primary" },
+                        on: { click: _vm.oneMoreImage }
+                      },
+                      [_vm._v("もう一枚投稿")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.e1 = 2
+                          }
+                        }
+                      },
+                      [_vm._v("戻る")]
+                    )
+                  ],
+                  1
+                )
+              ]),
+              _vm._v(" "),
+              _c("v-stepper-content", { attrs: { step: "4" } }, [
+                _c(
+                  "div",
+                  { staticClass: "d-flex" },
+                  [
+                    _c(
+                      "v-card",
+                      {
+                        staticClass: "mx-auto my-5",
+                        attrs: { "max-width": "300" }
+                      },
+                      [
+                        _c(
+                          "v-list",
+                          [
+                            _c(
+                              "v-list-item",
+                              [
+                                _c(
+                                  "v-list-item-avatar",
+                                  [
+                                    _c("v-img", {
+                                      attrs: { src: "/storage/image/panda.png" }
+                                    })
+                                  ],
+                                  1
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-list-item-content",
+                                  [_c("v-list-item-title")],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-carousel",
+                          { attrs: { height: "300" } },
+                          _vm._l(_vm.concatImg, function(image, i) {
+                            return _c("v-carousel-item", {
+                              key: i,
+                              attrs: {
+                                src: image,
+                                "reverse-transition": "fade-transition",
+                                transition: "fade-transition"
+                              }
+                            })
+                          }),
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          { attrs: { icon: "" } },
+                          [_c("v-icon", [_vm._v("mdi-heart")])],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          { attrs: { icon: "" } },
+                          [_c("v-icon", [_vm._v("mdi-comment")])],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-btn",
+                          { attrs: { icon: "" } },
+                          [_c("v-icon", [_vm._v("mdi-bookmark")])],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c("v-card-title", [
+                          _vm._v(
+                            "\n                            " +
+                              _vm._s(_vm.title) +
+                              "\n                            "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("v-card-subtitle", [
+                          _vm._v(
+                            "\n                            " +
+                              _vm._s(_vm.message) +
+                              "\n                            "
+                          )
+                        ])
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  [
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { color: "primary" },
+                        on: { click: _vm.submit }
+                      },
+                      [_vm._v("保存")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      {
+                        attrs: { text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.e1 = 2
+                          }
+                        }
+                      },
+                      [_vm._v("戻る")]
+                    )
+                  ],
+                  1
+                )
+              ])
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "show",
+              rawName: "v-show",
+              value: _vm.e1 !== 4,
+              expression: "e1 !== 4"
+            }
+          ]
+        },
+        [
+          _c("div", {
+            staticClass: "d-flex justify-content-start flex-wrap",
+            attrs: { id: "concatImages" }
+          }),
+          _vm._v(" "),
+          _vm.concatImageBtn
+            ? _c(
+                "v-btn",
+                { attrs: { color: "primary" }, on: { click: _vm.submit } },
+                [_vm._v("保存")]
+              )
+            : _vm._e()
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "300" },
+          model: {
+            value: _vm.sizeDialog,
+            callback: function($$v) {
+              _vm.sizeDialog = $$v
+            },
+            expression: "sizeDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "headline grey lighten-2" }, [
+                _vm._v("\n          Error\n        ")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v(
+                  "\n          Filesize is over. Less than 2.5M is allowed.\n        "
+                )
+              ]),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.sizeDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("\n            I accept\n          ")]
                   )
                 ],
                 1
@@ -80288,6 +82199,93 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplate_vue_vue_type_template_id_24eced31___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplate_vue_vue_type_template_id_24eced31___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/ts/components/templates/PostTemplateSp.vue":
+/*!**************************************************************!*\
+  !*** ./resources/ts/components/templates/PostTemplateSp.vue ***!
+  \**************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _PostTemplateSp_vue_vue_type_template_id_47d5a224___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./PostTemplateSp.vue?vue&type=template&id=47d5a224& */ "./resources/ts/components/templates/PostTemplateSp.vue?vue&type=template&id=47d5a224&");
+/* harmony import */ var _PostTemplateSp_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./PostTemplateSp.vue?vue&type=script&lang=js& */ "./resources/ts/components/templates/PostTemplateSp.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _PostTemplateSp_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./PostTemplateSp.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+  _PostTemplateSp_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _PostTemplateSp_vue_vue_type_template_id_47d5a224___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _PostTemplateSp_vue_vue_type_template_id_47d5a224___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/ts/components/templates/PostTemplateSp.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/ts/components/templates/PostTemplateSp.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************!*\
+  !*** ./resources/ts/components/templates/PostTemplateSp.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./PostTemplateSp.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css&":
+/*!***********************************************************************************************!*\
+  !*** ./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css& ***!
+  \***********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./PostTemplateSp.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=style&index=0&lang=css&");
+/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default.a); 
+
+/***/ }),
+
+/***/ "./resources/ts/components/templates/PostTemplateSp.vue?vue&type=template&id=47d5a224&":
+/*!*********************************************************************************************!*\
+  !*** ./resources/ts/components/templates/PostTemplateSp.vue?vue&type=template&id=47d5a224& ***!
+  \*********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_template_id_47d5a224___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./PostTemplateSp.vue?vue&type=template&id=47d5a224& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/PostTemplateSp.vue?vue&type=template&id=47d5a224&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_template_id_47d5a224___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_PostTemplateSp_vue_vue_type_template_id_47d5a224___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
