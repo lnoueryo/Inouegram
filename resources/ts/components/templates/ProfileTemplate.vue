@@ -1,11 +1,11 @@
 <template>
     <div>
-        <v-card class="mx-auto" max-width="1000" tile>
+        <v-card class="mx-auto" max-width="800" tile v-resize="onResize">
             <div v-if="userInfo.bg_image">
-                <v-img height="300" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image" @click="btnclick"></v-img>
+                <v-img style="border-radius: 15px" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image" @click="btnclick"></v-img>
             </div>
             <div v-else>
-                <v-img height="300" :src="'storage/image/background/' + myMainImage" @click="btnclick"></v-img>
+                <v-img :src="'storage/image/background/' + myMainImage" @click="btnclick"></v-img>
             </div>
             <v-list-item three-line>
                 <v-list-item-avatar size="80" @click="btnclick2">
@@ -28,7 +28,7 @@
         <div v-if="newPosts">
         <v-layout row wrap class="justify-end" style="margin: auto;">
             <v-hover v-for="(thisUserPost, index) in newPosts" :key="index" v-slot="{ hover }">
-                <v-card class="mx-auto my-4" color="grey lighten-4" max-width="350" style="width: 100%">
+                <v-card class="mx-auto my-4" color="grey lighten-4" :max-width="card.size3" style="width: 100%">
                     <v-img :aspect-ratio="14/12" :src="'storage/image/' + thisUserPost.image[0].src" @click="openDialog(index)">
                         <v-expand-transition>
                         <div v-if="hover" class="d-flex transition-fast-in-fast-out black darken-2 v-card--reveal display-3 white--text" style="height: 100%;">
@@ -36,23 +36,36 @@
                         </div>
                         </v-expand-transition>
                     </v-img>
-                    <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
+                    <!-- <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
                         <v-btn absolute color="black" class="white--text" fab large right top @click="openDeleteDialog(index)">
                         <v-icon>mdi-delete</v-icon>
                         </v-btn>
                         <p class="text-h6 font-weight-light orange--text mb-2">
                         {{ thisUserPost.title }}
-                        </h6>
+                        </p>
                         <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
                         {{ thisUserPost.text }}
                         </div>
-                    </v-card-text>
+                    </v-card-text> -->
                 </v-card>
             </v-hover>
-            <v-dialog v-model="dialog" max-width="500px" @click:outside="outside">
-                <v-carousel>
+            <v-dialog v-model="dialog" :max-width="card.size2" @click:outside="outside">
+                <v-card color="grey lighten-4" :max-width="card.size2">
+                <v-carousel :height="dialogSize">
                     <v-carousel-item v-for="(image,i) in newPosts[postKey].image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                 </v-carousel>
+                    <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
+                        <v-btn absolute color="black" class="white--text" fab large right top @click="openDeleteDialog(index)">
+                        <v-icon>mdi-delete</v-icon>
+                        </v-btn>
+                        <p class="text-h6 font-weight-light orange--text mb-2">
+                        {{ newPosts[postKey].title }}
+                        </p>
+                        <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
+                        <div class="content">{{ newPosts[postKey].text }}</div>
+                        </div>
+                    </v-card-text>
+                </v-card>
             </v-dialog>
             <v-dialog v-model="deleteDialog" max-width="290" @click:outside="outside">
                 <v-card>
@@ -133,11 +146,15 @@
 <script>
 
   export default {
-    props: ['thisUserPosts', 'thisUser', 'thisUserLikes', 'thisUserComments', 'myInfo', 'commentUsers'],
+    props: ['thisUserPosts', 'thisUser', 'thisUserLikes', 'thisUserComments', 'commentUsers'],
     data () {
       return {
+      windowSize: {
+        x: 0,
+        y: 0,
+      },
         userPosts: this.thisUserPosts,
-        userData: this.myInfo,
+        userData: this.thisUser,
         dialog: false,
         deleteDialog: false,
         postKey: 0,
@@ -164,14 +181,31 @@
         },
         userInfo(){
             return this.userData;
+        },
+        card(){
+            if(this.windowSize.x < 480){
+                return {size1: 350, size2: 300, size3: 110};
+            } else {
+                return {size1: 600, size2: 500, size3: 350};
+            }
+        },
+        dialogSize(){
+            if(this.windowSize.x < 480){
+                return 300;
+            } else {
+                return 500;
+            }
         }
     },
     methods: {
+      onResize () {
+        this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+      },
       async changeBg(){
             var bgData = this.changingBgData;
             let fd= new FormData();
             fd.append("bgData", bgData);
-            fd.append("userId", this.myInfo.id);
+            fd.append("userId", this.thisUser.id);
             axios.post('/api/upload', fd)
             .then(
                 response => {
@@ -193,7 +227,7 @@
                 avatarData = e.target.result;
             let fd= new FormData();
             fd.append("avatarData", avatarData);
-            fd.append("userId", that.myInfo.id);
+            fd.append("userId", that.thisUser.id);
             axios.post('/api/upload2', fd)
             .then(
                 response => {
@@ -243,7 +277,7 @@
         },
         submit(){
             axios.get('/api/comment', {
-            params: {'userId': this.myInfo.id, 'postId': this.images.id, 'text': this.comment},
+            params: {'userId': this.thisUser.id, 'postId': this.images.id, 'text': this.comment},
             })
             .then(
                 response => (this.thisUserComments = response.data),
@@ -298,9 +332,7 @@
 }
 </script>
 <style scoped>
-    .v-dialog {
-        max-width: 900px!important;
-    }
+
 
 .slide-fade-enter-active,
 .slide-fade-leave-active,
@@ -349,5 +381,18 @@
   opacity: .5;
   position: absolute;
   width: 100%;
+}
+.content{
+    overflow: hidden;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+</style>
+<style>
+.v-dialog {
+    max-height: 100%!important;
 }
 </style>
