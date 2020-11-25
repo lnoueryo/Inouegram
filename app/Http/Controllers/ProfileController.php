@@ -20,12 +20,11 @@ class ProfileController extends Controller
     //     $this->middleware('auth');
     // }
 
-    public function index() {
-
+    public function index(Request $request) {
         // $id = $request->id;
-        // $this_user = User::find(1);
+        $this_user = User::find($request->id);
         // $my_info = User::find(Auth::id());
-        $this_user_posts = Post::where('user_id', Auth::id())->orderBy('updated_at', 'desc');
+        $this_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
         // $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
         // $this_user_comments = Comment::whereIn('post_id', $this_user_posts->get('id'))->latest();
         // $comment_users = User::whereIn('id', $this_user_comments->get('user_id'))->get();
@@ -37,9 +36,8 @@ class ProfileController extends Controller
         // } else {
         //     $followed = 1;
         // }
-        $user = User::all();
 
-        return view('profile',['this_user_posts' => $this_user_posts->get(), 'user' => $user]);
+        return view('profile',['this_user_posts' => $this_user_posts->get(), 'this_user' => $this_user]);
     }
 
     // public function index(Request $request) {

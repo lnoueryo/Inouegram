@@ -10,6 +10,14 @@
                 <v-list-item-title v-text="item.title" />
             </v-list-item-content>
             </v-list-item>
+            <v-list-item>
+            <!-- <v-list-item-action>
+                <v-icon>mdi-search</v-icon>
+            </v-list-item-action> -->
+            <v-list-item-content>
+                <search-field></search-field>
+            </v-list-item-content>
+            </v-list-item>
         </v-list>
         </v-navigation-drawer>
         <v-app-bar :clipped-left="clipped" fixed app>
@@ -26,7 +34,12 @@
 </template>
 
 <script>
+import SearchField from '../molecules/SearchField'
 export default {
+  props: ['user'],
+  components:{
+    SearchField
+  },
   data () {
     return {
       clipped: false,
@@ -46,15 +59,14 @@ export default {
         {
           icon: 'mdi-chart-bubble',
           title: 'マイページ',
-          to: '/profile'
+          to: '/profile?id=' + this.user.id,
         },
       ],
       miniVariant: false,
       right: true,
       rightDrawer: false,
       title: 'My Memories',
-      thisUserInfo: {id: 1, screen_name: 'inoueryo', profile_image: 'panda.png'},
     }
-  }
+  },
 }
 </script>

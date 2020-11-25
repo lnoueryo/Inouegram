@@ -1,6 +1,6 @@
-<template functional>
-    <v-list two-line v-if="props.users.length > 0">
-        <template v-for="(user, index) in props.users">
+<template>
+    <v-list two-line v-if="users.length > 0">
+        <template v-for="(user, index) in users">
         <v-list-item :key="index" :href="'/profile?id=' + user.id">
             <v-list-item-avatar>
                 <v-avatar>

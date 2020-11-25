@@ -59,3 +59,26 @@ Route::get('/delete_like', function(Request $request){
 });
 Route::post('/upload', 'ProfileController@uploadBg');
 Route::post('/upload2', 'ProfileController@uploadAvatar');
+Route::get('/user', function(Request $request){
+    $cond_name = $request->name;
+    if ($cond_name !='') {
+        $users = User::where('screen_name', 'like', '%'.$cond_name. '%')->take(5)->get();
+    } else {
+        $users = User::inRandomOrder()->take(5)->get();
+    }
+    return $users;
+});
+
+Route::get('/follow', function(){
+    if($request->followed == 0) {
+        $follower = new Follower;
+        $follower->following_id = $request->myId;
+        $follower->followed_id = $request->id;
+        $follower->save();
+        return  1;
+    } else {
+        $follower = Follower::where('following_id', $request->myId)->where('followed_id', $request->id);
+        $follower->delete();
+        return  0;
+    }
+});

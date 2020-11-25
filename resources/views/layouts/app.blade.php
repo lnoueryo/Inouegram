@@ -31,9 +31,9 @@
             <header-bar2 :user='@json(Auth::user())'></header-bar2>
             @endauth
             @guest
-            <header-bar :user="null"></header-bar>
+            <header-bar2 :user="null"></header-bar2>
             @endguest
-            <main style="padding-top: 70px">
+            <main style="padding-top: 55px;padding-bottom: 55px">
                 @yield('content')
             </main>
         </v-app>

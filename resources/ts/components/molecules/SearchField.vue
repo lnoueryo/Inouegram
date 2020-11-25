@@ -1,6 +1,6 @@
 <template>
     <div class="text-center" style="max-width: 520px;" :class="`d-flex justify-space-between align-center`" color="grey lighten-2">
-    <v-menu offset-y>
+    <v-menu offset-y max-width="230">
         <template v-slot:activator="{ on }">
         <v-text-field
             v-model="search"
@@ -10,8 +10,8 @@
             hide-details
             v-on="on"
             autocomplete="off"
-            v-on:keyup="searchUser()"
-            v-on:focus="searchUser()"
+            @keyup="searchUser()"
+            @focus="searchUser()"
         ></v-text-field>
       </template>
       <two-line-list :users="users"></two-line-list>
