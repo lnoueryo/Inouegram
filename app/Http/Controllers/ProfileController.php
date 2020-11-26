@@ -25,7 +25,8 @@ class ProfileController extends Controller
         $this_user = User::find($request->id);
         // $my_info = User::find(Auth::id());
         $this_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
-        // $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
+        $my_likes = Like::where('user_id', Auth::id())->get();
+        $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
         // $this_user_comments = Comment::whereIn('post_id', $this_user_posts->get('id'))->latest();
         // $comment_users = User::whereIn('id', $this_user_comments->get('user_id'))->get();
         // $followed_numbers = Follower::where('followed_id', $id);
@@ -37,7 +38,7 @@ class ProfileController extends Controller
         //     $followed = 1;
         // }
 
-        return view('profile',['this_user_posts' => $this_user_posts->get(), 'this_user' => $this_user]);
+        return view('profile',['this_user_posts' => $this_user_posts->get(), 'this_user' => $this_user, 'my_likes' => $my_likes, 'this_user_likes' => $this_user_likes]);
     }
 
     // public function index(Request $request) {
