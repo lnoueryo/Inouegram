@@ -19,7 +19,8 @@
                     <v-list-item-subtitle>フォロワー</v-list-item-subtitle>
                 </v-list-item-content>
                 <div class="font-weight-light grey--text title mb-2">
-                    <v-btn @click="follow">フォロー</v-btn>
+            <v-btn elevation="24" :color="color" :style="[isActive ? activeClass : inactiveClass]" @click="follow();">
+            <span>{{ followBtn }}</span></v-btn>
                 </div>
             </v-list-item>
         </v-card>
@@ -150,7 +151,7 @@
 <script>
 
   export default {
-    props: ['thisUserPosts', 'thisUser', 'myInfo', 'myLikes', 'thisUserComments', 'commentUsers', 'thisUserLikes'],
+    props: ['thisUserPosts', 'thisUser', 'myInfo', 'myLikes', 'thisUserComments', 'commentUsers', 'thisUserLikes', 'followed'],
     data () {
       return {
       windowSize: {
@@ -158,9 +159,6 @@
         y: 0,
       },
         likeArray: [],
-        followingUser: [
-            {following_id: 2, followed_id: 1}
-        ],
         menu: [],
         lastPostId: '',
         lastIndex: '',
@@ -168,6 +166,7 @@
         userData: this.thisUser,
         thisLikes: this.myLikes,
         allLikes: this.thisUserLikes,
+        user: this.myInfo,
         dialog: false,
         deleteDialog: false,
         postKey: 0,
@@ -218,6 +217,15 @@
                 }
             }
             return likeNumber;
+        },
+        isActive: function(){
+            return (this.followed == 0) ? true : false;
+        },
+        followBtn: function(){
+            return (this.followed == 0) ? 'フォローする' : 'フォロー済み';
+        },
+        color: function(){
+            return (this.followed == 0) ? 'primary' : 'error';
         }
     },
     created(){
@@ -355,12 +363,16 @@
             this.images = event;
             this.thisImageComments = this.thisUserComments.filter((v) => v.post_id === event.id);
         },
-        follow() {
-          axios.post('/follow')
-          .then(() => location.href = '/')
-          .catch(function (error) {
-              location.href = '/';
-          });
+        follow: function(){
+                axios.get('/api/follow', {
+                params: {'id': this.thisUser.id, 'myId': this.user.id, 'followed': this.followed},
+            })
+            .then(
+                response => (this.followed = response.data)
+            )
+            .catch(function (error) {
+                console.log(error);
+            });
         },
         like(thisPostId, num, index){
             this.menu[index] = false;
@@ -369,7 +381,7 @@
             axios.get('/api/like', {
                 params: {
                     postId: thisPostId,
-                    postingUserId: this.myInfo.id,
+                    postingUserId: this.user.id,
                     reaction: num,
                     userPosts: JSON.stringify(this.userPosts),
                 }
@@ -390,7 +402,7 @@
             axios.get('/api/delete_like', {
             params: {
                 postId: thisPostId,
-                postingUserId: this.myInfo.id,
+                postingUserId: this.user.id,
                 userPosts: JSON.stringify(this.userPosts),
             }
             })

@@ -4753,7 +4753,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['this-user-posts', 'my-info', 'this-user', 'my-likes', 'this-user-likes'],
+  props: ['this-user-posts', 'my-info', 'this-user', 'my-likes', 'this-user-likes', 'followed'],
   components: {
     ProfileTemplates: _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__["default"],
     UserProfileTemplates: _templates_UserProfileTemplate__WEBPACK_IMPORTED_MODULE_1__["default"]
@@ -7610,8 +7610,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['thisUserPosts', 'thisUser', 'myInfo', 'myLikes', 'thisUserComments', 'commentUsers', 'thisUserLikes'],
+  props: ['thisUserPosts', 'thisUser', 'myInfo', 'myLikes', 'thisUserComments', 'commentUsers', 'thisUserLikes', 'followed'],
   data: function data() {
     return {
       windowSize: {
@@ -7619,10 +7620,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         y: 0
       },
       likeArray: [],
-      followingUser: [{
-        following_id: 2,
-        followed_id: 1
-      }],
       menu: [],
       lastPostId: '',
       lastIndex: '',
@@ -7630,6 +7627,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       userData: this.thisUser,
       thisLikes: this.myLikes,
       allLikes: this.thisUserLikes,
+      user: this.myInfo,
       dialog: false,
       deleteDialog: false,
       postKey: 0,
@@ -7692,6 +7690,15 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
 
       return likeNumber;
+    },
+    isActive: function isActive() {
+      return this.followed == 0 ? true : false;
+    },
+    followBtn: function followBtn() {
+      return this.followed == 0 ? 'フォローする' : 'フォロー済み';
+    },
+    color: function color() {
+      return this.followed == 0 ? 'primary' : 'error';
     }
   },
   created: function created() {
@@ -7862,14 +7869,22 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     follow: function follow() {
-      axios.post('/follow').then(function () {
-        return location.href = '/';
+      var _this5 = this;
+
+      axios.get('/api/follow', {
+        params: {
+          'id': this.thisUser.id,
+          'myId': this.user.id,
+          'followed': this.followed
+        }
+      }).then(function (response) {
+        return _this5.followed = response.data;
       })["catch"](function (error) {
-        location.href = '/';
+        console.log(error);
       });
     },
     like: function like(thisPostId, num, index) {
-      var _this5 = this;
+      var _this6 = this;
 
       this.menu[index] = false;
       this.likeArray[index].like = true;
@@ -7877,32 +7892,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       axios.get('/api/like', {
         params: {
           postId: thisPostId,
-          postingUserId: this.myInfo.id,
+          postingUserId: this.user.id,
           reaction: num,
           userPosts: JSON.stringify(this.userPosts)
         }
       }).then(function (response) {
-        _this5.allLikes = response.data;
-        _this5.snackbar = true;
-        _this5.lastPostId = thisPostId;
-        _this5.lastIndex = index;
+        _this6.allLikes = response.data;
+        _this6.snackbar = true;
+        _this6.lastPostId = thisPostId;
+        _this6.lastIndex = index;
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     deleteLike: function deleteLike(thisPostId, index) {
-      var _this6 = this;
+      var _this7 = this;
 
       this.likeArray[index].like = false;
       this.likeArray[index].reaction = '';
       axios.get('/api/delete_like', {
         params: {
           postId: thisPostId,
-          postingUserId: this.myInfo.id,
+          postingUserId: this.user.id,
           userPosts: JSON.stringify(this.userPosts)
         }
       }).then(function (response) {
-        _this6.allLikes = response.data;
+        _this7.allLikes = response.data;
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -16751,7 +16766,8 @@ var render = function() {
                 thisUser: _vm.thisUser,
                 myInfo: _vm.myInfo,
                 myLikes: _vm.myLikes,
-                thisUserLikes: _vm.thisUserLikes
+                thisUserLikes: _vm.thisUserLikes,
+                followed: _vm.followed
               }
             })
           ],
@@ -21008,9 +21024,21 @@ var render = function() {
                 "div",
                 { staticClass: "font-weight-light grey--text title mb-2" },
                 [
-                  _c("v-btn", { on: { click: _vm.follow } }, [
-                    _vm._v("フォロー")
-                  ])
+                  _c(
+                    "v-btn",
+                    {
+                      style: [
+                        _vm.isActive ? _vm.activeClass : _vm.inactiveClass
+                      ],
+                      attrs: { elevation: "24", color: _vm.color },
+                      on: {
+                        click: function($event) {
+                          return _vm.follow()
+                        }
+                      }
+                    },
+                    [_c("span", [_vm._v(_vm._s(_vm.followBtn))])]
+                  )
                 ],
                 1
               )

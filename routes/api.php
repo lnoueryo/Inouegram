@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\User;
 use App\Like;
+use App\Follower;
 use Illuminate\Support\Facades\Auth;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -80,7 +81,7 @@ Route::get('/user', function(Request $request){
     return $users;
 });
 
-Route::get('/follow', function(){
+Route::get('/follow', function(Request $request){
     if($request->followed == 0) {
         $follower = new Follower;
         $follower->following_id = $request->myId;

@@ -29,16 +29,16 @@ class ProfileController extends Controller
         $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
         // $this_user_comments = Comment::whereIn('post_id', $this_user_posts->get('id'))->latest();
         // $comment_users = User::whereIn('id', $this_user_comments->get('user_id'))->get();
-        // $followed_numbers = Follower::where('followed_id', $id);
-        // $followed_count = $followed_numbers->count();
-        // $following_count = Follower::where('following_id', $id)->count();
-        // if($followed_numbers->where('following_id', Auth::id())->count() == 0){
-        //     $followed = 0;
-        // } else {
-        //     $followed = 1;
-        // }
+        $followed_numbers = Follower::where('followed_id', $request->id);
+        $followed_count = $followed_numbers->count();
+        $following_count = Follower::where('following_id', $request->id)->count();
+        if($followed_numbers->where('following_id', Auth::id())->count() == 0){
+            $followed = 0;
+        } else {
+            $followed = 1;
+        }
 
-        return view('profile',['this_user_posts' => $this_user_posts->get(), 'this_user' => $this_user, 'my_likes' => $my_likes, 'this_user_likes' => $this_user_likes]);
+        return view('profile',['this_user_posts' => $this_user_posts->get(), 'this_user' => $this_user, 'my_likes' => $my_likes, 'this_user_likes' => $this_user_likes, 'followed' => $followed]);
     }
 
     // public function index(Request $request) {
