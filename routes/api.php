@@ -94,3 +94,5 @@ Route::get('/follow', function(Request $request){
         return  0;
     }
 });
+
+Route::get('/users', 'HomeController@search');

@@ -1,35 +1,21 @@
 <template>
-    <div>
-    <v-card class="mx-auto my-5" max-width="500" v-for="(newPost,index) in newPosts" :key="index">
+    <div class="px-1">
+    <v-card class="mx-auto my-5" :max-width="dialogSize" v-for="(newPost,index) in newPosts" :key="index" v-resize="onResize">
         <v-list>
         <v-list-item>
             <v-list-item-avatar>
-            <v-img :src="'storage/image/' + myInfo.profile_image"></v-img>
+            <v-img :src="'storage/image/avatar/' + userAvatar(newPost.user_id)"></v-img>
             </v-list-item-avatar>
-
-            <!-- <v-list-item-content>
-            <v-list-item-title v-text="def"></v-list-item-title>
-            </v-list-item-content> -->
-
+            <v-list-item-content>
+            <v-list-item-title>{{ userName(newPost.user_id) }}</v-list-item-title>
+          </v-list-item-content>
             </v-list-item>
         </v-list>
-        <!-- <div v-if="followingUserPost.image.length == 1">
-        <v-img :src="followingUserPost.image.src"></v-img>
-        </div>
-        <div v-else> -->
-        <v-carousel>
+        <v-carousel :height="dialogSize">
             <v-carousel-item v-for="(image,i) in newPost.image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
         </v-carousel>
-        <!-- </div> -->
 
-            <v-menu
-        v-model="menu[index]"
-        :close-on-content-click="true"
-        :nudge-width="200"
-        offset-y
-        top
-
-        >
+        <v-menu v-model="menu[index]" :close-on-content-click="true" :nudge-width="200" offset-y top>
         <template v-slot:activator="{ on, attrs }">
             <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[index].like === true) ? 'pink' : ''">
             <v-icon>mdi-heart</v-icon>
@@ -82,7 +68,7 @@
         </v-card-actions>
 
         <v-expand-transition>
-            <div v-show="show">
+            <div class="scroll" v-show="show">
                 <!-- <v-divider></v-divider>
                 <v-card-text>
                 I'm a thing. But, like most politicians, he promised more than he could deliver. You won't have time for sleeping, soldier, not with all the bed making you'll be doing. Then we'll go with that data file! Hey, you add a one and two zeros to that or we walk! You're going to do his laundry? I've got to find a way to escape.
@@ -104,8 +90,13 @@
         </v-expand-transition>
         <v-divider></v-divider>
         <div class="d-flex align-center justify-space-around">
-        <v-col cols="12" md="9">
-            <v-text-field></v-text-field>
+        <v-col cols="8" md="9">
+            <v-text-field
+              color="purple darken-2"
+              label="コメント"
+              required
+            ></v-text-field>
+            <!-- <v-text-field style="padding-left: 10px;max-width: 100px"></v-text-field> -->
         </v-col>
         <v-btn>投稿する</v-btn>
         </div>
@@ -123,7 +114,7 @@
 
 <script>
 export default {
-    props: ['myInfo', 'myPosts', 'myLikes','comments'],
+    props: ['myInfo', 'posts', 'myLikes','comments', 'myUsers'],
     data() {
         return {
             items: [
@@ -138,12 +129,17 @@ export default {
                 subtitle: `<span class="text--primary">to Alex, Scott, Jennifer</span> &mdash; Wish I could come, but I'm out of town this weekend.`,
             },
             ],
+            windowSize: {
+                x: 0,
+                y: 0,
+            },
             show: false,
             snackbar: false,
             text: `Hello, I'm a snackbar`,
             thisUser: this.myInfo,
-            thisPosts: this.myPosts,
+            thisPosts: this.posts,
             thisLikes: this.myLikes,
+            users: this.myUsers,
             likeArray: [],
             followingUser: [
                 {following_id: 2, followed_id: 1}
@@ -155,12 +151,20 @@ export default {
     },
     computed: {
         newPosts(){
-            var posts = this.myPosts;
+            var posts = this.posts;
             for(let i=0; i<posts.length; i++){
                 posts[i].image = JSON.parse(posts[i].image);
             }
             return posts;
-        }
+        },
+        dialogSize(){
+            if(this.windowSize.x < 480){
+                console.log(this.windowSize.x)
+                return 350;
+            } else {
+                return 500;
+            }
+        },
     },
     created(){
         var thisPosts = this.thisPosts;
@@ -176,6 +180,27 @@ export default {
         }
     },
     methods:{
+        userAvatar(id){
+            var users = this.myUsers;
+            for (let i = 0; i < users.length; i++) {
+                if(id == users[i].id){
+                    console.log(users[i])
+                    return users[i].profile_image;
+                }
+            }
+        },
+        userName(id){
+            var users = this.myUsers;
+            for (let i = 0; i < users.length; i++) {
+                if(id == users[i].id){
+                    console.log(users[i])
+                    return users[i].screen_name;
+                }
+            }
+        },
+        onResize () {
+            this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+        },
         like(thisPostId, num, index){
             this.menu[index] = false;
             this.likeArray[index].like = true;
@@ -215,3 +240,12 @@ export default {
     }
 }
 </script>
+<style>
+    input{
+        margin: 0!important;
+    }
+    .scroll{
+        height: 200px;
+        overflow-y: scroll;
+    }
+</style>

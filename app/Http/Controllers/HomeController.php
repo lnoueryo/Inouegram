@@ -7,6 +7,7 @@ use App\User;
 use App\Post;
 use App\Photo;
 use App\Like;
+use App\Follower;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 class HomeController extends Controller
@@ -29,9 +30,11 @@ class HomeController extends Controller
     public function index()
     {
         $my_info = Auth::user();
-        $my_posts = Post::where('user_id', $my_info->id)->orderBy('updated_at', 'desc')->get();
+        $followers = Follower::where('following_id', $my_info->id);
+        $my_users = User::where('id', $my_info->id)->orWhereIn('id', $followers->get('followed_id'));
+        $posts = Post::whereIn('user_id', $my_users->get('id'))->orderBy('updated_at', 'desc')->get();
         $my_likes = Like::where('user_id', Auth::id())->get();
-        return view('index', ['my_info' => $my_info, 'my_posts' => $my_posts, 'my_likes' => $my_likes]);
+        return view('index', ['my_info' => $my_info, 'posts' => $posts, 'my_likes' => $my_likes, 'my_users' => $my_users->get()]);
     }
     // public function index()
     // {
@@ -99,5 +102,11 @@ class HomeController extends Controller
     //     $filename = $request->photo->name;
     //     $path = $request->photo->storeAs('images', $filename);
     // }
+
+    public function search(Request $request){
+        $followers = Follower::where('following_id', $request->id);
+        $my_users = User::where('id',$request->id)->orWhereIn('id', $followers->get('followed_id'))->get();
+        return $my_users;
+    }
 
 }

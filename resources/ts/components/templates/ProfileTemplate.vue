@@ -197,9 +197,6 @@
         y: 0,
       },
     likeArray: [],
-    followingUser: [
-        {following_id: 2, followed_id: 1}
-    ],
     menu: [],
             lastPostId: '',
             lastIndex: '',
