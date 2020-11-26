@@ -5,7 +5,7 @@
                 <v-img style="border-radius: 15px" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image"></v-img>
             </div>
             <div v-else>
-                <v-img :src="'storage/image/background/' + myMainImage"></v-img>
+                <v-img src="storage/image/background/bg-1.jpg"></v-img>
             </div>
             <v-list-item three-line>
                 <v-list-item-avatar size="80">
@@ -122,7 +122,6 @@
         snackbar: false,
         text: 'deleted',
         timeout: 2000,
-        myMainImage: 'kobe.jpg',
         changeBgDialog: false,
         changingBgData: '',
       }
