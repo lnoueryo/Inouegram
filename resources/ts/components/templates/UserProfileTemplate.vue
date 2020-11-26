@@ -370,9 +370,11 @@
                     postId: thisPostId,
                     postingUserId: this.myInfo.id,
                     reaction: num,
+                    userPosts: JSON.stringify(this.userPosts),
                 }
             })
             .then(response => {
+                this.allLikes = response.data;
                 this.snackbar = true;
                 this.lastPostId = thisPostId;
                 this.lastIndex = index;
@@ -388,10 +390,11 @@
             params: {
                 postId: thisPostId,
                 postingUserId: this.myInfo.id,
+                userPosts: JSON.stringify(this.userPosts),
             }
             })
             .then(response => {
-
+                this.allLikes = response.data;
             })
             .catch(error => {
                 console.log('fail')
