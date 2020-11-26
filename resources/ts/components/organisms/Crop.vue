@@ -94,7 +94,6 @@ export default {
         var that = this;
         setTimeout(function () {
             that.abc = cropImage;
-            console.log(that.abc)
         }, 500)
         var canvas = [];
         var canvasCtx = [];

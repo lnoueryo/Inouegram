@@ -167,7 +167,6 @@ export default {
             this.imgSrc = e;
         },
         submit(){
-            console.log(JSON.stringify(this.concatImg));
             let fd= new FormData();
             fd.append("cropped_image", JSON.stringify(this.concatImg));
             fd.append("message", 'hello');

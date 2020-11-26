@@ -148,7 +148,6 @@ export default {
             followingUser: [
                 {following_id: 2, followed_id: 1}
             ],
-            postKey: 0,
             menu: [],
             lastPostId: '',
             lastIndex: '',
@@ -177,27 +176,27 @@ export default {
         }
     },
     methods:{
-    like(thisPostId, num, index){
-        this.menu[index] = false;
-        this.likeArray[index].like = true;
-        this.likeArray[index].reaction = num;
-        axios.get('/api/like', {
-            params: {
-                postId: thisPostId,
-                postingUserId: this.myInfo.id,
-                reaction: num,
-            }
-        })
-        .then(response => {
-            this.snackbar = true;
-            this.lastPostId = thisPostId;
-            this.lastIndex = index;
-        })
-        .catch(error => {
-            console.log('fail')
-        })
-    },
-    deleteLike(thisPostId, index){
+        like(thisPostId, num, index){
+            this.menu[index] = false;
+            this.likeArray[index].like = true;
+            this.likeArray[index].reaction = num;
+            axios.get('/api/like', {
+                params: {
+                    postId: thisPostId,
+                    postingUserId: this.myInfo.id,
+                    reaction: num,
+                }
+            })
+            .then(response => {
+                this.snackbar = true;
+                this.lastPostId = thisPostId;
+                this.lastIndex = index;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        deleteLike(thisPostId, index){
             this.likeArray[index].like = false;
             this.likeArray[index].reaction = '';
             axios.get('/api/delete_like', {
