@@ -463,7 +463,6 @@ export default {
             fd.append("title", this.title);
             fd.append("message", this.message);
             fd.append("userId", this.user.id);
-            console.log(this.user.id)
             axios.post('/api/create', fd)
             .then(
                 response => (window.location.href = '/')

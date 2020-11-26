@@ -54,7 +54,6 @@ export default {
     //     'profile-templates': ProfileTemplates,
     // },
         mounted(){
-        console.log(this.thisUserPosts);
         this.profileInfo();
     },
     methods: {

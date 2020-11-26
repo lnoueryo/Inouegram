@@ -1,10 +1,10 @@
 <template>
     <div>
         <div v-if="myInfo.id == thisUser.id">
-            <profile-templates :thisUserPosts="thisUserPosts" :thisUser="myInfo"></profile-templates>
+            <profile-templates :thisUserPosts="thisUserPosts" :thisUser="myInfo" :myLikes="myLikes" :thisUserLikes="thisUserLikes"></profile-templates>
         </div>
         <div v-else>
-            <user-profile-templates :thisUserPosts="thisUserPosts" :thisUser="thisUser"></user-profile-templates>
+            <user-profile-templates :thisUserPosts="thisUserPosts" :thisUser="thisUser" :myInfo="myInfo" :myLikes="myLikes" :thisUserLikes="thisUserLikes"></user-profile-templates>
         </div>
     </div>
 </template>
@@ -13,10 +13,10 @@
 import ProfileTemplates from '../templates/ProfileTemplate'
 import UserProfileTemplates from '../templates/UserProfileTemplate'
 export default {
-    props: ['this-user-posts', 'my-info', 'this-user'],
+    props: ['this-user-posts', 'my-info', 'this-user', 'my-likes', 'this-user-likes'],
     components: {
         ProfileTemplates,
         UserProfileTemplates
-    }
+    },
 }
 </script>

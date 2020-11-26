@@ -8,11 +8,6 @@
 <script>
 export default {
     props: ['user'],
-    methods: {
-        abc(){
-            console.log(this.user);
-        },
-    }
 }
 </script>
 

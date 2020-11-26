@@ -38,6 +38,7 @@ Route::post('/delete_post','ProfileController@deletePost');
 Route::post('/create', 'HomeController@create')->name('create');
 Route::post('/store', 'HomeController@store')->name('store');
 Route::get('/like', function(Request $request){
+
     $search_like = Like::where('post_id', $request->postId)->where('user_id', $request->postingUserId);
     if($search_like->exists()){
         $like = $search_like->first();

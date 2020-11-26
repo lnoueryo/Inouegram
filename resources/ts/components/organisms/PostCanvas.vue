@@ -68,7 +68,6 @@ export default {
             var canvasInfo = edittedImg;
             let fd= new FormData();
             fd.append("canvasInfo", canvasInfo);
-            console.log(canvasInfo)
             axios.post('api/canvas', fd)
             .then(
                 response => (console.log('abc')),
@@ -77,7 +76,6 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
-            console.log(canvasInfo)
         },
     }
 }

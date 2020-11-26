@@ -2,7 +2,7 @@
     <div>
         <v-card class="mx-auto" max-width="800" tile v-resize="onResize">
             <div v-if="userInfo.bg_image">
-                <v-img style="border-radius: 15px" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image"></v-img>
+                <v-img style="border-radius: 5px" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image"></v-img>
             </div>
             <div v-else>
                 <v-img src="storage/image/background/bg-1.jpg"></v-img>
@@ -41,15 +41,50 @@
                 <v-carousel :height="dialogSize">
                     <v-carousel-item v-for="(image,i) in newPosts[postKey].image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                 </v-carousel>
-                    <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
-                        <p class="text-h6 font-weight-light orange--text mb-2">
-                        {{ newPosts[postKey].title }}
-                        </p>
-                        <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
-                        <div class="content">{{ newPosts[postKey].text }}</div>
-                        </div>
-                    </v-card-text>
+            <v-menu v-model="menu[postKey]" :close-on-content-click="true" :nudge-width="200" offset-y top>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[postKey].like === true) ? 'pink' : ''">
+                    <v-icon>mdi-heart</v-icon>{{ likeNumber }}
+                    </v-btn>
+                </template>
+                <v-card>
+                    <v-card-actions>
+                    <v-btn icon @click="like(newPosts[postKey].id, 0, postKey)" :color="(likeArray[postKey].reaction === 0) ? 'yellow' : ''">
+                        <v-icon>mdi-emoticon</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 1, postKey)"  :color="(likeArray[postKey].reaction === 1) ? 'blue' : ''">
+                        <v-icon>mdi-emoticon-cry</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 2, postKey)"  :color="(likeArray[postKey].reaction === 2) ? 'orange' : ''">
+                        <v-icon>mdi-emoticon-lol</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 3, postKey)" :color="(likeArray[postKey].reaction === 3) ? 'red' : ''">
+                        <v-icon>mdi-emoticon-angry</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 4, postKey)" :color="(likeArray[postKey].reaction === 4) ? 'pink' : ''">
+                        <v-icon>mdi-emoticon-kiss</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="deleteLike(newPosts[postKey].id, postKey)" v-if="likeArray[postKey].like">
+                        <v-icon>mdi-minus-circle</v-icon>
+                    </v-btn>
+                    </v-card-actions>
                 </v-card>
+                </v-menu>
+                <v-btn icon>
+                <v-icon>mdi-comment</v-icon>
+                </v-btn>
+                <v-btn icon>
+                <v-icon>mdi-bookmark</v-icon>
+                </v-btn>
+                <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
+                    <p class="text-h6 font-weight-light orange--text mb-2">
+                    {{ newPosts[postKey].title }}
+                    </p>
+                    <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
+                    <div class="content">{{ newPosts[postKey].text }}</div>
+                    </div>
+                </v-card-text>
+            </v-card>
             </v-dialog>
             <v-dialog v-model="deleteDialog" max-width="290" @click:outside="outside">
                 <v-card>
@@ -101,21 +136,38 @@
             </v-dialog>
         </v-layout>
         </div>
+        <v-snackbar v-model="snackbar">
+            {{ text }}
+            <template v-slot:action="{ attrs }">
+                <v-btn color="pink" text v-bind="attrs" @click="deleteLike(lastPostId, lastIndex)">
+                Close
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
 <script>
 
   export default {
-    props: ['thisUserPosts', 'thisUser', 'thisUserLikes', 'thisUserComments', 'commentUsers'],
+    props: ['thisUserPosts', 'thisUser', 'myInfo', 'myLikes', 'thisUserComments', 'commentUsers', 'thisUserLikes'],
     data () {
       return {
       windowSize: {
         x: 0,
         y: 0,
       },
+        likeArray: [],
+        followingUser: [
+            {following_id: 2, followed_id: 1}
+        ],
+        menu: [],
+        lastPostId: '',
+        lastIndex: '',
         userPosts: this.thisUserPosts,
         userData: this.thisUser,
+        thisLikes: this.myLikes,
+        allLikes: this.thisUserLikes,
         dialog: false,
         deleteDialog: false,
         postKey: 0,
@@ -154,6 +206,30 @@
             } else {
                 return 500;
             }
+        },
+        likeNumber(){
+            var likeNumber = 0;
+            var postId = this.userPosts[this.postKey].id;
+            var allLikes = this.allLikes;
+            for(var i=0; i<allLikes.length; i++){
+                if(allLikes[i].post_id == postId){
+                    likeNumber = likeNumber + 1;
+                }
+            }
+            return likeNumber;
+        }
+    },
+    created(){
+        var thisPosts = this.userPosts;
+        var thisLikes = this.thisLikes;
+        for(var i=0; i<thisPosts.length; i++){
+            this.likeArray.push({like: false, reaction: ''})
+            for(var j=0; j<thisLikes.length; j++){
+                if(thisPosts[i].id == thisLikes[j].post_id){
+                    this.likeArray[i].like = true;
+                    this.likeArray[i].reaction = thisLikes[j].reaction;
+                }
+            }
         }
     },
     methods: {
@@ -191,7 +267,6 @@
             .then(
                 response => {
                     that.userData = response.data;
-                    console.log(response.data)
                 }
             )
             .catch(function (error) {
@@ -226,7 +301,6 @@
       openDeleteDialog(key){
         this.deleteDialog = true;
         this.postKey = key;
-        console.log(key)
       },
         outside(){
             // this.$refs.carouselPost.remove();
@@ -286,6 +360,42 @@
           .catch(function (error) {
               location.href = '/';
           });
+        },
+        like(thisPostId, num, index){
+            this.menu[index] = false;
+            this.likeArray[index].like = true;
+            this.likeArray[index].reaction = num;
+            axios.get('/api/like', {
+                params: {
+                    postId: thisPostId,
+                    postingUserId: this.myInfo.id,
+                    reaction: num,
+                }
+            })
+            .then(response => {
+                this.snackbar = true;
+                this.lastPostId = thisPostId;
+                this.lastIndex = index;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        deleteLike(thisPostId, index){
+            this.likeArray[index].like = false;
+            this.likeArray[index].reaction = '';
+            axios.get('/api/delete_like', {
+            params: {
+                postId: thisPostId,
+                postingUserId: this.myInfo.id,
+            }
+            })
+            .then(response => {
+
+            })
+            .catch(error => {
+                console.log('fail')
+            })
         },
     }
 }

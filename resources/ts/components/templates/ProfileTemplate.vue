@@ -2,7 +2,7 @@
     <div>
         <v-card class="mx-auto" max-width="800" tile v-resize="onResize">
             <div v-if="userInfo.bg_image">
-                <v-img style="border-radius: 15px" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image" @click="btnclick"></v-img>
+                <v-img style="border-radius: 5px" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image" @click="btnclick"></v-img>
             </div>
             <div v-else>
                 <v-img src="storage/image/background/bg-1.jpg"></v-img>
@@ -65,6 +65,41 @@
                         <div class="content">{{ newPosts[postKey].text }}</div>
                         </div>
                     </v-card-text>
+            <v-menu v-model="menu[postKey]" :close-on-content-click="true" :nudge-width="200" offset-y top>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[postKey].like === true) ? 'pink' : ''">
+                    <v-icon>mdi-heart</v-icon>
+                    </v-btn>
+                </template>
+                <v-card>
+                    <v-card-actions>
+                    <v-btn icon @click="like(newPosts[postKey].id, 0, postKey)" :color="(likeArray[postKey].reaction === 0) ? 'yellow' : ''">
+                        <v-icon>mdi-emoticon</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 1, postKey)"  :color="(likeArray[postKey].reaction === 1) ? 'blue' : ''">
+                        <v-icon>mdi-emoticon-cry</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 2, postKey)"  :color="(likeArray[postKey].reaction === 2) ? 'orange' : ''">
+                        <v-icon>mdi-emoticon-lol</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 3, postKey)" :color="(likeArray[postKey].reaction === 3) ? 'red' : ''">
+                        <v-icon>mdi-emoticon-angry</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="like(newPosts[postKey].id, 4, postKey)" :color="(likeArray[postKey].reaction === 4) ? 'pink' : ''">
+                        <v-icon>mdi-emoticon-kiss</v-icon>
+                    </v-btn>
+                    <v-btn icon @click="deleteLike(newPosts[postKey].id, postKey)" v-if="likeArray[postKey].like">
+                        <v-icon>mdi-minus-circle</v-icon>
+                    </v-btn>
+                    </v-card-actions>
+                </v-card>
+                </v-menu>
+                <v-btn icon>
+                <v-icon>mdi-comment</v-icon>
+                </v-btn>
+                <v-btn icon>
+                <v-icon>mdi-bookmark</v-icon>
+                </v-btn>
                 </v-card>
             </v-dialog>
             <v-dialog v-model="deleteDialog" max-width="290" @click:outside="outside">
@@ -140,21 +175,37 @@
             まだ投稿はありません<br>
             <v-btn href="/post">投稿する</v-btn>
         </div>
+        <v-snackbar v-model="snackbar">
+            {{ text }}
+            <template v-slot:action="{ attrs }">
+                <v-btn color="pink" text v-bind="attrs" @click="deleteLike(lastPostId, lastIndex)">
+                Close
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
 <script>
 
   export default {
-    props: ['thisUserPosts', 'thisUser', 'thisUserLikes', 'thisUserComments', 'commentUsers'],
+    props: ['thisUserPosts', 'thisUser', 'myLikes', 'thisUserComments', 'commentUsers', 'thisUserLikes'],
     data () {
       return {
       windowSize: {
         x: 0,
         y: 0,
       },
+    likeArray: [],
+    followingUser: [
+        {following_id: 2, followed_id: 1}
+    ],
+    menu: [],
+            lastPostId: '',
+            lastIndex: '',
         userPosts: this.thisUserPosts,
         userData: this.thisUser,
+        thisLikes: this.myLikes,
         dialog: false,
         deleteDialog: false,
         postKey: 0,
@@ -193,6 +244,24 @@
                 return 300;
             } else {
                 return 500;
+            }
+        },
+        likeNumber(){
+            var postId = userPosts[this.postKey].id;
+            console.log()
+            return likeNumber;
+        }
+    },
+    created(){
+        var thisPosts = this.userPosts;
+        var thisLikes = this.thisLikes;
+        for(var i=0; i<thisPosts.length; i++){
+            this.likeArray.push({like: false, reaction: ''})
+            for(var j=0; j<thisLikes.length; j++){
+                if(thisPosts[i].id == thisLikes[j].post_id){
+                    this.likeArray[i].like = true;
+                    this.likeArray[i].reaction = thisLikes[j].reaction;
+                }
             }
         }
     },
@@ -326,6 +395,43 @@
           .catch(function (error) {
               location.href = '/';
           });
+        },
+        like(thisPostId, num, index){
+            console.log(thisPostId)
+            this.menu[index] = false;
+            this.likeArray[index].like = true;
+            this.likeArray[index].reaction = num;
+            axios.get('/api/like', {
+                params: {
+                    postId: thisPostId,
+                    postingUserId: this.userData.id,
+                    reaction: num,
+                }
+            })
+            .then(response => {
+                this.snackbar = true;
+                this.lastPostId = thisPostId;
+                this.lastIndex = index;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        deleteLike(thisPostId, index){
+            this.likeArray[index].like = false;
+            this.likeArray[index].reaction = '';
+            axios.get('/api/delete_like', {
+            params: {
+                postId: thisPostId,
+                postingUserId: this.userData.id,
+            }
+            })
+            .then(response => {
+
+            })
+            .catch(error => {
+                console.log('fail')
+            })
         },
     }
 }
