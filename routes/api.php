@@ -51,12 +51,22 @@ Route::get('/like', function(Request $request){
         $like->reaction = $request->reaction;
         $like->save();
     }
-    return Like::all();
+    $user_posts = json_decode($request->userPosts);
+    for($i=0; $i<count($user_posts); $i++){
+        $array[] = $user_posts[$i]->id;
+    }
+    $this_user_likes = Like::whereIn('post_id', $array)->get();
+    return $this_user_likes;
 });
 Route::get('/delete_like', function(Request $request){
     $like = Like::where('post_id', $request->postId)->where('user_id', $request->postingUserId)->first();
     $like->delete();
-    return Like::all();
+    $user_posts = json_decode($request->userPosts);
+    for($i=0; $i<count($user_posts); $i++){
+        $array[] = $user_posts[$i]->id;
+    }
+    $this_user_likes = Like::whereIn('post_id', $array)->get();
+    return $this_user_likes;
 });
 Route::post('/upload', 'ProfileController@uploadBg');
 Route::post('/upload2', 'ProfileController@uploadAvatar');

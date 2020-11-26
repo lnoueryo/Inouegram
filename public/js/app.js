@@ -7878,9 +7878,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         params: {
           postId: thisPostId,
           postingUserId: this.myInfo.id,
-          reaction: num
+          reaction: num,
+          userPosts: JSON.stringify(this.userPosts)
         }
       }).then(function (response) {
+        _this5.allLikes = response.data;
         _this5.snackbar = true;
         _this5.lastPostId = thisPostId;
         _this5.lastIndex = index;
@@ -7889,14 +7891,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     deleteLike: function deleteLike(thisPostId, index) {
+      var _this6 = this;
+
       this.likeArray[index].like = false;
       this.likeArray[index].reaction = '';
       axios.get('/api/delete_like', {
         params: {
           postId: thisPostId,
-          postingUserId: this.myInfo.id
+          postingUserId: this.myInfo.id,
+          userPosts: JSON.stringify(this.userPosts)
         }
-      }).then(function (response) {})["catch"](function (error) {
+      }).then(function (response) {
+        _this6.allLikes = response.data;
+      })["catch"](function (error) {
         console.log('fail');
       });
     }
