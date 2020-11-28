@@ -5033,9 +5033,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       axios.get('/api/likeUsers', {
-        params: {
-          postId: this.thisPosts[key].id
-        }
+        postId: this.thisPosts[key].id
       }).then(function (response) {
         _this.likeDialog = true;
         _this.likeUsers = response.data;
@@ -5080,13 +5078,11 @@ __webpack_require__.r(__webpack_exports__);
       this.menu[index] = false;
       this.likeArray[index].like = true;
       this.likeArray[index].reaction = num;
-      axios.get('/api/like', {
-        params: {
-          postId: thisPostId,
-          postingUserId: this.myInfo.id,
-          reaction: num,
-          userPosts: JSON.stringify(this.thisPosts)
-        }
+      axios.post('/api/like', {
+        postId: thisPostId,
+        postingUserId: this.myInfo.id,
+        reaction: num,
+        userPosts: JSON.stringify(this.thisPosts)
       }).then(function (response) {
         _this2.snackbar = true;
         _this2.lastPostId = thisPostId;
@@ -5102,12 +5098,10 @@ __webpack_require__.r(__webpack_exports__);
 
       this.likeArray[index].like = false;
       this.likeArray[index].reaction = '';
-      axios.get('/api/delete_like', {
-        params: {
-          postId: thisPostId,
-          postingUserId: this.myInfo.id,
-          userPosts: JSON.stringify(this.thisPosts)
-        }
+      axios.post('/api/delete_like', {
+        postId: thisPostId,
+        postingUserId: this.myInfo.id,
+        userPosts: JSON.stringify(this.thisPosts)
       }).then(function (response) {
         _this3.allLikes = response.data;
       })["catch"](function (error) {
@@ -7495,13 +7489,11 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.menu[index] = false;
       this.likeArray[index].like = true;
       this.likeArray[index].reaction = num;
-      axios.get('/api/like', {
-        params: {
-          postId: thisPostId,
-          postingUserId: this.userData.id,
-          reaction: num,
-          userPosts: JSON.stringify(this.userPosts)
-        }
+      axios.post('/api/like', {
+        postId: thisPostId,
+        postingUserId: this.userData.id,
+        reaction: num,
+        userPosts: JSON.stringify(this.userPosts)
       }).then(function (response) {
         _this5.snackbar = true;
         _this5.lastPostId = thisPostId;
@@ -7513,7 +7505,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     deleteLike: function deleteLike(thisPostId, index) {
       this.likeArray[index].like = false;
       this.likeArray[index].reaction = '';
-      axios.get('/api/delete_like', {
+      axios.post('/api/delete_like', {
         params: {
           postId: thisPostId,
           postingUserId: this.userData.id
@@ -7971,7 +7963,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.menu[index] = false;
       this.likeArray[index].like = true;
       this.likeArray[index].reaction = num;
-      axios.get('/api/like', {
+      axios.post('/api/like', {
         params: {
           postId: thisPostId,
           postingUserId: this.user.id,
@@ -7992,7 +7984,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
       this.likeArray[index].like = false;
       this.likeArray[index].reaction = '';
-      axios.get('/api/delete_like', {
+      axios.post('/api/delete_like', {
         params: {
           postId: thisPostId,
           postingUserId: this.user.id,

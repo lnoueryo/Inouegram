@@ -377,7 +377,7 @@
             this.menu[index] = false;
             this.likeArray[index].like = true;
             this.likeArray[index].reaction = num;
-            axios.get('/api/like', {
+            axios.post('/api/like', {
                 params: {
                     postId: thisPostId,
                     postingUserId: this.user.id,
@@ -398,7 +398,7 @@
         deleteLike(thisPostId, index){
             this.likeArray[index].like = false;
             this.likeArray[index].reaction = '';
-            axios.get('/api/delete_like', {
+            axios.post('/api/delete_like', {
             params: {
                 postId: thisPostId,
                 postingUserId: this.user.id,

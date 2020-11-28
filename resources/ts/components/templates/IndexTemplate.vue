@@ -179,9 +179,7 @@ export default {
     methods:{
         likeDialogOpen(key){
             axios.get('/api/likeUsers', {
-                params: {
-                    postId: this.thisPosts[key].id,
-                }
+                postId: this.thisPosts[key].id,
             })
             .then(response => {
                 this.likeDialog = true;
@@ -221,13 +219,11 @@ export default {
             this.menu[index] = false;
             this.likeArray[index].like = true;
             this.likeArray[index].reaction = num;
-            axios.get('/api/like', {
-                params: {
-                    postId: thisPostId,
-                    postingUserId: this.myInfo.id,
-                    reaction: num,
-                    userPosts: JSON.stringify(this.thisPosts),
-                }
+            axios.post('/api/like', {
+                postId: thisPostId,
+                postingUserId: this.myInfo.id,
+                reaction: num,
+                userPosts: JSON.stringify(this.thisPosts),
             })
             .then(response => {
                 this.snackbar = true;
@@ -243,12 +239,10 @@ export default {
         deleteLike(thisPostId, index){
             this.likeArray[index].like = false;
             this.likeArray[index].reaction = '';
-            axios.get('/api/delete_like', {
-            params: {
+            axios.post('/api/delete_like', {
                 postId: thisPostId,
                 postingUserId: this.myInfo.id,
                 userPosts: JSON.stringify(this.thisPosts),
-            }
             })
             .then(response => {
                 this.allLikes = response.data;

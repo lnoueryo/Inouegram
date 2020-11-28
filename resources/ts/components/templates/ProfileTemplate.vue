@@ -399,13 +399,11 @@
             this.menu[index] = false;
             this.likeArray[index].like = true;
             this.likeArray[index].reaction = num;
-            axios.get('/api/like', {
-                params: {
-                    postId: thisPostId,
-                    postingUserId: this.userData.id,
-                    reaction: num,
-                    userPosts: JSON.stringify(this.userPosts),
-                }
+            axios.post('/api/like', {
+                postId: thisPostId,
+                postingUserId: this.userData.id,
+                reaction: num,
+                userPosts: JSON.stringify(this.userPosts),
             })
             .then(response => {
                 this.snackbar = true;
@@ -419,7 +417,7 @@
         deleteLike(thisPostId, index){
             this.likeArray[index].like = false;
             this.likeArray[index].reaction = '';
-            axios.get('/api/delete_like', {
+            axios.post('/api/delete_like', {
             params: {
                 postId: thisPostId,
                 postingUserId: this.userData.id,
