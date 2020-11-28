@@ -7,32 +7,28 @@ class My_func
 {
     public static function RandomStorageNumber()
     {
-
         $file_total_numbers = count(Storage::allFiles())-1;
         $random_numbers = random_int (0, $file_total_numbers);
         return $random_numbers;
     }
 
-    public static function Hello()
-    {
-        $abc = My_func::RandomStorageNumber();
-        $def = My_func::RandomStorageNumber();
-        $g = [$abc,$def];
-        return json_encode($g);
-    }
-
-    public static function SelectJson($number)
+    public static function SelectJson($number_between, $src_array)
     {
         $json = [];
+        $abc = [];
         for($j=1; $j<11; $j++){
-            if($number == $j){
+            if($number_between == $j){
                 for($i=0; $i<$j; $i++){
-                    $array[] = ['src' => Storage::allFiles()[My_func::RandomStorageNumber()]];
+                    $random_numbers = random_int (0, count($src_array)-1);
+                    $array[] = ['src' => $src_array[$random_numbers]];
                     $json += $array;
+                    $def[] = $src_array[$random_numbers];
+                    $abc += $def;
                 }
             }
         }
-        return json_encode($json);
+        return [json_encode($json), $abc];
     }
+
 
 }
