@@ -7431,6 +7431,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       console.log(fd.get('post'));
       axios.post('/api/delete_post', fd).then(function (response) {
         _this4.userPosts = response.data;
+        _this4.dialog = false;
         _this4.deleteDialog = false;
         _this4.snackbar = true;
       })["catch"](function (error) {
@@ -20506,7 +20507,7 @@ var render = function() {
                                   },
                                   on: {
                                     click: function($event) {
-                                      return _vm.openDeleteDialog(_vm.index)
+                                      return _vm.openDeleteDialog(_vm.postKey)
                                     }
                                   }
                                 },

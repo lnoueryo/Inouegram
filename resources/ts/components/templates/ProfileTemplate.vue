@@ -55,7 +55,7 @@
                     <v-carousel-item v-for="(image,i) in newPosts[postKey].image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                 </v-carousel>
                     <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
-                        <v-btn absolute color="black" class="white--text" fab large right top @click="openDeleteDialog(index)">
+                        <v-btn absolute color="black" class="white--text" fab large right top @click="openDeleteDialog(postKey)">
                         <v-icon>mdi-delete</v-icon>
                         </v-btn>
                         <p class="text-h6 font-weight-light orange--text mb-2">
@@ -65,34 +65,34 @@
                         <div class="content">{{ newPosts[postKey].text }}</div>
                         </div>
                     </v-card-text>
-            <v-menu v-model="menu[postKey]" :close-on-content-click="true" :nudge-width="200" offset-y top>
-                <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[postKey].like === true) ? 'pink' : ''">
-                    <v-icon>mdi-heart</v-icon>
-                    </v-btn>
-                </template>
-                <v-card>
-                    <v-card-actions>
-                    <v-btn icon @click="like(newPosts[postKey].id, 0, postKey)" :color="(likeArray[postKey].reaction === 0) ? 'yellow' : ''">
-                        <v-icon>mdi-emoticon</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="like(newPosts[postKey].id, 1, postKey)"  :color="(likeArray[postKey].reaction === 1) ? 'blue' : ''">
-                        <v-icon>mdi-emoticon-cry</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="like(newPosts[postKey].id, 2, postKey)"  :color="(likeArray[postKey].reaction === 2) ? 'orange' : ''">
-                        <v-icon>mdi-emoticon-lol</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="like(newPosts[postKey].id, 3, postKey)" :color="(likeArray[postKey].reaction === 3) ? 'red' : ''">
-                        <v-icon>mdi-emoticon-angry</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="like(newPosts[postKey].id, 4, postKey)" :color="(likeArray[postKey].reaction === 4) ? 'pink' : ''">
-                        <v-icon>mdi-emoticon-kiss</v-icon>
-                    </v-btn>
-                    <v-btn icon @click="deleteLike(newPosts[postKey].id, postKey)" v-if="likeArray[postKey].like">
-                        <v-icon>mdi-minus-circle</v-icon>
-                    </v-btn>
-                    </v-card-actions>
-                </v-card>
+                <v-menu v-model="menu[postKey]" :close-on-content-click="true" :nudge-width="200" offset-y top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-btn icon v-bind="attrs" v-on="on" :color="(likeArray[postKey].like === true) ? 'pink' : ''">
+                        <v-icon>mdi-heart</v-icon>
+                        </v-btn>
+                    </template>
+                    <v-card>
+                        <v-card-actions>
+                        <v-btn icon @click="like(newPosts[postKey].id, 0, postKey)" :color="(likeArray[postKey].reaction === 0) ? 'yellow' : ''">
+                            <v-icon>mdi-emoticon</v-icon>
+                        </v-btn>
+                        <v-btn icon @click="like(newPosts[postKey].id, 1, postKey)"  :color="(likeArray[postKey].reaction === 1) ? 'blue' : ''">
+                            <v-icon>mdi-emoticon-cry</v-icon>
+                        </v-btn>
+                        <v-btn icon @click="like(newPosts[postKey].id, 2, postKey)"  :color="(likeArray[postKey].reaction === 2) ? 'orange' : ''">
+                            <v-icon>mdi-emoticon-lol</v-icon>
+                        </v-btn>
+                        <v-btn icon @click="like(newPosts[postKey].id, 3, postKey)" :color="(likeArray[postKey].reaction === 3) ? 'red' : ''">
+                            <v-icon>mdi-emoticon-angry</v-icon>
+                        </v-btn>
+                        <v-btn icon @click="like(newPosts[postKey].id, 4, postKey)" :color="(likeArray[postKey].reaction === 4) ? 'pink' : ''">
+                            <v-icon>mdi-emoticon-kiss</v-icon>
+                        </v-btn>
+                        <v-btn icon @click="deleteLike(newPosts[postKey].id, postKey)" v-if="likeArray[postKey].like">
+                            <v-icon>mdi-minus-circle</v-icon>
+                        </v-btn>
+                        </v-card-actions>
+                    </v-card>
                 </v-menu>
                 <v-btn icon>
                 <v-icon>mdi-comment</v-icon>
@@ -363,6 +363,7 @@
             .then(
                 response => {
                     (this.userPosts = response.data);
+                    this.dialog = false;
                     this.deleteDialog = false;
                     this.snackbar = true;
                 }
