@@ -38,8 +38,8 @@ Route::post('/delete_post','ProfileController@deletePost');
 
 Route::post('/create', 'HomeController@create')->name('create');
 Route::post('/store', 'HomeController@store')->name('store');
-Route::get('/like', function(Request $request){
 
+Route::get('/like', function(Request $request){
     $search_like = Like::where('post_id', $request->postId)->where('user_id', $request->postingUserId);
     if($search_like->exists()){
         $like = $search_like->first();
@@ -59,6 +59,7 @@ Route::get('/like', function(Request $request){
     $this_user_likes = Like::whereIn('post_id', $array)->get();
     return $this_user_likes;
 });
+
 Route::get('/delete_like', function(Request $request){
     $like = Like::where('post_id', $request->postId)->where('user_id', $request->postingUserId)->first();
     $like->delete();
@@ -93,6 +94,11 @@ Route::get('/follow', function(Request $request){
         $follower->delete();
         return  0;
     }
+});
+Route::get('/likeUsers', function(Request $request){
+    $users_id = Like::where('post_id', $request->postId)->get('user_id');
+    $like_users = User::whereIn('id', $users_id)->get();
+    return $like_users;
 });
 
 Route::get('/users', 'HomeController@search');

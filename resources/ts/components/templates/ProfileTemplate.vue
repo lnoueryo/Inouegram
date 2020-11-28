@@ -404,6 +404,7 @@
                     postId: thisPostId,
                     postingUserId: this.userData.id,
                     reaction: num,
+                    userPosts: JSON.stringify(this.userPosts),
                 }
             })
             .then(response => {

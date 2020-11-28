@@ -32,9 +32,10 @@ class HomeController extends Controller
         $my_info = Auth::user();
         $followers = Follower::where('following_id', $my_info->id);
         $my_users = User::where('id', $my_info->id)->orWhereIn('id', $followers->get('followed_id'));
-        $posts = Post::whereIn('user_id', $my_users->get('id'))->orderBy('updated_at', 'desc')->take(20)->get();
+        $posts = Post::whereIn('user_id', $my_users->get('id'));
         $my_likes = Like::where('user_id', Auth::id())->get();
-        return view('index', ['my_info' => $my_info, 'posts' => $posts, 'my_likes' => $my_likes, 'my_users' => $my_users->get()]);
+        $likes = Like::whereIn('post_id', $posts->get('id'))->get();
+        return view('index', ['my_info' => $my_info, 'posts' => $posts->orderBy('updated_at', 'desc')->take(20)->get(), 'my_likes' => $my_likes, 'my_users' => $my_users->get(), 'likes' => $likes]);
     }
     // public function index()
     // {
