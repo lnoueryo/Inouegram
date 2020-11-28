@@ -2,7 +2,7 @@
     <div class="px-1">
         <v-card class="mx-auto my-5" :max-width="dialogSize" v-for="(newPost,index) in newPosts" :key="index" v-resize="onResize">
             <v-list>
-            <v-list-item>
+            <v-list-item :href="'/profile?id=' + newPost.user_id">
                 <v-list-item-avatar>
                 <v-img :src="'storage/image/avatar/' + userAvatar(newPost.user_id)"></v-img>
                 </v-list-item-avatar>
