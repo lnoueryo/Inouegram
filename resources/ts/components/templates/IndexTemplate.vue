@@ -184,7 +184,6 @@ export default {
             var users = this.myUsers;
             for (let i = 0; i < users.length; i++) {
                 if(id == users[i].id){
-                    console.log(users[i])
                     return users[i].profile_image;
                 }
             }
@@ -193,7 +192,6 @@ export default {
             var users = this.myUsers;
             for (let i = 0; i < users.length; i++) {
                 if(id == users[i].id){
-                    console.log(users[i])
                     return users[i].screen_name;
                 }
             }

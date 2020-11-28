@@ -5,7 +5,7 @@
                 <v-img style="border-radius: 5px" :aspect-ratio="16/9" :src="'storage/image/background/' + userInfo.bg_image" @click="btnclick"></v-img>
             </div>
             <div v-else>
-                <v-img src="storage/image/background/bg-1.jpg"></v-img>
+                <v-img src="storage/image/background/bg-1.jpg" @click="btnclick"></v-img>
             </div>
             <v-list-item three-line>
                 <v-list-item-avatar size="80" @click="btnclick2">

@@ -3592,6 +3592,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -3602,6 +3617,11 @@ __webpack_require__.r(__webpack_exports__);
       search: '',
       users: ''
     };
+  },
+  computed: {
+    sendUserInfo: function sendUserInfo() {
+      return this.users;
+    }
   },
   methods: {
     searchUser: function searchUser() {
@@ -3652,6 +3672,15 @@ __webpack_require__.r(__webpack_exports__);
   props: ['users'],
   components: {
     'list-item-text': _atoms_ListItemText_vue__WEBPACK_IMPORTED_MODULE_0__["default"]
+  },
+  computed: {
+    user: function user() {
+      console.log(this.users);
+      return this.users;
+    }
+  },
+  mounted: function mounted() {
+    console.log(this.users);
   }
 });
 
@@ -5005,7 +5034,6 @@ __webpack_require__.r(__webpack_exports__);
 
       for (var i = 0; i < users.length; i++) {
         if (id == users[i].id) {
-          console.log(users[i]);
           return users[i].profile_image;
         }
       }
@@ -5015,7 +5043,6 @@ __webpack_require__.r(__webpack_exports__);
 
       for (var i = 0; i < users.length; i++) {
         if (id == users[i].id) {
-          console.log(users[i]);
           return users[i].screen_name;
         }
       }
@@ -16070,7 +16097,78 @@ var render = function() {
             }
           ])
         },
-        [_vm._v(" "), _c("two-line-list", { attrs: { users: _vm.users } })],
+        [
+          _vm._v(" "),
+          _vm.sendUserInfo.length > 0
+            ? _c(
+                "v-list",
+                { attrs: { "two-line": "" } },
+                [
+                  _vm._l(_vm.sendUserInfo, function(user, index) {
+                    return [
+                      _c(
+                        "v-list-item",
+                        {
+                          key: index,
+                          attrs: { href: "/profile?id=" + user.id }
+                        },
+                        [
+                          _c(
+                            "v-list-item-avatar",
+                            [
+                              _c(
+                                "v-avatar",
+                                [
+                                  _c("v-img", {
+                                    attrs: {
+                                      src:
+                                        "/storage/image/avatar/" +
+                                        user.profile_image
+                                    }
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-list-item-content",
+                            { staticStyle: { "align-items": "start" } },
+                            [
+                              _c(
+                                "v-list-item-title",
+                                {
+                                  staticStyle: {
+                                    "-webkit-line-clamp": "initial"
+                                  }
+                                },
+                                [_vm._v(_vm._s(user.screen_name))]
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-list-item-subtitle",
+                                {
+                                  staticStyle: {
+                                    "-webkit-line-clamp": "initial"
+                                  }
+                                },
+                                [_vm._v(_vm._s(user.comment))]
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ]
+                  })
+                ],
+                2
+              )
+            : _vm._e()
+        ],
         1
       )
     ],
@@ -16099,12 +16197,12 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm.users.length > 0
+  return _vm.user.length > 0
     ? _c(
         "v-list",
         { attrs: { "two-line": "" } },
         [
-          _vm._l(_vm.users, function(user, index) {
+          _vm._l(_vm.user, function(user, index) {
             return [
               _c(
                 "v-list-item",
@@ -16118,7 +16216,7 @@ var render = function() {
                         [
                           _c("v-img", {
                             attrs: {
-                              src: "/storage/image/" + user.profile_image
+                              src: "/storage/image/avatar/" + user.profile_image
                             }
                           })
                         ],
@@ -20161,7 +20259,8 @@ var render = function() {
                 "div",
                 [
                   _c("v-img", {
-                    attrs: { src: "storage/image/background/bg-1.jpg" }
+                    attrs: { src: "storage/image/background/bg-1.jpg" },
+                    on: { click: _vm.btnclick }
                   })
                 ],
                 1
