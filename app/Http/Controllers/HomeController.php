@@ -32,7 +32,7 @@ class HomeController extends Controller
         $my_info = Auth::user();
         $followers = Follower::where('following_id', $my_info->id);
         $my_users = User::where('id', $my_info->id)->orWhereIn('id', $followers->get('followed_id'));
-        $posts = Post::whereIn('user_id', $my_users->get('id'))->orderBy('updated_at', 'desc')->get();
+        $posts = Post::whereIn('user_id', $my_users->get('id'))->orderBy('updated_at', 'desc')->take(20)->get();
         $my_likes = Like::where('user_id', Auth::id())->get();
         return view('index', ['my_info' => $my_info, 'posts' => $posts, 'my_likes' => $my_likes, 'my_users' => $my_users->get()]);
     }
@@ -51,21 +51,18 @@ class HomeController extends Controller
         $post->title = $request->title;
         $post->save();
         $decoded_images = json_decode($request->cropped_image);
+        $src_array = [];
         for ($i=0; $i<count($decoded_images); $i++) {
-            $photo = new Photo;
-            $photo->post_id = $post->id;
             $base64_image = $decoded_images[$i];
             @list($type, $file_data[$i]) = explode(';', $base64_image);
             @list(, $file_data[$i]) = explode(',', $file_data[$i]);
             $imageName = str_random(10).'.'.'png';
             Storage::disk('local')->put($imageName, base64_decode($file_data[$i]));
-            $photo->src = $imageName;
-            $photo->save();
+            $array[] = ['src' => $imageName];
+            $src_array += $array;
         }
-        $photos = Photo::where('post_id', $post->id)->get('src');
-        $post->image = $photos;
+        $post->image = json_encode($src_array);
         $post->save();
-        // return 'hello';
     }
 
     public function createdes(Request $request)
