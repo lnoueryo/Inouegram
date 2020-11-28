@@ -14,7 +14,22 @@
             @focus="searchUser()"
         ></v-text-field>
       </template>
-      <two-line-list :users="users"></two-line-list>
+      <!-- <two-line-list :users="sendUserInfo"></two-line-list> -->
+        <v-list two-line v-if="sendUserInfo.length > 0">
+            <template v-for="(user, index) in sendUserInfo">
+            <v-list-item :key="index" :href="'/profile?id=' + user.id">
+                <v-list-item-avatar>
+                    <v-avatar>
+                        <v-img :src="'/storage/image/avatar/' + user.profile_image"></v-img>
+                    </v-avatar>
+                </v-list-item-avatar>
+                <v-list-item-content style="align-items: start;">
+                    <v-list-item-title style="-webkit-line-clamp: initial;" >{{ user.screen_name }}</v-list-item-title>
+                    <v-list-item-subtitle style="-webkit-line-clamp: initial;">{{ user.comment }}</v-list-item-subtitle>
+                </v-list-item-content>
+            </v-list-item>
+            </template>
+        </v-list>
     </v-menu>
   </div>
 </template>
@@ -29,6 +44,11 @@ export default {
         return{
             search: '',
             users: '',
+        }
+    },
+    computed: {
+        sendUserInfo(){
+            return this.users;
         }
     },
     methods: {
