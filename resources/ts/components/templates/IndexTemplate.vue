@@ -119,9 +119,6 @@
 <script>
 export default {
     props: ['myInfo', 'posts', 'myLikes','comments', 'myUsers', 'likes'],
-    mounted(){
-        console.log(this.likes)
-    },
     data() {
         return {
             windowSize: {
@@ -178,7 +175,7 @@ export default {
     },
     methods:{
         likeDialogOpen(key){
-            axios.get('/api/likeUsers', {
+            axios.post('/api/likeUsers', {
                 postId: this.thisPosts[key].id,
             })
             .then(response => {
@@ -230,7 +227,6 @@ export default {
                 this.lastPostId = thisPostId;
                 this.lastIndex = index;
                 this.allLikes = response.data;
-                console.log(this.allLikes)
             })
             .catch(error => {
                 console.log('fail')

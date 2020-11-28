@@ -96,7 +96,7 @@ Route::get('/follow', function(Request $request){
         return  0;
     }
 });
-Route::get('/likeUsers', function(Request $request){
+Route::post('/likeUsers', function(Request $request){
     $users_id = Like::where('post_id', $request->postId)->get('user_id');
     $like_users = User::whereIn('id', $users_id)->get();
     return $like_users;

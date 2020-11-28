@@ -4963,9 +4963,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['myInfo', 'posts', 'myLikes', 'comments', 'myUsers', 'likes'],
-  mounted: function mounted() {
-    console.log(this.likes);
-  },
   data: function data() {
     return {
       windowSize: {
@@ -5032,7 +5029,7 @@ __webpack_require__.r(__webpack_exports__);
     likeDialogOpen: function likeDialogOpen(key) {
       var _this = this;
 
-      axios.get('/api/likeUsers', {
+      axios.post('/api/likeUsers', {
         postId: this.thisPosts[key].id
       }).then(function (response) {
         _this.likeDialog = true;
@@ -5088,7 +5085,6 @@ __webpack_require__.r(__webpack_exports__);
         _this2.lastPostId = thisPostId;
         _this2.lastIndex = index;
         _this2.allLikes = response.data;
-        console.log(_this2.allLikes);
       })["catch"](function (error) {
         console.log('fail');
       });
