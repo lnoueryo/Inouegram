@@ -17090,6 +17090,7 @@ var render = function() {
               [
                 _c(
                   "v-list-item",
+                  { attrs: { href: "/profile?id=" + newPost.user_id } },
                   [
                     _c(
                       "v-list-item-avatar",
