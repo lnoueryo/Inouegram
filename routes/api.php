@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use App\User;
 use App\Like;
+use App\Post;
 use App\Follower;
 use Illuminate\Support\Facades\Auth;
 
@@ -40,36 +41,33 @@ Route::post('/create', 'HomeController@create')->name('create');
 Route::post('/store', 'HomeController@store')->name('store');
 
 Route::post('/like', function(Request $request){
-
-    $search_like = Like::where('post_id', $request->postId)->where('user_id', $request->postingUserId);
+    $search_like = Like::where('post_id', $request->postId)->where('user_id', $request->userId);
     if($search_like->exists()){
         $like = $search_like->first();
         $like->reaction = $request->reaction;
         $like->save();
     } else {
         $like = new Like;
-        $like->user_id = $request->postingUserId;
+        $like->user_id = $request->userId;
         $like->post_id = $request->postId;
         $like->reaction = $request->reaction;
         $like->save();
     }
-    $user_posts = json_decode($request->userPosts);
-    for($i=0; $i<count($user_posts); $i++){
-        $array[] = $user_posts[$i]->id;
-    }
-    $this_user_likes = Like::whereIn('post_id', $array)->get();
-    return $this_user_likes;
+    // $users_id = Like::where('post_id', $request->postId)->get('user_id');
+    // $like_users = User::whereIn('id', $users_id)->get();
+    $requested_user_posts = Post::where('user_id', $request->requestedUserId)->orderBy('updated_at', 'desc');
+    $main_user_likes = Like::where('user_id', $request->userId)->get();
+    $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
+    return [$main_user_likes,$requested_user_likes];
 });
 
 Route::post('/delete_like', function(Request $request){
-    $like = Like::where('post_id', $request->postId)->where('user_id', $request->postingUserId)->first();
+    $like = Like::where('post_id', $request->postId)->where('user_id', $request->userId)->first();
     $like->delete();
-    $user_posts = json_decode($request->userPosts);
-    for($i=0; $i<count($user_posts); $i++){
-        $array[] = $user_posts[$i]->id;
-    }
-    $this_user_likes = Like::whereIn('post_id', $array)->get();
-    return $this_user_likes;
+    $requested_user_posts = Post::where('user_id', $request->requestedUserId)->orderBy('updated_at', 'desc');
+    $main_user_likes = Like::where('user_id', $request->userId)->get();
+    $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
+    return [$main_user_likes,$requested_user_likes];
 });
 Route::post('/upload', 'ProfileController@uploadBg');
 Route::post('/upload2', 'ProfileController@uploadAvatar');

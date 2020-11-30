@@ -21,14 +21,14 @@ class ProfileController extends Controller
     // }
 
     public function index(Request $request) {
-        // $id = $request->id;
-        $this_user = User::find($request->id);
-        // $my_info = User::find(Auth::id());
-        $this_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
-        $my_likes = Like::where('user_id', Auth::id())->get();
-        $this_user_likes = Like::whereIn('post_id', $this_user_posts->get('id'))->get();
-        // $this_user_comments = Comment::whereIn('post_id', $this_user_posts->get('id'))->latest();
-        // $comment_users = User::whereIn('id', $this_user_comments->get('user_id'))->get();
+        $main_user = User::find(Auth::id())->first();
+        $requested_user = User::find($request->id)->first();
+        $requested_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
+        $main_user_likes = Like::where('user_id', Auth::id())->get();
+        $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
+        $requested_user_comments = Comment::whereIn('post_id', $requested_user_posts->get('id'))->latest();
+
+        $commented_users = User::whereIn('id', $requested_user_comments->get('user_id'))->get();
         $followed_numbers = Follower::where('followed_id', $request->id);
         $followed_count = $followed_numbers->count();
         $following_count = Follower::where('following_id', $request->id)->count();
@@ -38,7 +38,7 @@ class ProfileController extends Controller
             $followed = 1;
         }
 
-        return view('profile',['this_user_posts' => $this_user_posts->get(), 'this_user' => $this_user, 'my_likes' => $my_likes, 'this_user_likes' => $this_user_likes, 'followed' => $followed]);
+        return view('profile',['main_user' => $main_user, 'requested_user' => $requested_user, 'requested_user_posts' => $requested_user_posts->get(), 'main_user_likes' => $main_user_likes, 'requested_user_likes' => $requested_user_likes, 'followed' => $followed]);
     }
 
     // public function index(Request $request) {
@@ -75,17 +75,16 @@ class ProfileController extends Controller
             return  0;
         }
     }
-
+// TODO:
     public function deletePost(Request $request) {
-        $request = json_decode($request->post);
-        $post = Post::find($request->id);
-        $image =$request->image;
-        $exists = [];
+        $decoded_post = json_decode($request->post);
+        $post = Post::find($decoded_post->id);
+        $image = $decoded_post->image;
         for($i=0; $i<count($image); $i++){
-            Storage::delete($request->image[$i]->src);
+            Storage::delete($image[$i]->src);
         };
         $post->delete();
-        $posts = Post::where('user_id', $request->user_id)->orderBy('updated_at', 'desc')->get();
+        $posts = Post::where('user_id', $post->user_id)->orderBy('updated_at', 'desc')->get();
         return $posts;
     }
 

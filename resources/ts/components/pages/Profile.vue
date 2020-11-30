@@ -1,10 +1,10 @@
 <template>
     <div>
-        <div v-if="myInfo.id == thisUser.id">
-            <profile-templates :thisUserPosts="thisUserPosts" :thisUser="myInfo" :myLikes="myLikes" :thisUserLikes="thisUserLikes"></profile-templates>
+        <div v-if="mainUser.id == requestedUser.id">
+            <profile-templates :requestedUser="mainUser" :requestedUserPosts="requestedUserPosts" :mainUserLikes="mainUserLikes" :requestedUserLikes="requestedUserLikes"></profile-templates>
         </div>
         <div v-else>
-            <user-profile-templates :thisUserPosts="thisUserPosts" :thisUser="thisUser" :myInfo="myInfo" :myLikes="myLikes" :thisUserLikes="thisUserLikes" :followed="followed"></user-profile-templates>
+            <user-profile-templates :mainUser="mainUser" :requestedUser="requestedUser" :requestedUserPosts="requestedUserPosts" :mainUserLikes="mainUserLikes" :requestedUserLikes="requestedUserLikes" :followed="followed"></user-profile-templates>
         </div>
     </div>
 </template>
@@ -13,7 +13,7 @@
 import ProfileTemplates from '../templates/ProfileTemplate'
 import UserProfileTemplates from '../templates/UserProfileTemplate'
 export default {
-    props: ['this-user-posts', 'my-info', 'this-user', 'my-likes', 'this-user-likes', 'followed'],
+    props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'followed'],
     components: {
         ProfileTemplates,
         UserProfileTemplates

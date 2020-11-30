@@ -1,6 +1,6 @@
 <template>
     <div class="px-1">
-        <v-card class="mx-auto my-5" :max-width="dialogSize" v-for="(newPost,index) in newPosts" :key="index" v-resize="onResize">
+        <v-card class="mx-auto my-5 elevation-1" :max-width="dialogSize" v-for="(newPost,index) in newPosts" :key="index" v-resize="onResize" flat>
             <v-list>
             <v-list-item :href="'/profile?id=' + newPost.user_id">
                 <v-list-item-avatar>
@@ -92,11 +92,13 @@
                         <v-list-item-title v-text="likeUser.screen_name"></v-list-item-title>
                         </v-list-item-content>
 
-                        <v-list-item-icon>
-                        <v-icon>
-                            mdi-emoticon-angry
-                        </v-icon>
-                        </v-list-item-icon>
+                        <!-- <v-list-item-icon>
+                            <div v-if="iconType(postKey, likeUser.id) == 0"><v-icon :color="(iconType(postKey, likeUser.id) === 0) ? 'yellow' : ''">mdi-emoticon</v-icon></div>
+                            <div v-else-if="iconType(postKey, likeUser.id) == 1"><v-icon :color="(iconType(postKey, likeUser.id) === 1) ? 'blue' : ''">mdi-emoticon-cry</v-icon></div>
+                            <div v-else-if="iconType(postKey, likeUser.id) == 2"><v-icon :color="(iconType(postKey, likeUser.id) === 2) ? 'orange' : ''">mdi-emoticon-lol</v-icon></div>
+                            <div v-else-if="iconType(postKey, likeUser.id) == 3"><v-icon :color="(iconType(postKey, likeUser.id) === 3) ? 'red' : ''">mdi-emoticon-angry</v-icon></div>
+                            <div v-else><v-icon :color="(iconType(postKey, likeUser.id) === 4) ? 'pink' : ''">mdi-emoticon-kiss</v-icon></div>
+                        </v-list-item-icon> -->
                     </v-list-item>
                 </div>
                 </v-list>
@@ -113,6 +115,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <a href="#app">aaaa</a>
     </div>
 </template>
 
@@ -191,6 +194,7 @@ export default {
             var a = likes.filter((object) => {
                 return object.post_id === id;
             });
+            console.log(likes);
             return a.length;
         },
         userAvatar(id){
