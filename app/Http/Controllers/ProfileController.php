@@ -22,23 +22,19 @@ class ProfileController extends Controller
 
     public function index(Request $request) {
         $main_user = User::find(Auth::id())->first();
-        $requested_user = User::find($request->id)->first();
+        $requested_user = User::find($request->id);
         $requested_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
         $main_user_likes = Like::where('user_id', Auth::id())->get();
         $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
         $requested_user_comments = Comment::whereIn('post_id', $requested_user_posts->get('id'))->latest();
 
         $commented_users = User::whereIn('id', $requested_user_comments->get('user_id'))->get();
-        $followed_numbers = Follower::where('followed_id', $request->id);
-        $followed_count = $followed_numbers->count();
-        $following_count = Follower::where('following_id', $request->id)->count();
-        if($followed_numbers->where('following_id', Auth::id())->count() == 0){
-            $followed = 0;
-        } else {
-            $followed = 1;
-        }
+        $requested_user_followed = Follower::where('followed_id', $request->id)->get();
+        // $is_followed = $followed_numbers->where('following_id', Auth::id())->count();
 
-        return view('profile',['main_user' => $main_user, 'requested_user' => $requested_user, 'requested_user_posts' => $requested_user_posts->get(), 'main_user_likes' => $main_user_likes, 'requested_user_likes' => $requested_user_likes, 'followed' => $followed]);
+        // $followed_count = $followed_numbers->count();
+        // $following_count = Follower::where('following_id', $request->id)->count();
+        return view('profile', ['main_user' => $main_user, 'requested_user' => $requested_user, 'requested_user_posts' => $requested_user_posts->get(), 'main_user_likes' => $main_user_likes, 'requested_user_likes' => $requested_user_likes, 'requested_user_followed' => $requested_user_followed]);
     }
 
     // public function index(Request $request) {

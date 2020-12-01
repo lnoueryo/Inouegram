@@ -16,10 +16,15 @@
                 <v-list-item-content>
                     <v-list-item-title class="title" style="margin-top:20px;">{{requestedUserInfo.screen_name}}</v-list-item-title>
                     <v-list-item-subtitle>{{requestedUserInfo.name}}</v-list-item-subtitle>
-                    <v-list-item-subtitle>フォロワー</v-list-item-subtitle>
+                    <v-list-item-subtitle>フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle>
                 </v-list-item-content>
-                <div class="font-weight-light grey--text title mb-2">
+                <div class="font-weight-light grey--text title mb-2" v-if="visitor.id == user.id">
                     <v-btn @click="logout">ログアウト</v-btn>
+                </div>
+                <div v-else>
+                    <v-btn elevation="1" :color="isFollowed ? 'error' : 'primary'" @click="follow(isFollowed);">
+                        <span>{{ isFollowed ? 'フォロー済み' : 'フォローする' }}</span>
+                    </v-btn>
                 </div>
             </v-list-item>
         </v-card>
@@ -95,7 +100,7 @@
                                 <v-list subheader  style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>Recent chat</v-subheader>
                                     <div>
-                                        <v-list-item v-for="(likedUser, index) in likedUsers[0]" :key="index" :href="'/profile?id=' + likedUser.id">
+                                        <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.id">
                                             <v-list-item-avatar>
                                             <v-img :src="'storage/image/avatar/' + likedUser.profile_image"></v-img>
                                             </v-list-item-avatar>
@@ -105,10 +110,10 @@
                                             </v-list-item-content>
 
                                             <v-list-item-icon>
-                                                <div v-if="likedUsers[1][index] == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
-                                                <div v-else-if="likedUsers[1][index] == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
-                                                <div v-else-if="likedUsers[1][index] == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
-                                                <div v-else-if="likedUsers[1][index] == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
+                                                <div v-if="likedUser.reaction == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
+                                                <div v-else-if="likedUser.reaction == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
+                                                <div v-else-if="likedUser.reaction == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
+                                                <div v-else-if="likedUser.reaction == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
                                                 <div v-else><v-icon color="pink">mdi-emoticon-kiss</v-icon></div>
                                             </v-list-item-icon>
                                         </v-list-item>
@@ -245,11 +250,13 @@
 <script>
 
   export default {
-    props: ['requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'followed'],
+    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed'],
     data () {
         return {
+            visitor: this.mainUser,
             user: this.requestedUser,
             userPosts: this.requestedUserPosts,
+            userFollowed: this.requestedUserFollowed,
             dialog: false,
             dialogPost: '',
             dialogPostIndex: '',
@@ -333,13 +340,24 @@
         likedUsers(){
             var likeUsers = this.likeUsers;
             if(likeUsers){
-                var likeUserReactions = likeUsers.map((likeUser) => {
-                    return this.iconType(likeUser.id);
+                var newLikeUsers = likeUsers.map((likeUser) => {
+                    return Object.assign(likeUser, {reaction: this.iconType(likeUser.id)});
                 })
-                return [likeUsers,likeUserReactions];
+                return newLikeUsers;
             } else {
                 return false;
             }
+        },
+        isFollowed(){
+            var userFolloweds = this.userFollowed;
+            var visitor = this.visitor;
+            return userFolloweds.some((userFollowed) => {
+                return userFollowed.following_id === this.visitor.id;
+            })
+        },
+        userFollowedNumer(){
+            var userFollowedNumer = this.userFollowed.length;
+            return userFollowedNumer;
         }
     },
     methods: {
@@ -418,10 +436,14 @@
             }
         },
         btnclick() {
-            this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+            if(this.visitor.id == this.user.id){
+                this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+            }
         },
         btnclick2() {
-            this.$refs.avatar.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+            if(this.visitor.id == this.user.id){
+                this.$refs.avatar.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+            }
         },
         openDialog(userPost, index){
             this.dialogPost = userPost;
@@ -498,7 +520,7 @@
         like(index){
             axios.post('/api/like', {
                 postId: this.dialogPost.id,
-                userId: this.user.id,
+                userId: this.visitor.id,
                 requestedUserId: this.user.id,
                 reaction: index,
             })
@@ -508,6 +530,7 @@
                 this.lastIndex = index;
                 this.userLikes = response.data[0];
                 this.userPostLikes = response.data[1];
+                this.likeUsers = response.data[2];
             })
             .catch(error => {
                 console.log('fail')
@@ -516,17 +539,29 @@
         deleteLike(thisPostId, index){
             axios.post('/api/delete_like', {
                 postId: thisPostId,
-                userId: this.user.id,
+                userId: this.visitor.id,
                 requestedUserId: this.user.id,
                 reaction: index,
             })
             .then(response => {
                 this.userLikes = response.data[0];
                 this.userPostLikes = response.data[1];
+                this.likeUsers = response.data[2];
             })
             .catch(error => {
                 console.log('fail')
             })
+        },
+        follow(isFollowed){
+                axios.get('/api/follow', {
+                params: {'id': this.user.id, 'myId': this.visitor.id, 'isFollowed': isFollowed},
+            })
+            .then(
+                response => (this.userFollowed = response.data)
+            )
+            .catch(function (error) {
+                console.log(error);
+            });
         },
     }
 }

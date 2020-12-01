@@ -4779,10 +4779,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'followed'],
+  props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed'],
   components: {
     ProfileTemplates: _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__["default"],
     UserProfileTemplates: _templates_UserProfileTemplate__WEBPACK_IMPORTED_MODULE_1__["default"]
@@ -7280,12 +7281,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'followed'],
+  props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed'],
   data: function data() {
     return {
+      visitor: this.mainUser,
       user: this.requestedUser,
       userPosts: this.requestedUserPosts,
+      userFollowed: this.requestedUserFollowed,
       dialog: false,
       dialogPost: '',
       dialogPostIndex: '',
@@ -7397,21 +7405,36 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var likeUsers = this.likeUsers;
 
       if (likeUsers) {
-        var likeUserReactions = likeUsers.map(function (likeUser) {
-          return _this4.iconType(likeUser.id);
+        var newLikeUsers = likeUsers.map(function (likeUser) {
+          return Object.assign(likeUser, {
+            reaction: _this4.iconType(likeUser.id)
+          });
         });
-        return [likeUsers, likeUserReactions];
+        return newLikeUsers;
       } else {
         return false;
       }
+    },
+    isFollowed: function isFollowed() {
+      var _this5 = this;
+
+      var userFolloweds = this.userFollowed;
+      var visitor = this.visitor;
+      return userFolloweds.some(function (userFollowed) {
+        return userFollowed.following_id === _this5.visitor.id;
+      });
+    },
+    userFollowedNumer: function userFollowedNumer() {
+      var userFollowedNumer = this.userFollowed.length;
+      return userFollowedNumer;
     }
   },
   methods: {
     iconType: function iconType(userId) {
-      var _this5 = this;
+      var _this6 = this;
 
       var userPostLikes = this.userPostLikes.filter(function (userPostLike) {
-        return userPostLike.post_id === _this5.dialogPost.id;
+        return userPostLike.post_id === _this6.dialogPost.id;
       });
       var userPostLike = userPostLikes.find(function (like) {
         return like.user_id === userId;
@@ -7431,7 +7454,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
     },
     changeBg: function changeBg() {
-      var _this6 = this;
+      var _this7 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var bgData, fd;
@@ -7439,13 +7462,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                bgData = _this6.changingBgData;
+                bgData = _this7.changingBgData;
                 fd = new FormData();
                 fd.append("bgData", bgData);
-                fd.append("userId", _this6.user.id);
+                fd.append("userId", _this7.user.id);
                 axios.post('/api/upload', fd).then(function (response) {
-                  _this6.changeBgDialog = false;
-                  _this6.user = response.data;
+                  _this7.changeBgDialog = false;
+                  _this7.user = response.data;
                 })["catch"](function (error) {
                   console.log(error);
                 });
@@ -7459,7 +7482,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     changeAvatar: function changeAvatar(event) {
-      var _this7 = this;
+      var _this8 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
         var file, reader, avatarData, that;
@@ -7470,7 +7493,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 file = event.target.files[0];
                 reader = new FileReader();
                 reader.readAsDataURL(file);
-                that = _this7;
+                that = _this8;
 
                 reader.onload = function (e) {
                   avatarData = e.target.result;
@@ -7509,21 +7532,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     btnclick: function btnclick() {
-      this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+      if (this.visitor.id == this.user.id) {
+        this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+      }
     },
     btnclick2: function btnclick2() {
-      this.$refs.avatar.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+      if (this.visitor.id == this.user.id) {
+        this.$refs.avatar.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+      }
     },
     openDialog: function openDialog(userPost, index) {
-      var _this8 = this;
+      var _this9 = this;
 
       this.dialogPost = userPost;
       this.dialogPostIndex = index;
       axios.post('/api/likeUsers', {
         postId: userPost.id
       }).then(function (response) {
-        _this8.dialog = true;
-        _this8.likeUsers = response.data;
+        _this9.dialog = true;
+        _this9.likeUsers = response.data;
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -7535,7 +7562,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.showUp = false;
     },
     submit: function submit() {
-      var _this9 = this;
+      var _this10 = this;
 
       axios.get('/api/comment', {
         params: {
@@ -7544,21 +7571,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'text': this.comment
         }
       }).then(function (response) {
-        return _this9.thisUserComments = response.data;
+        return _this10.thisUserComments = response.data;
       }, this.$refs.carouselPost.remove(), this.snackbar = true, this.destroy())["catch"](function (error) {
         console.log(error);
       });
     },
     deletePost: function deletePost(dialogPost) {
-      var _this10 = this;
+      var _this11 = this;
 
       var fd = new FormData();
       fd.append("post", JSON.stringify(dialogPost));
       axios.post('/api/delete_post', fd).then(function (response) {
-        _this10.userPosts = response.data;
-        _this10.dialog = false;
-        _this10.deleteDialog = false;
-        _this10.snackbar = true;
+        _this11.userPosts = response.data;
+        _this11.dialog = false;
+        _this11.deleteDialog = false;
+        _this11.snackbar = true;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -7585,36 +7612,53 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     like: function like(index) {
-      var _this11 = this;
+      var _this12 = this;
 
       axios.post('/api/like', {
         postId: this.dialogPost.id,
-        userId: this.user.id,
+        userId: this.visitor.id,
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this11.snackbar = true;
-        _this11.lastPostId = _this11.dialogPost.id;
-        _this11.lastIndex = index;
-        _this11.userLikes = response.data[0];
-        _this11.userPostLikes = response.data[1];
+        _this12.snackbar = true;
+        _this12.lastPostId = _this12.dialogPost.id;
+        _this12.lastIndex = index;
+        _this12.userLikes = response.data[0];
+        _this12.userPostLikes = response.data[1];
+        _this12.likeUsers = response.data[2];
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     deleteLike: function deleteLike(thisPostId, index) {
-      var _this12 = this;
+      var _this13 = this;
 
       axios.post('/api/delete_like', {
         postId: thisPostId,
-        userId: this.user.id,
+        userId: this.visitor.id,
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this12.userLikes = response.data[0];
-        _this12.userPostLikes = response.data[1];
+        _this13.userLikes = response.data[0];
+        _this13.userPostLikes = response.data[1];
+        _this13.likeUsers = response.data[2];
       })["catch"](function (error) {
         console.log('fail');
+      });
+    },
+    follow: function follow(isFollowed) {
+      var _this14 = this;
+
+      axios.get('/api/follow', {
+        params: {
+          'id': this.user.id,
+          'myId': this.visitor.id,
+          'isFollowed': isFollowed
+        }
+      }).then(function (response) {
+        return _this14.userFollowed = response.data;
+      })["catch"](function (error) {
+        console.log(error);
       });
     }
   }
@@ -17044,39 +17088,22 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _vm.mainUser.id == _vm.requestedUser.id
-      ? _c(
-          "div",
-          [
-            _c("profile-templates", {
-              attrs: {
-                requestedUser: _vm.mainUser,
-                requestedUserPosts: _vm.requestedUserPosts,
-                mainUserLikes: _vm.mainUserLikes,
-                requestedUserLikes: _vm.requestedUserLikes
-              }
-            })
-          ],
-          1
-        )
-      : _c(
-          "div",
-          [
-            _c("user-profile-templates", {
-              attrs: {
-                mainUser: _vm.mainUser,
-                requestedUser: _vm.requestedUser,
-                requestedUserPosts: _vm.requestedUserPosts,
-                mainUserLikes: _vm.mainUserLikes,
-                requestedUserLikes: _vm.requestedUserLikes,
-                followed: _vm.followed
-              }
-            })
-          ],
-          1
-        )
-  ])
+  return _c(
+    "div",
+    [
+      _c("profile-templates", {
+        attrs: {
+          mainUser: _vm.mainUser,
+          requestedUser: _vm.requestedUser,
+          requestedUserPosts: _vm.requestedUserPosts,
+          mainUserLikes: _vm.mainUserLikes,
+          requestedUserLikes: _vm.requestedUserLikes,
+          requestedUserFollowed: _vm.requestedUserFollowed
+        }
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -20522,21 +20549,53 @@ var render = function() {
                     _vm._v(_vm._s(_vm.requestedUserInfo.name))
                   ]),
                   _vm._v(" "),
-                  _c("v-list-item-subtitle", [_vm._v("フォロワー")])
+                  _c("v-list-item-subtitle", [
+                    _vm._v("フォロワー" + _vm._s(_vm.userFollowedNumer) + "人")
+                  ])
                 ],
                 1
               ),
               _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "font-weight-light grey--text title mb-2" },
-                [
-                  _c("v-btn", { on: { click: _vm.logout } }, [
-                    _vm._v("ログアウト")
-                  ])
-                ],
-                1
-              )
+              _vm.visitor.id == _vm.user.id
+                ? _c(
+                    "div",
+                    { staticClass: "font-weight-light grey--text title mb-2" },
+                    [
+                      _c("v-btn", { on: { click: _vm.logout } }, [
+                        _vm._v("ログアウト")
+                      ])
+                    ],
+                    1
+                  )
+                : _c(
+                    "div",
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: {
+                            elevation: "1",
+                            color: _vm.isFollowed ? "error" : "primary"
+                          },
+                          on: {
+                            click: function($event) {
+                              return _vm.follow(_vm.isFollowed)
+                            }
+                          }
+                        },
+                        [
+                          _c("span", [
+                            _vm._v(
+                              _vm._s(
+                                _vm.isFollowed ? "フォロー済み" : "フォローする"
+                              )
+                            )
+                          ])
+                        ]
+                      )
+                    ],
+                    1
+                  )
             ],
             1
           )
@@ -21034,7 +21093,7 @@ var render = function() {
                                       _vm._v(" "),
                                       _c(
                                         "div",
-                                        _vm._l(_vm.likedUsers[0], function(
+                                        _vm._l(_vm.likedUsers, function(
                                           likedUser,
                                           index
                                         ) {
@@ -21077,7 +21136,7 @@ var render = function() {
                                               ),
                                               _vm._v(" "),
                                               _c("v-list-item-icon", [
-                                                _vm.likedUsers[1][index] == 0
+                                                likedUser.reaction == 0
                                                   ? _c(
                                                       "div",
                                                       [
@@ -21097,8 +21156,7 @@ var render = function() {
                                                       ],
                                                       1
                                                     )
-                                                  : _vm.likedUsers[1][index] ==
-                                                    1
+                                                  : likedUser.reaction == 1
                                                   ? _c(
                                                       "div",
                                                       [
@@ -21118,8 +21176,7 @@ var render = function() {
                                                       ],
                                                       1
                                                     )
-                                                  : _vm.likedUsers[1][index] ==
-                                                    2
+                                                  : likedUser.reaction == 2
                                                   ? _c(
                                                       "div",
                                                       [
@@ -21139,8 +21196,7 @@ var render = function() {
                                                       ],
                                                       1
                                                     )
-                                                  : _vm.likedUsers[1][index] ==
-                                                    3
+                                                  : likedUser.reaction == 3
                                                   ? _c(
                                                       "div",
                                                       [

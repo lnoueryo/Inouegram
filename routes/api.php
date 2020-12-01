@@ -58,7 +58,9 @@ Route::post('/like', function(Request $request){
     $requested_user_posts = Post::where('user_id', $request->requestedUserId)->orderBy('updated_at', 'desc');
     $main_user_likes = Like::where('user_id', $request->userId)->get();
     $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
-    return [$main_user_likes,$requested_user_likes];
+    $users_id = Like::where('post_id', $request->postId)->get('user_id');
+    $like_users = User::whereIn('id', $users_id)->get();
+    return [$main_user_likes,$requested_user_likes,$like_users];
 });
 
 Route::post('/delete_like', function(Request $request){
@@ -67,7 +69,9 @@ Route::post('/delete_like', function(Request $request){
     $requested_user_posts = Post::where('user_id', $request->requestedUserId)->orderBy('updated_at', 'desc');
     $main_user_likes = Like::where('user_id', $request->userId)->get();
     $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
-    return [$main_user_likes,$requested_user_likes];
+    $users_id = Like::where('post_id', $request->postId)->get('user_id');
+    $like_users = User::whereIn('id', $users_id)->get();
+    return [$main_user_likes,$requested_user_likes,$like_users];
 });
 Route::post('/upload', 'ProfileController@uploadBg');
 Route::post('/upload2', 'ProfileController@uploadAvatar');
@@ -82,17 +86,18 @@ Route::get('/user', function(Request $request){
 });
 
 Route::get('/follow', function(Request $request){
-    if($request->followed == 0) {
+    if($request->isFollowed == 'true') {
+        $follower = Follower::where('following_id', $request->myId)->where('followed_id', $request->id);
+        $follower->delete();
+        $requested_user_followed = Follower::where('followed_id', $request->id)->get();
+    } else {
         $follower = new Follower;
         $follower->following_id = $request->myId;
         $follower->followed_id = $request->id;
         $follower->save();
-        return  1;
-    } else {
-        $follower = Follower::where('following_id', $request->myId)->where('followed_id', $request->id);
-        $follower->delete();
-        return  0;
+        $requested_user_followed = Follower::where('followed_id', $request->id)->get();
     }
+    return  $requested_user_followed;
 });
 Route::post('/likeUsers', function(Request $request){
     $users_id = Like::where('post_id', $request->postId)->get('user_id');
