@@ -29,13 +29,18 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $my_info = Auth::user();
-        $followers = Follower::where('following_id', $my_info->id);
-        $my_users = User::where('id', $my_info->id)->orWhereIn('id', $followers->get('followed_id'));
-        $posts = Post::whereIn('user_id', $my_users->get('id'));
-        $my_likes = Like::where('user_id', Auth::id())->get();
-        $likes = Like::whereIn('post_id', $posts->get('id'))->get();
-        return view('index', ['my_info' => $my_info, 'posts' => $posts->orderBy('updated_at', 'desc')->take(20)->get(), 'my_likes' => $my_likes, 'my_users' => $my_users->get(), 'likes' => $likes]);
+        $main_user = Auth::user();
+        $following_users = Follower::where('following_id', Auth::id());
+        $following_users_info = User::where('id', Auth::id())->orWhereIn('id', $following_users->get('followed_id'))->get();
+        $posts = Post::whereIn('user_id', User::where('id', Auth::id())->orWhereIn('id', $following_users->get('followed_id'))->get('id'));
+        $main_user_likes = Like::where('user_id', Auth::id())->get();
+        $likes = Like::whereIn('post_id', $posts->get('id'));
+        $liked_users = User::whereIn('id', $likes->get('user_id'))->get();
+
+        // $requested_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
+        // $requested_user_comments = Comment::whereIn('post_id', $requested_user_posts->get('id'))->latest();
+        // $commented_users = User::whereIn('id', $requested_user_comments->get('user_id'))->get();
+        return view('index', ['main_user' => $main_user, 'posts' => $posts->orderBy('updated_at', 'desc')->take(20)->get(), 'main_user_likes' => $main_user_likes, 'following_users_info' => $following_users_info, 'likes' => $likes->get(), 'liked_users' => $liked_users]);
     }
     // public function index()
     // {

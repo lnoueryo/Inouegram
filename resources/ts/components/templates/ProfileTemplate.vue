@@ -110,10 +110,10 @@
                                             </v-list-item-content>
 
                                             <v-list-item-icon>
-                                                <div v-if="likedUser.reaction == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
-                                                <div v-else-if="likedUser.reaction == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
-                                                <div v-else-if="likedUser.reaction == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
-                                                <div v-else-if="likedUser.reaction == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
+                                                <div v-if="iconType(likedUser.id) == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
+                                                <div v-else-if="iconType(likedUser.id) == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
+                                                <div v-else-if="iconType(likedUser.id) == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
+                                                <div v-else-if="iconType(likedUser.id) == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
                                                 <div v-else><v-icon color="pink">mdi-emoticon-kiss</v-icon></div>
                                             </v-list-item-icon>
                                         </v-list-item>
@@ -263,7 +263,7 @@
             carousel: [],
             deleteDialog: false,
             length: 3,
-            window: '',
+            window: 0,
             userLikes: this.mainUserLikes,
             userPostLikes: this.requestedUserLikes,
             postLikes: this.requestedUserLikes,
@@ -314,8 +314,12 @@
         },
         mainUserLike(){
             return this.dialogPost ? this.userLikes.find((userserLike) => {
-                    return userserLike.post_id === this.dialogPost.id;
-                }) : '';
+                return userserLike.post_id === this.dialogPost.id;
+            }) : '';
+        },
+        likedUsers(){
+            var likeUsers = this.likeUsers;
+            return likeUsers;
         },
         card(){
             if(this.windowSize.x < 480){
@@ -337,17 +341,6 @@
             })
             return userPostLike.length;
         },
-        likedUsers(){
-            var likeUsers = this.likeUsers;
-            if(likeUsers){
-                var newLikeUsers = likeUsers.map((likeUser) => {
-                    return Object.assign(likeUser, {reaction: this.iconType(likeUser.id)});
-                })
-                return newLikeUsers;
-            } else {
-                return false;
-            }
-        },
         isFollowed(){
             var userFolloweds = this.userFollowed;
             var visitor = this.visitor;
@@ -365,10 +358,18 @@
             var userPostLikes = this.userPostLikes.filter((userPostLike) => {
                 return userPostLike.post_id === this.dialogPost.id;
             });
-            var userPostLike = userPostLikes.find((like) => {
-                return like.user_id === userId;
-            })
-            return userPostLike.reaction;
+            if (userPostLikes) {
+                var userPostLike = userPostLikes.find((like) => {
+                    return like.user_id === userId;
+                })
+                if(userPostLike){
+                    return userPostLike.reaction;
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
         },
         next () {
             this.window = this.window + 1 === this.length
@@ -448,12 +449,15 @@
         openDialog(userPost, index){
             this.dialogPost = userPost;
             this.dialogPostIndex = index;
+            this.findLikeUsers(userPost);
+        },
+        findLikeUsers(userPost){
             axios.post('/api/likeUsers', {
                 postId: userPost.id,
             })
             .then(response => {
-                this.dialog = true;
                 this.likeUsers = response.data;
+                this.dialog = true;
             })
             .catch(error => {
                 console.log('fail')
@@ -528,9 +532,8 @@
                 this.snackbar = true;
                 this.lastPostId = this.dialogPost.id;
                 this.lastIndex = index;
-                this.userLikes = response.data[0];
-                this.userPostLikes = response.data[1];
-                this.likeUsers = response.data[2];
+                this.checkLikeObj(response.data);
+                this.findLikeUsers(this.dialogPost);
             })
             .catch(error => {
                 console.log('fail')
@@ -544,13 +547,37 @@
                 reaction: index,
             })
             .then(response => {
-                this.userLikes = response.data[0];
-                this.userPostLikes = response.data[1];
-                this.likeUsers = response.data[2];
+                // this.userLikes = response.data[0];
+                // this.userPostLikes = response.data[1];
+                // this.likeUsers = response.data[2];
+                this.findDeleteLike(response.data);
+                this.findLikeUsers(this.dialogPost);
             })
             .catch(error => {
                 console.log('fail')
             })
+        },
+        checkLikeObj(res){
+            var isLike = this.userLikes.find((userLike) => {
+                return userLike.post_id === res.post_id;
+            })
+            if(isLike){
+                isLike.reaction = res.reaction;
+            } else {
+                this.userLikes.push(res);
+                this.userPostLikes.push(res);
+            }
+        },
+        findDeleteLike(res){
+            var newUserLikes = this.userLikes.filter((userLike) => {
+                return userLike.id !== res.id;
+            })
+            this.userLikes = newUserLikes;
+
+            var newUserPostLikes = this.userPostLikes.filter((userPostLike) => {
+                return userPostLike.id !== res.id;
+            })
+            this.userPostLikes = newUserPostLikes;
         },
         follow(isFollowed){
                 axios.get('/api/follow', {

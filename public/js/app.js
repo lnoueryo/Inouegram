@@ -4433,7 +4433,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['my-info', 'posts', 'my-likes', 'my-users', 'likes'],
+  props: ['main-user', 'posts', 'main-user-likes', 'likes', 'following-users-info', 'liked-users'],
   components: {
     IndexTemplate: _templates_IndexTemplate__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
@@ -4958,17 +4958,33 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['myInfo', 'posts', 'myLikes', 'comments', 'myUsers', 'likes'],
+  props: ['mainUser', 'posts', 'mainUserLikes', 'comments', 'likes', 'followingUsersInfo', 'likedUsers'],
   data: function data() {
     return {
+      abc: '',
+      visitor: this.mainUser,
+      userPosts: this.posts,
+      usersInfo: this.followingUsersInfo,
+      userLikes: this.mainUserLikes,
+      usersLikes: this.likes,
+      likedUsersInfo: this.likedUsers,
+      btns: [{
+        color: 'yellow',
+        icon: 'mdi-emoticon'
+      }, {
+        color: 'blue',
+        icon: 'mdi-emoticon-cry'
+      }, {
+        color: 'orange',
+        icon: 'mdi-emoticon-lol'
+      }, {
+        color: 'red',
+        icon: 'mdi-emoticon-angry'
+      }, {
+        color: 'pink',
+        icon: 'mdi-emoticon-kiss'
+      }],
       windowSize: {
         x: 0,
         y: 0
@@ -4976,32 +4992,27 @@ __webpack_require__.r(__webpack_exports__);
       show: [],
       snackbar: false,
       text: "Hello, I'm a snackbar",
-      thisUser: this.myInfo,
-      thisPosts: this.posts,
-      thisLikes: this.myLikes,
-      allLikes: this.likes,
-      users: this.myUsers,
-      likeArray: [],
-      followingUser: [{
-        following_id: 2,
-        followed_id: 1
-      }],
       menu: [],
       lastPostId: '',
       lastIndex: '',
       likeDialog: false,
-      likeUsers: ''
+      likeUsers: '',
+      dialogPostId: ''
     };
   },
   computed: {
-    newPosts: function newPosts() {
-      var posts = this.posts;
+    parsedUserPosts: function parsedUserPosts() {
+      var userPosts = this.userPosts;
 
-      for (var i = 0; i < posts.length; i++) {
-        posts[i].image = JSON.parse(posts[i].image);
+      if (userPosts.length == 0) {
+        return false;
+      } else {
+        for (var i = 0; i < userPosts.length; i++) {
+          userPosts[i].image = JSON.parse(userPosts[i].image);
+        }
+
+        return userPosts;
       }
-
-      return posts;
     },
     dialogSize: function dialogSize() {
       if (this.windowSize.x < 480) {
@@ -5011,62 +5022,65 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
   },
-  created: function created() {
-    var thisPosts = this.thisPosts;
-    var thisLikes = this.thisLikes;
-
-    for (var i = 0; i < thisPosts.length; i++) {
-      this.likeArray.push({
-        like: false,
-        reaction: ''
-      });
-
-      for (var j = 0; j < thisLikes.length; j++) {
-        if (thisPosts[i].id == thisLikes[j].post_id) {
-          this.likeArray[i].like = true;
-          this.likeArray[i].reaction = thisLikes[j].reaction;
-        }
-      }
-    }
-  },
   methods: {
-    likeDialogOpen: function likeDialogOpen(key) {
+    iconType: function iconType(userId) {
       var _this = this;
 
+      var usersLikes = this.usersLikes.filter(function (usersLike) {
+        return usersLike.post_id === _this.dialogPostId;
+      });
+
+      if (usersLikes) {
+        var userPostLike = usersLikes.find(function (like) {
+          return like.user_id === userId;
+        });
+
+        if (userPostLike) {
+          return userPostLike.reaction;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
+    postUser: function postUser(id) {
+      var usersInfo = this.usersInfo;
+      var userInfo = usersInfo.find(function (userInfo) {
+        return userInfo.id === id;
+      });
+      return userInfo;
+    },
+    isLike: function isLike(id) {
+      if (this.userLikes.some(function (userLike) {
+        return userLike.post_id === id;
+      })) {
+        return this.userLikes.find(function (userLike) {
+          return userLike.post_id === id;
+        });
+      } else {
+        return false;
+      }
+    },
+    likeDialogOpen: function likeDialogOpen(id) {
+      var _this2 = this;
+
       axios.post('/api/likeUsers', {
-        postId: this.thisPosts[key].id
+        postId: id
       }).then(function (response) {
-        _this.likeDialog = true;
-        _this.likeUsers = response.data;
+        _this2.likeDialog = true;
+        _this2.likeUsers = response.data;
+        _this2.dialogPostId = id;
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     totalLikeNumber: function totalLikeNumber(id) {
-      var likes = this.allLikes;
-      var a = likes.filter(function (object) {
-        return object.post_id === id;
+      var usersLikes = this.usersLikes;
+      var likes = usersLikes.filter(function (usersLike) {
+        return usersLike.post_id === id;
       });
-      console.log(likes);
-      return a.length;
-    },
-    userAvatar: function userAvatar(id) {
-      var users = this.myUsers;
-
-      for (var i = 0; i < users.length; i++) {
-        if (id == users[i].id) {
-          return users[i].profile_image;
-        }
-      }
-    },
-    userName: function userName(id) {
-      var users = this.myUsers;
-
-      for (var i = 0; i < users.length; i++) {
-        if (id == users[i].id) {
-          return users[i].screen_name;
-        }
-      }
+      return likes.length;
     },
     onResize: function onResize() {
       this.windowSize = {
@@ -5074,40 +5088,58 @@ __webpack_require__.r(__webpack_exports__);
         y: window.innerHeight
       };
     },
-    like: function like(thisPostId, num, index) {
-      var _this2 = this;
+    like: function like(index, id, user_id) {
+      var _this3 = this;
 
-      this.menu[index] = false;
-      this.likeArray[index].like = true;
-      this.likeArray[index].reaction = num;
       axios.post('/api/like', {
-        postId: thisPostId,
-        postingUserId: this.myInfo.id,
-        reaction: num,
-        userPosts: JSON.stringify(this.thisPosts)
+        postId: id,
+        userId: this.visitor.id,
+        requestedUserId: user_id,
+        reaction: index
       }).then(function (response) {
-        _this2.snackbar = true;
-        _this2.lastPostId = thisPostId;
-        _this2.lastIndex = index;
-        _this2.allLikes = response.data;
+        _this3.snackbar = true;
+        _this3.lastPostId = id;
+        _this3.lastIndex = index;
+
+        _this3.checkLikeObj(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
-    deleteLike: function deleteLike(thisPostId, index) {
-      var _this3 = this;
+    deleteLike: function deleteLike(id, user_id) {
+      var _this4 = this;
 
-      this.likeArray[index].like = false;
-      this.likeArray[index].reaction = '';
       axios.post('/api/delete_like', {
-        postId: thisPostId,
-        postingUserId: this.myInfo.id,
-        userPosts: JSON.stringify(this.thisPosts)
+        postId: id,
+        userId: this.visitor.id,
+        requestedUserId: user_id
       }).then(function (response) {
-        _this3.allLikes = response.data;
+        _this4.findDeleteLike(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
+    },
+    checkLikeObj: function checkLikeObj(res) {
+      var isLike = this.userLikes.find(function (userLike) {
+        return userLike.post_id === res.post_id;
+      });
+
+      if (isLike) {
+        isLike.reaction = res.reaction;
+      } else {
+        this.userLikes.push(res);
+        this.usersLikes.push(res);
+      }
+    },
+    findDeleteLike: function findDeleteLike(res) {
+      var newUserLikes = this.userLikes.filter(function (userLike) {
+        return userLike.id !== res.id;
+      });
+      this.userLikes = newUserLikes;
+      var newUsersLikes = this.usersLikes.filter(function (usersLike) {
+        return usersLike.id !== res.id;
+      });
+      this.usersLikes = newUsersLikes;
     }
   }
 });
@@ -7300,7 +7332,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       carousel: [],
       deleteDialog: false,
       length: 3,
-      window: '',
+      window: 0,
       userLikes: this.mainUserLikes,
       userPostLikes: this.requestedUserLikes,
       postLikes: this.requestedUserLikes,
@@ -7369,6 +7401,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return userserLike.post_id === _this2.dialogPost.id;
       }) : '';
     },
+    likedUsers: function likedUsers() {
+      var likeUsers = this.likeUsers;
+      return likeUsers;
+    },
     card: function card() {
       if (this.windowSize.x < 480) {
         return {
@@ -7399,29 +7435,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
       return userPostLike.length;
     },
-    likedUsers: function likedUsers() {
-      var _this4 = this;
-
-      var likeUsers = this.likeUsers;
-
-      if (likeUsers) {
-        var newLikeUsers = likeUsers.map(function (likeUser) {
-          return Object.assign(likeUser, {
-            reaction: _this4.iconType(likeUser.id)
-          });
-        });
-        return newLikeUsers;
-      } else {
-        return false;
-      }
-    },
     isFollowed: function isFollowed() {
-      var _this5 = this;
+      var _this4 = this;
 
       var userFolloweds = this.userFollowed;
       var visitor = this.visitor;
       return userFolloweds.some(function (userFollowed) {
-        return userFollowed.following_id === _this5.visitor.id;
+        return userFollowed.following_id === _this4.visitor.id;
       });
     },
     userFollowedNumer: function userFollowedNumer() {
@@ -7431,15 +7451,25 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   },
   methods: {
     iconType: function iconType(userId) {
-      var _this6 = this;
+      var _this5 = this;
 
       var userPostLikes = this.userPostLikes.filter(function (userPostLike) {
-        return userPostLike.post_id === _this6.dialogPost.id;
+        return userPostLike.post_id === _this5.dialogPost.id;
       });
-      var userPostLike = userPostLikes.find(function (like) {
-        return like.user_id === userId;
-      });
-      return userPostLike.reaction;
+
+      if (userPostLikes) {
+        var userPostLike = userPostLikes.find(function (like) {
+          return like.user_id === userId;
+        });
+
+        if (userPostLike) {
+          return userPostLike.reaction;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
     },
     next: function next() {
       this.window = this.window + 1 === this.length ? 0 : this.window + 1;
@@ -7454,7 +7484,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
     },
     changeBg: function changeBg() {
-      var _this7 = this;
+      var _this6 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var bgData, fd;
@@ -7462,13 +7492,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                bgData = _this7.changingBgData;
+                bgData = _this6.changingBgData;
                 fd = new FormData();
                 fd.append("bgData", bgData);
-                fd.append("userId", _this7.user.id);
+                fd.append("userId", _this6.user.id);
                 axios.post('/api/upload', fd).then(function (response) {
-                  _this7.changeBgDialog = false;
-                  _this7.user = response.data;
+                  _this6.changeBgDialog = false;
+                  _this6.user = response.data;
                 })["catch"](function (error) {
                   console.log(error);
                 });
@@ -7482,7 +7512,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     changeAvatar: function changeAvatar(event) {
-      var _this8 = this;
+      var _this7 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
         var file, reader, avatarData, that;
@@ -7493,7 +7523,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 file = event.target.files[0];
                 reader = new FileReader();
                 reader.readAsDataURL(file);
-                that = _this8;
+                that = _this7;
 
                 reader.onload = function (e) {
                   avatarData = e.target.result;
@@ -7542,15 +7572,18 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }
     },
     openDialog: function openDialog(userPost, index) {
-      var _this9 = this;
-
       this.dialogPost = userPost;
       this.dialogPostIndex = index;
+      this.findLikeUsers(userPost);
+    },
+    findLikeUsers: function findLikeUsers(userPost) {
+      var _this8 = this;
+
       axios.post('/api/likeUsers', {
         postId: userPost.id
       }).then(function (response) {
-        _this9.dialog = true;
-        _this9.likeUsers = response.data;
+        _this8.likeUsers = response.data;
+        _this8.dialog = true;
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -7562,7 +7595,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.showUp = false;
     },
     submit: function submit() {
-      var _this10 = this;
+      var _this9 = this;
 
       axios.get('/api/comment', {
         params: {
@@ -7571,21 +7604,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'text': this.comment
         }
       }).then(function (response) {
-        return _this10.thisUserComments = response.data;
+        return _this9.thisUserComments = response.data;
       }, this.$refs.carouselPost.remove(), this.snackbar = true, this.destroy())["catch"](function (error) {
         console.log(error);
       });
     },
     deletePost: function deletePost(dialogPost) {
-      var _this11 = this;
+      var _this10 = this;
 
       var fd = new FormData();
       fd.append("post", JSON.stringify(dialogPost));
       axios.post('/api/delete_post', fd).then(function (response) {
-        _this11.userPosts = response.data;
-        _this11.dialog = false;
-        _this11.deleteDialog = false;
-        _this11.snackbar = true;
+        _this10.userPosts = response.data;
+        _this10.dialog = false;
+        _this10.deleteDialog = false;
+        _this10.snackbar = true;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -7612,7 +7645,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     like: function like(index) {
-      var _this12 = this;
+      var _this11 = this;
 
       axios.post('/api/like', {
         postId: this.dialogPost.id,
@@ -7620,18 +7653,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this12.snackbar = true;
-        _this12.lastPostId = _this12.dialogPost.id;
-        _this12.lastIndex = index;
-        _this12.userLikes = response.data[0];
-        _this12.userPostLikes = response.data[1];
-        _this12.likeUsers = response.data[2];
+        _this11.snackbar = true;
+        _this11.lastPostId = _this11.dialogPost.id;
+        _this11.lastIndex = index;
+
+        _this11.checkLikeObj(response.data);
+
+        _this11.findLikeUsers(_this11.dialogPost);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     deleteLike: function deleteLike(thisPostId, index) {
-      var _this13 = this;
+      var _this12 = this;
 
       axios.post('/api/delete_like', {
         postId: thisPostId,
@@ -7639,15 +7673,40 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this13.userLikes = response.data[0];
-        _this13.userPostLikes = response.data[1];
-        _this13.likeUsers = response.data[2];
+        // this.userLikes = response.data[0];
+        // this.userPostLikes = response.data[1];
+        // this.likeUsers = response.data[2];
+        _this12.findDeleteLike(response.data);
+
+        _this12.findLikeUsers(_this12.dialogPost);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
+    checkLikeObj: function checkLikeObj(res) {
+      var isLike = this.userLikes.find(function (userLike) {
+        return userLike.post_id === res.post_id;
+      });
+
+      if (isLike) {
+        isLike.reaction = res.reaction;
+      } else {
+        this.userLikes.push(res);
+        this.userPostLikes.push(res);
+      }
+    },
+    findDeleteLike: function findDeleteLike(res) {
+      var newUserLikes = this.userLikes.filter(function (userLike) {
+        return userLike.id !== res.id;
+      });
+      this.userLikes = newUserLikes;
+      var newUserPostLikes = this.userPostLikes.filter(function (userPostLike) {
+        return userPostLike.id !== res.id;
+      });
+      this.userPostLikes = newUserPostLikes;
+    },
     follow: function follow(isFollowed) {
-      var _this14 = this;
+      var _this13 = this;
 
       axios.get('/api/follow', {
         params: {
@@ -7656,7 +7715,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'isFollowed': isFollowed
         }
       }).then(function (response) {
-        return _this14.userFollowed = response.data;
+        return _this13.userFollowed = response.data;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -16687,11 +16746,12 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("index-template", {
     attrs: {
-      myInfo: _vm.myInfo,
+      mainUser: _vm.mainUser,
       posts: _vm.posts,
-      myLikes: _vm.myLikes,
-      myUsers: _vm.myUsers,
-      likes: _vm.likes
+      mainUserLikes: _vm.mainUserLikes,
+      likes: _vm.likes,
+      followingUsersInfo: _vm.followingUsersInfo,
+      likedUsers: _vm.likedUsers
     }
   })
 }
@@ -17190,7 +17250,7 @@ var render = function() {
     "div",
     { staticClass: "px-1" },
     [
-      _vm._l(_vm.newPosts, function(newPost, index) {
+      _vm._l(_vm.parsedUserPosts, function(parsedUserPost, index) {
         return _c(
           "v-card",
           {
@@ -17212,7 +17272,12 @@ var render = function() {
               [
                 _c(
                   "v-list-item",
-                  { attrs: { href: "/profile?id=" + newPost.user_id } },
+                  {
+                    attrs: {
+                      href:
+                        "/profile?id=" + _vm.postUser(parsedUserPost.user_id).id
+                    }
+                  },
                   [
                     _c(
                       "v-list-item-avatar",
@@ -17221,7 +17286,7 @@ var render = function() {
                           attrs: {
                             src:
                               "storage/image/avatar/" +
-                              _vm.userAvatar(newPost.user_id)
+                              _vm.postUser(parsedUserPost.user_id).profile_image
                           }
                         })
                       ],
@@ -17232,8 +17297,16 @@ var render = function() {
                       "v-list-item-content",
                       [
                         _c("v-list-item-title", [
-                          _vm._v(_vm._s(_vm.userName(newPost.user_id)))
-                        ])
+                          _vm._v(
+                            _vm._s(
+                              _vm.postUser(parsedUserPost.user_id).screen_name
+                            )
+                          )
+                        ]),
+                        _vm._v(
+                          _vm._s(_vm.isLike(parsedUserPost.id).reaction) +
+                            "\n                "
+                        )
                       ],
                       1
                     )
@@ -17247,7 +17320,7 @@ var render = function() {
             _c(
               "v-carousel",
               { attrs: { height: _vm.dialogSize } },
-              _vm._l(newPost.image, function(image, i) {
+              _vm._l(parsedUserPost.image, function(image, i) {
                 return _c("v-carousel-item", {
                   key: i,
                   attrs: {
@@ -17288,10 +17361,9 @@ var render = function() {
                                     {
                                       attrs: {
                                         icon: "",
-                                        color:
-                                          _vm.likeArray[index].like === true
-                                            ? "pink"
-                                            : ""
+                                        color: _vm.isLike(parsedUserPost.id)
+                                          ? "pink"
+                                          : ""
                                       }
                                     },
                                     "v-btn",
@@ -17320,133 +17392,93 @@ var render = function() {
                   },
                   [
                     _vm._v(" "),
-                    _c(
-                      "v-card",
-                      [
-                        _c(
-                          "v-card-actions",
+                    _vm.isLike(parsedUserPost.id)
+                      ? _c(
+                          "v-card",
                           [
                             _c(
-                              "v-btn",
-                              {
-                                attrs: {
-                                  icon: "",
-                                  color:
-                                    _vm.likeArray[index].reaction === 0
-                                      ? "yellow"
-                                      : ""
-                                },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.like(newPost.id, 0, index)
-                                  }
-                                }
-                              },
-                              [_c("v-icon", [_vm._v("mdi-emoticon")])],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-btn",
-                              {
-                                attrs: {
-                                  icon: "",
-                                  color:
-                                    _vm.likeArray[index].reaction === 1
-                                      ? "blue"
-                                      : ""
-                                },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.like(newPost.id, 1, index)
-                                  }
-                                }
-                              },
-                              [_c("v-icon", [_vm._v("mdi-emoticon-cry")])],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-btn",
-                              {
-                                attrs: {
-                                  icon: "",
-                                  color:
-                                    _vm.likeArray[index].reaction === 2
-                                      ? "orange"
-                                      : ""
-                                },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.like(newPost.id, 2, index)
-                                  }
-                                }
-                              },
-                              [_c("v-icon", [_vm._v("mdi-emoticon-lol")])],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-btn",
-                              {
-                                attrs: {
-                                  icon: "",
-                                  color:
-                                    _vm.likeArray[index].reaction === 3
-                                      ? "red"
-                                      : ""
-                                },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.like(newPost.id, 3, index)
-                                  }
-                                }
-                              },
-                              [_c("v-icon", [_vm._v("mdi-emoticon-angry")])],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-btn",
-                              {
-                                attrs: {
-                                  icon: "",
-                                  color:
-                                    _vm.likeArray[index].reaction === 4
-                                      ? "pink"
-                                      : ""
-                                },
-                                on: {
-                                  click: function($event) {
-                                    return _vm.like(newPost.id, 4, index)
-                                  }
-                                }
-                              },
-                              [_c("v-icon", [_vm._v("mdi-emoticon-kiss")])],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _vm.likeArray[index].like
-                              ? _c(
+                              "v-card-actions",
+                              [
+                                _vm._l(_vm.btns, function(btn, key) {
+                                  return _c(
+                                    "v-btn",
+                                    {
+                                      key: key,
+                                      attrs: {
+                                        icon: "",
+                                        color:
+                                          _vm.isLike(parsedUserPost.id)
+                                            .reaction === key
+                                            ? btn.color
+                                            : ""
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.like(
+                                            key,
+                                            parsedUserPost.id,
+                                            parsedUserPost.user_id
+                                          )
+                                        }
+                                      }
+                                    },
+                                    [_c("v-icon", [_vm._v(_vm._s(btn.icon))])],
+                                    1
+                                  )
+                                }),
+                                _vm._v(" "),
+                                _c(
                                   "v-btn",
                                   {
                                     attrs: { icon: "" },
                                     on: {
                                       click: function($event) {
-                                        return _vm.deleteLike(newPost.id, index)
+                                        return _vm.deleteLike(
+                                          parsedUserPost.id,
+                                          parsedUserPost.user_id
+                                        )
                                       }
                                     }
                                   },
                                   [_c("v-icon", [_vm._v("mdi-minus-circle")])],
                                   1
                                 )
-                              : _vm._e()
+                              ],
+                              2
+                            )
                           ],
                           1
                         )
-                      ],
-                      1
-                    )
+                      : _c(
+                          "v-card",
+                          [
+                            _c(
+                              "v-card-actions",
+                              _vm._l(_vm.btns, function(btn, key) {
+                                return _c(
+                                  "v-btn",
+                                  {
+                                    key: key,
+                                    attrs: { icon: "" },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.like(
+                                          key,
+                                          parsedUserPost.id,
+                                          parsedUserPost.user_id
+                                        )
+                                      }
+                                    }
+                                  },
+                                  [_c("v-icon", [_vm._v(_vm._s(btn.icon))])],
+                                  1
+                                )
+                              }),
+                              1
+                            )
+                          ],
+                          1
+                        )
                   ],
                   1
                 ),
@@ -17458,11 +17490,15 @@ var render = function() {
                     staticStyle: { display: "inline-block" },
                     on: {
                       click: function($event) {
-                        return _vm.likeDialogOpen(index)
+                        return _vm.likeDialogOpen(parsedUserPost.id)
                       }
                     }
                   },
-                  [_vm._v(_vm._s(_vm.totalLikeNumber(newPost.id)) + "人")]
+                  [
+                    _vm._v(
+                      _vm._s(_vm.totalLikeNumber(parsedUserPost.id)) + "人"
+                    )
+                  ]
                 ),
                 _vm._v(" "),
                 _c(
@@ -17498,7 +17534,7 @@ var render = function() {
                   {
                     staticClass: "text-h6 font-weight-light orange--text mb-2"
                   },
-                  [_vm._v(_vm._s(newPost.title))]
+                  [_vm._v(_vm._s(parsedUserPost.title))]
                 ),
                 _vm._v(" "),
                 _c(
@@ -17512,7 +17548,7 @@ var render = function() {
                   [
                     _vm._v(
                       "\n                " +
-                        _vm._s(newPost.text) +
+                        _vm._s(parsedUserPost.text) +
                         "\n                "
                     )
                   ]
@@ -17654,7 +17690,63 @@ var render = function() {
                               })
                             ],
                             1
-                          )
+                          ),
+                          _vm._v(" "),
+                          _c("v-list-item-icon", [
+                            _vm.iconType(likeUser.id) == 0
+                              ? _c(
+                                  "div",
+                                  [
+                                    _c(
+                                      "v-icon",
+                                      { attrs: { color: "yellow" } },
+                                      [_vm._v("mdi-emoticon")]
+                                    )
+                                  ],
+                                  1
+                                )
+                              : _vm.iconType(likeUser.id) == 1
+                              ? _c(
+                                  "div",
+                                  [
+                                    _c("v-icon", { attrs: { color: "blue" } }, [
+                                      _vm._v("mdi-emoticon-cry")
+                                    ])
+                                  ],
+                                  1
+                                )
+                              : _vm.iconType(likeUser.id) == 2
+                              ? _c(
+                                  "div",
+                                  [
+                                    _c(
+                                      "v-icon",
+                                      { attrs: { color: "orange" } },
+                                      [_vm._v("mdi-emoticon-lol")]
+                                    )
+                                  ],
+                                  1
+                                )
+                              : _vm.iconType(likeUser.id) == 3
+                              ? _c(
+                                  "div",
+                                  [
+                                    _c("v-icon", { attrs: { color: "red" } }, [
+                                      _vm._v("mdi-emoticon-angry")
+                                    ])
+                                  ],
+                                  1
+                                )
+                              : _c(
+                                  "div",
+                                  [
+                                    _c("v-icon", { attrs: { color: "pink" } }, [
+                                      _vm._v("mdi-emoticon-kiss")
+                                    ])
+                                  ],
+                                  1
+                                )
+                          ])
                         ],
                         1
                       )
@@ -21136,7 +21228,7 @@ var render = function() {
                                               ),
                                               _vm._v(" "),
                                               _c("v-list-item-icon", [
-                                                likedUser.reaction == 0
+                                                _vm.iconType(likedUser.id) == 0
                                                   ? _c(
                                                       "div",
                                                       [
@@ -21156,7 +21248,9 @@ var render = function() {
                                                       ],
                                                       1
                                                     )
-                                                  : likedUser.reaction == 1
+                                                  : _vm.iconType(
+                                                      likedUser.id
+                                                    ) == 1
                                                   ? _c(
                                                       "div",
                                                       [
@@ -21176,7 +21270,9 @@ var render = function() {
                                                       ],
                                                       1
                                                     )
-                                                  : likedUser.reaction == 2
+                                                  : _vm.iconType(
+                                                      likedUser.id
+                                                    ) == 2
                                                   ? _c(
                                                       "div",
                                                       [
@@ -21196,7 +21292,9 @@ var render = function() {
                                                       ],
                                                       1
                                                     )
-                                                  : likedUser.reaction == 3
+                                                  : _vm.iconType(
+                                                      likedUser.id
+                                                    ) == 3
                                                   ? _c(
                                                       "div",
                                                       [

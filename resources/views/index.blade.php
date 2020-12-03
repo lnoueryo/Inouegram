@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<index :my-info='@json($my_info)' :posts='@json($posts)' :my-likes='@json($my_likes)' :my-users='@json($my_users)' :likes='@json($likes)'></index>
+<index :main-user='@json($main_user)' :posts='@json($posts)' :main-user-likes='@json($main_user_likes)' :following-users-info='@json($following_users_info)' :likes='@json($likes)' :liked-users='@json($liked_users)'></index>
 
 @endsection

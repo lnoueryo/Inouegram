@@ -1,11 +1,11 @@
 <template>
-    <index-template :myInfo="myInfo" :posts="posts" :myLikes="myLikes" :myUsers="myUsers" :likes="likes"></index-template>
+    <index-template :mainUser="mainUser" :posts="posts" :mainUserLikes="mainUserLikes" :likes="likes" :followingUsersInfo="followingUsersInfo" :likedUsers="likedUsers"></index-template>
 </template>
 
 <script>
 import IndexTemplate from '../templates/IndexTemplate'
 export default {
-    props: ['my-info', 'posts', 'my-likes', 'my-users', 'likes'],
+    props: ['main-user', 'posts', 'main-user-likes', 'likes', 'following-users-info', 'liked-users'],
     components: {
         IndexTemplate,
     },

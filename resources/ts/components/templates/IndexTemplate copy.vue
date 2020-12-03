@@ -2,12 +2,12 @@
     <div class="px-1">
         <v-card class="mx-auto my-5 elevation-1" :max-width="dialogSize" v-for="(parsedUserPost,index) in parsedUserPosts" :key="index" v-resize="onResize" flat>
             <v-list>
-                <v-list-item :href="'/profile?id=' + postUser(parsedUserPost.user_id).id">
+                <v-list-item :href="'/profile?id=' + parsedUserPost.user_id">
                     <v-list-item-avatar>
-                        <v-img :src="'storage/image/avatar/' + postUser(parsedUserPost.user_id).profile_image"></v-img>
+                        <v-img :src="'storage/image/avatar/' + parsedUserPost.profile_image"></v-img>
                     </v-list-item-avatar>
                     <v-list-item-content>
-                        <v-list-item-title>{{ postUser(parsedUserPost.user_id).screen_name }}</v-list-item-title>{{ isLike(parsedUserPost.id).reaction }}
+                        <v-list-item-title>{{ parsedUserPost.screen_name }}</v-list-item-title>{{ parsedUserPost.isLike }}{{ color(parsedUserPost.id) }}
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
@@ -15,31 +15,31 @@
                 <v-carousel-item v-for="(image,i) in parsedUserPost.image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
             </v-carousel>
             <div class="px-2">
-                <v-menu v-model="menu[index]" :close-on-content-click="true" :nudge-width="200" offset-y top>
-                    <template v-slot:activator="{ on, attrs }">
-                        <v-btn icon v-bind="attrs" v-on="on" :color="isLike(parsedUserPost.id) ? 'pink' : ''">
-                        <v-icon>mdi-heart</v-icon>
+            <v-menu v-model="menu[index]" :close-on-content-click="true" :nudge-width="200" offset-y top>
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn icon v-bind="attrs" v-on="on" :color="parsedUserPost.isLike ? 'pink' : ''">
+                    <v-icon>mdi-heart</v-icon>
+                    </v-btn>
+                </template>
+                <v-card v-if="parsedUserPost.isLike">
+                    <v-card-actions>
+                        <v-btn v-for="(btn, key) in btns" :key="key" icon @click="like(key, parsedUserPost.id, parsedUserPost.user_id)" :color="color(parsedUserPost.id) === key ? btn.color : ''">
+                            <v-icon>{{ btn.icon }}</v-icon>
                         </v-btn>
-                    </template>
-                    <v-card v-if="isLike(parsedUserPost.id)">
-                        <v-card-actions>
-                            <v-btn v-for="(btn, key) in btns" :key="key" icon @click="like(key, parsedUserPost.id, parsedUserPost.user_id)" :color="isLike(parsedUserPost.id).reaction === key ? btn.color : ''">
-                                <v-icon>{{ btn.icon }}</v-icon>
-                            </v-btn>
-                            <v-btn icon @click="deleteLike(parsedUserPost.id, parsedUserPost.user_id)">
-                                <v-icon>mdi-minus-circle</v-icon>
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                    <v-card v-else>
-                        <v-card-actions>
-                            <v-btn v-for="(btn, key) in btns" :key="key" icon @click="like(key, parsedUserPost.id, parsedUserPost.user_id)">
-                                <v-icon>{{ btn.icon }}</v-icon>
-                            </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-menu>
-            <div class="px-1" style="display: inline-block" @click="likeDialogOpen(parsedUserPost.id)">{{ totalLikeNumber(parsedUserPost.id) }}人</div>
+                        <v-btn icon @click="deleteLike(parsedUserPost.id, parsedUserPost.user_id)">
+                            <v-icon>mdi-minus-circle</v-icon>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+                <v-card v-else>
+                    <v-card-actions>
+                        <v-btn v-for="(btn, key) in btns" :key="key" icon @click="like(key, parsedUserPost.id, parsedUserPost.user_id)">
+                            <v-icon>{{ btn.icon }}</v-icon>
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-menu>
+            <!-- <div class="px-1" style="display: inline-block" @click="likeDialogOpen(index)">{{ totalLikeNumber(newPost.id) }}人</div> -->
             <v-btn icon>
             <v-icon>mdi-comment</v-icon>
             </v-btn>
@@ -47,10 +47,10 @@
             <v-btn icon>
             <v-icon>mdi-bookmark</v-icon>
             </v-btn>
-                <p class="text-h6 font-weight-light orange--text mb-2">{{ parsedUserPost.title }}</p>
+                <!-- <p class="text-h6 font-weight-light orange--text mb-2">{{ newPost.title }}</p>
                     <div style="overflow-y: scroll;max-height: 110px;">
-                    {{ parsedUserPost.text }}
-                    </div>
+                    {{ newPost.text }}
+                    </div> -->
             <v-divider></v-divider>
             </div>
             <div class="d-flex align-center justify-space-around">
@@ -85,13 +85,14 @@
                         <v-list-item-content>
                         <v-list-item-title v-text="likeUser.screen_name"></v-list-item-title>
                         </v-list-item-content>
-                            <v-list-item-icon>
-                                <div v-if="iconType(likeUser.id) == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
-                                <div v-else-if="iconType(likeUser.id) == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
-                                <div v-else-if="iconType(likeUser.id) == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
-                                <div v-else-if="iconType(likeUser.id) == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
-                                <div v-else><v-icon color="pink">mdi-emoticon-kiss</v-icon></div>
-                            </v-list-item-icon>
+
+                        <!-- <v-list-item-icon>
+                            <div v-if="iconType(postKey, likeUser.id) == 0"><v-icon :color="(iconType(postKey, likeUser.id) === 0) ? 'yellow' : ''">mdi-emoticon</v-icon></div>
+                            <div v-else-if="iconType(postKey, likeUser.id) == 1"><v-icon :color="(iconType(postKey, likeUser.id) === 1) ? 'blue' : ''">mdi-emoticon-cry</v-icon></div>
+                            <div v-else-if="iconType(postKey, likeUser.id) == 2"><v-icon :color="(iconType(postKey, likeUser.id) === 2) ? 'orange' : ''">mdi-emoticon-lol</v-icon></div>
+                            <div v-else-if="iconType(postKey, likeUser.id) == 3"><v-icon :color="(iconType(postKey, likeUser.id) === 3) ? 'red' : ''">mdi-emoticon-angry</v-icon></div>
+                            <div v-else><v-icon :color="(iconType(postKey, likeUser.id) === 4) ? 'pink' : ''">mdi-emoticon-kiss</v-icon></div>
+                        </v-list-item-icon> -->
                     </v-list-item>
                 </div>
                 </v-list>
@@ -138,12 +139,20 @@ export default {
             show: [],
             snackbar: false,
             text: `Hello, I'm a snackbar`,
+            // thisUser: this.myInfo,
+            // thisPosts: this.posts,
+            // thisLikes: this.myLikes,
+            // allLikes: this.likes,
+            // users: this.myUsers,
+            likeArray: [],
+            followingUser: [
+                {following_id: 2, followed_id: 1}
+            ],
             menu: [],
             lastPostId: '',
             lastIndex: '',
             likeDialog: false,
             likeUsers: '',
-            dialogPostId: '',
         }
     },
     computed: {
@@ -155,7 +164,25 @@ export default {
                 for(var i=0; i<userPosts.length; i++){
                     userPosts[i].image = JSON.parse(userPosts[i].image);
                 }
-                return userPosts;
+                var newUserPosts = userPosts.map((userPost) => {
+                    return Object.assign(userPost, this.postUser(userPost.user_id));
+                })
+            //     newUserPosts.map((userPost) => {
+            //         return Object.assign(userPost, this.userLikes.find((userLike) => {
+            //     if(userLike.post_id == userPost.id){
+            //     var newUserLike = Object.assign(userLike, {'isLike': true})
+            //     return newUserLike;
+            // }
+            // }));
+            //     })
+                var abc =newUserPosts.map((userPost) => {
+                    return {...userPost, isLike: this.userLikes.some(userLike => userLike.post_id === userPost.id) ? true : false}
+                })
+                // newUserPosts.map((userPost) => {
+                //     return Object.assign(userPost, this.isLikeArray(userPost.id));
+                // })
+                console.log(abc)
+                return abc;
             }
         },
         dialogSize(){
@@ -165,23 +192,25 @@ export default {
                 return 500;
             }
         },
+        userPostsWithLikes(){
+            var userPosts = this.userPosts;
+            var userLikes = this.userLikes;
+            var userPostsWithLikes = userPosts.map(userPost => {
+                return { ...userPost, like: userLikes.some(userLike => userLike.post_id === userPost.id) ? userLikes.find(userLike => userLike.post_id === userPost.id) : ''}
+            })
+            return userPostsWithLikes;
+        }
     },
     methods:{
-        iconType(userId){
-            var usersLikes = this.usersLikes.filter((usersLike) => {
-                return usersLike.post_id === this.dialogPostId;
-            });
-            if (usersLikes) {
-                var userPostLike = usersLikes.find((like) => {
-                    return like.user_id === userId;
-                })
-                if(userPostLike){
-                    return userPostLike.reaction;
-                } else {
-                    return false
-                }
-            } else {
-                return false
+        color(id){
+            var userLikes = this.userLikes;
+            var isUserLike = userLikes.some((userLike) => {
+                return userLike.post_id === id
+            })
+            if(isUserLike){
+                return userLikes.find((userLike) => {
+                return userLike.post_id === id
+            }).reaction;
             }
         },
         postUser(id){
@@ -189,38 +218,27 @@ export default {
             var userInfo = usersInfo.find((userInfo) => {
                 return userInfo.id === id;
             })
-            return userInfo;
+            return {'screen_name': userInfo.screen_name, 'profile_image': userInfo.profile_image};
         },
-        isLike(id){
-            if(this.userLikes.some((userLike) => {
-                return userLike.post_id === id;
-            })){
-                return this.userLikes.find((userLike) => {
-                    return userLike.post_id === id;
-                })
-            } else {
-                return false;
-            }
-        },
-        likeDialogOpen(id){
+        likeDialogOpen(key){
             axios.post('/api/likeUsers', {
-                postId: id,
+                postId: this.thisPosts[key].id,
             })
             .then(response => {
                 this.likeDialog = true;
                 this.likeUsers = response.data;
-                this.dialogPostId =id;
             })
             .catch(error => {
                 console.log('fail')
             })
         },
         totalLikeNumber(id){
-            var usersLikes = this.usersLikes;
-            var likes = usersLikes.filter((usersLike) => {
-                return usersLike.post_id === id;
+            var likes = this.allLikes;
+            var a = likes.filter((object) => {
+                return object.post_id === id;
             });
-            return likes.length;
+            console.log(likes);
+            return a.length;
         },
         onResize () {
             this.windowSize = { x: window.innerWidth, y: window.innerHeight }
@@ -236,7 +254,10 @@ export default {
                 this.snackbar = true;
                 this.lastPostId = id;
                 this.lastIndex = index;
-                this.checkLikeObj(response.data);
+                // this.userLikes = response.data[0];
+                console.log(this.userLikes)
+                // this.usersLikes = response.data[1];
+                // this.likeUsers = response.data[2];
             })
             .catch(error => {
                 console.log('fail')
@@ -249,33 +270,17 @@ export default {
                 requestedUserId: user_id,
             })
             .then(response => {
-                this.findDeleteLike(response.data);
+                this.snackbar = true;
+                this.lastPostId = id;
+                this.lastIndex = index;
+                this.userLikes = response.data[0];
+                // this.usersLikes = response.data[1];
+                // this.likeUsers = response.data[2];
             })
             .catch(error => {
                 console.log('fail')
             })
         },
-        checkLikeObj(res){
-            var isLike = this.userLikes.find((userLike) => {
-                return userLike.post_id === res.post_id;
-            })
-            if(isLike){
-                isLike.reaction = res.reaction;
-            } else {
-                this.userLikes.push(res);
-                this.usersLikes.push(res);
-            }
-        },
-        findDeleteLike(res){
-            var newUserLikes = this.userLikes.filter((userLike) => {
-                return userLike.id !== res.id;
-            })
-            this.userLikes = newUserLikes;
-            var newUsersLikes = this.usersLikes.filter((usersLike) => {
-                return usersLike.id !== res.id;
-            })
-            this.usersLikes = newUsersLikes;
-        }
     },
 }
 </script>

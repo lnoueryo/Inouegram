@@ -42,6 +42,7 @@ Route::post('/store', 'HomeController@store')->name('store');
 
 Route::post('/like', function(Request $request){
     $search_like = Like::where('post_id', $request->postId)->where('user_id', $request->userId);
+
     if($search_like->exists()){
         $like = $search_like->first();
         $like->reaction = $request->reaction;
@@ -60,18 +61,20 @@ Route::post('/like', function(Request $request){
     $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
     $users_id = Like::where('post_id', $request->postId)->get('user_id');
     $like_users = User::whereIn('id', $users_id)->get();
-    return [$main_user_likes,$requested_user_likes,$like_users];
+    return $like;
+    // return [$main_user_likes,$requested_user_likes,$like_users];
 });
 
 Route::post('/delete_like', function(Request $request){
     $like = Like::where('post_id', $request->postId)->where('user_id', $request->userId)->first();
     $like->delete();
-    $requested_user_posts = Post::where('user_id', $request->requestedUserId)->orderBy('updated_at', 'desc');
-    $main_user_likes = Like::where('user_id', $request->userId)->get();
-    $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
-    $users_id = Like::where('post_id', $request->postId)->get('user_id');
-    $like_users = User::whereIn('id', $users_id)->get();
-    return [$main_user_likes,$requested_user_likes,$like_users];
+    // $requested_user_posts = Post::where('user_id', $request->requestedUserId)->orderBy('updated_at', 'desc');
+    // $main_user_likes = Like::where('user_id', $request->userId)->get();
+    // $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
+    // $users_id = Like::where('post_id', $request->postId)->get('user_id');
+    // $like_users = User::whereIn('id', $users_id)->get();
+    return $like;
+    // return [$main_user_likes,$requested_user_likes,$like_users];
 });
 Route::post('/upload', 'ProfileController@uploadBg');
 Route::post('/upload2', 'ProfileController@uploadAvatar');
