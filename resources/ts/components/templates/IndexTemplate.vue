@@ -7,7 +7,7 @@
                         <v-img :src="'storage/image/avatar/' + postUser(parsedUserPost.user_id).profile_image"></v-img>
                     </v-list-item-avatar>
                     <v-list-item-content>
-                        <v-list-item-title>{{ postUser(parsedUserPost.user_id).screen_name }}</v-list-item-title>{{ isLike(parsedUserPost.id).reaction }}
+                        <v-list-item-title>{{ postUser(parsedUserPost.user_id).screen_name }}</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
@@ -39,11 +39,11 @@
                         </v-card-actions>
                     </v-card>
                 </v-menu>
-            <div class="px-1" style="display: inline-block" @click="likeDialogOpen(parsedUserPost.id)">{{ totalLikeNumber(parsedUserPost.id) }}人</div>
+            <div class="px-1" style="display: inline-block; cursor: pointer;" @click="likeDialogOpen(parsedUserPost.id)">{{ totalLikeNumber(parsedUserPost.id) }}人</div>
             <v-btn icon>
-            <v-icon>mdi-comment</v-icon>
+            <v-icon :color="isMainUserComment(parsedUserPost.id) ? 'orange' : ''">mdi-comment</v-icon>
             </v-btn>
-            <div class="px-1" style="display: inline-block" @click="likeDialog = true">100件</div>
+            <div class="px-1" style="display: inline-block; cursor: pointer;" @click="commentDialogOpen(parsedUserPost.id)">{{ totalCommentNumber(parsedUserPost.id) }}人</div>
             <v-btn icon>
             <v-icon>mdi-bookmark</v-icon>
             </v-btn>
@@ -59,15 +59,24 @@
                 color="purple darken-2"
                 label="コメント"
                 required
+                v-model="comment[index]"
                 ></v-text-field>
             </v-col>
-            <v-btn>投稿する</v-btn>
+            <v-btn @click="sendComment(parsedUserPost.id, index)">投稿する</v-btn>
             </div>
         </v-card>
-        <v-snackbar v-model="snackbar">
+        <v-snackbar v-model="likeSnackbar">
             {{ text }}
             <template v-slot:action="{ attrs }">
                 <v-btn color="pink" text v-bind="attrs" @click="deleteLike(lastPostId, lastIndex)">
+                Close
+                </v-btn>
+            </template>
+        </v-snackbar>
+        <v-snackbar v-model="commentSnackbar">
+            {{ text }}
+            <template v-slot:action="{ attrs }">
+                <v-btn color="pink" text v-bind="attrs" @click="deleteComment(lastPostId, lastIndex)">
                 Close
                 </v-btn>
             </template>
@@ -108,6 +117,43 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <v-dialog v-model="commentDialog" max-width="400">
+            <v-card>
+                <v-list subheader>
+                <v-subheader>Recent chat</v-subheader>
+                <div style="max-height: 450px; overflow-y: scroll;">
+                    <v-list-item v-for="(postComment, index) in postComments" :key="index">
+                        <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
+                        <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                        </v-list-item-avatar>
+
+                        <v-list-item-content>
+                        <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                        </v-list-item-content>
+                        <div>{{ postComment.text }}
+                            <template v-if="commentUser(postComment.user_id).id==visitor.id">
+                                <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
+                            </template>
+                            <template v-else>
+                                <v-btn color="success">a</v-btn>
+                            </template>
+                        </div>
+                    </v-list-item>
+                </div>
+                </v-list>
+                <v-card-actions>
+                <v-spacer></v-spacer>
+
+                <v-btn color="green darken-1" text @click="commentDialog = false">
+                    Disagree
+                </v-btn>
+
+                <v-btn color="green darken-1" text @click="commentDialog = false">
+                    Agree
+                </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
         <a href="#app">aaaa</a>
     </div>
 </template>
@@ -117,13 +163,13 @@ export default {
     props: ['mainUser', 'posts', 'mainUserLikes','comments', 'likes', 'followingUsersInfo', 'likedUsers'],
     data() {
         return {
-            abc: '',
             visitor: this.mainUser,
             userPosts: this.posts,
             usersInfo: this.followingUsersInfo,
             userLikes: this.mainUserLikes,
             usersLikes: this.likes,
             likedUsersInfo: this.likedUsers,
+            usersComments: this.comments,
             btns: [
                 {color: 'yellow', icon: 'mdi-emoticon'},
                 {color: 'blue', icon: 'mdi-emoticon-cry'},
@@ -135,15 +181,18 @@ export default {
                 x: 0,
                 y: 0,
             },
-            show: [],
-            snackbar: false,
+            likeSnackbar: false,
+            commentSnackbar: false,
             text: `Hello, I'm a snackbar`,
             menu: [],
+            likeUsers: '',
+            commentUsers: '',
             lastPostId: '',
             lastIndex: '',
             likeDialog: false,
-            likeUsers: '',
+            commentDialog: false,
             dialogPostId: '',
+            comment: [],
         }
     },
     computed: {
@@ -165,6 +214,14 @@ export default {
                 return 500;
             }
         },
+        postComments(){
+            var postComments = this.usersComments.filter((usersComment) => {
+                return usersComment.post_id === this.dialogPostId;
+            })
+            return postComments.sort((a, b) => {
+                return b.id - a.id;
+            });
+        }
     },
     methods:{
         iconType(userId){
@@ -182,6 +239,16 @@ export default {
                 }
             } else {
                 return false
+            }
+        },
+        commentUser(id){
+            if(this.commentUsers){
+                var user = this.commentUsers.find((commentUser) => {
+                    return commentUser.id ===id;
+                })
+                return user;
+            } else {
+                return '';
             }
         },
         postUser(id){
@@ -215,12 +282,41 @@ export default {
                 console.log('fail')
             })
         },
+        isMainUserComment(id){
+            var postComments = this.usersComments.filter((usersComment) => {
+                return usersComment.post_id === id;
+            })
+            return postComments.some((postComment) => {
+                return postComment.user_id === this.visitor.id;
+            })
+        },
+        commentDialogOpen(id){
+            axios.post('/api/commentUsers', {
+                postId: id,
+            })
+            .then(response => {
+                this.commentDialog = true;
+                this.commentUsers = response.data;
+                this.dialogPostId = id;
+                // this.showBtn();
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
         totalLikeNumber(id){
             var usersLikes = this.usersLikes;
             var likes = usersLikes.filter((usersLike) => {
                 return usersLike.post_id === id;
             });
             return likes.length;
+        },
+        totalCommentNumber(id){
+            var usersComments = this.usersComments;
+            var comments = usersComments.filter((usersComment) => {
+                return usersComment.post_id === id;
+            });
+            return comments.length;
         },
         onResize () {
             this.windowSize = { x: window.innerWidth, y: window.innerHeight }
@@ -233,7 +329,7 @@ export default {
                 reaction: index,
             })
             .then(response => {
-                this.snackbar = true;
+                this.likeSnackbar = true;
                 this.lastPostId = id;
                 this.lastIndex = index;
                 this.checkLikeObj(response.data);
@@ -279,7 +375,40 @@ export default {
                 return usersLike.id !== res.id;
             })
             this.usersLikes = newUsersLikes;
-        }
+        },
+        sendComment(postId, index){
+            axios.post('/api/comment', {
+                postId: postId,
+                userId: this.visitor.id,
+                text: this.comment[index],
+            })
+            .then(response => {
+                this.commentSnackbar = true;
+                this.lastPostId = postId;
+                this.lastIndex = index;
+                this.usersComments.push(response.data)
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        deleteComment(postComment){
+            axios.post('/api/delete_comment', {
+                id: postComment.id,
+            })
+            .then(response => {
+                this.findDeleteComment(response.data);
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        findDeleteComment(res){
+            var newUsersComments = this.usersComments.filter((usersComment) => {
+                return usersComment.id !== res.id;
+            })
+            this.usersComments = newUsersComments;
+        },
     },
 }
 </script>
@@ -291,7 +420,5 @@ export default {
         height: 200px;
         overflow-y: scroll;
     }
-    /* ::-webkit-scrollbar {
-        display: none;
-    } */
+
 </style>
