@@ -5,6 +5,7 @@ use App\User;
 use App\Like;
 use App\Post;
 use App\Follower;
+use App\Comment;
 use Illuminate\Support\Facades\Auth;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -107,5 +108,25 @@ Route::post('/likeUsers', function(Request $request){
     $like_users = User::whereIn('id', $users_id)->get();
     return $like_users;
 });
+Route::post('/commentUsers', function(Request $request){
+    $users_id = Comment::where('post_id', $request->postId)->get('user_id');
+    $comment_users = User::whereIn('id', $users_id)->get();
+    return $comment_users;
+});
 
 Route::get('/users', 'HomeController@search');
+
+Route::post('/comment', function(Request $request){
+    $comment = new Comment;
+    $comment->user_id = $request->userId;
+    $comment->post_id = $request->postId;
+    $comment->text = $request->text;
+    $comment->save();
+    return $comment;
+});
+
+Route::post('/delete_comment', function(Request $request){
+    $comment = Comment::find($request->id);
+    $comment->delete();
+    return $comment;
+});
