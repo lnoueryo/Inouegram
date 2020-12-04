@@ -558,11 +558,15 @@
             })
         },
         checkLikeObj(res){
+            var userPostLike = this.userPostLikes.find((userPostLike) => {
+                return userPostLike.post_id === res.post_id && userPostLike.user_id === res.user_id;
+            })
             var isLike = this.userLikes.find((userLike) => {
                 return userLike.post_id === res.post_id;
             })
             if(isLike){
                 isLike.reaction = res.reaction;
+                userPostLike.reaction = res.reaction;
             } else {
                 this.userLikes.push(res);
                 this.userPostLikes.push(res);

@@ -256,11 +256,15 @@ export default {
             })
         },
         checkLikeObj(res){
+            var usersLike = this.usersLikes.find((usersLike) => {
+                return usersLike.post_id === res.post_id && usersLike.user_id === res.user_id;
+            })
             var isLike = this.userLikes.find((userLike) => {
                 return userLike.post_id === res.post_id;
             })
             if(isLike){
                 isLike.reaction = res.reaction;
+                usersLike.reaction = res.reaction;
             } else {
                 this.userLikes.push(res);
                 this.usersLikes.push(res);

@@ -5120,12 +5120,16 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     checkLikeObj: function checkLikeObj(res) {
+      var usersLike = this.usersLikes.find(function (usersLike) {
+        return usersLike.post_id === res.post_id && usersLike.user_id === res.user_id;
+      });
       var isLike = this.userLikes.find(function (userLike) {
         return userLike.post_id === res.post_id;
       });
 
       if (isLike) {
         isLike.reaction = res.reaction;
+        usersLike.reaction = res.reaction;
       } else {
         this.userLikes.push(res);
         this.usersLikes.push(res);
@@ -7684,12 +7688,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     checkLikeObj: function checkLikeObj(res) {
+      var userPostLike = this.userPostLikes.find(function (userPostLike) {
+        return userPostLike.post_id === res.post_id && userPostLike.user_id === res.user_id;
+      });
       var isLike = this.userLikes.find(function (userLike) {
         return userLike.post_id === res.post_id;
       });
 
       if (isLike) {
         isLike.reaction = res.reaction;
+        userPostLike.reaction = res.reaction;
       } else {
         this.userLikes.push(res);
         this.userPostLikes.push(res);
