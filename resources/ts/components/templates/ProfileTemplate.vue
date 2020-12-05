@@ -16,7 +16,7 @@
                 <v-list-item-content>
                     <v-list-item-title class="title" style="margin-top:20px;">{{requestedUserInfo.screen_name}}</v-list-item-title>
                     <v-list-item-subtitle>{{requestedUserInfo.name}}</v-list-item-subtitle>
-                    <v-list-item-subtitle>フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle>
+                    <!-- <v-list-item-subtitle @click="followerDialog()">フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle> -->
                 </v-list-item-content>
                 <div class="font-weight-light grey--text title mb-2" v-if="visitor.id == user.id">
                     <v-btn @click="logout">ログアウト</v-btn>
@@ -51,8 +51,8 @@
                         <v-window v-model="window" class="elevation-0">
                             <v-window-item :value="0">
                                 <v-card flat>
-                                    <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
-                                        <p class="text-h6 font-weight-light orange--text mb-2">
+                                    <v-card-text class="py-1" style="position: relative; max-width: 340px;">
+                                        <p class="text-h6 font-weight-light orange--text mb-2" style="margin: 0!important;">
                                         {{ dialogPost.title }}
                                         </p>
                                         <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
@@ -61,7 +61,7 @@
                                     </v-card-text>
                                     <v-menu v-model="menu[dialogPostIndex]" :close-on-content-click="true" :nudge-width="200" offset-y top>
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-btn icon v-bind="attrs" v-on="on" :color="mainUserLikeBool ? 'pink' : ''">
+                                            <v-btn class="pl-3" icon v-bind="attrs" v-on="on" :color="mainUserLikeBool ? 'pink' : ''">
                                             <v-icon>mdi-heart</v-icon>
                                             </v-btn>
                                         </template>
@@ -85,19 +85,30 @@
                                     </v-menu>
                                     {{ likeNumber }}
                                     <v-btn icon>
-                                    <v-icon>mdi-comment</v-icon>
+                                    <v-icon :color="isMainUserComment(dialogPost.id) ? 'orange' : ''">mdi-comment</v-icon>
                                     </v-btn>
+                                    {{ totalCommentNumber(dialogPost.id) }}人
                                     <v-btn icon>
                                     <v-icon>mdi-bookmark</v-icon>
                                     </v-btn>
                                     <v-btn absolute icon right @click="deleteDialog = true">
                                     <v-icon>mdi-delete</v-icon>
                                     </v-btn>
+                                    <div class="d-flex align-center justify-space-around px-2">
+                                        <v-text-field
+                                        class="px-2 pt-2"
+                                        color="purple darken-2"
+                                        label="コメント"
+                                        required
+                                        v-model="comment"
+                                        ></v-text-field>
+                                    <v-btn @click="sendComment(dialogPost.id, dialogPostIndex)">投稿</v-btn>
+                                    </div>
                                 </v-card>
                             </v-window-item>
 
                             <v-window-item :value="1">
-                                <v-list subheader  style="max-height: 180px; overflow-y: scroll;">
+                                <v-list subheader style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>Recent chat</v-subheader>
                                     <div>
                                         <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.id">
@@ -122,14 +133,13 @@
                             </v-window-item>
                             <!-- TODO:comment -->
                             <v-window-item :value="2">
-                                <v-list subheader>
+                                <v-list subheader style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>Recent chat</v-subheader>
-                                <div style="max-height: 450px; overflow-y: scroll;">
-                                    <v-list-item v-for="(postComment, index) in postComments" :key="index">
+                                <div v-for="(postComment, index) in postComments" :key="index">
+                                    <v-list-item v-if="commentUser(postComment.user_id)">
                                         <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
                                         <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
                                         </v-list-item-avatar>
-
                                         <v-list-item-content>
                                         <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
                                         </v-list-item-content>
@@ -163,6 +173,32 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <!-- <v-dialog v-model="followerDialog" max-width="290" @click:outside="outside">
+                    <v-card>
+                        <v-list subheader>
+                        <v-subheader>Recent chat</v-subheader>
+                        <div style="max-height: 450px; overflow-y: scroll;">
+                            <v-list-item v-for="(postComment, index) in postComments" :key="index">
+                                <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
+                                <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                                </v-list-item-avatar>
+
+                                <v-list-item-content>
+                                <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                </v-list-item-content>
+                                <div>{{ postComment.text }}
+                                    <template v-if="commentUser(postComment.user_id).id==visitor.id">
+                                        <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
+                                    </template>
+                                    <template v-else>
+                                        <v-btn color="success">a</v-btn>
+                                    </template>
+                                </div>
+                            </v-list-item>
+                        </div>
+                        </v-list>
+                    </v-card>
+                </v-dialog> -->
                 <v-dialog v-model="deleteDialog" max-width="290" @click:outside="outside">
                     <v-card>
                         <v-card-title class="headline">
@@ -270,6 +306,7 @@
             postLikes: this.requestedUserLikes,
             likeUsers: '',
             commentUsers: '',
+            comment: '',
             menu: [],
             btns: [
                 {color: 'yellow', icon: 'mdi-emoticon'},
@@ -352,6 +389,7 @@
         },
         userFollowedNumer(){
             var userFollowedNumer = this.userFollowed.length;
+            console.log(this.userFollowed)
             return userFollowedNumer;
         },
         postComments(){
@@ -361,6 +399,7 @@
                 })
                 return postComments.sort((a, b) => {
                     return b.id - a.id;
+                    console.log(postComments)
                 });
             } else {
                 return false
@@ -414,7 +453,7 @@
                 console.log(error);
             });
         },
-        async changeAvatar(event){  
+        async changeAvatar(event){
             var file = event.target.files[0];
             var reader = new FileReader();
             reader.readAsDataURL(file);
@@ -485,12 +524,12 @@
                 })
                 return user;
             } else {
-                return '';
+                return false;
             }
         },
         isMainUserComment(id){
-            var postComments = this.usersComments.filter((usersComment) => {
-                return usersComment.post_id === id;
+            var postComments = this.userComments.filter((userComment) => {
+                return userComment.post_id === id;
             })
             return postComments.some((postComment) => {
                 return postComment.user_id === this.visitor.id;
@@ -510,9 +549,9 @@
             })
         },
         totalCommentNumber(id){
-            var usersComments = this.usersComments;
-            var comments = usersComments.filter((usersComment) => {
-                return usersComment.post_id === id;
+            var userComments = this.userComments;
+            var comments = userComments.filter((userComment) => {
+                return userComment.post_id === id;
             });
             return comments.length;
         },
@@ -644,13 +683,13 @@
             axios.post('/api/comment', {
                 postId: postId,
                 userId: this.visitor.id,
-                text: this.comment[index],
+                text: this.comment,
             })
             .then(response => {
                 this.commentSnackbar = true;
                 this.lastPostId = postId;
                 this.lastIndex = index;
-                this.usersComments.push(response.data)
+                this.userComments.push(response.data)
             })
             .catch(error => {
                 console.log('fail')
@@ -668,10 +707,10 @@
             })
         },
         findDeleteComment(res){
-            var newUsersComments = this.usersComments.filter((usersComment) => {
-                return usersComment.id !== res.id;
+            var newUserComments = this.userComments.filter((userComment) => {
+                return userComment.id !== res.id;
             })
-            this.usersComments = newUsersComments;
+            this.userComments = newUserComments;
         },
     }
 }

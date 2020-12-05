@@ -7453,6 +7453,42 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed', 'requestedUserComments'],
   data: function data() {
@@ -7474,6 +7510,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       postLikes: this.requestedUserLikes,
       likeUsers: '',
       commentUsers: '',
+      comment: '',
       menu: [],
       btns: [{
         color: 'yellow',
@@ -7583,6 +7620,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     userFollowedNumer: function userFollowedNumer() {
       var userFollowedNumer = this.userFollowed.length;
+      console.log(this.userFollowed);
       return userFollowedNumer;
     },
     postComments: function postComments() {
@@ -7594,6 +7632,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
         return postComments.sort(function (a, b) {
           return b.id - a.id;
+          console.log(postComments);
         });
       } else {
         return false;
@@ -7747,14 +7786,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         });
         return user;
       } else {
-        return '';
+        return false;
       }
     },
     isMainUserComment: function isMainUserComment(id) {
       var _this10 = this;
 
-      var postComments = this.usersComments.filter(function (usersComment) {
-        return usersComment.post_id === id;
+      var postComments = this.userComments.filter(function (userComment) {
+        return userComment.post_id === id;
       });
       return postComments.some(function (postComment) {
         return postComment.user_id === _this10.visitor.id;
@@ -7774,9 +7813,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     totalCommentNumber: function totalCommentNumber(id) {
-      var usersComments = this.usersComments;
-      var comments = usersComments.filter(function (usersComment) {
-        return usersComment.post_id === id;
+      var userComments = this.userComments;
+      var comments = userComments.filter(function (userComment) {
+        return userComment.post_id === id;
       });
       return comments.length;
     },
@@ -7915,13 +7954,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       axios.post('/api/comment', {
         postId: postId,
         userId: this.visitor.id,
-        text: this.comment[index]
+        text: this.comment
       }).then(function (response) {
         _this17.commentSnackbar = true;
         _this17.lastPostId = postId;
         _this17.lastIndex = index;
 
-        _this17.usersComments.push(response.data);
+        _this17.userComments.push(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -7938,10 +7977,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     findDeleteComment: function findDeleteComment(res) {
-      var newUsersComments = this.usersComments.filter(function (usersComment) {
-        return usersComment.id !== res.id;
+      var newUserComments = this.userComments.filter(function (userComment) {
+        return userComment.id !== res.id;
       });
-      this.usersComments = newUsersComments;
+      this.userComments = newUserComments;
     }
   }
 });
@@ -21092,10 +21131,6 @@ var render = function() {
                   _vm._v(" "),
                   _c("v-list-item-subtitle", [
                     _vm._v(_vm._s(_vm.requestedUserInfo.name))
-                  ]),
-                  _vm._v(" "),
-                  _c("v-list-item-subtitle", [
-                    _vm._v("フォロワー" + _vm._s(_vm.userFollowedNumer) + "人")
                   ])
                 ],
                 1
@@ -21345,7 +21380,7 @@ var render = function() {
                                       _c(
                                         "v-card-text",
                                         {
-                                          staticClass: "pt-6",
+                                          staticClass: "py-1",
                                           staticStyle: {
                                             position: "relative",
                                             "max-width": "340px"
@@ -21356,7 +21391,10 @@ var render = function() {
                                             "p",
                                             {
                                               staticClass:
-                                                "text-h6 font-weight-light orange--text mb-2"
+                                                "text-h6 font-weight-light orange--text mb-2",
+                                              staticStyle: {
+                                                margin: "0!important"
+                                              }
                                             },
                                             [
                                               _vm._v(
@@ -21410,6 +21448,7 @@ var render = function() {
                                                       _vm._g(
                                                         _vm._b(
                                                           {
+                                                            staticClass: "pl-3",
                                                             attrs: {
                                                               icon: "",
                                                               color: _vm.mainUserLikeBool
@@ -21436,7 +21475,7 @@ var render = function() {
                                             ],
                                             null,
                                             false,
-                                            2210075266
+                                            4133288800
                                           ),
                                           model: {
                                             value:
@@ -21581,10 +21620,32 @@ var render = function() {
                                       _c(
                                         "v-btn",
                                         { attrs: { icon: "" } },
-                                        [_c("v-icon", [_vm._v("mdi-comment")])],
+                                        [
+                                          _c(
+                                            "v-icon",
+                                            {
+                                              attrs: {
+                                                color: _vm.isMainUserComment(
+                                                  _vm.dialogPost.id
+                                                )
+                                                  ? "orange"
+                                                  : ""
+                                              }
+                                            },
+                                            [_vm._v("mdi-comment")]
+                                          )
+                                        ],
                                         1
                                       ),
-                                      _vm._v(" "),
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(
+                                            _vm.totalCommentNumber(
+                                              _vm.dialogPost.id
+                                            )
+                                          ) +
+                                          "人\n                                "
+                                      ),
                                       _c(
                                         "v-btn",
                                         { attrs: { icon: "" } },
@@ -21609,6 +21670,47 @@ var render = function() {
                                           }
                                         },
                                         [_c("v-icon", [_vm._v("mdi-delete")])],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "d-flex align-center justify-space-around px-2"
+                                        },
+                                        [
+                                          _c("v-text-field", {
+                                            staticClass: "px-2 pt-2",
+                                            attrs: {
+                                              color: "purple darken-2",
+                                              label: "コメント",
+                                              required: ""
+                                            },
+                                            model: {
+                                              value: _vm.comment,
+                                              callback: function($$v) {
+                                                _vm.comment = $$v
+                                              },
+                                              expression: "comment"
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.sendComment(
+                                                    _vm.dialogPost.id,
+                                                    _vm.dialogPostIndex
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("投稿")]
+                                          )
+                                        ],
                                         1
                                       )
                                     ],
@@ -21806,119 +21908,130 @@ var render = function() {
                                 [
                                   _c(
                                     "v-list",
-                                    { attrs: { subheader: "" } },
+                                    {
+                                      staticStyle: {
+                                        "max-height": "180px",
+                                        "overflow-y": "scroll"
+                                      },
+                                      attrs: { subheader: "" }
+                                    },
                                     [
                                       _c("v-subheader", [
                                         _vm._v("Recent chat")
                                       ]),
                                       _vm._v(" "),
-                                      _c(
-                                        "div",
-                                        {
-                                          staticStyle: {
-                                            "max-height": "450px",
-                                            "overflow-y": "scroll"
-                                          }
-                                        },
-                                        _vm._l(_vm.postComments, function(
-                                          postComment,
-                                          index
-                                        ) {
-                                          return _c(
-                                            "v-list-item",
-                                            { key: index },
-                                            [
-                                              _c(
-                                                "v-list-item-avatar",
-                                                {
-                                                  attrs: {
-                                                    href:
-                                                      "/profile?id=" +
-                                                      postComment.user_id
-                                                  }
-                                                },
-                                                [
-                                                  _c("v-img", {
-                                                    attrs: {
-                                                      src:
-                                                        "storage/image/avatar/" +
+                                      _vm._l(_vm.postComments, function(
+                                        postComment,
+                                        index
+                                      ) {
+                                        return _c(
+                                          "div",
+                                          { key: index },
+                                          [
+                                            _vm.commentUser(postComment.user_id)
+                                              ? _c(
+                                                  "v-list-item",
+                                                  [
+                                                    _c(
+                                                      "v-list-item-avatar",
+                                                      {
+                                                        attrs: {
+                                                          href:
+                                                            "/profile?id=" +
+                                                            postComment.user_id
+                                                        }
+                                                      },
+                                                      [
+                                                        _c("v-img", {
+                                                          attrs: {
+                                                            src:
+                                                              "storage/image/avatar/" +
+                                                              _vm.commentUser(
+                                                                postComment.user_id
+                                                              ).profile_image
+                                                          }
+                                                        })
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "v-list-item-content",
+                                                      [
+                                                        _c(
+                                                          "v-list-item-title",
+                                                          {
+                                                            domProps: {
+                                                              textContent: _vm._s(
+                                                                _vm.commentUser(
+                                                                  postComment.user_id
+                                                                ).screen_name
+                                                              )
+                                                            }
+                                                          }
+                                                        )
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "div",
+                                                      [
+                                                        _vm._v(
+                                                          _vm._s(
+                                                            postComment.text
+                                                          ) +
+                                                            "\n                                        "
+                                                        ),
                                                         _vm.commentUser(
                                                           postComment.user_id
-                                                        ).profile_image
-                                                    }
-                                                  })
-                                                ],
-                                                1
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "v-list-item-content",
-                                                [
-                                                  _c("v-list-item-title", {
-                                                    domProps: {
-                                                      textContent: _vm._s(
-                                                        _vm.commentUser(
-                                                          postComment.user_id
-                                                        ).screen_name
-                                                      )
-                                                    }
-                                                  })
-                                                ],
-                                                1
-                                              ),
-                                              _vm._v(" "),
-                                              _c(
-                                                "div",
-                                                [
-                                                  _vm._v(
-                                                    _vm._s(postComment.text) +
-                                                      "\n                                        "
-                                                  ),
-                                                  _vm.commentUser(
-                                                    postComment.user_id
-                                                  ).id == _vm.visitor.id
-                                                    ? [
-                                                        _c(
-                                                          "v-btn",
-                                                          {
-                                                            attrs: {
-                                                              color: "success"
-                                                            },
-                                                            on: {
-                                                              click: function(
-                                                                $event
-                                                              ) {
-                                                                return _vm.deleteComment(
-                                                                  postComment
-                                                                )
-                                                              }
-                                                            }
-                                                          },
-                                                          [_vm._v("削除")]
-                                                        )
-                                                      ]
-                                                    : [
-                                                        _c(
-                                                          "v-btn",
-                                                          {
-                                                            attrs: {
-                                                              color: "success"
-                                                            }
-                                                          },
-                                                          [_vm._v("a")]
-                                                        )
-                                                      ]
-                                                ],
-                                                2
-                                              )
-                                            ],
-                                            1
-                                          )
-                                        }),
-                                        1
-                                      )
+                                                        ).id == _vm.visitor.id
+                                                          ? [
+                                                              _c(
+                                                                "v-btn",
+                                                                {
+                                                                  attrs: {
+                                                                    color:
+                                                                      "success"
+                                                                  },
+                                                                  on: {
+                                                                    click: function(
+                                                                      $event
+                                                                    ) {
+                                                                      return _vm.deleteComment(
+                                                                        postComment
+                                                                      )
+                                                                    }
+                                                                  }
+                                                                },
+                                                                [_vm._v("削除")]
+                                                              )
+                                                            ]
+                                                          : [
+                                                              _c(
+                                                                "v-btn",
+                                                                {
+                                                                  attrs: {
+                                                                    color:
+                                                                      "success"
+                                                                  }
+                                                                },
+                                                                [_vm._v("a")]
+                                                              )
+                                                            ]
+                                                      ],
+                                                      2
+                                                    )
+                                                  ],
+                                                  1
+                                                )
+                                              : _vm._e()
+                                          ],
+                                          1
+                                        )
+                                      })
                                     ],
-                                    1
+                                    2
                                   )
                                 ],
                                 1

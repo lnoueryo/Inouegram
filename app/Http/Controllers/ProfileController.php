@@ -21,7 +21,7 @@ class ProfileController extends Controller
     // }
 
     public function index(Request $request) {
-        $main_user = User::find(Auth::id())->first();
+        $main_user = User::find(Auth::id());
         $requested_user = User::find($request->id);
         $requested_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
         $main_user_likes = Like::where('user_id', Auth::id())->get();

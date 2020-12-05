@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
+{{ $main_user }}
 <profile
     :main-user='@json($main_user)'
     :requested-user='@json($requested_user)'
