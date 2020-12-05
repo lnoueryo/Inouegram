@@ -121,30 +121,30 @@
                                 </v-list>
                             </v-window-item>
                             <!-- TODO:comment -->
-                            <!-- <v-window-item :value="2">
-                                <v-card flat style="overflow-y: scroll; max-height: 250px;">
-                                    <v-list subheader style="overflow-y: scroll; max-height: 250px;">
-                                    <v-subheader>Recent chat</v-subheader>
-                                        <div style="max-height: 200px; overflow-y: scroll;">
-                                            <v-list-item v-for="(likeUser, index) in likeUsers" :key="index" :href="'/profile?id=' + likeUser.id">
-                                                <v-list-item-avatar>
-                                                <v-img :src="'storage/image/avatar/' + likeUser.profile_image"></v-img>
-                                                </v-list-item-avatar>
+                            <v-window-item :value="2">
+                                <v-list subheader>
+                                <v-subheader>Recent chat</v-subheader>
+                                <div style="max-height: 450px; overflow-y: scroll;">
+                                    <v-list-item v-for="(postComment, index) in postComments" :key="index">
+                                        <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
+                                        <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                                        </v-list-item-avatar>
 
-                                                <v-list-item-content>
-                                                <v-list-item-title v-text="likeUser.screen_name"></v-list-item-title>
-                                                </v-list-item-content>
-
-                                                <v-list-item-icon>
-                                                <v-icon>
-                                                    mdi-emoticon-angry
-                                                </v-icon>
-                                                </v-list-item-icon>
-                                            </v-list-item>
+                                        <v-list-item-content>
+                                        <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                        </v-list-item-content>
+                                        <div>{{ postComment.text }}
+                                            <template v-if="commentUser(postComment.user_id).id==visitor.id">
+                                                <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
+                                            </template>
+                                            <template v-else>
+                                                <v-btn color="success">a</v-btn>
+                                            </template>
                                         </div>
-                                    </v-list>
-                                </v-card>
-                            </v-window-item> -->
+                                    </v-list-item>
+                                </div>
+                                </v-list>
+                            </v-window-item>
                         </v-window>
                         <v-card-actions class="justify-space-between">
                             <v-btn text @click="prev">
@@ -250,13 +250,14 @@
 <script>
 
   export default {
-    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed'],
+    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed', 'requestedUserComments'],
     data () {
         return {
             visitor: this.mainUser,
             user: this.requestedUser,
             userPosts: this.requestedUserPosts,
             userFollowed: this.requestedUserFollowed,
+            userComments: this.requestedUserComments,
             dialog: false,
             dialogPost: '',
             dialogPostIndex: '',
@@ -268,6 +269,7 @@
             userPostLikes: this.requestedUserLikes,
             postLikes: this.requestedUserLikes,
             likeUsers: '',
+            commentUsers: '',
             menu: [],
             btns: [
                 {color: 'yellow', icon: 'mdi-emoticon'},
@@ -351,6 +353,18 @@
         userFollowedNumer(){
             var userFollowedNumer = this.userFollowed.length;
             return userFollowedNumer;
+        },
+        postComments(){
+            if(this.dialogPost.id){
+                var postComments = this.userComments.filter((userComment) => {
+                    return userComment.post_id === this.dialogPost.id;
+                })
+                return postComments.sort((a, b) => {
+                    return b.id - a.id;
+                });
+            } else {
+                return false
+            }
         }
     },
     methods: {
@@ -449,11 +463,12 @@
         openDialog(userPost, index){
             this.dialogPost = userPost;
             this.dialogPostIndex = index;
-            this.findLikeUsers(userPost);
+            this.findLikeUsers(userPost.id);
+            this.findCommentUsers(userPost.id)
         },
-        findLikeUsers(userPost){
+        findLikeUsers(id){
             axios.post('/api/likeUsers', {
-                postId: userPost.id,
+                postId: id,
             })
             .then(response => {
                 this.likeUsers = response.data;
@@ -462,6 +477,44 @@
             .catch(error => {
                 console.log('fail')
             })
+        },
+        commentUser(id){
+            if(this.commentUsers){
+                var user = this.commentUsers.find((commentUser) => {
+                    return commentUser.id ===id;
+                })
+                return user;
+            } else {
+                return '';
+            }
+        },
+        isMainUserComment(id){
+            var postComments = this.usersComments.filter((usersComment) => {
+                return usersComment.post_id === id;
+            })
+            return postComments.some((postComment) => {
+                return postComment.user_id === this.visitor.id;
+            })
+        },
+        findCommentUsers(id){
+            axios.post('/api/commentUsers', {
+                postId: id,
+            })
+            .then(response => {
+                this.commentDialog = true;
+                this.commentUsers = response.data;
+                this.dialogPostId = id;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        totalCommentNumber(id){
+            var usersComments = this.usersComments;
+            var comments = usersComments.filter((usersComment) => {
+                return usersComment.post_id === id;
+            });
+            return comments.length;
         },
         outside(){
             // this.$refs.carouselPost.remove();
@@ -547,9 +600,6 @@
                 reaction: index,
             })
             .then(response => {
-                // this.userLikes = response.data[0];
-                // this.userPostLikes = response.data[1];
-                // this.likeUsers = response.data[2];
                 this.findDeleteLike(response.data);
                 this.findLikeUsers(this.dialogPost);
             })
@@ -589,6 +639,39 @@
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        sendComment(postId, index){
+            axios.post('/api/comment', {
+                postId: postId,
+                userId: this.visitor.id,
+                text: this.comment[index],
+            })
+            .then(response => {
+                this.commentSnackbar = true;
+                this.lastPostId = postId;
+                this.lastIndex = index;
+                this.usersComments.push(response.data)
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        deleteComment(postComment){
+            axios.post('/api/delete_comment', {
+                id: postComment.id,
+            })
+            .then(response => {
+                this.findDeleteComment(response.data);
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        findDeleteComment(res){
+            var newUsersComments = this.usersComments.filter((usersComment) => {
+                return usersComment.id !== res.id;
+            })
+            this.usersComments = newUsersComments;
         },
     }
 }
