@@ -29,10 +29,10 @@ class ProfileController extends Controller
         $requested_user_comments = Comment::whereIn('post_id', $requested_user_posts->get('id'))->latest();
         $commented_users = User::whereIn('id', $requested_user_comments->get('user_id'))->get();
         $requested_user_followed = Follower::where('followed_id', $request->id)->get();
-
         $requested_user_comments = Comment::whereIn('post_id', $requested_user_posts->get())->get();
         $posts = $requested_user_posts->get();
-        return view('profile', compact('main_user', 'requested_user', 'posts', 'main_user_likes', 'requested_user_likes', 'requested_user_followed', 'requested_user_comments'));
+        $liked_posts = Post::whereIn('id', Like::where('user_id', Auth::id())->get('post_id'))->get();
+        return view('profile', compact('main_user', 'requested_user', 'posts', 'main_user_likes', 'requested_user_likes', 'requested_user_followed', 'requested_user_comments', 'liked_posts'));
         // return view('profile', ['main_user' => $main_user, 'requested_user' => $requested_user, 'requested_user_posts' => $requested_user_posts->get(), 'main_user_likes' => $main_user_likes, 'requested_user_likes' => $requested_user_likes, 'requested_user_followed' => $requested_user_followed, 'requested_user_comments' => $requested_user_comments]);
 
     }

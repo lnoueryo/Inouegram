@@ -9,5 +9,6 @@
     :requested-user-likes='@json($requested_user_likes)' 
     :requested-user-followed='@json($requested_user_followed)'
     :requested-user-comments='@json($requested_user_comments)'
+    :liked-posts='@json($liked_posts)'
    ></profile>
 @endsection
