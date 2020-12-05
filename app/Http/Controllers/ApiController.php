@@ -83,4 +83,9 @@ class ApiController extends Controller
         return $comment_users;
     }
 
+    public function followingUsers(Request $request){
+        $following_users = User::whereIn('id', $request->usersId)->get();
+        return $following_users;
+    }
+
 }

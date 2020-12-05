@@ -7515,6 +7515,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       postLikes: this.requestedUserLikes,
       likeUsers: '',
       commentUsers: '',
+      followingUsers: '',
       comment: '',
       menu: [],
       btns: [{
@@ -7643,9 +7644,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         return false;
       }
     },
-    followingUsers: function followingUsers() {
-      return this.userFollowed;
-    },
+    // followingUsers(){
+    //     return this.followingUsers;
+    // },
     btnclick3: function btnclick3() {
       return this.visitor.id === this.user.id;
     }
@@ -7778,10 +7779,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.findLikeUsers(userPost.id);
       this.findCommentUsers(userPost.id);
     },
-    openFollowerDialog: function openFollowerDialog() {
-      this.followerDialog = true;
-      this.findFollowingUsers();
-    },
     findLikeUsers: function findLikeUsers(id) {
       var _this9 = this;
 
@@ -7838,15 +7835,17 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     findFollowingUsers: function findFollowingUsers() {
+      var _this12 = this;
+
+      this.followerDialog = true;
+      console.log(this.followerDialog);
       var followingIds = this.userFollowed.map(function (user) {
         return user.following_id;
       });
-      console.log(followingIds);
       axios.post('/api/followingUsers', {
         usersId: followingIds
-      }).then(function (response) {// this.commentDialog = true;
-        // this.commentUsers = response.data;
-        // this.dialogPostId = id;
+      }).then(function (response) {
+        _this12.followingUsers = response.data;
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -7865,7 +7864,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.showUp = false;
     },
     submit: function submit() {
-      var _this12 = this;
+      var _this13 = this;
 
       axios.get('/api/comment', {
         params: {
@@ -7874,21 +7873,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'text': this.comment
         }
       }).then(function (response) {
-        return _this12.thisUserComments = response.data;
+        return _this13.thisUserComments = response.data;
       }, this.$refs.carouselPost.remove(), this.snackbar = true, this.destroy())["catch"](function (error) {
         console.log(error);
       });
     },
     deletePost: function deletePost(dialogPost) {
-      var _this13 = this;
+      var _this14 = this;
 
       var fd = new FormData();
       fd.append("post", JSON.stringify(dialogPost));
       axios.post('/api/delete_post', fd).then(function (response) {
-        _this13.userPosts = response.data;
-        _this13.dialog = false;
-        _this13.deleteDialog = false;
-        _this13.snackbar = true;
+        _this14.userPosts = response.data;
+        _this14.dialog = false;
+        _this14.deleteDialog = false;
+        _this14.snackbar = true;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -7915,7 +7914,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     like: function like(index) {
-      var _this14 = this;
+      var _this15 = this;
 
       axios.post('/api/like', {
         postId: this.dialogPost.id,
@@ -7923,19 +7922,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this14.snackbar = true;
-        _this14.lastPostId = _this14.dialogPost.id;
-        _this14.lastIndex = index;
+        _this15.snackbar = true;
+        _this15.lastPostId = _this15.dialogPost.id;
+        _this15.lastIndex = index;
 
-        _this14.checkLikeObj(response.data);
+        _this15.checkLikeObj(response.data);
 
-        _this14.findLikeUsers(_this14.dialogPost);
+        _this15.findLikeUsers(_this15.dialogPost);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     deleteLike: function deleteLike(thisPostId, index) {
-      var _this15 = this;
+      var _this16 = this;
 
       axios.post('/api/delete_like', {
         postId: thisPostId,
@@ -7943,9 +7942,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this15.findDeleteLike(response.data);
+        _this16.findDeleteLike(response.data);
 
-        _this15.findLikeUsers(_this15.dialogPost);
+        _this16.findLikeUsers(_this16.dialogPost);
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -7977,7 +7976,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.userPostLikes = newUserPostLikes;
     },
     follow: function follow(isFollowed) {
-      var _this16 = this;
+      var _this17 = this;
 
       axios.get('/api/follow', {
         params: {
@@ -7986,35 +7985,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'isFollowed': isFollowed
         }
       }).then(function (response) {
-        return _this16.userFollowed = response.data;
+        return _this17.userFollowed = response.data;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     sendComment: function sendComment(postId, index) {
-      var _this17 = this;
+      var _this18 = this;
 
       axios.post('/api/comment', {
         postId: postId,
         userId: this.visitor.id,
         text: this.comment
       }).then(function (response) {
-        _this17.commentSnackbar = true;
-        _this17.lastPostId = postId;
-        _this17.lastIndex = index;
+        _this18.commentSnackbar = true;
+        _this18.lastPostId = postId;
+        _this18.lastIndex = index;
 
-        _this17.userComments.push(response.data);
+        _this18.userComments.push(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     deleteComment: function deleteComment(postComment) {
-      var _this18 = this;
+      var _this19 = this;
 
       axios.post('/api/delete_comment', {
         id: postComment.id
       }).then(function (response) {
-        _this18.findDeleteComment(response.data);
+        _this19.findDeleteComment(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -21179,9 +21178,10 @@ var render = function() {
                   _c(
                     "v-list-item-subtitle",
                     {
+                      staticStyle: { cursor: "pointer" },
                       on: {
                         click: function($event) {
-                          return _vm.openFollowerDialog()
+                          return _vm.findFollowingUsers()
                         }
                       }
                     },
@@ -22196,101 +22196,6 @@ var render = function() {
                       attrs: { "max-width": "290" },
                       on: { "click:outside": _vm.outside },
                       model: {
-                        value: _vm.followerDialog,
-                        callback: function($$v) {
-                          _vm.followerDialog = $$v
-                        },
-                        expression: "followerDialog"
-                      }
-                    },
-                    [
-                      _c(
-                        "v-card",
-                        [
-                          _c(
-                            "v-list",
-                            { attrs: { subheader: "" } },
-                            [
-                              _c("v-subheader", [
-                                _vm._v(_vm._s(_vm.followingUsers))
-                              ]),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticStyle: {
-                                    "max-height": "450px",
-                                    "overflow-y": "scroll"
-                                  }
-                                },
-                                _vm._l(_vm.followingUsers, function(
-                                  followingUser,
-                                  index
-                                ) {
-                                  return _c(
-                                    "v-list-item",
-                                    { key: index },
-                                    [
-                                      _c(
-                                        "v-list-item-avatar",
-                                        {
-                                          attrs: {
-                                            href:
-                                              "/profile?id=" +
-                                              followingUser.following_id
-                                          }
-                                        },
-                                        [
-                                          _c("v-img", {
-                                            attrs: {
-                                              src:
-                                                "storage/image/avatar/" +
-                                                _vm.commentUser(
-                                                  followingUser.following_id
-                                                ).profile_image
-                                            }
-                                          })
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-list-item-content",
-                                        [
-                                          _c("v-list-item-title", {
-                                            domProps: {
-                                              textContent: _vm._s(
-                                                _vm.commentUser(
-                                                  followingUser.following_id
-                                                ).screen_name
-                                              )
-                                            }
-                                          })
-                                        ],
-                                        1
-                                      )
-                                    ],
-                                    1
-                                  )
-                                }),
-                                1
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-dialog",
-                    {
-                      attrs: { "max-width": "290" },
-                      on: { "click:outside": _vm.outside },
-                      model: {
                         value: _vm.deleteDialog,
                         callback: function($$v) {
                           _vm.deleteDialog = $$v
@@ -22552,6 +22457,86 @@ var render = function() {
             ],
             1
           ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "max-width": "290" },
+          on: { "click:outside": _vm.outside },
+          model: {
+            value: _vm.followerDialog,
+            callback: function($$v) {
+              _vm.followerDialog = $$v
+            },
+            expression: "followerDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c(
+                "v-list",
+                { attrs: { subheader: "" } },
+                [
+                  _c("v-subheader"),
+                  _vm._v(" "),
+                  _c(
+                    "div",
+                    {
+                      staticStyle: {
+                        "max-height": "450px",
+                        "overflow-y": "scroll"
+                      }
+                    },
+                    _vm._l(_vm.followingUsers, function(followingUser, index) {
+                      return _c(
+                        "v-list-item",
+                        {
+                          key: index,
+                          attrs: { href: "/profile?id=" + followingUser.id }
+                        },
+                        [
+                          _c(
+                            "v-list-item-avatar",
+                            [
+                              _c("v-img", {
+                                attrs: {
+                                  src:
+                                    "storage/image/avatar/" +
+                                    followingUser.profile_image
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-list-item-content",
+                            [
+                              _c("v-list-item-title", {
+                                domProps: {
+                                  textContent: _vm._s(followingUser.screen_name)
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    }),
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
       _vm._v(" "),
       _c(
         "v-snackbar",

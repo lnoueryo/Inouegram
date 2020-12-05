@@ -29,6 +29,7 @@ Route::post('/upload2', 'ProfileController@uploadAvatar');
 Route::get('/follow', 'ApiController@follow');
 Route::post('/likeUsers', 'ApiController@likeUsers');
 Route::post('/commentUsers', 'ApiController@commentUsers');
+Route::post('/followingUsers', 'ApiController@followingUsers');
 
 // Route::get('/users', 'HomeController@search');
 
