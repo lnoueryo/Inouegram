@@ -7505,6 +7505,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       dialog: false,
       dialogPost: '',
       dialogPostIndex: '',
+      followerDialog: false,
       carousel: [],
       deleteDialog: false,
       length: 3,
@@ -7641,6 +7642,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       } else {
         return false;
       }
+    },
+    followingUsers: function followingUsers() {
+      return this.userFollowed;
+    },
+    btnclick3: function btnclick3() {
+      return this.visitor.id === this.user.id;
     }
   },
   methods: {
@@ -7771,6 +7778,10 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.findLikeUsers(userPost.id);
       this.findCommentUsers(userPost.id);
     },
+    openFollowerDialog: function openFollowerDialog() {
+      this.followerDialog = true;
+      this.findFollowingUsers();
+    },
     findLikeUsers: function findLikeUsers(id) {
       var _this9 = this;
 
@@ -7784,6 +7795,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     commentUser: function commentUser(id) {
+      if (this.commentUsers) {
+        var user = this.commentUsers.find(function (commentUser) {
+          return commentUser.id === id;
+        });
+        return user;
+      } else {
+        return false;
+      }
+    },
+    followedUser: function followedUser(id) {
       if (this.commentUsers) {
         var user = this.commentUsers.find(function (commentUser) {
           return commentUser.id === id;
@@ -7812,6 +7833,20 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         _this11.commentDialog = true;
         _this11.commentUsers = response.data;
         _this11.dialogPostId = id;
+      })["catch"](function (error) {
+        console.log('fail');
+      });
+    },
+    findFollowingUsers: function findFollowingUsers() {
+      var followingIds = this.userFollowed.map(function (user) {
+        return user.following_id;
+      });
+      console.log(followingIds);
+      axios.post('/api/followingUsers', {
+        usersId: followingIds
+      }).then(function (response) {// this.commentDialog = true;
+        // this.commentUsers = response.data;
+        // this.dialogPostId = id;
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -21139,7 +21174,23 @@ var render = function() {
                   _vm._v(" "),
                   _c("v-list-item-subtitle", [
                     _vm._v(_vm._s(_vm.requestedUserInfo.name))
-                  ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-list-item-subtitle",
+                    {
+                      on: {
+                        click: function($event) {
+                          return _vm.openFollowerDialog()
+                        }
+                      }
+                    },
+                    [
+                      _vm._v(
+                        "フォロワー" + _vm._s(_vm.userFollowedNumer) + "人"
+                      )
+                    ]
+                  )
                 ],
                 1
               ),
@@ -21663,23 +21714,29 @@ var render = function() {
                                         1
                                       ),
                                       _vm._v(" "),
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          attrs: {
-                                            absolute: "",
-                                            icon: "",
-                                            right: ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              _vm.deleteDialog = true
-                                            }
-                                          }
-                                        },
-                                        [_c("v-icon", [_vm._v("mdi-delete")])],
-                                        1
-                                      ),
+                                      _vm.btnclick3
+                                        ? _c(
+                                            "v-btn",
+                                            {
+                                              attrs: {
+                                                absolute: "",
+                                                icon: "",
+                                                right: ""
+                                              },
+                                              on: {
+                                                click: function($event) {
+                                                  _vm.deleteDialog = true
+                                                }
+                                              }
+                                            },
+                                            [
+                                              _c("v-icon", [
+                                                _vm._v("mdi-delete")
+                                              ])
+                                            ],
+                                            1
+                                          )
+                                        : _vm._e(),
                                       _vm._v(" "),
                                       _c(
                                         "div",
@@ -22121,6 +22178,101 @@ var render = function() {
                                   on: { click: _vm.next }
                                 },
                                 [_c("v-icon", [_vm._v("mdi-chevron-right")])],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-dialog",
+                    {
+                      attrs: { "max-width": "290" },
+                      on: { "click:outside": _vm.outside },
+                      model: {
+                        value: _vm.followerDialog,
+                        callback: function($$v) {
+                          _vm.followerDialog = $$v
+                        },
+                        expression: "followerDialog"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-card",
+                        [
+                          _c(
+                            "v-list",
+                            { attrs: { subheader: "" } },
+                            [
+                              _c("v-subheader", [
+                                _vm._v(_vm._s(_vm.followingUsers))
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                {
+                                  staticStyle: {
+                                    "max-height": "450px",
+                                    "overflow-y": "scroll"
+                                  }
+                                },
+                                _vm._l(_vm.followingUsers, function(
+                                  followingUser,
+                                  index
+                                ) {
+                                  return _c(
+                                    "v-list-item",
+                                    { key: index },
+                                    [
+                                      _c(
+                                        "v-list-item-avatar",
+                                        {
+                                          attrs: {
+                                            href:
+                                              "/profile?id=" +
+                                              followingUser.following_id
+                                          }
+                                        },
+                                        [
+                                          _c("v-img", {
+                                            attrs: {
+                                              src:
+                                                "storage/image/avatar/" +
+                                                _vm.commentUser(
+                                                  followingUser.following_id
+                                                ).profile_image
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-list-item-content",
+                                        [
+                                          _c("v-list-item-title", {
+                                            domProps: {
+                                              textContent: _vm._s(
+                                                _vm.commentUser(
+                                                  followingUser.following_id
+                                                ).screen_name
+                                              )
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                }),
                                 1
                               )
                             ],

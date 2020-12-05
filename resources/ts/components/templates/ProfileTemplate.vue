@@ -16,7 +16,7 @@
                 <v-list-item-content>
                     <v-list-item-title class="title" style="margin-top:20px;">{{requestedUserInfo.screen_name}}</v-list-item-title>
                     <v-list-item-subtitle>{{requestedUserInfo.name}}</v-list-item-subtitle>
-                    <!-- <v-list-item-subtitle @click="followerDialog()">フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle> -->
+                    <v-list-item-subtitle @click="openFollowerDialog()">フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle>
                 </v-list-item-content>
                 <div class="font-weight-light grey--text title mb-2" v-if="visitor.id == user.id">
                     <v-btn @click="logout">ログアウト</v-btn>
@@ -91,7 +91,7 @@
                                     <v-btn icon>
                                     <v-icon>mdi-bookmark</v-icon>
                                     </v-btn>
-                                    <v-btn absolute icon right @click="deleteDialog = true">
+                                    <v-btn absolute icon right @click="deleteDialog = true" v-if="btnclick3">
                                     <v-icon>mdi-delete</v-icon>
                                     </v-btn>
                                     <div class="d-flex align-center justify-space-around px-2">
@@ -173,32 +173,32 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
-                <!-- <v-dialog v-model="followerDialog" max-width="290" @click:outside="outside">
+                <v-dialog v-model="followerDialog" max-width="290" @click:outside="outside">
                     <v-card>
                         <v-list subheader>
-                        <v-subheader>Recent chat</v-subheader>
+                        <v-subheader>{{ followingUsers }}</v-subheader>
                         <div style="max-height: 450px; overflow-y: scroll;">
-                            <v-list-item v-for="(postComment, index) in postComments" :key="index">
-                                <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
-                                <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                            <v-list-item v-for="(followingUser, index) in followingUsers" :key="index">
+                                <v-list-item-avatar :href="'/profile?id=' + followingUser.following_id">
+                                <v-img :src="'storage/image/avatar/' + commentUser(followingUser.following_id).profile_image"></v-img>
                                 </v-list-item-avatar>
 
                                 <v-list-item-content>
-                                <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                <v-list-item-title v-text="commentUser(followingUser.following_id).screen_name"></v-list-item-title>
                                 </v-list-item-content>
-                                <div>{{ postComment.text }}
-                                    <template v-if="commentUser(postComment.user_id).id==visitor.id">
+                                <!-- <div>{{ postComment.text }}
+                                    <template v-if="commentUser(followingUser.following_id).id==visitor.id">
                                         <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
                                     </template>
                                     <template v-else>
                                         <v-btn color="success">a</v-btn>
                                     </template>
-                                </div>
+                                </div> -->
                             </v-list-item>
                         </div>
                         </v-list>
                     </v-card>
-                </v-dialog> -->
+                </v-dialog>
                 <v-dialog v-model="deleteDialog" max-width="290" @click:outside="outside">
                     <v-card>
                         <v-card-title class="headline">
@@ -297,6 +297,7 @@
             dialog: false,
             dialogPost: '',
             dialogPostIndex: '',
+            followerDialog: false,
             carousel: [],
             deleteDialog: false,
             length: 3,
@@ -404,6 +405,12 @@
             } else {
                 return false
             }
+        },
+        followingUsers(){
+            return this.userFollowed;
+        },
+        btnclick3() {
+            return this.visitor.id === this.user.id
         }
     },
     methods: {
@@ -505,6 +512,10 @@
             this.findLikeUsers(userPost.id);
             this.findCommentUsers(userPost.id)
         },
+        openFollowerDialog(){
+            this.followerDialog = true;
+            this.findFollowingUsers()
+        },
         findLikeUsers(id){
             axios.post('/api/likeUsers', {
                 postId: id,
@@ -518,6 +529,16 @@
             })
         },
         commentUser(id){
+            if(this.commentUsers){
+                var user = this.commentUsers.find((commentUser) => {
+                    return commentUser.id ===id;
+                })
+                return user;
+            } else {
+                return false;
+            }
+        },
+        followedUser(id){
             if(this.commentUsers){
                 var user = this.commentUsers.find((commentUser) => {
                     return commentUser.id ===id;
@@ -543,6 +564,23 @@
                 this.commentDialog = true;
                 this.commentUsers = response.data;
                 this.dialogPostId = id;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        findFollowingUsers(){
+            var followingIds = this.userFollowed.map((user) => {
+                return user.following_id
+            })
+            console.log(followingIds)
+            axios.post('/api/followingUsers', {
+                usersId: followingIds,
+            })
+            .then(response => {
+                // this.commentDialog = true;
+                // this.commentUsers = response.data;
+                // this.dialogPostId = id;
             })
             .catch(error => {
                 console.log('fail')
