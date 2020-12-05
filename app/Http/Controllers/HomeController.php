@@ -37,7 +37,7 @@ class HomeController extends Controller
         $main_user_likes = Like::where('user_id', Auth::id())->get();
         $likes = Like::whereIn('post_id', $posts->get('id'));
         $liked_users = User::whereIn('id', $likes->get('user_id'))->get();
-        $comments = Comment::whereIn('post_id', $posts->orderBy('updated_at', 'desc')->take(20)->get())->get();
+        $comments = Comment::whereIn('post_id', $posts->orderBy('updated_at', 'desc')->take(20)->get('id'))->get();
         return view('index', ['main_user' => $main_user, 'posts' => $posts->orderBy('updated_at', 'desc')->take(20)->get(), 'main_user_likes' => $main_user_likes, 'following_users_info' => $following_users_info, 'likes' => $likes->get(), 'liked_users' => $liked_users, 'comments' => $comments]);
     }
 

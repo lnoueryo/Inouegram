@@ -1,6 +1,6 @@
 <template>
     <div>
-        <profile-templates 
+        <profile-templates
             :mainUser="mainUser"
             :requestedUser="requestedUser"
             :requestedUserPosts="requestedUserPosts"
