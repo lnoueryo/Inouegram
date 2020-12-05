@@ -16,7 +16,7 @@
                 <v-list-item-content>
                     <v-list-item-title class="title" style="margin-top:20px;">{{requestedUserInfo.screen_name}}</v-list-item-title>
                     <v-list-item-subtitle>{{requestedUserInfo.name}}</v-list-item-subtitle>
-                    <v-list-item-subtitle>フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle>
+                    <!-- <v-list-item-subtitle @click="followerDialog()">フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle> -->
                 </v-list-item-content>
                 <div class="font-weight-light grey--text title mb-2" v-if="visitor.id == user.id">
                     <v-btn @click="logout">ログアウト</v-btn>
@@ -51,8 +51,8 @@
                         <v-window v-model="window" class="elevation-0">
                             <v-window-item :value="0">
                                 <v-card flat>
-                                    <v-card-text class="pt-6" style="position: relative; max-width: 340px;">
-                                        <p class="text-h6 font-weight-light orange--text mb-2">
+                                    <v-card-text class="py-1" style="position: relative; max-width: 340px;">
+                                        <p class="text-h6 font-weight-light orange--text mb-2" style="margin: 0!important;">
                                         {{ dialogPost.title }}
                                         </p>
                                         <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
@@ -61,7 +61,7 @@
                                     </v-card-text>
                                     <v-menu v-model="menu[dialogPostIndex]" :close-on-content-click="true" :nudge-width="200" offset-y top>
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-btn icon v-bind="attrs" v-on="on" :color="mainUserLikeBool ? 'pink' : ''">
+                                            <v-btn class="pl-3" icon v-bind="attrs" v-on="on" :color="mainUserLikeBool ? 'pink' : ''">
                                             <v-icon>mdi-heart</v-icon>
                                             </v-btn>
                                         </template>
@@ -85,19 +85,30 @@
                                     </v-menu>
                                     {{ likeNumber }}
                                     <v-btn icon>
-                                    <v-icon>mdi-comment</v-icon>
+                                    <v-icon :color="isMainUserComment(dialogPost.id) ? 'orange' : ''">mdi-comment</v-icon>
                                     </v-btn>
+                                    {{ totalCommentNumber(dialogPost.id) }}人
                                     <v-btn icon>
                                     <v-icon>mdi-bookmark</v-icon>
                                     </v-btn>
                                     <v-btn absolute icon right @click="deleteDialog = true">
                                     <v-icon>mdi-delete</v-icon>
                                     </v-btn>
+                                    <div class="d-flex align-center justify-space-around px-2">
+                                        <v-text-field
+                                        class="px-2 pt-2"
+                                        color="purple darken-2"
+                                        label="コメント"
+                                        required
+                                        v-model="comment"
+                                        ></v-text-field>
+                                    <v-btn @click="sendComment(dialogPost.id, dialogPostIndex)">投稿</v-btn>
+                                    </div>
                                 </v-card>
                             </v-window-item>
 
                             <v-window-item :value="1">
-                                <v-list subheader  style="max-height: 180px; overflow-y: scroll;">
+                                <v-list subheader style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>Recent chat</v-subheader>
                                     <div>
                                         <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.id">
@@ -121,30 +132,29 @@
                                 </v-list>
                             </v-window-item>
                             <!-- TODO:comment -->
-                            <!-- <v-window-item :value="2">
-                                <v-card flat style="overflow-y: scroll; max-height: 250px;">
-                                    <v-list subheader style="overflow-y: scroll; max-height: 250px;">
-                                    <v-subheader>Recent chat</v-subheader>
-                                        <div style="max-height: 200px; overflow-y: scroll;">
-                                            <v-list-item v-for="(likeUser, index) in likeUsers" :key="index" :href="'/profile?id=' + likeUser.id">
-                                                <v-list-item-avatar>
-                                                <v-img :src="'storage/image/avatar/' + likeUser.profile_image"></v-img>
-                                                </v-list-item-avatar>
-
-                                                <v-list-item-content>
-                                                <v-list-item-title v-text="likeUser.screen_name"></v-list-item-title>
-                                                </v-list-item-content>
-
-                                                <v-list-item-icon>
-                                                <v-icon>
-                                                    mdi-emoticon-angry
-                                                </v-icon>
-                                                </v-list-item-icon>
-                                            </v-list-item>
+                            <v-window-item :value="2">
+                                <v-list subheader style="max-height: 180px; overflow-y: scroll;">
+                                <v-subheader>Recent chat</v-subheader>
+                                <div v-for="(postComment, index) in postComments" :key="index">
+                                    <v-list-item v-if="commentUser(postComment.user_id)">
+                                        <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
+                                        <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                                        </v-list-item-avatar>
+                                        <v-list-item-content>
+                                        <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                        </v-list-item-content>
+                                        <div>{{ postComment.text }}
+                                            <template v-if="commentUser(postComment.user_id).id==visitor.id">
+                                                <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
+                                            </template>
+                                            <template v-else>
+                                                <v-btn color="success">a</v-btn>
+                                            </template>
                                         </div>
-                                    </v-list>
-                                </v-card>
-                            </v-window-item> -->
+                                    </v-list-item>
+                                </div>
+                                </v-list>
+                            </v-window-item>
                         </v-window>
                         <v-card-actions class="justify-space-between">
                             <v-btn text @click="prev">
@@ -163,6 +173,32 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
+                <!-- <v-dialog v-model="followerDialog" max-width="290" @click:outside="outside">
+                    <v-card>
+                        <v-list subheader>
+                        <v-subheader>Recent chat</v-subheader>
+                        <div style="max-height: 450px; overflow-y: scroll;">
+                            <v-list-item v-for="(postComment, index) in postComments" :key="index">
+                                <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
+                                <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                                </v-list-item-avatar>
+
+                                <v-list-item-content>
+                                <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                </v-list-item-content>
+                                <div>{{ postComment.text }}
+                                    <template v-if="commentUser(postComment.user_id).id==visitor.id">
+                                        <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
+                                    </template>
+                                    <template v-else>
+                                        <v-btn color="success">a</v-btn>
+                                    </template>
+                                </div>
+                            </v-list-item>
+                        </div>
+                        </v-list>
+                    </v-card>
+                </v-dialog> -->
                 <v-dialog v-model="deleteDialog" max-width="290" @click:outside="outside">
                     <v-card>
                         <v-card-title class="headline">
@@ -250,13 +286,14 @@
 <script>
 
   export default {
-    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed'],
+    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed', 'requestedUserComments'],
     data () {
         return {
             visitor: this.mainUser,
             user: this.requestedUser,
             userPosts: this.requestedUserPosts,
             userFollowed: this.requestedUserFollowed,
+            userComments: this.requestedUserComments,
             dialog: false,
             dialogPost: '',
             dialogPostIndex: '',
@@ -268,6 +305,8 @@
             userPostLikes: this.requestedUserLikes,
             postLikes: this.requestedUserLikes,
             likeUsers: '',
+            commentUsers: '',
+            comment: '',
             menu: [],
             btns: [
                 {color: 'yellow', icon: 'mdi-emoticon'},
@@ -350,7 +389,21 @@
         },
         userFollowedNumer(){
             var userFollowedNumer = this.userFollowed.length;
+            console.log(this.userFollowed)
             return userFollowedNumer;
+        },
+        postComments(){
+            if(this.dialogPost.id){
+                var postComments = this.userComments.filter((userComment) => {
+                    return userComment.post_id === this.dialogPost.id;
+                })
+                return postComments.sort((a, b) => {
+                    return b.id - a.id;
+                    console.log(postComments)
+                });
+            } else {
+                return false
+            }
         }
     },
     methods: {
@@ -400,7 +453,7 @@
                 console.log(error);
             });
         },
-        async changeAvatar(event){  
+        async changeAvatar(event){
             var file = event.target.files[0];
             var reader = new FileReader();
             reader.readAsDataURL(file);
@@ -449,11 +502,12 @@
         openDialog(userPost, index){
             this.dialogPost = userPost;
             this.dialogPostIndex = index;
-            this.findLikeUsers(userPost);
+            this.findLikeUsers(userPost.id);
+            this.findCommentUsers(userPost.id)
         },
-        findLikeUsers(userPost){
+        findLikeUsers(id){
             axios.post('/api/likeUsers', {
-                postId: userPost.id,
+                postId: id,
             })
             .then(response => {
                 this.likeUsers = response.data;
@@ -462,6 +516,44 @@
             .catch(error => {
                 console.log('fail')
             })
+        },
+        commentUser(id){
+            if(this.commentUsers){
+                var user = this.commentUsers.find((commentUser) => {
+                    return commentUser.id ===id;
+                })
+                return user;
+            } else {
+                return false;
+            }
+        },
+        isMainUserComment(id){
+            var postComments = this.userComments.filter((userComment) => {
+                return userComment.post_id === id;
+            })
+            return postComments.some((postComment) => {
+                return postComment.user_id === this.visitor.id;
+            })
+        },
+        findCommentUsers(id){
+            axios.post('/api/commentUsers', {
+                postId: id,
+            })
+            .then(response => {
+                this.commentDialog = true;
+                this.commentUsers = response.data;
+                this.dialogPostId = id;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        totalCommentNumber(id){
+            var userComments = this.userComments;
+            var comments = userComments.filter((userComment) => {
+                return userComment.post_id === id;
+            });
+            return comments.length;
         },
         outside(){
             // this.$refs.carouselPost.remove();
@@ -547,9 +639,6 @@
                 reaction: index,
             })
             .then(response => {
-                // this.userLikes = response.data[0];
-                // this.userPostLikes = response.data[1];
-                // this.likeUsers = response.data[2];
                 this.findDeleteLike(response.data);
                 this.findLikeUsers(this.dialogPost);
             })
@@ -593,6 +682,39 @@
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        sendComment(postId, index){
+            axios.post('/api/comment', {
+                postId: postId,
+                userId: this.visitor.id,
+                text: this.comment,
+            })
+            .then(response => {
+                this.commentSnackbar = true;
+                this.lastPostId = postId;
+                this.lastIndex = index;
+                this.userComments.push(response.data)
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        deleteComment(postComment){
+            axios.post('/api/delete_comment', {
+                id: postComment.id,
+            })
+            .then(response => {
+                this.findDeleteComment(response.data);
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        findDeleteComment(res){
+            var newUserComments = this.userComments.filter((userComment) => {
+                return userComment.id !== res.id;
+            })
+            this.userComments = newUserComments;
         },
     }
 }

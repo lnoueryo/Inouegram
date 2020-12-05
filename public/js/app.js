@@ -4780,10 +4780,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed'],
+  props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments'],
   components: {
     ProfileTemplates: _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__["default"],
     UserProfileTemplates: _templates_UserProfileTemplate__WEBPACK_IMPORTED_MODULE_1__["default"]
@@ -7455,14 +7457,51 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed'],
+  props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed', 'requestedUserComments'],
   data: function data() {
     return {
       visitor: this.mainUser,
       user: this.requestedUser,
       userPosts: this.requestedUserPosts,
       userFollowed: this.requestedUserFollowed,
+      userComments: this.requestedUserComments,
       dialog: false,
       dialogPost: '',
       dialogPostIndex: '',
@@ -7474,6 +7513,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       userPostLikes: this.requestedUserLikes,
       postLikes: this.requestedUserLikes,
       likeUsers: '',
+      commentUsers: '',
+      comment: '',
       menu: [],
       btns: [{
         color: 'yellow',
@@ -7583,15 +7624,31 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     userFollowedNumer: function userFollowedNumer() {
       var userFollowedNumer = this.userFollowed.length;
+      console.log(this.userFollowed);
       return userFollowedNumer;
+    },
+    postComments: function postComments() {
+      var _this5 = this;
+
+      if (this.dialogPost.id) {
+        var postComments = this.userComments.filter(function (userComment) {
+          return userComment.post_id === _this5.dialogPost.id;
+        });
+        return postComments.sort(function (a, b) {
+          return b.id - a.id;
+          console.log(postComments);
+        });
+      } else {
+        return false;
+      }
     }
   },
   methods: {
     iconType: function iconType(userId) {
-      var _this5 = this;
+      var _this6 = this;
 
       var userPostLikes = this.userPostLikes.filter(function (userPostLike) {
-        return userPostLike.post_id === _this5.dialogPost.id;
+        return userPostLike.post_id === _this6.dialogPost.id;
       });
 
       if (userPostLikes) {
@@ -7621,7 +7678,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       };
     },
     changeBg: function changeBg() {
-      var _this6 = this;
+      var _this7 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var bgData, fd;
@@ -7629,13 +7686,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                bgData = _this6.changingBgData;
+                bgData = _this7.changingBgData;
                 fd = new FormData();
                 fd.append("bgData", bgData);
-                fd.append("userId", _this6.user.id);
+                fd.append("userId", _this7.user.id);
                 axios.post('/api/upload', fd).then(function (response) {
-                  _this6.changeBgDialog = false;
-                  _this6.user = response.data;
+                  _this7.changeBgDialog = false;
+                  _this7.user = response.data;
                 })["catch"](function (error) {
                   console.log(error);
                 });
@@ -7649,7 +7706,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       }))();
     },
     changeAvatar: function changeAvatar(event) {
-      var _this7 = this;
+      var _this8 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
         var file, reader, avatarData, that;
@@ -7660,7 +7717,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                 file = event.target.files[0];
                 reader = new FileReader();
                 reader.readAsDataURL(file);
-                that = _this7;
+                that = _this8;
 
                 reader.onload = function (e) {
                   avatarData = e.target.result;
@@ -7711,19 +7768,60 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     openDialog: function openDialog(userPost, index) {
       this.dialogPost = userPost;
       this.dialogPostIndex = index;
-      this.findLikeUsers(userPost);
+      this.findLikeUsers(userPost.id);
+      this.findCommentUsers(userPost.id);
     },
-    findLikeUsers: function findLikeUsers(userPost) {
-      var _this8 = this;
+    findLikeUsers: function findLikeUsers(id) {
+      var _this9 = this;
 
       axios.post('/api/likeUsers', {
-        postId: userPost.id
+        postId: id
       }).then(function (response) {
-        _this8.likeUsers = response.data;
-        _this8.dialog = true;
+        _this9.likeUsers = response.data;
+        _this9.dialog = true;
       })["catch"](function (error) {
         console.log('fail');
       });
+    },
+    commentUser: function commentUser(id) {
+      if (this.commentUsers) {
+        var user = this.commentUsers.find(function (commentUser) {
+          return commentUser.id === id;
+        });
+        return user;
+      } else {
+        return false;
+      }
+    },
+    isMainUserComment: function isMainUserComment(id) {
+      var _this10 = this;
+
+      var postComments = this.userComments.filter(function (userComment) {
+        return userComment.post_id === id;
+      });
+      return postComments.some(function (postComment) {
+        return postComment.user_id === _this10.visitor.id;
+      });
+    },
+    findCommentUsers: function findCommentUsers(id) {
+      var _this11 = this;
+
+      axios.post('/api/commentUsers', {
+        postId: id
+      }).then(function (response) {
+        _this11.commentDialog = true;
+        _this11.commentUsers = response.data;
+        _this11.dialogPostId = id;
+      })["catch"](function (error) {
+        console.log('fail');
+      });
+    },
+    totalCommentNumber: function totalCommentNumber(id) {
+      var userComments = this.userComments;
+      var comments = userComments.filter(function (userComment) {
+        return userComment.post_id === id;
+      });
+      return comments.length;
     },
     outside: function outside() {
       // this.$refs.carouselPost.remove();
@@ -7732,7 +7830,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.showUp = false;
     },
     submit: function submit() {
-      var _this9 = this;
+      var _this12 = this;
 
       axios.get('/api/comment', {
         params: {
@@ -7741,21 +7839,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'text': this.comment
         }
       }).then(function (response) {
-        return _this9.thisUserComments = response.data;
+        return _this12.thisUserComments = response.data;
       }, this.$refs.carouselPost.remove(), this.snackbar = true, this.destroy())["catch"](function (error) {
         console.log(error);
       });
     },
     deletePost: function deletePost(dialogPost) {
-      var _this10 = this;
+      var _this13 = this;
 
       var fd = new FormData();
       fd.append("post", JSON.stringify(dialogPost));
       axios.post('/api/delete_post', fd).then(function (response) {
-        _this10.userPosts = response.data;
-        _this10.dialog = false;
-        _this10.deleteDialog = false;
-        _this10.snackbar = true;
+        _this13.userPosts = response.data;
+        _this13.dialog = false;
+        _this13.deleteDialog = false;
+        _this13.snackbar = true;
       })["catch"](function (error) {
         console.log(error);
       });
@@ -7782,7 +7880,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       });
     },
     like: function like(index) {
-      var _this11 = this;
+      var _this14 = this;
 
       axios.post('/api/like', {
         postId: this.dialogPost.id,
@@ -7790,19 +7888,19 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this11.snackbar = true;
-        _this11.lastPostId = _this11.dialogPost.id;
-        _this11.lastIndex = index;
+        _this14.snackbar = true;
+        _this14.lastPostId = _this14.dialogPost.id;
+        _this14.lastIndex = index;
 
-        _this11.checkLikeObj(response.data);
+        _this14.checkLikeObj(response.data);
 
-        _this11.findLikeUsers(_this11.dialogPost);
+        _this14.findLikeUsers(_this14.dialogPost);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     deleteLike: function deleteLike(thisPostId, index) {
-      var _this12 = this;
+      var _this15 = this;
 
       axios.post('/api/delete_like', {
         postId: thisPostId,
@@ -7810,12 +7908,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        // this.userLikes = response.data[0];
-        // this.userPostLikes = response.data[1];
-        // this.likeUsers = response.data[2];
-        _this12.findDeleteLike(response.data);
+        _this15.findDeleteLike(response.data);
 
-        _this12.findLikeUsers(_this12.dialogPost);
+        _this15.findLikeUsers(_this15.dialogPost);
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -7847,7 +7942,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.userPostLikes = newUserPostLikes;
     },
     follow: function follow(isFollowed) {
-      var _this13 = this;
+      var _this16 = this;
 
       axios.get('/api/follow', {
         params: {
@@ -7856,10 +7951,44 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           'isFollowed': isFollowed
         }
       }).then(function (response) {
-        return _this13.userFollowed = response.data;
+        return _this16.userFollowed = response.data;
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    sendComment: function sendComment(postId, index) {
+      var _this17 = this;
+
+      axios.post('/api/comment', {
+        postId: postId,
+        userId: this.visitor.id,
+        text: this.comment
+      }).then(function (response) {
+        _this17.commentSnackbar = true;
+        _this17.lastPostId = postId;
+        _this17.lastIndex = index;
+
+        _this17.userComments.push(response.data);
+      })["catch"](function (error) {
+        console.log('fail');
+      });
+    },
+    deleteComment: function deleteComment(postComment) {
+      var _this18 = this;
+
+      axios.post('/api/delete_comment', {
+        id: postComment.id
+      }).then(function (response) {
+        _this18.findDeleteComment(response.data);
+      })["catch"](function (error) {
+        console.log('fail');
+      });
+    },
+    findDeleteComment: function findDeleteComment(res) {
+      var newUserComments = this.userComments.filter(function (userComment) {
+        return userComment.id !== res.id;
+      });
+      this.userComments = newUserComments;
     }
   }
 });
@@ -17300,7 +17429,8 @@ var render = function() {
           requestedUserPosts: _vm.requestedUserPosts,
           mainUserLikes: _vm.mainUserLikes,
           requestedUserLikes: _vm.requestedUserLikes,
-          requestedUserFollowed: _vm.requestedUserFollowed
+          requestedUserFollowed: _vm.requestedUserFollowed,
+          requestedUserComments: _vm.requestedUserComments
         }
       })
     ],
@@ -21009,10 +21139,6 @@ var render = function() {
                   _vm._v(" "),
                   _c("v-list-item-subtitle", [
                     _vm._v(_vm._s(_vm.requestedUserInfo.name))
-                  ]),
-                  _vm._v(" "),
-                  _c("v-list-item-subtitle", [
-                    _vm._v("フォロワー" + _vm._s(_vm.userFollowedNumer) + "人")
                   ])
                 ],
                 1
@@ -21262,7 +21388,7 @@ var render = function() {
                                       _c(
                                         "v-card-text",
                                         {
-                                          staticClass: "pt-6",
+                                          staticClass: "py-1",
                                           staticStyle: {
                                             position: "relative",
                                             "max-width": "340px"
@@ -21273,7 +21399,10 @@ var render = function() {
                                             "p",
                                             {
                                               staticClass:
-                                                "text-h6 font-weight-light orange--text mb-2"
+                                                "text-h6 font-weight-light orange--text mb-2",
+                                              staticStyle: {
+                                                margin: "0!important"
+                                              }
                                             },
                                             [
                                               _vm._v(
@@ -21327,6 +21456,7 @@ var render = function() {
                                                       _vm._g(
                                                         _vm._b(
                                                           {
+                                                            staticClass: "pl-3",
                                                             attrs: {
                                                               icon: "",
                                                               color: _vm.mainUserLikeBool
@@ -21353,7 +21483,7 @@ var render = function() {
                                             ],
                                             null,
                                             false,
-                                            2210075266
+                                            4133288800
                                           ),
                                           model: {
                                             value:
@@ -21498,10 +21628,32 @@ var render = function() {
                                       _c(
                                         "v-btn",
                                         { attrs: { icon: "" } },
-                                        [_c("v-icon", [_vm._v("mdi-comment")])],
+                                        [
+                                          _c(
+                                            "v-icon",
+                                            {
+                                              attrs: {
+                                                color: _vm.isMainUserComment(
+                                                  _vm.dialogPost.id
+                                                )
+                                                  ? "orange"
+                                                  : ""
+                                              }
+                                            },
+                                            [_vm._v("mdi-comment")]
+                                          )
+                                        ],
                                         1
                                       ),
-                                      _vm._v(" "),
+                                      _vm._v(
+                                        "\n                                " +
+                                          _vm._s(
+                                            _vm.totalCommentNumber(
+                                              _vm.dialogPost.id
+                                            )
+                                          ) +
+                                          "人\n                                "
+                                      ),
                                       _c(
                                         "v-btn",
                                         { attrs: { icon: "" } },
@@ -21526,6 +21678,47 @@ var render = function() {
                                           }
                                         },
                                         [_c("v-icon", [_vm._v("mdi-delete")])],
+                                        1
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        {
+                                          staticClass:
+                                            "d-flex align-center justify-space-around px-2"
+                                        },
+                                        [
+                                          _c("v-text-field", {
+                                            staticClass: "px-2 pt-2",
+                                            attrs: {
+                                              color: "purple darken-2",
+                                              label: "コメント",
+                                              required: ""
+                                            },
+                                            model: {
+                                              value: _vm.comment,
+                                              callback: function($$v) {
+                                                _vm.comment = $$v
+                                              },
+                                              expression: "comment"
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-btn",
+                                            {
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.sendComment(
+                                                    _vm.dialogPost.id,
+                                                    _vm.dialogPostIndex
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("投稿")]
+                                          )
+                                        ],
                                         1
                                       )
                                     ],
@@ -21712,6 +21905,141 @@ var render = function() {
                                       )
                                     ],
                                     1
+                                  )
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-window-item",
+                                { attrs: { value: 2 } },
+                                [
+                                  _c(
+                                    "v-list",
+                                    {
+                                      staticStyle: {
+                                        "max-height": "180px",
+                                        "overflow-y": "scroll"
+                                      },
+                                      attrs: { subheader: "" }
+                                    },
+                                    [
+                                      _c("v-subheader", [
+                                        _vm._v("Recent chat")
+                                      ]),
+                                      _vm._v(" "),
+                                      _vm._l(_vm.postComments, function(
+                                        postComment,
+                                        index
+                                      ) {
+                                        return _c(
+                                          "div",
+                                          { key: index },
+                                          [
+                                            _vm.commentUser(postComment.user_id)
+                                              ? _c(
+                                                  "v-list-item",
+                                                  [
+                                                    _c(
+                                                      "v-list-item-avatar",
+                                                      {
+                                                        attrs: {
+                                                          href:
+                                                            "/profile?id=" +
+                                                            postComment.user_id
+                                                        }
+                                                      },
+                                                      [
+                                                        _c("v-img", {
+                                                          attrs: {
+                                                            src:
+                                                              "storage/image/avatar/" +
+                                                              _vm.commentUser(
+                                                                postComment.user_id
+                                                              ).profile_image
+                                                          }
+                                                        })
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "v-list-item-content",
+                                                      [
+                                                        _c(
+                                                          "v-list-item-title",
+                                                          {
+                                                            domProps: {
+                                                              textContent: _vm._s(
+                                                                _vm.commentUser(
+                                                                  postComment.user_id
+                                                                ).screen_name
+                                                              )
+                                                            }
+                                                          }
+                                                        )
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "div",
+                                                      [
+                                                        _vm._v(
+                                                          _vm._s(
+                                                            postComment.text
+                                                          ) +
+                                                            "\n                                        "
+                                                        ),
+                                                        _vm.commentUser(
+                                                          postComment.user_id
+                                                        ).id == _vm.visitor.id
+                                                          ? [
+                                                              _c(
+                                                                "v-btn",
+                                                                {
+                                                                  attrs: {
+                                                                    color:
+                                                                      "success"
+                                                                  },
+                                                                  on: {
+                                                                    click: function(
+                                                                      $event
+                                                                    ) {
+                                                                      return _vm.deleteComment(
+                                                                        postComment
+                                                                      )
+                                                                    }
+                                                                  }
+                                                                },
+                                                                [_vm._v("削除")]
+                                                              )
+                                                            ]
+                                                          : [
+                                                              _c(
+                                                                "v-btn",
+                                                                {
+                                                                  attrs: {
+                                                                    color:
+                                                                      "success"
+                                                                  }
+                                                                },
+                                                                [_vm._v("a")]
+                                                              )
+                                                            ]
+                                                      ],
+                                                      2
+                                                    )
+                                                  ],
+                                                  1
+                                                )
+                                              : _vm._e()
+                                          ],
+                                          1
+                                        )
+                                      })
+                                    ],
+                                    2
                                   )
                                 ],
                                 1
