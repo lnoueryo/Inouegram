@@ -16,7 +16,7 @@ import 'vuetify/dist/vuetify.min.css';
 
 // Vuetify Icon
 import '@mdi/font/css/materialdesignicons.css'
-import '@fortawesome/fontawesome-free/css/all.css'
+// import '@fortawesome/fontawesome-free/css/all.css'
 Vue.use(VueRouter);
 Vue.use(Vuex);
 Vue.use(Vuetify);

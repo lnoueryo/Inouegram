@@ -9,9 +9,9 @@
                 :requestedUserPosts="requestedUserPosts"
                 :mainUserLikes="mainUserLikes"
                 :requestedUserLikes="requestedUserLikes"
-                :requestedUserFollowed="requestedUserFollowed"
                 :requestedUserComments="requestedUserComments"
                 :likedPosts="likedPosts"
+                :isMainUser="isMainUser"
             ></user-posts>
         </template>
         <template v-else-if="value == 1">
@@ -43,30 +43,49 @@
     </div>
 </template>
 
-<script>
-    import UserPosts from "../organisms/profile/UserPosts.vue";
-    import LikePosts from "../organisms/profile/LikePosts.vue";
-    import ProfileCard from "../organisms/profile/ProfileCard.vue";
-    export default {
+<script lang="ts">
+import Vue, { PropType } from "vue"
+import UserPosts from "../organisms/profile/UserPosts.vue";
+import LikePosts from "../organisms/profile/LikePosts.vue";
+import ProfileCard from "../organisms/profile/ProfileCard.vue";
+export type PropUserObjType = {
+    id: number
+    screen_name: string
+    name: string
+    email: string
+}
+export type DataType = {
+    value: number
+}
+export default Vue.extend({
         components: {
             UserPosts,
             LikePosts,
             ProfileCard,
         },
-    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed', 'requestedUserComments', 'likedPosts'],
-    data () {
+    props: {
+        mainUser: Object as PropType<PropUserObjType>,
+        requestedUser: Object as PropType<PropUserObjType>,
+        requestedUserPosts: Array,
+        mainUserLikes: Array,
+        requestedUserLikes: Array,
+        requestedUserFollowed: Array,
+        requestedUserComments: Array,
+        likedPosts: Array,
+    },
+    data (): DataType {
         return {
             value: 0,
         }
     },
     computed:{
-        isMainUser() {
+        isMainUser():boolean {
             const visitor = this.mainUser;
             const user = this.requestedUser;
             return visitor.id === user.id
         }
     },
-}
+})
 </script>
 <style>
 .v-dialog {

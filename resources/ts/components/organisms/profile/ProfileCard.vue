@@ -68,10 +68,38 @@
     </div>
 </template>
 
-<script>
-    export default {
-    props: ['mainUser', 'requestedUser', 'requestedUserFollowed'],
-    data () {
+<script lang="ts">
+import Vue, { PropType } from "vue"
+import axios from 'axios'
+export type DataType = {
+    visitor: User,
+    user: User,
+    userFollowed: Follower[],
+    followerDialog: boolean,
+    followingUsers: User[] | string,
+    windowSize: windowSize,
+    changeBgDialog: boolean,
+    changingBgData: string | null
+}
+
+interface User {
+    id: number;
+}
+interface Follower {
+    following_id: number;
+}
+interface windowSize {
+    x: number
+    y: number
+}
+    export default Vue.extend({
+    props: {
+        mainUser: Object as () => User,
+        requestedUser: Object as () => User,
+        requestedUserFollowed: Array as () => Follower[],
+    },
+    // props: ['mainUser', 'requestedUser', 'requestedUserFollowed'],
+    data (): DataType {
         return {
             visitor: this.mainUser,
             user: this.requestedUser,
@@ -87,29 +115,30 @@
         }
     },
     computed:{
-        requestedUserInfo(){
-            var user = this.user;
+        requestedUserInfo(): User{
+            var user = this.user as User;
             return user;
         },
-        isFollowed(){
+        isFollowed(): boolean{
             var userFolloweds = this.userFollowed;
-            var visitor = this.visitor;
-            return userFolloweds.some((userFollowed) => {
-                return userFollowed.following_id === this.visitor.id;
+            var visitor = this.visitor as User;
+            return userFolloweds.some((userFollowed: Follower) => {
+                return userFollowed.following_id === visitor.id;
             })
         },
         userFollowedNumer(){
-            var userFollowedNumer = this.userFollowed.length;
+            var userFollowedNumer: number = this.userFollowed.length;
             console.log(this.userFollowed)
             return userFollowedNumer;
         },
     },
     methods: {
         async changeBg(){
-            var bgData = this.changingBgData;
+            var bgData = this.changingBgData as string;
+            let userId: any = this.user.id;
             let fd= new FormData();
             fd.append("bgData", bgData);
-            fd.append("userId", this.user.id);
+            fd.append("userId", userId);
             axios.post('/api/upload', fd)
             .then(
                 response => {
@@ -117,67 +146,57 @@
                     this.user = response.data;
                 }
             )
-            .catch(function (error) {
+            .catch(function (error: string) {
                 console.log(error);
             });
         },
-        async changeAvatar(event){
+        async changeAvatar(event: any){
             var file = event.target.files[0];
             var reader = new FileReader();
             reader.readAsDataURL(file);
             var avatarData;
             var that = this;
-            reader.onload = function(e) {
+            reader.onload = function(e: any) {
                 avatarData = e.target.result;
             let fd= new FormData();
             fd.append("avatarData", avatarData);
-            fd.append("userId", that.user.id);
+            fd.append("userId", that.user.id as any);
             axios.post('/api/upload2', fd)
             .then(
                 response => {
                     that.user = response.data;
                 }
             )
-            .catch(function (error) {
+            .catch(function (error: string) {
                 console.log(error);
             });
             }
         },
-        upload(event){
-            if(event.target.value == ''){
-                this.changeBgDialog = false;
-            } else {
+        upload(event: any): void{
+            if(event.target instanceof HTMLInputElement){
             var file = event.target.files[0];
             var reader = new FileReader();
             var that = this;
-                reader.onload = function(e) {
-                    that.changingBgData = e.target.result;
+                reader.onload = function(e: any) {
+                    that.changingBgData = e.target.result as string | null;
                     that.changeBgDialog = true;
                 }
                 reader.readAsDataURL(file);
+            } else {
+                this.changeBgDialog = false;
             }
         },
-        btnclick() {
+        btnclick(): void {
             if(this.visitor.id == this.user.id){
                 this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
             }
         },
-        btnclick2() {
+        btnclick2(): void {
             if(this.visitor.id == this.user.id){
                 this.$refs.avatar.click();
             }
         },
-        followedUser(id){
-            if(this.commentUsers){
-                var user = this.commentUsers.find((commentUser) => {
-                    return commentUser.id ===id;
-                })
-                return user;
-            } else {
-                return false;
-            }
-        },
-        findFollowingUsers(){
+        findFollowingUsers(): void{
             this.followerDialog = true;
             console.log(this.followerDialog)
             var followingIds = this.userFollowed.map((user) => {
@@ -186,21 +205,21 @@
             axios.post('/api/followingUsers', {
                 usersId: followingIds,
             })
-            .then(response => {
+            .then((response) => {
                 this.followingUsers = response.data;
             })
-            .catch(error => {
+            .catch((error) => {
                 console.log('fail')
             })
         },
-        logout() {
+        logout(): void {
           axios.post('/logout')
           .then(() => location.href = '/')
           .catch(function (error) {
               location.href = '/';
           });
         },
-        follow(isFollowed){
+        follow(isFollowed: boolean): void{
                 axios.get('/api/follow', {
                 params: {'id': this.user.id, 'myId': this.visitor.id, 'isFollowed': isFollowed},
             })
@@ -212,7 +231,7 @@
             });
         },
     }
-}
+})
 </script>
 <style>
 .v-dialog {

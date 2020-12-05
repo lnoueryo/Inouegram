@@ -61,7 +61,7 @@
                                     <v-btn icon>
                                     <v-icon>mdi-bookmark</v-icon>
                                     </v-btn>
-                                    <v-btn absolute icon right @click="deleteDialog = true" v-if="btnclick3">
+                                    <v-btn absolute icon right @click="deleteDialog = true" v-if="isMainUser">
                                     <v-icon>mdi-delete</v-icon>
                                     </v-btn>
                                     <div class="d-flex align-center justify-space-around px-2">
@@ -185,18 +185,16 @@
 
 <script>
     export default {
-    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserFollowed', 'requestedUserComments', 'likedPosts'],
+    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserComments', 'likedPosts', 'isMainUser'],
     data () {
         return {
             visitor: this.mainUser,
             user: this.requestedUser,
             userPosts: this.requestedUserPosts,
-            userFollowed: this.requestedUserFollowed,
             userComments: this.requestedUserComments,
             dialog: false,
             dialogPost: '',
             dialogPostIndex: '',
-            followerDialog: false,
             carousel: [],
             deleteDialog: false,
             length: 3,
@@ -206,7 +204,6 @@
             postLikes: this.requestedUserLikes,
             likeUsers: '',
             commentUsers: '',
-            followingUsers: '',
             comment: '',
             menu: [],
             btns: [
@@ -223,11 +220,8 @@
             lastPostId: '',
             lastIndex: '',
             snackbar: false,
-            text: 'deleted',
             timeout: 2000,
-            changeBgDialog: false,
-            changingBgData: '',
-            value: 2,
+            text: 'deleted',
             likePosts: this.likedPosts,
         }
     },
@@ -241,18 +235,6 @@
                     userPosts[i].image = JSON.parse(userPosts[i].image);
                 }
                 return userPosts;
-            }
-        },
-        parsedLikePosts(){
-            var likePosts = this.likedPosts;
-           console.log(likePosts)
-            if(likePosts.length == 0){
-                return false;
-                } else {
-                for(var i=0; i<likePosts.length; i++){
-                    likePosts[i].image = JSON.parse(likePosts[i].image);
-                }
-                return likePosts;
             }
         },
         requestedUserInfo(){
@@ -294,18 +276,6 @@
             })
             return userPostLike.length;
         },
-        isFollowed(){
-            var userFolloweds = this.userFollowed;
-            var visitor = this.visitor;
-            return userFolloweds.some((userFollowed) => {
-                return userFollowed.following_id === this.visitor.id;
-            })
-        },
-        userFollowedNumer(){
-            var userFollowedNumer = this.userFollowed.length;
-            console.log(this.userFollowed)
-            return userFollowedNumer;
-        },
         postComments(){
             if(this.dialogPost.id){
                 var postComments = this.userComments.filter((userComment) => {
@@ -319,9 +289,6 @@
                 return false
             }
         },
-        btnclick3() {
-            return this.visitor.id === this.user.id
-        }
     },
     methods: {
         iconType(userId){
@@ -354,68 +321,6 @@
         onResize () {
             this.windowSize = { x: window.innerWidth, y: window.innerHeight }
         },
-        async changeBg(){
-            var bgData = this.changingBgData;
-            let fd= new FormData();
-            fd.append("bgData", bgData);
-            fd.append("userId", this.user.id);
-            axios.post('/api/upload', fd)
-            .then(
-                response => {
-                    this.changeBgDialog = false;
-                    this.user = response.data;
-                }
-            )
-            .catch(function (error) {
-                console.log(error);
-            });
-        },
-        async changeAvatar(event){
-            var file = event.target.files[0];
-            var reader = new FileReader();
-            reader.readAsDataURL(file);
-            var avatarData;
-            var that = this;
-            reader.onload = function(e) {
-                avatarData = e.target.result;
-            let fd= new FormData();
-            fd.append("avatarData", avatarData);
-            fd.append("userId", that.user.id);
-            axios.post('/api/upload2', fd)
-            .then(
-                response => {
-                    that.user = response.data;
-                }
-            )
-            .catch(function (error) {
-                console.log(error);
-            });
-            }
-        },
-        upload(event){
-            if(event.target.value == ''){
-                this.changeBgDialog = false;
-            } else {
-            var file = event.target.files[0];
-            var reader = new FileReader();
-            var that = this;
-                reader.onload = function(e) {
-                    that.changingBgData = e.target.result;
-                    that.changeBgDialog = true;
-                }
-                reader.readAsDataURL(file);
-            }
-        },
-        btnclick() {
-            if(this.visitor.id == this.user.id){
-                this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
-            }
-        },
-        btnclick2() {
-            if(this.visitor.id == this.user.id){
-                this.$refs.avatar.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
-            }
-        },
         openDialog(userPost, index){
             this.dialogPost = userPost;
             this.dialogPostIndex = index;
@@ -444,16 +349,6 @@
                 return false;
             }
         },
-        followedUser(id){
-            if(this.commentUsers){
-                var user = this.commentUsers.find((commentUser) => {
-                    return commentUser.id ===id;
-                })
-                return user;
-            } else {
-                return false;
-            }
-        },
         isMainUserComment(id){
             var postComments = this.userComments.filter((userComment) => {
                 return userComment.post_id === id;
@@ -470,22 +365,6 @@
                 this.commentDialog = true;
                 this.commentUsers = response.data;
                 this.dialogPostId = id;
-            })
-            .catch(error => {
-                console.log('fail')
-            })
-        },
-        findFollowingUsers(){
-            this.followerDialog = true;
-            console.log(this.followerDialog)
-            var followingIds = this.userFollowed.map((user) => {
-                return user.following_id
-            })
-            axios.post('/api/followingUsers', {
-                usersId: followingIds,
-            })
-            .then(response => {
-                this.followingUsers = response.data;
             })
             .catch(error => {
                 console.log('fail')
@@ -530,28 +409,6 @@
             .catch(function (error) {
                 console.log(error);
             });
-        },
-        destroy(){
-            setTimeout(
-                function() {
-                this.comment='';
-                this.showUp = false;
-                this.dialog = false;
-                }.bind(this),
-            1000,
-            );
-        },
-        imageData(event){
-            this.dialog = true;
-            this.images = event;
-            this.thisImageComments = this.thisUserComments.filter((v) => v.post_id === event.id);
-        },
-        logout() {
-          axios.post('/logout')
-          .then(() => location.href = '/')
-          .catch(function (error) {
-              location.href = '/';
-          });
         },
         like(index){
             axios.post('/api/like', {
@@ -611,17 +468,6 @@
                 return userPostLike.id !== res.id;
             })
             this.userPostLikes = newUserPostLikes;
-        },
-        follow(isFollowed){
-                axios.get('/api/follow', {
-                params: {'id': this.user.id, 'myId': this.visitor.id, 'isFollowed': isFollowed},
-            })
-            .then(
-                response => (this.userFollowed = response.data)
-            )
-            .catch(function (error) {
-                console.log(error);
-            });
         },
         sendComment(postId, index){
             axios.post('/api/comment', {
