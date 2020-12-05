@@ -1,4 +1,4 @@
 *.sqlite
 *.sqlite-journal
 # seeds/
-
+migrations/
