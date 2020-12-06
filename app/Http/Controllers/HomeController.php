@@ -46,5 +46,9 @@ class HomeController extends Controller
     //     $my_users = User::where('id',$request->id)->orWhereIn('id', $followers->get('followed_id'))->get();
     //     return $my_users;
     // }
+    public function json(){
+        $posts = Post::whereBetween('user_id', [51, 101])->get();
+        return view('json', compact('posts'));
+    }
 
 }

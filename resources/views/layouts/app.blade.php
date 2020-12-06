@@ -34,7 +34,7 @@
             <header-bar2 :user="null"></header-bar2>
             @endguest
             <keep-alive>
-                <main style="padding-top: 55px;padding-bottom: 55px">
+                <main style="padding-top: 65px;padding-bottom: 55px">
                     @yield('content')
                 </main>
             </keep-alive>

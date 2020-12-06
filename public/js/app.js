@@ -2005,8 +2005,6 @@ module.exports = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 //
 //
 //
@@ -2020,592 +2018,56 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-// import VueCropper from 'vue-cropperjs'
-// import InputFile from '../molecules/InputFile.vue'
-// import ImageEditer from '../organisms/ImageEditer.vue'
 /* harmony default export */ __webpack_exports__["default"] = ({
-  // name: "DrawTool",
-  // components: {
-  //     VueCropper,
-  //     'input-file': InputFile,
-  //     'image-editer': ImageEditer,
-  // },
+  props: ['posts'],
   data: function data() {
-    var _ref;
-
-    return _ref = {
-      e1: 1,
-      concatImg: [],
-      imgSrc: 'storage/image/panda.png',
-      value: 0,
-      canvasMode: 'penBlack',
-      drawCanvas: null,
-      drawCanvasctx: null,
-      isDrag: false,
-      cover: null,
-      coverctx: null,
-      penColor: '#000000',
-      lineWidth: 5,
-      lineCaps: ['square', 'butt', 'round'],
-      lineCap: 'round',
-      lineJoins: ['bebel', 'miter', 'round'],
-      lineJoin: 'round',
-      filterObject: {
-        'blur': 0,
-        'brightness': 100,
-        'contrast': 100,
-        'grayscale': 0,
-        'hueRotate': 0,
-        'invert': 0,
-        'saturate': 100,
-        'sepia': 0
-      },
-      globalCompositeOperation: ['lighter', 'darken', 'overlay', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity']
-    }, _defineProperty(_ref, "isDrag", false), _defineProperty(_ref, "model", null), _defineProperty(_ref, "globalAlpha", 1), _defineProperty(_ref, "color", '#00000080'), _defineProperty(_ref, "timer", ''), _defineProperty(_ref, "filters", ''), _defineProperty(_ref, "croppedImage", ''), _defineProperty(_ref, "toggle_multiple", []), _defineProperty(_ref, "textCanvas", ''), _defineProperty(_ref, "textCanvasctx", ''), _defineProperty(_ref, "texts", []), _defineProperty(_ref, "selectedText", -1), _defineProperty(_ref, "selectedEditText", -1), _defineProperty(_ref, "offsetX", ''), _defineProperty(_ref, "offsetY", ''), _defineProperty(_ref, "scrollX", ''), _defineProperty(_ref, "scrollY", ''), _defineProperty(_ref, "startX", ''), _defineProperty(_ref, "startY", ''), _defineProperty(_ref, "isActive", false), _defineProperty(_ref, "isActiveEditText", false), _defineProperty(_ref, "dialog", false), _defineProperty(_ref, "selectedEditTextMessage", ''), _defineProperty(_ref, "inputPosition", {
-      fontSize: '15px',
-      color: 'black',
-      fontWeght: '500',
-      fontStyle: 'normal',
-      top: '100px',
-      left: '100px',
-      position: 'absolute',
-      zIndex: 1
-    }), _defineProperty(_ref, "selectedInputPosition", {
-      fontSize: '15px',
-      color: 'black',
-      fontWeght: '500',
-      fontStyle: 'normal',
-      top: '100px',
-      left: '100px',
-      position: 'absolute',
-      zIndex: 1
-    }), _ref;
+    return {
+      allPosts: this.posts,
+      ids: ''
+    };
   },
   computed: {
-    toolStepper: function toolStepper() {
-      return Number(this.value) + 1;
+    parsedUserPosts: function parsedUserPosts() {
+      return this.allPosts;
     },
-    opacity: {
-      get: function get() {
-        return this.globalAlpha * 10;
-      },
-      set: function set(newValue) {
-        this.globalAlpha = newValue / 10;
-      }
-    },
-    fontSize: {
-      get: function get() {
-        return this.inputPosition.fontSize.replace(/px/g, "");
-      },
-      set: function set(newValue) {
-        this.inputPosition.fontSize = newValue + 'px';
-      }
-    },
-    selectedFontSize: {
-      get: function get() {
-        return this.selectedInputPosition.fontSize.replace(/px/g, "");
-      },
-      set: function set(newValue) {
-        this.selectedInputPosition.fontSize = newValue + 'px';
-      }
+    showIds: function showIds() {
+      return this.ids;
     }
   },
   mounted: function mounted() {
-    // canvas
-    this.drawCanvas = document.getElementById('drawCanvas');
-    this.drawCanvasctx = this.drawCanvas.getContext('2d');
-    this.drawCanvasctx.lineCap = 'round';
-    this.drawCanvasctx.lineJoin = 'round';
-    this.drawCanvasctx.lineWidth = 5;
-    this.drawCanvasctx.miterLimit = 50;
-    this.drawCanvasctx.strokeStyle = '#000000';
+    var allPosts = this.allPosts;
+
+    if (allPosts.length == 0) {
+      return false;
+    } else {
+      for (var i = 0; i < allPosts.length; i++) {
+        allPosts[i].image = JSON.parse(allPosts[i].image);
+      }
+    }
+
+    var abcs = allPosts.map(function (allpost) {
+      return allpost.image;
+    });
+    this.allPosts = abcs.map(function (abc) {
+      return abc.map(function (ab) {
+        return ab.src;
+      });
+    });
+    this.ids = allPosts.map(function (allPost) {
+      return allPost.id;
+    });
+    console.log(allPosts);
   },
   methods: {
-    loadImage: function loadImage(e) {
-      this.$refs.cropper.replace(e);
-      this.imgSrc = e;
-    },
-    submit: function submit() {
-      var fd = new FormData();
-      fd.append("cropped_image", JSON.stringify(this.concatImg));
-      fd.append("message", 'hello');
-      axios.post('/api/create', fd).then()["catch"](function (error) {
-        console.log(error);
+    update: function update() {
+      axios.post('/api/jsonjson', {
+        json: this.allPosts,
+        id: this.ids
+      }).then(function (response) {
+        console.log(response.data);
+      })["catch"](function (error) {
+        console.log('fail');
       });
-    },
-    getImage: function getImage() {
-      this.e1 = 3;
-      var concat = document.getElementById('concat');
-      var concatCxt = concat.getContext("2d");
-      var cover = this.createImage(document.getElementById("cover"));
-      var text = this.createImage(document.getElementById("text"));
-      var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
-
-      drawCanvas.onload = function () {
-        concatCxt.drawImage(cover, 0, 0, 500, 500);
-        concatCxt.drawImage(text, 0, 0, 500, 500);
-        concatCxt.drawImage(drawCanvas, 0, 0, 500, 500);
-      };
-
-      var that = this;
-      setTimeout(function () {
-        var abc = document.getElementById('concat').toDataURL('image/png');
-        that.concatImg.push(abc);
-      }, 200);
-    },
-    createImage: function createImage(context) {
-      var image = new Image();
-      image.src = context.toDataURL();
-      return image;
-    },
-    searchTimeOut: function searchTimeOut() {
-      var _this = this;
-
-      if (this.timer) {
-        clearTimeout(this.timer);
-        this.timer = null;
-      }
-
-      this.timer = setTimeout(function () {
-        _this.pen();
-      }, 200);
-    },
-    pen: function pen() {
-      this.canvasMode = 'pen';
-      this.drawCanvasctx.globalCompositeOperation = 'source-over';
-      this.drawCanvasctx.lineCap = this.lineCap;
-      this.drawCanvasctx.lineJoin = this.lineJoin;
-      this.drawCanvasctx.lineWidth = this.lineWidth;
-      this.drawCanvasctx.strokeStyle = this.penColor;
-    },
-    eraser: function eraser() {
-      this.canvasMode = 'eraser';
-      this.drawCanvasctx.lineCap = 'square';
-      this.drawCanvasctx.lineJoin = 'square';
-      this.drawCanvasctx.lineWidth = 30;
-      this.drawCanvasctx.globalCompositeOperation = 'destination-out';
-    },
-    draw: function draw(e) {
-      var x = e.layerX;
-      var y = e.layerY;
-
-      if (!this.isDrag) {
-        return;
-      }
-
-      this.drawCanvasctx.lineTo(x, y);
-      this.drawCanvasctx.stroke();
-    },
-    dragStart: function dragStart(e) {
-      var x = e.layerX;
-      var y = e.layerY;
-      this.drawCanvasctx.beginPath();
-      this.drawCanvasctx.lineTo(x, y);
-      this.drawCanvasctx.stroke();
-      this.isDrag = true;
-    },
-    dragEnd: function dragEnd() {
-      this.drawCanvasctx.closePath();
-      this.isDrag = false;
-    },
-    clear: function clear() {
-      this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
-    },
-    cropImage: function cropImage() {
-      this.e1 = 2;
-      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
-      this.cover = document.getElementById("cover");
-      this.coverctx = this.cover.getContext("2d");
-      var background = new Image();
-      background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
-      var that = this;
-
-      background.onload = function () {
-        that.coverctx.drawImage(background, 0, 0, 500, 500);
-      };
-
-      var that = this;
-      var canvas = [];
-      var canvasCtx = [];
-      var coverImage = [];
-      var that = this;
-      setTimeout(function () {
-        var _loop = function _loop(i) {
-          canvas[i] = document.getElementById("pic" + i);
-          canvasCtx[i] = canvas[i].getContext('2d');
-          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-          canvasCtx[i].globalAlpha = 1;
-          coverImage[i] = new Image();
-          coverImage[i].src = background.src;
-
-          coverImage[i].onload = function () {
-            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-          };
-        };
-
-        for (var i = 1; i < 14; i++) {
-          _loop(i);
-        }
-      }, 500);
-      this.coverctx.save();
-    },
-    back: function back() {
-      this.coverctx.clearRect(0, 0, 500, 500);
-      this.coverctx.restore();
-      var picImage = new Image();
-      picImage.src = this.croppedImage;
-      var that = this;
-
-      picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
-      };
-
-      this.coverctx.fillRect(0, 0, 500, 500);
-    },
-    rotate: function rotate() {
-      this.coverctx.clearRect(0, 0, 500, 500);
-      this.coverctx.translate(500, 0);
-      this.coverctx.rotate(90 * Math.PI / 180);
-      this.coverctx.globalAlpha = this.globalAlpha;
-      this.coverctx.fillStyle = this.color;
-      this.coverctx.fillRect(0, 0, 500, 500);
-      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-      var picImage = new Image();
-      picImage.src = this.croppedImage;
-      var that = this;
-
-      picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
-        that.coverctx.save();
-      };
-    },
-    click: function click() {
-      this.coverctx.clearRect(0, 0, 500, 500);
-      this.coverctx.globalAlpha = this.globalAlpha;
-      this.coverctx.fillStyle = this.color;
-      this.coverctx.fillRect(0, 0, 500, 500);
-      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-      var picImage = new Image();
-      picImage.src = this.croppedImage;
-      var that = this;
-
-      picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
-        that.coverctx.save();
-      };
-    },
-    reset: function reset() {
-      this.coverctx.filter = 'grayscale(0%)';
-      this.globalAlpha = 1;
-      this.color = 'transparent';
-      this.model = '';
-      this.coverctx.globalCompositeOperation = 'source-over';
-      this.filterObject = {
-        'blur': 0,
-        'brightness': 100,
-        'contrast': 100,
-        'grayscale': 0,
-        'hueRotate': 0,
-        'invert': 0,
-        'saturate': 100,
-        'sepia': 0
-      };
-      this.coverctx.clearRect(0, 0, 500, 500);
-      var myImage = new Image();
-      myImage.src = this.croppedImage;
-      var that = this;
-
-      myImage.onload = function () {
-        that.coverctx.drawImage(myImage, 0, 0, 500, 500);
-        that.coverctx.save();
-      };
-
-      this.color = '#00000080';
-      that.searchTimeOut();
-    },
-    searchTimeOut2: function searchTimeOut2() {
-      var _this2 = this;
-
-      if (this.timer) {
-        clearTimeout(this.timer);
-        this.timer = null;
-      }
-
-      this.timer = setTimeout(function () {
-        _this2.colorImage();
-      }, 200);
-    },
-    searchTimeOut3: function searchTimeOut3() {
-      var _this3 = this;
-
-      if (this.timer) {
-        clearTimeout(this.timer);
-        this.timer = null;
-      }
-
-      this.timer = setTimeout(function () {
-        _this3.filter();
-
-        _this3.colorImage();
-      }, 200);
-    },
-    colorImage: function colorImage() {
-      var canvas = [];
-      var canvasCtx = [];
-      var coverImage = [];
-      var that = this;
-      setTimeout(function () {
-        var _loop2 = function _loop2(i) {
-          canvas[i] = document.getElementById("pic" + i);
-          canvasCtx[i] = canvas[i].getContext('2d');
-          canvasCtx[i].clearRect(0, 0, 500, 500);
-          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-          canvasCtx[i].globalAlpha = that.globalAlpha;
-          canvasCtx[i].fillStyle = that.color;
-          canvasCtx[i].filter = that.filters;
-          canvasCtx[i].fillRect(0, 0, 500, 500);
-          coverImage[i] = new Image();
-          coverImage[i].src = that.croppedImage;
-
-          coverImage[i].onload = function () {
-            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-          };
-        };
-
-        for (var i = 1; i < 14; i++) {
-          _loop2(i);
-        }
-      }, 500);
-    },
-    filter: function filter() {
-      var filterKeys = Object.keys(this.filterObject);
-      var filterValues = Object.values(this.filterObject);
-      var filtersArray = [];
-      var newValue;
-
-      for (var i = 0; i < filterKeys.length; i++) {
-        if (filterKeys[i] == 'hueRotate') {
-          newValue = "hue-rotate(".concat(filterValues[i], "deg)");
-          filtersArray.push(newValue);
-        } else if (filterKeys[i] == 'blur') {
-          newValue = filterKeys[i] + "(".concat(filterValues[i], "px)");
-          filtersArray.push(newValue);
-        } else {
-          newValue = filterKeys[i] + "(".concat(filterValues[i], "%)");
-          filtersArray.push(newValue);
-        }
-      }
-
-      ;
-      var filters = filtersArray.join(' ');
-      this.filters = filters;
-      this.coverctx.clearRect(0, 0, 500, 500);
-      this.coverctx.globalAlpha = this.globalAlpha;
-      this.coverctx.fillstyle = this.color;
-      this.coverctx.filter = this.filters;
-      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-      this.coverctx.fillRect(0, 0, 500, 500);
-      var picImage = new Image();
-      picImage.src = this.croppedImage;
-      var that = this;
-
-      picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 500, 500);
-        that.coverctx.save();
-      };
-    },
-    blur: function blur(e) {
-      e.target.blur();
-    },
-    create: function create(e) {
-      this.isActive = true;
-      var that = this;
-      setTimeout(function () {
-        that.startX = parseInt(e.clientX - that.offsetX);
-        that.startY = e.pageY - 188;
-        that.inputPosition.top = e.pageY - 230 + 'px';
-        that.inputPosition.left = e.pageX - 10 + 'px';
-        document.getElementById('newText').focus();
-      }, 100);
-    },
-    discribeNew: function discribeNew() {
-      this.isActive = false;
-      var text = {
-        text: document.getElementById('newText').value,
-        x: this.startX,
-        y: this.startY + this.inputPosition.fontSize.replace(/px/g, "") / 2 - 5,
-        font: "bold ".concat(this.inputPosition.fontSize, " normal"),
-        fillStyle: this.inputPosition.color
-      };
-      this.textCanvasctx.font = text.font;
-      this.textCanvasctx.fillStyle = text.fillStyle;
-      text.width = this.textCanvasctx.measureText(text.text).width;
-      text.height = this.inputPosition.fontSize.replace(/px/g, "");
-      this.texts.push(text);
-      this.drawText();
-    },
-    edit: function edit() {
-      this.isActiveEditText = false;
-      var editText = this.texts[this.selectedEditText];
-      editText.text = this.selectedEditTextMessage;
-      editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
-      editText.fillStyle = this.selectedInputPosition.color;
-      var that = this;
-      setTimeout(function () {
-        editText.width = that.textCanvasctx.measureText(that.selectedEditTextMessage).width;
-      }, 100);
-      this.drawText();
-      this.selectedEditText = -1;
-    },
-    drawText: function drawText() {
-      this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
-
-      for (var i = 0; i < this.texts.length; i++) {
-        var text = this.texts[i];
-
-        if (text.text == '') {
-          this.texts.splice(i, 1);
-        }
-      }
-
-      for (var i = 0; i < this.texts.length; i++) {
-        var text = this.texts[i];
-        this.textCanvasctx.font = text.font;
-        this.textCanvasctx.fillStyle = text.fillStyle;
-        this.textCanvasctx.fillText(text.text, text.x, text.y);
-      }
-    },
-    selectText: function selectText(event) {
-      this.startX = parseInt(event.clientX - this.offsetX);
-      this.startY = event.pageY - 188;
-      this.inputPosition.width = 500 - this.startX + 'px';
-      this.selectedInputPosition.width = 500 - this.startX + 'px';
-
-      for (var i = 0; i < this.texts.length; i++) {
-        if (this.textHittest(this.startX, this.startY, i)) {
-          this.isActiveEditText = true;
-          this.isActive = false;
-          this.selectedEditText = i;
-          setTimeout(function () {
-            document.getElementById('selectedText').focus();
-          }, 100); // var selectedInput = document.getElementById('selectedText');
-          // selectedInput.focus();
-
-          this.selectedInputPosition.top = this.texts[i].y - 45 + 'px';
-          this.selectedInputPosition.left = this.texts[i].x + 15 + 'px';
-          this.selectedInputPosition.color = this.texts[i].fillStyle;
-          this.texts[i].fillStyle = 'transparent';
-          var fontArray = this.texts[i].font.split(/\s+/);
-          this.selectedInputPosition.fontWeight = fontArray[0];
-          this.selectedInputPosition.fontSize = fontArray[1];
-          this.selectedInputPosition.fontStyle = fontArray[2];
-          var that = this;
-          setTimeout(that.drawText(), 100);
-          this.selectedEditTextMessage = this.texts[i].text;
-        }
-      }
-
-      if (this.selectedEditText == -1) {
-        this.create(event);
-      }
-    },
-    textHittest: function textHittest(x, y, textIndex) {
-      var text = this.texts[textIndex];
-      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
-    },
-    handleMouseDown: function handleMouseDown(event) {
-      var newText = document.getElementById('newText');
-      var selectedText = document.getElementById('selectedText'); // if(newText == document.activeElement){
-      //   newText.blur();
-      // }
-      // if(selectedText == document.activeElement){
-      //   selectedText.blur();
-      // }
-
-      this.pageY = event.pageY;
-      this.startX = parseInt(event.clientX - this.offsetX);
-      this.startY = event.pageY - 188;
-
-      for (var i = 0; i < this.texts.length; i++) {
-        if (this.textHittest(this.startX, this.startY, i)) {
-          this.selectedText = i;
-        }
-      }
-    },
-    handleMouseUp: function handleMouseUp(e) {
-      this.selectedText = -1;
-    },
-    handleMouseOut: function handleMouseOut(e) {
-      this.selectedText = -1;
-    },
-    handleMouseMove: function handleMouseMove(e) {
-      if (this.selectedText < 0) {
-        return;
-      }
-
-      var mouseX = parseInt(e.clientX - this.offsetX);
-      var mouseY = event.pageY - 188;
-      var dx = mouseX - this.startX;
-      var dy = mouseY - this.startY;
-      this.startX = mouseX;
-      this.startY = mouseY;
-      var text = this.texts[this.selectedText];
-      text.x += dx;
-      text.y += dy;
-      this.drawText();
     }
   }
 });
@@ -12249,25 +11711,6 @@ exports.push([module.i, "/*!\n* Vuetify v2.3.19\n* Forged by John Leider\n* Rele
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&":
-/*!**********************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css& ***!
-  \**********************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\r\n\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css&":
 /*!************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/atoms/InputFileBtn.vue?vue&type=style&index=0&lang=css& ***!
@@ -13854,36 +13297,6 @@ try {
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&":
-/*!**************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css& ***!
-  \**************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../node_modules/css-loader??ref--7-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
 
 /***/ }),
 
@@ -15623,192 +15036,31 @@ var render = function() {
   return _c(
     "div",
     [
+      _vm._l(_vm.parsedUserPosts, function(parsedUserPost, index) {
+        return _c("div", { key: index }, [
+          _vm._v("\n        " + _vm._s(parsedUserPost) + "\n    ")
+        ])
+      }),
+      _vm._v(" "),
+      _vm._l(_vm.showIds, function(showId, index) {
+        return _c("div", { key: index }, [
+          _vm._v("\n        " + _vm._s(showId) + "\n    ")
+        ])
+      }),
+      _vm._v(" "),
       _c(
-        "v-stepper",
+        "v-btn",
         {
-          model: {
-            value: _vm.e1,
-            callback: function($$v) {
-              _vm.e1 = $$v
-            },
-            expression: "e1"
+          on: {
+            click: function($event) {
+              return _vm.update()
+            }
           }
         },
-        [
-          _c(
-            "v-stepper-header",
-            [
-              _c(
-                "v-stepper-step",
-                { attrs: { complete: _vm.e1 > 1, step: "1" } },
-                [_vm._v("\n      画像のトリミング\n    ")]
-              ),
-              _vm._v(" "),
-              _c("v-divider"),
-              _vm._v(" "),
-              _c(
-                "v-stepper-step",
-                { attrs: { complete: _vm.e1 > 2, step: "2" } },
-                [_vm._v("\n      画像の加工\n    ")]
-              ),
-              _vm._v(" "),
-              _c("v-divider"),
-              _vm._v(" "),
-              _c("v-stepper-step", { attrs: { step: "3" } }, [
-                _vm._v("\n      保存\n    ")
-              ])
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-stepper-items",
-            [
-              _c(
-                "v-stepper-content",
-                { attrs: { step: "1" } },
-                [
-                  _c(
-                    "v-container",
-                    [
-                      _c(
-                        "v-layout",
-                        { attrs: { "justify-space-around": "", wrap: "" } },
-                        [
-                          _vm.imgSrc !== ""
-                            ? _c(
-                                "div",
-                                [
-                                  _c("vue-cropper", {
-                                    ref: "cropper",
-                                    attrs: {
-                                      guides: true,
-                                      "view-mode": 2,
-                                      "auto-crop-area": 0.5,
-                                      "min-container-width": 500,
-                                      "min-container-height": 500,
-                                      background: true,
-                                      rotatable: false,
-                                      src: _vm.imgSrc,
-                                      "img-style": {
-                                        width: "500px",
-                                        height: "500px"
-                                      },
-                                      "aspect-ratio": 1 / 1,
-                                      "drag-mode": "crop",
-                                      preview: ".preview"
-                                    }
-                                  })
-                                ],
-                                1
-                              )
-                            : _vm._e(),
-                          _vm._v(" "),
-                          _c(
-                            "div",
-                            [
-                              _c("div", { staticClass: "preview" }),
-                              _vm._v(" "),
-                              _c("input-file", {
-                                on: {
-                                  selectedImage: function($event) {
-                                    return _vm.loadImage($event)
-                                  }
-                                }
-                              })
-                            ],
-                            1
-                          )
-                        ]
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { color: "primary" },
-                      on: { click: _vm.cropImage }
-                    },
-                    [_vm._v("トリミング")]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-stepper-content",
-                { attrs: { step: "2" } },
-                [
-                  _c("image-editer"),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { color: "primary" },
-                      on: { click: _vm.getImage }
-                    },
-                    [_vm._v("決定")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { text: "" },
-                      on: {
-                        click: function($event) {
-                          _vm.e1 = 1
-                        }
-                      }
-                    },
-                    [_vm._v("戻る")]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c("v-stepper-content", { attrs: { step: "3" } }, [
-                _c("canvas", {
-                  staticClass: "mx-auto",
-                  attrs: { id: "concat", width: "500", height: "500" }
-                }),
-                _c(
-                  "div",
-                  [
-                    _c(
-                      "v-btn",
-                      {
-                        attrs: { color: "primary" },
-                        on: { click: _vm.submit }
-                      },
-                      [_vm._v("トリミング")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "v-btn",
-                      {
-                        attrs: { text: "" },
-                        on: {
-                          click: function($event) {
-                            _vm.e1 = 2
-                          }
-                        }
-                      },
-                      [_vm._v("\n          戻る\n          ")]
-                    )
-                  ],
-                  1
-                )
-              ])
-            ],
-            1
-          )
-        ],
-        1
+        [_vm._v("aaa")]
       )
     ],
-    1
+    2
   )
 }
 var staticRenderFns = []
@@ -17549,7 +16801,7 @@ var render = function() {
                                         "aspect-ratio": 14 / 12,
                                         src:
                                           "storage/image/" +
-                                          parsedLikePost.image[0].src
+                                          parsedLikePost.image[0]
                                       },
                                       on: {
                                         click: function($event) {
@@ -17652,7 +16904,7 @@ var render = function() {
                             return _c("v-carousel-item", {
                               key: index,
                               attrs: {
-                                src: "storage/image/" + postDialogImage.src,
+                                src: "storage/image/" + postDialogImage,
                                 "reverse-transition": "fade-transition",
                                 transition: "fade-transition"
                               }
@@ -18833,7 +18085,7 @@ var render = function() {
                                         "aspect-ratio": 14 / 12,
                                         src:
                                           "storage/image/" +
-                                          parsedUserPost.image[0].src
+                                          parsedUserPost.image[0]
                                       },
                                       on: {
                                         click: function($event) {
@@ -18937,7 +18189,7 @@ var render = function() {
                             return _c("v-carousel-item", {
                               key: index,
                               attrs: {
-                                src: "storage/image/" + postDialogImage.src,
+                                src: "storage/image/" + postDialogImage,
                                 "reverse-transition": "fade-transition",
                                 transition: "fade-transition"
                               }
@@ -20446,7 +19698,7 @@ var render = function() {
                 return _c("v-carousel-item", {
                   key: i,
                   attrs: {
-                    src: "storage/image/" + image.src,
+                    src: "storage/image/" + image,
                     "reverse-transition": "fade-transition",
                     transition: "fade-transition"
                   }
@@ -85458,16 +84710,15 @@ function bootstrap() {
 /*!******************************************************!*\
   !*** ./resources/ts/components/ExampleComponent.vue ***!
   \******************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ExampleComponent_vue_vue_type_template_id_e6486658___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=template&id=e6486658& */ "./resources/ts/components/ExampleComponent.vue?vue&type=template&id=e6486658&");
 /* harmony import */ var _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=script&lang=js& */ "./resources/ts/components/ExampleComponent.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -85475,7 +84726,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _ExampleComponent_vue_vue_type_template_id_e6486658___WEBPACK_IMPORTED_MODULE_0__["render"],
   _ExampleComponent_vue_vue_type_template_id_e6486658___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -85497,29 +84748,13 @@ component.options.__file = "resources/ts/components/ExampleComponent.vue"
 /*!*******************************************************************************!*\
   !*** ./resources/ts/components/ExampleComponent.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************/
-/*! exports provided: default */
+/*! no static exports found */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&":
-/*!***************************************************************************************!*\
-  !*** ./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css& ***!
-  \***************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/style-loader!../../../node_modules/css-loader??ref--7-1!../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../node_modules/postcss-loader/src??ref--7-2!../../../node_modules/vue-loader/lib??vue-loader-options!./ExampleComponent.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/ExampleComponent.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
 
 /***/ }),
 

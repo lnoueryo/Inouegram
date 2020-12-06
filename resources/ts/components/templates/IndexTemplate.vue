@@ -12,7 +12,7 @@
                 </v-list-item>
             </v-list>
             <v-carousel :height="dialogSize">
-                <v-carousel-item v-for="(image,i) in parsedUserPost.image" :key="i" :src="'storage/image/' + image.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
+                <v-carousel-item v-for="(image,i) in parsedUserPost.image" :key="i" :src="'storage/image/' + image" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
             </v-carousel>
             <div class="px-2">
                 <v-menu v-model="menu[index]" :close-on-content-click="true" :nudge-width="200" offset-y top>

@@ -4,7 +4,7 @@
             <v-layout row wrap class="justify-end" style="margin: auto;">
                 <v-hover v-for="(parsedLikePost, index) in parsedLikePosts" :key="index" v-slot="{ hover }">
                     <v-card class="mx-auto my-4" color="grey lighten-4" :max-width="card.size3" style="width: 100%">
-                        <v-img :aspect-ratio="14/12" :src="'storage/image/' + parsedLikePost.image[0].src" @click="openDialog(parsedLikePost, index)">
+                        <v-img :aspect-ratio="14/12" :src="'storage/image/' + parsedLikePost.image[0]" @click="openDialog(parsedLikePost, index)">
                             <v-expand-transition>
                             <div v-if="hover" class="d-flex transition-fast-in-fast-out black darken-2 v-card--reveal display-3 white--text" style="height: 100%;">
                                 <p style="font-size: 25px">{{parsedLikePost.image.length}}枚</p>
@@ -16,7 +16,7 @@
                 <v-dialog v-model="dialog" :max-width="card.size2">
                     <v-card color="grey lighten-4" :max-width="card.size2" style="overflow-y: hidden; max-height: 750px;">
                         <v-carousel :height="dialogSize" v-model="carousel[postDialogIndex]">
-                            <v-carousel-item v-for="(postDialogImage,index) in postDialog.image" :key="index" :src="'storage/image/' + postDialogImage.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
+                            <v-carousel-item v-for="(postDialogImage,index) in postDialog.image" :key="index" :src="'storage/image/' + postDialogImage" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                         </v-carousel>
                         <v-window v-model="window" class="elevation-0">
                             <v-window-item :value="0">
