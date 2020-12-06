@@ -39,6 +39,9 @@
             <v-icon>mdi-map-marker</v-icon>
             </v-btn> -->
         </v-bottom-navigation>
+        <v-btn medium fab fixed right :style="isMainUser ? 'bottom: 80px' : 'bottom: 10px'" @click="scrollTop()">
+            <v-icon size="16">mdi-triangle</v-icon>
+        </v-btn>
     </div>
 </template>
 
@@ -125,6 +128,12 @@ export default Vue.extend({
                 }
                 this.likedPosts = posts;
             }
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         }
     }
 })

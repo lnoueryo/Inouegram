@@ -154,7 +154,9 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <a href="#app">aaaa</a>
+        <v-btn medium fab fixed right style="bottom: 10px" @click="scrollTop()">
+            <v-icon size="16">mdi-triangle</v-icon>
+        </v-btn>
     </div>
 </template>
 
@@ -386,7 +388,9 @@ export default {
                 this.commentSnackbar = true;
                 this.lastPostId = postId;
                 this.lastIndex = index;
-                this.usersComments.push(response.data)
+                this.usersComments.push(response.data);
+                this.commentDialogOpen(postId);
+                this.comment = '';
             })
             .catch(error => {
                 console.log('fail')
@@ -408,6 +412,12 @@ export default {
                 return usersComment.id !== res.id;
             })
             this.usersComments = newUsersComments;
+        },
+        scrollTop(){
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         },
     },
 }

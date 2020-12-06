@@ -5322,6 +5322,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['mainUser', 'posts', 'mainUserLikes', 'comments', 'likes', 'followingUsersInfo', 'likedUsers'],
   data: function data() {
@@ -5575,6 +5577,10 @@ __webpack_require__.r(__webpack_exports__);
         _this8.lastIndex = index;
 
         _this8.usersComments.push(response.data);
+
+        _this8.commentDialogOpen(postId);
+
+        _this8.comment = '';
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -5595,6 +5601,12 @@ __webpack_require__.r(__webpack_exports__);
         return usersComment.id !== res.id;
       });
       this.usersComments = newUsersComments;
+    },
+    scrollTop: function scrollTop() {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
     }
   }
 });
@@ -14749,6 +14761,12 @@ __webpack_require__.r(__webpack_exports__);
                 }
                 this.likedPosts = posts;
             }
+        },
+        scrollTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
         }
     }
 }));
@@ -20396,7 +20414,20 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("a", { attrs: { href: "#app" } }, [_vm._v("aaaa")])
+      _c(
+        "v-btn",
+        {
+          staticStyle: { bottom: "10px" },
+          attrs: { medium: "", fab: "", fixed: "", right: "" },
+          on: {
+            click: function($event) {
+              return _vm.scrollTop()
+            }
+          }
+        },
+        [_c("v-icon", { attrs: { size: "16" } }, [_vm._v("mdi-triangle")])],
+        1
+      )
     ],
     2
   )
@@ -23241,7 +23272,22 @@ var render = function() {
             ],
             1
           )
-        : _vm._e()
+        : _vm._e(),
+      _vm._v(" "),
+      _c(
+        "v-btn",
+        {
+          style: _vm.isMainUser ? "bottom: 80px" : "bottom: 10px",
+          attrs: { medium: "", fab: "", fixed: "", right: "" },
+          on: {
+            click: function($event) {
+              return _vm.scrollTop()
+            }
+          }
+        },
+        [_c("v-icon", { attrs: { size: "16" } }, [_vm._v("mdi-triangle")])],
+        1
+      )
     ],
     1
   )
