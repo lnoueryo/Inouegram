@@ -44,9 +44,9 @@
             <v-icon :color="isMainUserComment(parsedUserPost.id) ? 'orange' : ''">mdi-comment</v-icon>
             </v-btn>
             <div class="px-1" style="display: inline-block; cursor: pointer;" @click="commentDialogOpen(parsedUserPost.id)">{{ totalCommentNumber(parsedUserPost.id) }}人</div>
-            <v-btn icon>
+            <!-- <v-btn icon>
             <v-icon>mdi-bookmark</v-icon>
-            </v-btn>
+            </v-btn> -->
                 <p class="text-h6 font-weight-light orange--text mb-2">{{ parsedUserPost.title }}</p>
                     <div style="overflow-y: scroll;max-height: 110px;">
                     {{ parsedUserPost.text }}

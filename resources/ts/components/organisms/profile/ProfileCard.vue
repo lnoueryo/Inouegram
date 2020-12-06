@@ -188,12 +188,14 @@ interface windowSize {
         },
         btnclick(): void {
             if(this.visitor.id == this.user.id){
-                this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+                let element: HTMLElement | any = this.$refs.bg;
+                element.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
             }
         },
         btnclick2(): void {
             if(this.visitor.id == this.user.id){
-                this.$refs.avatar.click();
+                let element: HTMLElement | any = this.$refs.avatar;
+                element.click()
             }
         },
         findFollowingUsers(): void{

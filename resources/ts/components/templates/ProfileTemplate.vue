@@ -10,12 +10,11 @@
                 :mainUserLikes="mainUserLikes"
                 :requestedUserLikes="requestedUserLikes"
                 :requestedUserComments="requestedUserComments"
-                :likedPosts="likedPosts"
                 :isMainUser="isMainUser"
             ></user-posts>
         </template>
         <template v-else-if="value == 1">
-            <like-posts :likedPosts="likedPosts"></like-posts>
+            <like-posts :mainUserPostLikes="mainUserPostLikes" :likedPosts="likedPosts" :postLikes="postLikes" :postLikeUsers="postLikeUsers" :comments="postComments" :postCommentUsers="postCommentUsers" :mainUser="mainUser" :requestedUser="requestedUser"></like-posts>
         </template>
         <template v-else>
             a
@@ -33,17 +32,18 @@
 
             <v-icon>mdi-heart</v-icon>
             </v-btn>
-
-            <v-btn  @click="value = 2">
+            <!-- TODO: -->
+            <!-- <v-btn  @click="value = 2">
             <span>Nearby</span>
 
             <v-icon>mdi-map-marker</v-icon>
-            </v-btn>
+            </v-btn> -->
         </v-bottom-navigation>
     </div>
 </template>
 
 <script lang="ts">
+import axios from 'axios';
 import Vue, { PropType } from "vue"
 import UserPosts from "../organisms/profile/UserPosts.vue";
 import LikePosts from "../organisms/profile/LikePosts.vue";
@@ -55,7 +55,13 @@ export type PropUserObjType = {
     email: string
 }
 export type DataType = {
-    value: number
+    value: number,
+    likedPosts: PropUserObjType[] | string,
+    postLikes: PropUserObjType[] | string,
+    postLikeUsers: PropUserObjType[] | string,
+    postComments: PropUserObjType[] | string,
+    postCommentUsers: PropUserObjType[] | string,
+    mainUserPostLikes: PropUserObjType[] | string,
 }
 export default Vue.extend({
         components: {
@@ -71,11 +77,16 @@ export default Vue.extend({
         requestedUserLikes: Array,
         requestedUserFollowed: Array,
         requestedUserComments: Array,
-        likedPosts: Array,
     },
     data (): DataType {
         return {
             value: 0,
+            likedPosts: '',
+            postLikes: '',
+            postLikeUsers: '',
+            postComments: '',
+            postCommentUsers: '',
+            mainUserPostLikes: '',
         }
     },
     computed:{
@@ -85,6 +96,37 @@ export default Vue.extend({
             return visitor.id === user.id
         }
     },
+    created(): void{
+        const visitor = this.mainUser;
+        axios.get('/api/likedPostUsers', {
+            params: {id: visitor.id},
+        })
+        .then((response) => {
+            this.mainUserPostLikes = response.data.userLikes;
+            this.postLikes = response.data.likes;
+            this.postLikeUsers = response.data.likeUsers;
+            this.postComments = response.data.comments;
+            this.postCommentUsers = response.data.commentUsers;
+            // this.likedPosts = response.data.posts;
+            this.parsePosts(response.data.posts);
+        })
+        .catch(error => {
+            console.log('fail')
+        })
+    },
+    methods: {
+        parsePosts(posts: any): void{
+            var likedPosts = this.likedPosts;
+            if(posts.length == 0){
+                likedPosts = '';
+                } else {
+                    for(var i=0; i<posts.length; i++){
+                    posts[i].image = JSON.parse(posts[i].image);
+                }
+                this.likedPosts = posts;
+            }
+        }
+    }
 })
 </script>
 <style>

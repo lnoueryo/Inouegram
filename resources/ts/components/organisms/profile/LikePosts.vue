@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="parsedLikePosts" v-resize="onResize">
+        <div v-if="likePosts" v-resize="onResize">
             <v-layout row wrap class="justify-end" style="margin: auto;">
                 <v-hover v-for="(parsedLikePost, index) in parsedLikePosts" :key="index" v-slot="{ hover }">
                     <v-card class="mx-auto my-4" color="grey lighten-4" :max-width="card.size3" style="width: 100%">
@@ -13,25 +13,25 @@
                         </v-img>
                     </v-card>
                 </v-hover>
-                <!-- <v-dialog v-model="dialog" :max-width="card.size2">
+                <v-dialog v-model="dialog" :max-width="card.size2">
                     <v-card color="grey lighten-4" :max-width="card.size2" style="overflow-y: hidden; max-height: 750px;">
-                        <v-carousel :height="dialogSize" v-model="carousel[dialogPostIndex]">
-                            <v-carousel-item v-for="(dialogPostImage,index) in dialogPost.image" :key="index" :src="'storage/image/' + dialogPostImage.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
+                        <v-carousel :height="dialogSize" v-model="carousel[postDialogIndex]">
+                            <v-carousel-item v-for="(postDialogImage,index) in postDialog.image" :key="index" :src="'storage/image/' + postDialogImage.src" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                         </v-carousel>
                         <v-window v-model="window" class="elevation-0">
                             <v-window-item :value="0">
                                 <v-card flat>
                                     <v-card-text class="py-1" style="position: relative; max-width: 340px;">
                                         <p class="text-h6 font-weight-light orange--text mb-2" style="margin: 0!important;">
-                                        {{ dialogPost.title }}
+                                        {{ postDialog.title }}
                                         </p>
                                         <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
-                                        <div class="content">{{ dialogPost.text }}</div>
+                                        <div class="content">{{ postDialog.text }}</div>
                                         </div>
                                     </v-card-text>
-                                    <v-menu v-model="menu[dialogPostIndex]" :close-on-content-click="true" :nudge-width="200" offset-y top>
+                                    <v-menu v-model="menu[postDialogIndex]" :close-on-content-click="true" :nudge-width="200" offset-y top>
                                         <template v-slot:activator="{ on, attrs }">
-                                            <v-btn class="pl-3" icon v-bind="attrs" v-on="on" :color="mainUserLikeBool ? 'pink' : ''">
+                                            <v-btn class="ml-3" icon v-bind="attrs" v-on="on" :color="mainUserLikeBool ? 'pink' : ''">
                                             <v-icon>mdi-heart</v-icon>
                                             </v-btn>
                                         </template>
@@ -40,7 +40,7 @@
                                                 <v-btn v-for="(btn, index) in btns" :key="index" icon @click="like(index)" :color="(mainUserLike.reaction === index) ? btn.color : ''">
                                                     <v-icon>{{ btn.icon }}</v-icon>
                                                 </v-btn>
-                                                <v-btn icon @click="deleteLike(userPosts[dialogPostIndex].id, dialogPostIndex)">
+                                                <v-btn icon @click="deleteLike(likePosts[postDialogIndex].id, postDialogIndex)">
                                                     <v-icon>mdi-minus-circle</v-icon>
                                                 </v-btn>
                                             </v-card-actions>
@@ -53,15 +53,15 @@
                                             </v-card-actions>
                                         </v-card>
                                     </v-menu>
-                                    {{ likeNumber }}
+                                    <span class="pointer" @click="window = 1">{{ likeNumber }}人</span>
                                     <v-btn icon>
-                                    <v-icon :color="isMainUserComment(dialogPost.id) ? 'orange' : ''">mdi-comment</v-icon>
+                                    <v-icon :color="isMainUserComment(postDialog.id) ? 'orange' : ''">mdi-comment</v-icon>
                                     </v-btn>
-                                    {{ totalCommentNumber(dialogPost.id) }}人
-                                    <v-btn icon>
+                                    <span class="pointer" @click="window = 2">{{ totalCommentNumber(postDialog.id) }}人</span>
+                                    <!-- <v-btn icon>
                                     <v-icon>mdi-bookmark</v-icon>
-                                    </v-btn>
-                                    <v-btn absolute icon right @click="deleteDialog = true" v-if="btnclick3">
+                                    </v-btn> -->
+                                    <v-btn absolute icon right @click="deleteDialog = true" v-if="isMainUser">
                                     <v-icon>mdi-delete</v-icon>
                                     </v-btn>
                                     <div class="d-flex align-center justify-space-around px-2">
@@ -72,7 +72,7 @@
                                         required
                                         v-model="comment"
                                         ></v-text-field>
-                                    <v-btn @click="sendComment(dialogPost.id, dialogPostIndex)">投稿</v-btn>
+                                    <v-btn @click="sendComment(postDialog.id, postDialogIndex)">投稿</v-btn>
                                     </div>
                                 </v-card>
                             </v-window-item>
@@ -112,14 +112,10 @@
                                         <v-list-item-content>
                                         <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
                                         </v-list-item-content>
-                                        <div>{{ postComment.text }}
-                                            <template v-if="commentUser(postComment.user_id).id==visitor.id">
-                                                <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
-                                            </template>
-                                            <template v-else>
-                                                <v-btn color="success">a</v-btn>
-                                            </template>
-                                        </div>
+                                        <div>{{ postComment.text }}</div>
+                                        <template v-if="commentUser(postComment.user_id).id==visitor.id">
+                                            <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
+                                        </template>
                                     </v-list-item>
                                 </div>
                                 </v-list>
@@ -142,7 +138,7 @@
                         </v-card-actions>
                     </v-card>
                 </v-dialog>
-                <v-dialog v-model="deleteDialog" max-width="290">
+                <!-- <v-dialog v-model="deleteDialog" max-width="290">
                     <v-card>
                         <v-card-title class="headline">
                         Make sure!!
@@ -158,7 +154,7 @@
                             Disagree
                         </v-btn>
 
-                        <v-btn color="green darken-1" text @click="deletePost(dialogPost)">
+                        <v-btn color="green darken-1" text @click="deletePost(postDialog)">
                             Agree
                         </v-btn>
                         </v-card-actions>
@@ -172,24 +168,7 @@
                         Close
                         </v-btn>
                     </template>
-                </v-snackbar>
-                <v-dialog v-model="changeBgDialog" max-width="290">
-                    <v-card>
-                        <v-img :src="changingBgData"></v-img>
-                        <v-card-text>
-                        Do you wanna change to this image??
-                        </v-card-text>
-                        <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" text @click="changeBgDialog = false">
-                            No
-                        </v-btn>
-                        <v-btn color="green darken-1" text @click="changeBg()">
-                            Yes
-                        </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog> -->
+                </v-snackbar> -->
             </v-layout>
         </div>
         <div v-else class="text-center" style="margin: auto;">
@@ -201,7 +180,16 @@
 
 <script>
 export default {
-    props: ['likedPosts'],
+    props: {
+        mainUserPostLikes: Array,
+        postLikes: Array,
+        comments: Array,
+        mainUser: Object,
+        requestedUser: Object,
+        likedPosts: Array,
+        postLikeUsers: Array,
+        postCommentUsers: Array,
+    },
     data() {
         return {
             likePosts: this.likedPosts,
@@ -209,19 +197,34 @@ export default {
                 x: 0,
                 y: 0,
             },
+            dialog: false,
+            carousel: [],
+            postDialog: '',
+            postDialogIndex: '',
+            window: 0,
+            menu: [],
+            btns: [
+                {color: 'yellow', icon: 'mdi-emoticon'},
+                {color: 'blue', icon: 'mdi-emoticon-cry'},
+                {color: 'orange', icon: 'mdi-emoticon-lol'},
+                {color: 'red', icon: 'mdi-emoticon-angry'},
+                {color: 'pink', icon: 'mdi-emoticon-kiss'},
+            ],
+            userPostLikes: this.postLikes,
+            userComments: this.comments,
+            visitor: this.mainUser,
+            user: this.requestedUser,
+            comment: '',
+            length: 3,
+            likeUsers: this.postLikeUsers,
+            commentUsers: this.postCommentUsers,
+            userLikes: this.mainUserPostLikes,
         }
     },
     computed: {
         parsedLikePosts(){
             var likePosts = this.likePosts;
-            if(likePosts.length == 0){
-                return false;
-                } else {
-                for(var i=0; i<likePosts.length; i++){
-                    likePosts[i].image = JSON.parse(likePosts[i].image);
-                }
-                return likePosts;
-            }
+            return likePosts;
         },
         card(){
             if(this.windowSize.x < 480){
@@ -230,11 +233,220 @@ export default {
                 return {size1: 600, size2: 500, size3: 350};
             }
         },
+        mainUserLikeBool(){
+            if(this.userLikes){
+                var isLike = this.userLikes.some((userLike) => {
+                    return userLike.post_id === this.postDialog.id;
+                })
+            return isLike;
+            } else {
+                return false;
+            }
+        },
+        likeNumber(){
+            var userPostLike = this.userPostLikes.filter((userPostLike) => {
+                return userPostLike.post_id === this.postDialog.id;
+            })
+            return userPostLike.length;
+        },
+        dialogSize(){
+            if(this.windowSize.x < 480){
+                return 300;
+            } else {
+                return 500;
+            }
+        },
+        isMainUser() {
+            const visitor = this.mainUser;
+            const user = this.requestedUser;
+            return visitor.id === user.id
+        },
+        likedUsers(){
+            var likeUsers = this.likeUsers;
+            return likeUsers;
+        },
+        postComments(){
+            if(this.postDialog.id){
+                var postComments = this.userComments.filter((userComment) => {
+                    return userComment.post_id === this.postDialog.id;
+                })
+                return postComments.sort((a, b) => {
+                    return b.id - a.id;
+                });
+            } else {
+                return false
+            }
+        },
+        mainUserLike(){
+            return this.postDialog ? this.userLikes.find((userserLike) => {
+                return userserLike.post_id === this.postDialog.id;
+            }) : '';
+        },
     },
     methods: {
         onResize () {
             this.windowSize = { x: window.innerWidth, y: window.innerHeight }
         },
+        isMainUserComment(id){
+            var postComments = this.userComments.filter((userComment) => {
+                return userComment.post_id === id;
+            })
+            return postComments.some((postComment) => {
+                return postComment.user_id === this.visitor.id;
+            })
+        },
+        totalCommentNumber(id){
+            var userComments = this.userComments;
+            var comments = userComments.filter((userComment) => {
+                return userComment.post_id === id;
+            });
+            return comments.length;
+        },
+        next () {
+            this.window = this.window + 1 === this.length
+            ? 0
+            : this.window + 1
+        },
+        prev () {
+            this.window = this.window - 1 < 0
+            ? this.length - 1
+            : this.window - 1
+        },
+        openDialog(userPost, index){
+            this.postDialog = userPost;
+            this.postDialogIndex = index;
+            this.findLikeUsers(userPost.id);
+            this.findCommentUsers(userPost.id)
+        },
+        findLikeUsers(id){
+            axios.post('/api/likeUsers', {
+                postId: id,
+            })
+            .then(response => {
+                this.likeUsers = response.data;
+                this.dialog = true;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        findCommentUsers(id){
+            axios.post('/api/commentUsers', {
+                postId: id,
+            })
+            .then(response => {
+                this.commentDialog = true;
+                this.commentUsers = response.data;
+                this.postDialogId = id;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        iconType(userId){
+            var userPostLikes = this.userPostLikes.filter((userPostLike) => {
+                return userPostLike.post_id === this.postDialog.id;
+            });
+            if (userPostLikes) {
+                var userPostLike = userPostLikes.find((like) => {
+                    return like.user_id === userId;
+                })
+                if(userPostLike){
+                    return userPostLike.reaction;
+                } else {
+                    return false
+                }
+            } else {
+                return false
+            }
+        },
+        commentUser(id){
+            if(this.commentUsers){
+                var user = this.commentUsers.find((commentUser) => {
+                    return commentUser.id === id;
+                })
+                return user;
+            } else {
+                return false;
+            }
+        },
+        like(index){
+            axios.post('/api/like', {
+                postId: this.postDialog.id,
+                userId: this.visitor.id,
+                requestedUserId: this.user.id,
+                reaction: index,
+            })
+            .then(response => {
+                this.snackbar = true;
+                this.lastPostId = this.postDialog.id;
+                this.lastIndex = index;
+                this.checkLikeObj(response.data);
+                this.findLikeUsers(this.postDialog);
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        deleteLike(thisPostId, index){
+            axios.post('/api/delete_like', {
+                postId: thisPostId,
+                userId: this.visitor.id,
+                requestedUserId: this.user.id,
+                reaction: index,
+            })
+            .then(response => {
+                this.findDeletePost(response.data.post_id);
+                console.log('hello')
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        checkLikeObj(res){
+            var userPostLike = this.userPostLikes.find((userPostLike) => {
+                return userPostLike.post_id === res.post_id && userPostLike.user_id === res.user_id;
+            })
+            var isLike = this.userLikes.find((userLike) => {
+                return userLike.post_id === res.post_id;
+            })
+            if(isLike){
+                isLike.reaction = res.reaction;
+                userPostLike.reaction = res.reaction;
+            } else {
+                this.userLikes.push(res);
+                this.userPostLikes.push(res);
+            }
+        },
+        findDeleteLike(res){
+            var newUserLikes = this.userLikes.filter((userLike) => {
+                return userLike.id !== res.id;
+            })
+            this.userLikes = newUserLikes;
+
+            var newUserPostLikes = this.userPostLikes.filter((userPostLike) => {
+                return userPostLike.id !== res.id;
+            })
+            this.userPostLikes = newUserPostLikes;
+        },
+        findLikeUsers(id){
+            axios.post('/api/likeUsers', {
+                postId: id,
+            })
+            .then(response => {
+                this.likeUsers = response.data;
+                this.dialog = true;
+            })
+            .catch(error => {
+                console.log('fail')
+            })
+        },
+        findDeletePost(id){
+            this.likePosts.some((likePost, i) => {
+                return likePost.id===id ? this.likePosts.splice(i,1) : false;
+            });
+            this.dialog = false;
+        }
     }
 }
 </script>
@@ -296,6 +508,10 @@ export default {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+.pointer {
+    cursor: pointer;
+}
+
 
 </style>
 <style>
