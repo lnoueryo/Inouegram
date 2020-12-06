@@ -5082,7 +5082,6 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../templates/ProfileTemplate */ "./resources/ts/components/templates/ProfileTemplate.vue");
-/* harmony import */ var _templates_UserProfileTemplate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../templates/UserProfileTemplate */ "./resources/ts/components/templates/UserProfileTemplate.vue");
 //
 //
 //
@@ -5098,13 +5097,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments', 'liked-posts'],
   components: {
-    ProfileTemplates: _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__["default"],
-    UserProfileTemplates: _templates_UserProfileTemplate__WEBPACK_IMPORTED_MODULE_1__["default"]
+    ProfileTemplates: _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
 });
 
@@ -5936,6 +5933,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5953,6 +5963,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      carousel: '',
       basicSize: '',
       mediaSize: '',
       sizeDialog: false,
@@ -6009,6 +6020,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }), _ref;
   },
   computed: {
+    confirmMessage: function confirmMessage() {
+      return this.message && this.title ? false : true;
+    },
+    showConcatImg: function showConcatImg() {
+      if (this.concatImg.length == 0) {
+        return false;
+      } else {
+        return this.concatImg;
+      }
+    },
     toolStepper: function toolStepper() {
       return Number(this.value) + 1;
     },
@@ -6060,13 +6081,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.concatImageBtn = true;
       var preview = document.getElementsByClassName('preview');
       var img = preview[0].getElementsByTagName('img');
-      img[0].src = '';
-      var newImg = document.createElement("img");
-      newImg.src = this.concatImg[this.concatImg.length - 1];
-      newImg.width = 250;
-      newImg.height = 250;
-      var concatImages = document.getElementById('concatImages');
-      concatImages.appendChild(newImg);
+      img[0].src = ''; // var newImg = document.createElement("img");
+      // newImg.src = this.concatImg[this.concatImg.length-1];
+      // newImg.width = 250;
+      // newImg.height = 250;
+      // var concatImages = document.getElementById('concatImages')
+      // concatImages.appendChild(newImg);
     },
     loadImage: function loadImage(e) {
       var preview = document.getElementById('preview');
@@ -6104,6 +6124,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       })["catch"](function (error) {
         console.log(error);
       });
+    },
+    confirmSave: function confirmSave() {
+      if (this.title && this.message) {
+        if (this.e1 == 4) {
+          this.submit();
+        } else {
+          this.e1 = 4;
+        }
+      } else {
+        this.e1 = 3;
+      }
     },
     getImage: function getImage() {
       this.e1 = 3;
@@ -6569,6 +6600,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       text.x += dx;
       text.y += dy;
       this.drawText();
+    },
+    back2edit: function back2edit() {
+      this.e1 = 2;
+      this.concatImg.pop();
+    },
+    deleteImage: function deleteImage(index) {
+      this.concatImg.splice(index, 1);
+
+      if (this.concatImg.length == 0) {
+        this.e1 = 1;
+        this.imgSrc = '';
+        this.stepBtn1 = true;
+        this.concatImageBtn = true;
+        var preview = document.getElementsByClassName('preview');
+        var img = preview[0].getElementsByTagName('img');
+        img[0].src = '';
+      }
     }
   }
 });
@@ -6880,12 +6928,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 
 
@@ -6903,6 +6945,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      carousel: '',
       type: 'hexa',
       hexa: '#FF000000',
       length: 4,
@@ -6946,7 +6989,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }, _defineProperty(_ref, "isDrag", false), _defineProperty(_ref, "model", null), _defineProperty(_ref, "globalAlpha", 1), _defineProperty(_ref, "timer", ''), _defineProperty(_ref, "filters", ''), _defineProperty(_ref, "croppedImage", ''), _defineProperty(_ref, "toggle_multiple", []), _defineProperty(_ref, "textCanvas", ''), _defineProperty(_ref, "textCanvasctx", ''), _defineProperty(_ref, "texts", []), _defineProperty(_ref, "selectedText", -1), _defineProperty(_ref, "selectedEditText", -1), _defineProperty(_ref, "offsetX", ''), _defineProperty(_ref, "offsetY", ''), _defineProperty(_ref, "scrollX", ''), _defineProperty(_ref, "scrollY", ''), _defineProperty(_ref, "startX", ''), _defineProperty(_ref, "startY", ''), _defineProperty(_ref, "isActive", false), _defineProperty(_ref, "isActiveEditText", false), _defineProperty(_ref, "dialog", false), _defineProperty(_ref, "selectedEditTextMessage", ''), _defineProperty(_ref, "inputPosition", {
       fontSize: '15px',
       color: 'black',
-      fontWeght: '300',
+      fontWeght: '250',
       fontStyle: 'normal',
       top: '100px',
       left: '100px',
@@ -6955,7 +6998,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }), _defineProperty(_ref, "selectedInputPosition", {
       fontSize: '15px',
       color: 'black',
-      fontWeght: '300',
+      fontWeght: '250',
       fontStyle: 'normal',
       top: '100px',
       left: '100px',
@@ -6964,6 +7007,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }), _ref;
   },
   computed: {
+    confirmMessage: function confirmMessage() {
+      return this.message && this.title ? false : true;
+    },
+    showConcatImg: function showConcatImg() {
+      if (this.concatImg.length == 0) {
+        return false;
+      } else {
+        return this.concatImg;
+      }
+    },
     toolStepper: function toolStepper() {
       return Number(this.value) + 1;
     },
@@ -7025,13 +7078,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.e1 = 1;
       this.imgSrc = '';
       this.stepBtn1 = true;
-      this.concatImageBtn = true;
-      var newImg = document.createElement("img");
-      newImg.src = this.concatImg[this.concatImg.length - 1];
-      newImg.width = 75;
-      newImg.height = 75;
-      var concatImages = document.getElementById('concatImages');
-      concatImages.appendChild(newImg);
+      this.concatImageBtn = true; // var newImg = document.createElement("img");
+      // newImg.src = this.concatImg[this.concatImg.length-1];
+      // newImg.width = 75;
+      // newImg.height = 75;
+      // var concatImages = document.getElementById('concatImages')
+      // concatImages.appendChild(newImg);
     },
     loadImage: function loadImage(e) {
       if (e == '') {
@@ -7062,6 +7114,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         console.log(error);
       });
     },
+    confirmSave: function confirmSave() {
+      if (this.title && this.message) {
+        if (this.e1 == 4) {
+          this.submit();
+        } else {
+          this.e1 = 4;
+        }
+      } else {
+        this.e1 = 3;
+      }
+    },
     getImage: function getImage() {
       this.e1 = 3;
       var concat = document.getElementById('concat');
@@ -7071,9 +7134,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
 
       drawCanvas.onload = function () {
-        concatCxt.drawImage(cover, 0, 0, 300, 300);
-        concatCxt.drawImage(text, 0, 0, 300, 300);
-        concatCxt.drawImage(drawCanvas, 0, 0, 300, 300);
+        concatCxt.drawImage(cover, 0, 0, 250, 250);
+        concatCxt.drawImage(text, 0, 0, 250, 250);
+        concatCxt.drawImage(drawCanvas, 0, 0, 250, 250);
       };
 
       var that = this;
@@ -7144,19 +7207,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.e1 = 2;
       this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       this.cover = document.getElementById("cover");
-      this.drawCanvasctx.clearRect(0, 0, 300, 300);
-      this.textCanvasctx.clearRect(0, 0, 300, 300);
+      this.drawCanvasctx.clearRect(0, 0, 250, 250);
+      this.textCanvasctx.clearRect(0, 0, 250, 250);
       this.coverctx = this.cover.getContext("2d");
       this.coverctx.globalAlpha = 1;
       this.coverctx.globalCompositeOperation = 'source-over';
       this.coverctx.filter = 'grayscale(0%)';
-      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.clearRect(0, 0, 250, 250);
       var background = new Image();
       background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       var that = this;
 
       background.onload = function () {
-        that.coverctx.drawImage(background, 0, 0, 300, 300);
+        that.coverctx.drawImage(background, 0, 0, 250, 250);
       };
 
       var that = this;
@@ -7172,7 +7235,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           canvasCtx[i].globalAlpha = 1;
           canvasCtx[i].globalCompositeOperation = 'source-over';
           canvasCtx[i].filter = 'grayscale(0%)';
-          canvasCtx[i].clearRect(0, 0, 300, 300);
+          canvasCtx[i].clearRect(0, 0, 250, 250);
           coverImage[i] = new Image();
           coverImage[i].src = background.src;
 
@@ -7184,51 +7247,51 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         for (var i = 1; i < 14; i++) {
           _loop(i);
         }
-      }, 300);
+      }, 250);
       this.coverctx.save();
     },
     back: function back() {
-      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.clearRect(0, 0, 250, 250);
       this.coverctx.restore();
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
       };
 
-      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.fillRect(0, 0, 250, 250);
     },
     rotate: function rotate() {
-      this.coverctx.clearRect(0, 0, 300, 300);
-      this.coverctx.translate(300, 0);
+      this.coverctx.clearRect(0, 0, 250, 250);
+      this.coverctx.translate(250, 0);
       this.coverctx.rotate(90 * Math.PI / 180);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillStyle = this.color;
-      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.fillRect(0, 0, 250, 250);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
         that.coverctx.save();
       };
     },
     click: function click(key) {
-      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.clearRect(0, 0, 250, 250);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillStyle = this.hexa;
-      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.fillRect(0, 0, 250, 250);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[key - 1];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
         that.coverctx.save();
       };
     },
@@ -7255,13 +7318,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx.globalAlpha = 1;
       this.coverctx.globalCompositeOperation = 'source-over';
       this.coverctx.filter = 'grayscale(0%)';
-      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.clearRect(0, 0, 250, 250);
       var background = new Image();
       background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       var that = this;
 
       background.onload = function () {
-        that.coverctx.drawImage(background, 0, 0, 300, 300);
+        that.coverctx.drawImage(background, 0, 0, 250, 250);
       };
 
       var that = this;
@@ -7277,7 +7340,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           canvasCtx[i].globalAlpha = 1;
           canvasCtx[i].globalCompositeOperation = 'source-over';
           canvasCtx[i].filter = 'grayscale(0%)';
-          canvasCtx[i].clearRect(0, 0, 300, 300);
+          canvasCtx[i].clearRect(0, 0, 250, 250);
           coverImage[i] = new Image();
           coverImage[i].src = background.src;
 
@@ -7289,7 +7352,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         for (var i = 1; i < 14; i++) {
           _loop2(i);
         }
-      }, 300);
+      }, 250);
       this.coverctx.save();
       this.color = '#00000080'; // that.searchTimeOut();
     },
@@ -7320,17 +7383,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }, 200);
     },
     colorImage: function colorImage() {
-      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.clearRect(0, 0, 250, 250);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillStyle = this.hexa;
-      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.fillRect(0, 0, 250, 250);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
         that.coverctx.save();
       };
     },
@@ -7356,18 +7419,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       ;
       var filters = filtersArray.join(' ');
       this.filters = filters;
-      this.coverctx.clearRect(0, 0, 300, 300);
+      this.coverctx.clearRect(0, 0, 250, 250);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillstyle = this.hexa;
       this.coverctx.filter = this.filters;
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-      this.coverctx.fillRect(0, 0, 300, 300);
+      this.coverctx.fillRect(0, 0, 250, 250);
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 300, 300);
+        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
         that.coverctx.save();
       };
     },
@@ -7379,8 +7442,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var positionY = clientRect.top + window.pageYOffset;
       this.startX = clickX - positionX;
       this.startY = clickY - positionY;
-      this.inputPosition.width = 300 - this.startX + 'px';
-      this.selectedInputPosition.width = 300 - this.startX + 'px';
+      this.inputPosition.width = 250 - this.startX + 'px';
+      this.selectedInputPosition.width = 250 - this.startX + 'px';
 
       for (var i = 0; i < this.texts.length; i++) {
         if (this.textHittest(this.startX, this.startY, i)) {
@@ -7513,488 +7576,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       text.x += dx;
       text.y += dy;
       this.drawText();
-    }
-  }
-});
+    },
+    back2edit: function back2edit() {
+      this.e1 = 2;
+      this.concatImg.pop();
+    },
+    deleteImage: function deleteImage(index) {
+      this.concatImg.splice(index, 1);
 
-/***/ }),
-
-/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=script&lang=js&":
-/*!****************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=script&lang=js& ***!
-  \****************************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
-/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
-
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['thisUserPosts', 'thisUser', 'myInfo', 'myLikes', 'thisUserComments', 'commentUsers', 'thisUserLikes', 'followed'],
-  data: function data() {
-    return {
-      windowSize: {
-        x: 0,
-        y: 0
-      },
-      likeArray: [],
-      menu: [],
-      lastPostId: '',
-      lastIndex: '',
-      userPosts: this.thisUserPosts,
-      userData: this.thisUser,
-      thisLikes: this.myLikes,
-      allLikes: this.thisUserLikes,
-      user: this.myInfo,
-      dialog: false,
-      deleteDialog: false,
-      postKey: 0,
-      snackbar: false,
-      text: 'deleted',
-      timeout: 2000,
-      changeBgDialog: false,
-      changingBgData: ''
-    };
-  },
-  computed: {
-    newPosts: function newPosts() {
-      var userPosts = this.userPosts;
-
-      if (userPosts.length == 0) {
-        return false;
-      } else {
-        for (var i = 0; i < userPosts.length; i++) {
-          userPosts[i].image = JSON.parse(userPosts[i].image);
-        }
-
-        return this.userPosts;
+      if (this.concatImg.length == 0) {
+        this.e1 = 1;
+        this.imgSrc = '';
+        this.stepBtn1 = true;
+        this.concatImageBtn = true;
+        var preview = document.getElementsByClassName('preview');
+        var img = preview[0].getElementsByTagName('img');
+        img[0].src = '';
       }
-    },
-    userInfo: function userInfo() {
-      return this.userData;
-    },
-    card: function card() {
-      if (this.windowSize.x < 480) {
-        return {
-          size1: 350,
-          size2: 300,
-          size3: 110
-        };
-      } else {
-        return {
-          size1: 600,
-          size2: 500,
-          size3: 350
-        };
-      }
-    },
-    dialogSize: function dialogSize() {
-      if (this.windowSize.x < 480) {
-        return 300;
-      } else {
-        return 500;
-      }
-    },
-    likeNumber: function likeNumber() {
-      var likeNumber = 0;
-      var postId = this.userPosts[this.postKey].id;
-      var allLikes = this.allLikes;
-
-      for (var i = 0; i < allLikes.length; i++) {
-        if (allLikes[i].post_id == postId) {
-          likeNumber = likeNumber + 1;
-        }
-      }
-
-      return likeNumber;
-    },
-    isActive: function isActive() {
-      return this.followed == 0 ? true : false;
-    },
-    followBtn: function followBtn() {
-      return this.followed == 0 ? 'フォローする' : 'フォロー済み';
-    },
-    color: function color() {
-      return this.followed == 0 ? 'primary' : 'error';
-    }
-  },
-  created: function created() {
-    var thisPosts = this.userPosts;
-    var thisLikes = this.thisLikes;
-
-    for (var i = 0; i < thisPosts.length; i++) {
-      this.likeArray.push({
-        like: false,
-        reaction: ''
-      });
-
-      for (var j = 0; j < thisLikes.length; j++) {
-        if (thisPosts[i].id == thisLikes[j].post_id) {
-          this.likeArray[i].like = true;
-          this.likeArray[i].reaction = thisLikes[j].reaction;
-        }
-      }
-    }
-  },
-  methods: {
-    onResize: function onResize() {
-      this.windowSize = {
-        x: window.innerWidth,
-        y: window.innerHeight
-      };
-    },
-    changeBg: function changeBg() {
-      var _this = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var bgData, fd;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                bgData = _this.changingBgData;
-                fd = new FormData();
-                fd.append("bgData", bgData);
-                fd.append("userId", _this.thisUser.id);
-                axios.post('/api/upload', fd).then(function (response) {
-                  _this.changeBgDialog = false;
-                  _this.userData = response.data;
-                })["catch"](function (error) {
-                  console.log(error);
-                });
-
-              case 5:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee);
-      }))();
-    },
-    changeAvatar: function changeAvatar(event) {
-      var _this2 = this;
-
-      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
-        var file, reader, avatarData, that;
-        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                file = event.target.files[0];
-                reader = new FileReader();
-                reader.readAsDataURL(file);
-                that = _this2;
-
-                reader.onload = function (e) {
-                  avatarData = e.target.result;
-                  var fd = new FormData();
-                  fd.append("avatarData", avatarData);
-                  fd.append("userId", that.thisUser.id);
-                  axios.post('/api/upload2', fd).then(function (response) {
-                    that.userData = response.data;
-                  })["catch"](function (error) {
-                    console.log(error);
-                  });
-                };
-
-              case 5:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2);
-      }))();
-    },
-    upload: function upload(event) {
-      if (event.target.value == '') {
-        this.changeBgDialog = false;
-      } else {
-        var file = event.target.files[0];
-        var reader = new FileReader();
-        var that = this;
-
-        reader.onload = function (e) {
-          that.changingBgData = e.target.result;
-          that.changeBgDialog = true;
-        };
-
-        reader.readAsDataURL(file);
-      }
-    },
-    btnclick: function btnclick() {
-      this.$refs.bg.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
-    },
-    btnclick2: function btnclick2() {
-      this.$refs.avatar.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
-    },
-    openDialog: function openDialog(key) {
-      this.dialog = true;
-      this.postKey = key;
-    },
-    openDeleteDialog: function openDeleteDialog(key) {
-      this.deleteDialog = true;
-      this.postKey = key;
-    },
-    outside: function outside() {
-      // this.$refs.carouselPost.remove();
-      this.comments = '';
-      this.comment = '';
-      this.showUp = false;
-    },
-    submit: function submit() {
-      var _this3 = this;
-
-      axios.get('/api/comment', {
-        params: {
-          'userId': this.thisUser.id,
-          'postId': this.images.id,
-          'text': this.comment
-        }
-      }).then(function (response) {
-        return _this3.thisUserComments = response.data;
-      }, this.$refs.carouselPost.remove(), this.snackbar = true, this.destroy())["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    deletePost: function deletePost() {
-      var _this4 = this;
-
-      var thisPost = this.userPosts[this.postKey];
-      var fd = new FormData();
-      fd.append("post", JSON.stringify(thisPost));
-      console.log(fd.get('post'));
-      axios.post('/api/delete_post', fd).then(function (response) {
-        _this4.userPosts = response.data;
-        _this4.deleteDialog = false;
-        _this4.snackbar = true;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    destroy: function destroy() {
-      setTimeout(function () {
-        this.comment = '';
-        this.showUp = false;
-        this.dialog = false;
-      }.bind(this), 1000);
-    },
-    imageData: function imageData(event) {
-      this.dialog = true;
-      this.images = event;
-      this.thisImageComments = this.thisUserComments.filter(function (v) {
-        return v.post_id === event.id;
-      });
-    },
-    follow: function follow() {
-      var _this5 = this;
-
-      axios.get('/api/follow', {
-        params: {
-          'id': this.thisUser.id,
-          'myId': this.user.id,
-          'followed': this.followed
-        }
-      }).then(function (response) {
-        return _this5.followed = response.data;
-      })["catch"](function (error) {
-        console.log(error);
-      });
-    },
-    like: function like(thisPostId, num, index) {
-      var _this6 = this;
-
-      this.menu[index] = false;
-      this.likeArray[index].like = true;
-      this.likeArray[index].reaction = num;
-      axios.post('/api/like', {
-        params: {
-          postId: thisPostId,
-          postingUserId: this.user.id,
-          reaction: num,
-          userPosts: JSON.stringify(this.userPosts)
-        }
-      }).then(function (response) {
-        _this6.allLikes = response.data;
-        _this6.snackbar = true;
-        _this6.lastPostId = thisPostId;
-        _this6.lastIndex = index;
-      })["catch"](function (error) {
-        console.log('fail');
-      });
-    },
-    deleteLike: function deleteLike(thisPostId, index) {
-      var _this7 = this;
-
-      this.likeArray[index].like = false;
-      this.likeArray[index].reaction = '';
-      axios.post('/api/delete_like', {
-        params: {
-          postId: thisPostId,
-          postingUserId: this.user.id,
-          userPosts: JSON.stringify(this.userPosts)
-        }
-      }).then(function (response) {
-        _this7.allLikes = response.data;
-      })["catch"](function (error) {
-        console.log('fail');
-      });
     }
   }
 });
@@ -12008,44 +11606,6 @@ exports.push([module.i, "\n.v-dialog {\r\n    max-height: 700px!important;\n}\r\
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.slide-fade-enter-active[data-v-0fb5fd51],\r\n.slide-fade-leave-active[data-v-0fb5fd51],\r\n.slide-fade-move[data-v-0fb5fd51] {\r\n  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);\r\n  transition-property: opacity, transform;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter[data-v-0fb5fd51] {\r\n  opacity: 0;\r\n  transform: translateX(50px) scaleY(0.5);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter-to[data-v-0fb5fd51] {\r\n  opacity: 1;\r\n  transform: translateX(0) scaleY(1);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-active[data-v-0fb5fd51] {\r\n  position: absolute;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-to[data-v-0fb5fd51] {\r\n  opacity: 0;\r\n  transform: scaleY(0);\r\n  transform-origin: center top;\r\n    transition: all 0.8s ease;\n}\n.v-card--reveal[data-v-0fb5fd51] {\r\n  align-items: center;\r\n  bottom: 0;\r\n  justify-content: center;\r\n  opacity: .5;\r\n  position: absolute;\r\n  width: 100%;\n}\n.content[data-v-0fb5fd51]{\r\n    overflow: hidden;\r\n    width: 100%;\r\n    overflow: hidden;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\n}\r\n\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.v-dialog {\r\n    max-height: 100%!important;\n}\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/lib/css-base.js":
 /*!*************************************************!*\
   !*** ./node_modules/css-loader/lib/css-base.js ***!
@@ -13741,66 +13301,6 @@ if(false) {}
 
 
 var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./ProfileTemplate.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/ProfileTemplate.vue?vue&type=style&index=0&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css&":
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css& ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css&":
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css& ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./UserProfileTemplate.vue?vue&type=style&index=1&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -20460,6 +19960,7 @@ var render = function() {
       _c(
         "v-stepper",
         {
+          staticClass: "elevation-0",
           model: {
             value: _vm.e1,
             callback: function($$v) {
@@ -20854,7 +20355,7 @@ var render = function() {
                         "v-card",
                         {
                           staticClass: "overflow-hidden",
-                          attrs: { height: "550", width: "500" }
+                          attrs: { height: "550", width: "500", flat: "" }
                         },
                         [
                           _c(
@@ -21495,7 +20996,8 @@ var render = function() {
                                         staticClass: "mb-12",
                                         attrs: {
                                           color: "grey lighten-1",
-                                          height: "200px"
+                                          height: "200px",
+                                          flat: ""
                                         }
                                       })
                                     ],
@@ -21517,6 +21019,7 @@ var render = function() {
                   _c(
                     "v-stepper",
                     {
+                      staticClass: "elevation-0",
                       staticStyle: { width: "1000px" },
                       model: {
                         value: _vm.toolStepper,
@@ -21602,7 +21105,7 @@ var render = function() {
                                         "v-sheet",
                                         {
                                           attrs: {
-                                            elevation: "8",
+                                            elevation: "1",
                                             "max-width": "520"
                                           }
                                         },
@@ -21610,7 +21113,7 @@ var render = function() {
                                           _c(
                                             "v-slide-group",
                                             {
-                                              staticClass: "pa-4",
+                                              staticClass: "pa-3",
                                               attrs: {
                                                 "center-active": "",
                                                 "show-arrows": ""
@@ -21880,8 +21383,49 @@ var render = function() {
                   { staticClass: "d-flex pt-4 justify-content-around" },
                   [
                     _c("canvas", {
+                      directives: [
+                        {
+                          name: "show",
+                          rawName: "v-show",
+                          value: false,
+                          expression: "false"
+                        }
+                      ],
                       attrs: { id: "concat", width: "500", height: "500" }
                     }),
+                    _vm._v(" "),
+                    _vm.showConcatImg
+                      ? _c(
+                          "div",
+                          [
+                            _c(
+                              "v-carousel",
+                              {
+                                attrs: { height: "500" },
+                                model: {
+                                  value: _vm.carousel,
+                                  callback: function($$v) {
+                                    _vm.carousel = $$v
+                                  },
+                                  expression: "carousel"
+                                }
+                              },
+                              _vm._l(_vm.showConcatImg, function(image, index) {
+                                return _c("v-carousel-item", {
+                                  key: index,
+                                  attrs: {
+                                    src: image,
+                                    "reverse-transition": "fade-transition",
+                                    transition: "fade-transition"
+                                  }
+                                })
+                              }),
+                              1
+                            )
+                          ],
+                          1
+                        )
+                      : _vm._e(),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -21947,7 +21491,10 @@ var render = function() {
                     _c(
                       "v-btn",
                       {
-                        attrs: { color: "primary" },
+                        attrs: {
+                          color: "primary",
+                          disabled: _vm.confirmMessage
+                        },
                         on: {
                           click: function($event) {
                             _vm.e1 = 4
@@ -21968,14 +21515,7 @@ var render = function() {
                     _vm._v(" "),
                     _c(
                       "v-btn",
-                      {
-                        attrs: { text: "" },
-                        on: {
-                          click: function($event) {
-                            _vm.e1 = 2
-                          }
-                        }
-                      },
+                      { attrs: { text: "" }, on: { click: _vm.back2edit } },
                       [_vm._v("戻る")]
                     )
                   ],
@@ -22099,7 +21639,7 @@ var render = function() {
                         attrs: { text: "" },
                         on: {
                           click: function($event) {
-                            _vm.e1 = 2
+                            _vm.e1 = 3
                           }
                         }
                       },
@@ -22116,15 +21656,53 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c("div", {
-        staticClass: "d-flex justify-content-start",
-        attrs: { id: "concatImages" }
-      }),
-      _vm.concatImageBtn
+      _vm.showConcatImg
         ? _c(
-            "v-btn",
-            { attrs: { color: "primary" }, on: { click: _vm.submit } },
-            [_vm._v("保存")]
+            "div",
+            [
+              _c(
+                "div",
+                { staticClass: "d-flex justify-content-start" },
+                _vm._l(_vm.concatImg, function(image, index) {
+                  return _c("div", { key: index }, [
+                    _c("img", { attrs: { width: "250", src: image } }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      [
+                        _c(
+                          "v-btn",
+                          {
+                            on: {
+                              click: function($event) {
+                                return _vm.deleteImage(index)
+                              }
+                            }
+                          },
+                          [_vm._v("削除")]
+                        )
+                      ],
+                      1
+                    )
+                  ])
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "v-btn",
+                {
+                  attrs: { color: "primary" },
+                  on: {
+                    click: function($event) {
+                      return _vm.confirmSave()
+                    }
+                  }
+                },
+                [_vm._v("保存")]
+              )
+            ],
+            1
           )
         : _vm._e(),
       _vm._v(" "),
@@ -22214,6 +21792,7 @@ var render = function() {
       _c(
         "v-stepper",
         {
+          staticClass: "elevation-0",
           model: {
             value: _vm.e1,
             callback: function($$v) {
@@ -22228,7 +21807,7 @@ var render = function() {
             [
               _c(
                 "v-stepper-content",
-                { attrs: { step: "1" } },
+                { staticClass: "pt-1", attrs: { step: "1" } },
                 [
                   _c(
                     "v-container",
@@ -22247,14 +21826,14 @@ var render = function() {
                                       guides: true,
                                       "view-mode": 2,
                                       "auto-crop-area": 0.5,
-                                      "min-container-width": 300,
-                                      "min-container-height": 300,
+                                      "min-container-width": 250,
+                                      "min-container-height": 250,
                                       background: true,
                                       rotatable: false,
                                       src: _vm.imgSrc,
                                       "img-style": {
-                                        width: 300 + "px",
-                                        height: 300 + "px"
+                                        width: 250 + "px",
+                                        height: 250 + "px"
                                       },
                                       "aspect-ratio": 1 / 1,
                                       "drag-mode": "crop"
@@ -22310,14 +21889,14 @@ var render = function() {
               _vm._v(" "),
               _c(
                 "v-stepper-content",
-                { attrs: { step: "2" } },
+                { staticClass: "pt-1", attrs: { step: "2" } },
                 [
                   _c(
                     "v-card",
                     {
                       staticClass: "overflow-hidden",
                       staticStyle: { margin: "auto" },
-                      attrs: { height: "300", width: "300" }
+                      attrs: { height: "250", width: "250" }
                     },
                     [
                       _c(
@@ -22408,8 +21987,8 @@ var render = function() {
                             },
                             attrs: {
                               id: "drawCanvas",
-                              width: "300",
-                              height: "300"
+                              width: "250",
+                              height: "250"
                             },
                             on: {
                               mousedown: _vm.dragStart,
@@ -22425,7 +22004,7 @@ var render = function() {
                               top: "0",
                               left: "0"
                             },
-                            attrs: { id: "cover", width: "300", height: "300" }
+                            attrs: { id: "cover", width: "250", height: "250" }
                           }),
                           _vm._v(" "),
                           _c("canvas", {
@@ -22435,7 +22014,7 @@ var render = function() {
                               top: "0",
                               left: "0"
                             },
-                            attrs: { id: "text", width: "300", height: "300" },
+                            attrs: { id: "text", width: "250", height: "250" },
                             on: {
                               dblclick: _vm.selectText,
                               mousedown: function($event) {
@@ -22471,7 +22050,7 @@ var render = function() {
                       _c(
                         "v-window",
                         {
-                          staticClass: "px-2 py-2",
+                          staticClass: "px-2 mt-2",
                           model: {
                             value: _vm.onboarding,
                             callback: function($$v) {
@@ -22486,6 +22065,7 @@ var render = function() {
                             { attrs: { value: 0 } },
                             [
                               _c("v-slider", {
+                                staticStyle: { "margin-top": "35px" },
                                 attrs: {
                                   label: "opacity",
                                   min: "4",
@@ -22554,6 +22134,7 @@ var render = function() {
                             { attrs: { value: 1 } },
                             [
                               _c("v-slider", {
+                                staticStyle: { "margin-top": "35px" },
                                 attrs: {
                                   label: "contrast",
                                   min: "0",
@@ -22618,6 +22199,7 @@ var render = function() {
                             { attrs: { value: 2 } },
                             [
                               _c("v-slider", {
+                                staticStyle: { "margin-top": "35px" },
                                 attrs: {
                                   label: "invert",
                                   min: "0",
@@ -22640,7 +22222,7 @@ var render = function() {
                                 attrs: {
                                   label: "saturate",
                                   min: "0",
-                                  max: "300",
+                                  max: "250",
                                   "thumb-label": "always",
                                   "thumb-color": "light-blue",
                                   color: "light-blue"
@@ -22810,36 +22392,90 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { color: "primary" },
-                      on: { click: _vm.getImage }
-                    },
-                    [_vm._v("決定")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { text: "" },
-                      on: {
-                        click: function($event) {
-                          _vm.e1 = 1
-                        }
-                      }
-                    },
-                    [_vm._v("戻る")]
-                  )
+                  _vm.e1 == 2
+                    ? _c(
+                        "div",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: {
+                                fixed: "",
+                                left: "",
+                                bottom: "",
+                                color: "primary"
+                              },
+                              on: { click: _vm.getImage }
+                            },
+                            [_vm._v("決定")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-btn",
+                            {
+                              staticStyle: { left: "90px" },
+                              attrs: { fixed: "", bottom: "" },
+                              on: {
+                                click: function($event) {
+                                  _vm.e1 = 1
+                                }
+                              }
+                            },
+                            [_vm._v("戻る")]
+                          )
+                        ],
+                        1
+                      )
+                    : _vm._e()
                 ],
                 1
               ),
               _vm._v(" "),
               _c("v-stepper-content", { attrs: { step: "3" } }, [
                 _c("canvas", {
-                  staticStyle: { margin: "auto" },
-                  attrs: { id: "concat", width: "300", height: "300" }
+                  directives: [
+                    {
+                      name: "show",
+                      rawName: "v-show",
+                      value: false,
+                      expression: "false"
+                    }
+                  ],
+                  attrs: { id: "concat", width: "250", height: "250" }
                 }),
+                _vm._v(" "),
+                _vm.showConcatImg
+                  ? _c(
+                      "div",
+                      [
+                        _c(
+                          "v-carousel",
+                          {
+                            attrs: { height: "300" },
+                            model: {
+                              value: _vm.carousel,
+                              callback: function($$v) {
+                                _vm.carousel = $$v
+                              },
+                              expression: "carousel"
+                            }
+                          },
+                          _vm._l(_vm.showConcatImg, function(image, index) {
+                            return _c("v-carousel-item", {
+                              key: index,
+                              attrs: {
+                                src: image,
+                                "reverse-transition": "fade-transition",
+                                transition: "fade-transition"
+                              }
+                            })
+                          }),
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  : _vm._e(),
                 _vm._v(" "),
                 _c(
                   "div",
@@ -22868,7 +22504,7 @@ var render = function() {
                         color: "teal",
                         rows: "3",
                         counter: "",
-                        maxlength: "300"
+                        maxlength: "250"
                       },
                       scopedSlots: _vm._u([
                         {
@@ -22904,7 +22540,10 @@ var render = function() {
                     _c(
                       "v-btn",
                       {
-                        attrs: { color: "primary" },
+                        attrs: {
+                          color: "primary",
+                          disabled: _vm.confirmMessage
+                        },
                         on: {
                           click: function($event) {
                             _vm.e1 = 4
@@ -22917,24 +22556,15 @@ var render = function() {
                     _c(
                       "v-btn",
                       {
-                        attrs: { color: "primary" },
+                        attrs: { color: "purple" },
                         on: { click: _vm.oneMoreImage }
                       },
                       [_vm._v("もう一枚投稿")]
                     ),
                     _vm._v(" "),
-                    _c(
-                      "v-btn",
-                      {
-                        attrs: { text: "" },
-                        on: {
-                          click: function($event) {
-                            _vm.e1 = 2
-                          }
-                        }
-                      },
-                      [_vm._v("戻る")]
-                    )
+                    _c("v-btn", { on: { click: _vm.back2edit } }, [
+                      _vm._v("戻る")
+                    ])
                   ],
                   1
                 )
@@ -22949,6 +22579,7 @@ var render = function() {
                       "v-card",
                       {
                         staticClass: "mx-auto my-5",
+                        staticStyle: { width: "100%" },
                         attrs: { "max-width": "300" }
                       },
                       [
@@ -22982,7 +22613,7 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "v-carousel",
-                          { attrs: { height: "300" } },
+                          { attrs: { height: "300", width: "300" } },
                           _vm._l(_vm.concatImg, function(image, i) {
                             return _c("v-carousel-item", {
                               key: i,
@@ -23057,7 +22688,7 @@ var render = function() {
                         attrs: { text: "" },
                         on: {
                           click: function($event) {
-                            _vm.e1 = 2
+                            _vm.e1 = 3
                           }
                         }
                       },
@@ -23074,39 +22705,63 @@ var render = function() {
         1
       ),
       _vm._v(" "),
-      _c(
-        "div",
-        {
-          directives: [
-            {
-              name: "show",
-              rawName: "v-show",
-              value: _vm.e1 !== 4,
-              expression: "e1 !== 4"
-            }
-          ]
-        },
-        [
-          _c("div", {
-            staticClass: "d-flex justify-content-start flex-wrap",
-            attrs: { id: "concatImages" }
-          }),
-          _vm._v(" "),
-          _vm.concatImageBtn
-            ? _c(
+      _vm.showConcatImg
+        ? _c(
+            "div",
+            [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "d-flex justify-content-start flex-wrap justify-content-around"
+                },
+                _vm._l(_vm.concatImg, function(image, index) {
+                  return _c("div", { key: index }, [
+                    _c("img", { attrs: { width: "100", src: image } }),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      [
+                        _c(
+                          "v-btn",
+                          {
+                            on: {
+                              click: function($event) {
+                                return _vm.deleteImage(index)
+                              }
+                            }
+                          },
+                          [_vm._v("削除")]
+                        )
+                      ],
+                      1
+                    )
+                  ])
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
                 "v-btn",
-                { attrs: { color: "primary" }, on: { click: _vm.submit } },
+                {
+                  attrs: { color: "primary" },
+                  on: {
+                    click: function($event) {
+                      return _vm.confirmSave()
+                    }
+                  }
+                },
                 [_vm._v("保存")]
               )
-            : _vm._e()
-        ],
-        1
-      ),
+            ],
+            1
+          )
+        : _vm._e(),
       _vm._v(" "),
       _c(
         "v-dialog",
         {
-          attrs: { width: "300" },
+          attrs: { width: "250" },
           model: {
             value: _vm.sizeDialog,
             callback: function($$v) {
@@ -23287,844 +22942,6 @@ var render = function() {
         },
         [_c("v-icon", { attrs: { size: "16" } }, [_vm._v("mdi-triangle")])],
         1
-      )
-    ],
-    1
-  )
-}
-var staticRenderFns = []
-render._withStripped = true
-
-
-
-/***/ }),
-
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true&":
-/*!********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true& ***!
-  \********************************************************************************************************************************************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c(
-        "v-card",
-        {
-          directives: [
-            {
-              name: "resize",
-              rawName: "v-resize",
-              value: _vm.onResize,
-              expression: "onResize"
-            }
-          ],
-          staticClass: "mx-auto",
-          attrs: { "max-width": "800", tile: "" }
-        },
-        [
-          _vm.userInfo.bg_image
-            ? _c(
-                "div",
-                [
-                  _c("v-img", {
-                    staticStyle: { "border-radius": "5px" },
-                    attrs: {
-                      "aspect-ratio": 16 / 9,
-                      src: "storage/image/background/" + _vm.userInfo.bg_image
-                    }
-                  })
-                ],
-                1
-              )
-            : _c(
-                "div",
-                [
-                  _c("v-img", {
-                    attrs: { src: "storage/image/background/bg-1.jpg" }
-                  })
-                ],
-                1
-              ),
-          _vm._v(" "),
-          _c(
-            "v-list-item",
-            { attrs: { "three-line": "" } },
-            [
-              _c(
-                "v-list-item-avatar",
-                { attrs: { size: "80" } },
-                [
-                  _c(
-                    "v-avatar",
-                    { attrs: { color: "indigo", size: "80" } },
-                    [
-                      _c("v-img", {
-                        attrs: {
-                          src:
-                            "storage/image/avatar/" + _vm.userInfo.profile_image
-                        }
-                      })
-                    ],
-                    1
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-list-item-content",
-                [
-                  _c(
-                    "v-list-item-title",
-                    {
-                      staticClass: "title",
-                      staticStyle: { "margin-top": "20px" }
-                    },
-                    [_vm._v(_vm._s(_vm.userInfo.screen_name))]
-                  ),
-                  _vm._v(" "),
-                  _c("v-list-item-subtitle", [
-                    _vm._v(_vm._s(_vm.userInfo.name))
-                  ]),
-                  _vm._v(" "),
-                  _c("v-list-item-subtitle", [_vm._v("フォロワー")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "font-weight-light grey--text title mb-2" },
-                [
-                  _c(
-                    "v-btn",
-                    {
-                      style: [
-                        _vm.isActive ? _vm.activeClass : _vm.inactiveClass
-                      ],
-                      attrs: { elevation: "24", color: _vm.color },
-                      on: {
-                        click: function($event) {
-                          return _vm.follow()
-                        }
-                      }
-                    },
-                    [_c("span", [_vm._v(_vm._s(_vm.followBtn))])]
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _vm.newPosts
-        ? _c(
-            "div",
-            [
-              _c(
-                "v-layout",
-                { staticClass: "justify-start", attrs: { row: "", wrap: "" } },
-                [
-                  _vm._l(_vm.newPosts, function(thisUserPost, index) {
-                    return _c("v-hover", {
-                      key: index,
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "default",
-                            fn: function(ref) {
-                              var hover = ref.hover
-                              return [
-                                _c(
-                                  "v-card",
-                                  {
-                                    staticClass: "mx-auto my-4",
-                                    staticStyle: { width: "100%" },
-                                    attrs: {
-                                      color: "grey lighten-4",
-                                      "max-width": _vm.card.size3
-                                    }
-                                  },
-                                  [
-                                    _c(
-                                      "v-img",
-                                      {
-                                        attrs: {
-                                          "aspect-ratio": 14 / 12,
-                                          src:
-                                            "storage/image/" +
-                                            thisUserPost.image[0].src
-                                        },
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.openDialog(index)
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _c("v-expand-transition", [
-                                          hover
-                                            ? _c(
-                                                "div",
-                                                {
-                                                  staticClass:
-                                                    "d-flex transition-fast-in-fast-out black darken-2 v-card--reveal display-3 white--text",
-                                                  staticStyle: {
-                                                    height: "100%"
-                                                  }
-                                                },
-                                                [
-                                                  _c(
-                                                    "p",
-                                                    {
-                                                      staticStyle: {
-                                                        "font-size": "25px"
-                                                      }
-                                                    },
-                                                    [
-                                                      _vm._v(
-                                                        _vm._s(
-                                                          thisUserPost.image
-                                                            .length
-                                                        ) + "枚"
-                                                      )
-                                                    ]
-                                                  )
-                                                ]
-                                              )
-                                            : _vm._e()
-                                        ])
-                                      ],
-                                      1
-                                    )
-                                  ],
-                                  1
-                                )
-                              ]
-                            }
-                          }
-                        ],
-                        null,
-                        true
-                      )
-                    })
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "v-dialog",
-                    {
-                      attrs: { "max-width": _vm.card.size2 },
-                      on: { "click:outside": _vm.outside },
-                      model: {
-                        value: _vm.dialog,
-                        callback: function($$v) {
-                          _vm.dialog = $$v
-                        },
-                        expression: "dialog"
-                      }
-                    },
-                    [
-                      _c(
-                        "v-card",
-                        {
-                          attrs: {
-                            color: "grey lighten-4",
-                            "max-width": _vm.card.size2
-                          }
-                        },
-                        [
-                          _c(
-                            "v-carousel",
-                            { attrs: { height: _vm.dialogSize } },
-                            _vm._l(_vm.newPosts[_vm.postKey].image, function(
-                              image,
-                              i
-                            ) {
-                              return _c("v-carousel-item", {
-                                key: i,
-                                attrs: {
-                                  src: "storage/image/" + image.src,
-                                  "reverse-transition": "fade-transition",
-                                  transition: "fade-transition"
-                                }
-                              })
-                            }),
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-menu",
-                            {
-                              attrs: {
-                                "close-on-content-click": true,
-                                "nudge-width": 200,
-                                "offset-y": "",
-                                top: ""
-                              },
-                              scopedSlots: _vm._u(
-                                [
-                                  {
-                                    key: "activator",
-                                    fn: function(ref) {
-                                      var on = ref.on
-                                      var attrs = ref.attrs
-                                      return [
-                                        _c(
-                                          "v-btn",
-                                          _vm._g(
-                                            _vm._b(
-                                              {
-                                                attrs: {
-                                                  icon: "",
-                                                  color:
-                                                    _vm.likeArray[_vm.postKey]
-                                                      .like === true
-                                                      ? "pink"
-                                                      : ""
-                                                }
-                                              },
-                                              "v-btn",
-                                              attrs,
-                                              false
-                                            ),
-                                            on
-                                          ),
-                                          [
-                                            _c("v-icon", [_vm._v("mdi-heart")]),
-                                            _vm._v(
-                                              _vm._s(_vm.likeNumber) +
-                                                "\n                "
-                                            )
-                                          ],
-                                          1
-                                        )
-                                      ]
-                                    }
-                                  }
-                                ],
-                                null,
-                                false,
-                                1066178961
-                              ),
-                              model: {
-                                value: _vm.menu[_vm.postKey],
-                                callback: function($$v) {
-                                  _vm.$set(_vm.menu, _vm.postKey, $$v)
-                                },
-                                expression: "menu[postKey]"
-                              }
-                            },
-                            [
-                              _vm._v(" "),
-                              _c(
-                                "v-card",
-                                [
-                                  _c(
-                                    "v-card-actions",
-                                    [
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          attrs: {
-                                            icon: "",
-                                            color:
-                                              _vm.likeArray[_vm.postKey]
-                                                .reaction === 0
-                                                ? "yellow"
-                                                : ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.like(
-                                                _vm.newPosts[_vm.postKey].id,
-                                                0,
-                                                _vm.postKey
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c("v-icon", [_vm._v("mdi-emoticon")])
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          attrs: {
-                                            icon: "",
-                                            color:
-                                              _vm.likeArray[_vm.postKey]
-                                                .reaction === 1
-                                                ? "blue"
-                                                : ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.like(
-                                                _vm.newPosts[_vm.postKey].id,
-                                                1,
-                                                _vm.postKey
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c("v-icon", [
-                                            _vm._v("mdi-emoticon-cry")
-                                          ])
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          attrs: {
-                                            icon: "",
-                                            color:
-                                              _vm.likeArray[_vm.postKey]
-                                                .reaction === 2
-                                                ? "orange"
-                                                : ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.like(
-                                                _vm.newPosts[_vm.postKey].id,
-                                                2,
-                                                _vm.postKey
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c("v-icon", [
-                                            _vm._v("mdi-emoticon-lol")
-                                          ])
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          attrs: {
-                                            icon: "",
-                                            color:
-                                              _vm.likeArray[_vm.postKey]
-                                                .reaction === 3
-                                                ? "red"
-                                                : ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.like(
-                                                _vm.newPosts[_vm.postKey].id,
-                                                3,
-                                                _vm.postKey
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c("v-icon", [
-                                            _vm._v("mdi-emoticon-angry")
-                                          ])
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _c(
-                                        "v-btn",
-                                        {
-                                          attrs: {
-                                            icon: "",
-                                            color:
-                                              _vm.likeArray[_vm.postKey]
-                                                .reaction === 4
-                                                ? "pink"
-                                                : ""
-                                          },
-                                          on: {
-                                            click: function($event) {
-                                              return _vm.like(
-                                                _vm.newPosts[_vm.postKey].id,
-                                                4,
-                                                _vm.postKey
-                                              )
-                                            }
-                                          }
-                                        },
-                                        [
-                                          _c("v-icon", [
-                                            _vm._v("mdi-emoticon-kiss")
-                                          ])
-                                        ],
-                                        1
-                                      ),
-                                      _vm._v(" "),
-                                      _vm.likeArray[_vm.postKey].like
-                                        ? _c(
-                                            "v-btn",
-                                            {
-                                              attrs: { icon: "" },
-                                              on: {
-                                                click: function($event) {
-                                                  return _vm.deleteLike(
-                                                    _vm.newPosts[_vm.postKey]
-                                                      .id,
-                                                    _vm.postKey
-                                                  )
-                                                }
-                                              }
-                                            },
-                                            [
-                                              _c("v-icon", [
-                                                _vm._v("mdi-minus-circle")
-                                              ])
-                                            ],
-                                            1
-                                          )
-                                        : _vm._e()
-                                    ],
-                                    1
-                                  )
-                                ],
-                                1
-                              )
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            { attrs: { icon: "" } },
-                            [_c("v-icon", [_vm._v("mdi-comment")])],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            { attrs: { icon: "" } },
-                            [_c("v-icon", [_vm._v("mdi-bookmark")])],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-card-text",
-                            {
-                              staticClass: "pt-6",
-                              staticStyle: {
-                                position: "relative",
-                                "max-width": "340px"
-                              }
-                            },
-                            [
-                              _c(
-                                "p",
-                                {
-                                  staticClass:
-                                    "text-h6 font-weight-light orange--text mb-2"
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                " +
-                                      _vm._s(_vm.newPosts[_vm.postKey].title) +
-                                      "\n                "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "div",
-                                {
-                                  staticClass:
-                                    "text-subtitle-1 font-weight-light grey--text title mb-2"
-                                },
-                                [
-                                  _c("div", { staticClass: "content" }, [
-                                    _vm._v(
-                                      _vm._s(_vm.newPosts[_vm.postKey].text)
-                                    )
-                                  ])
-                                ]
-                              )
-                            ]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-dialog",
-                    {
-                      attrs: { "max-width": "290" },
-                      on: { "click:outside": _vm.outside },
-                      model: {
-                        value: _vm.deleteDialog,
-                        callback: function($$v) {
-                          _vm.deleteDialog = $$v
-                        },
-                        expression: "deleteDialog"
-                      }
-                    },
-                    [
-                      _c(
-                        "v-card",
-                        [
-                          _c("v-card-title", { staticClass: "headline" }, [
-                            _vm._v(
-                              "\n                Make sure!!\n                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("v-card-text", [
-                            _vm._v(
-                              "\n                Are you sure you are gonna delete this post??\n                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "v-card-actions",
-                            [
-                              _c("v-spacer"),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "green darken-1", text: "" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.deleteDialog = false
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                    Disagree\n                "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "green darken-1", text: "" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.deletePost()
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                    Agree\n                "
-                                  )
-                                ]
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-snackbar",
-                    {
-                      attrs: { timeout: _vm.timeout },
-                      scopedSlots: _vm._u(
-                        [
-                          {
-                            key: "action",
-                            fn: function(ref) {
-                              var attrs = ref.attrs
-                              return [
-                                _c(
-                                  "v-btn",
-                                  _vm._b(
-                                    {
-                                      attrs: { color: "blue", text: "" },
-                                      on: {
-                                        click: function($event) {
-                                          _vm.snackbar = false
-                                        }
-                                      }
-                                    },
-                                    "v-btn",
-                                    attrs,
-                                    false
-                                  ),
-                                  [
-                                    _vm._v(
-                                      "\n                Close\n                "
-                                    )
-                                  ]
-                                )
-                              ]
-                            }
-                          }
-                        ],
-                        null,
-                        false,
-                        3726381388
-                      ),
-                      model: {
-                        value: _vm.snackbar,
-                        callback: function($$v) {
-                          _vm.snackbar = $$v
-                        },
-                        expression: "snackbar"
-                      }
-                    },
-                    [
-                      _vm._v(
-                        "\n            " + _vm._s(_vm.text) + "\n            "
-                      )
-                    ]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-dialog",
-                    {
-                      attrs: { "max-width": "290" },
-                      on: { "click:outside": _vm.outside },
-                      model: {
-                        value: _vm.changeBgDialog,
-                        callback: function($$v) {
-                          _vm.changeBgDialog = $$v
-                        },
-                        expression: "changeBgDialog"
-                      }
-                    },
-                    [
-                      _c(
-                        "v-card",
-                        [
-                          _c("v-img", { attrs: { src: _vm.changingBgData } }),
-                          _vm._v(" "),
-                          _c("v-card-text", [
-                            _vm._v(
-                              "\n                Do you wanna change to this image??\n                "
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c(
-                            "v-card-actions",
-                            [
-                              _c("v-spacer"),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "green darken-1", text: "" },
-                                  on: {
-                                    click: function($event) {
-                                      _vm.changeBgDialog = false
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                    No\n                "
-                                  )
-                                ]
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: { color: "green darken-1", text: "" },
-                                  on: {
-                                    click: function($event) {
-                                      return _vm.changeBg()
-                                    }
-                                  }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                    Yes\n                "
-                                  )
-                                ]
-                              )
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ],
-                2
-              )
-            ],
-            1
-          )
-        : _vm._e(),
-      _vm._v(" "),
-      _c(
-        "v-snackbar",
-        {
-          scopedSlots: _vm._u([
-            {
-              key: "action",
-              fn: function(ref) {
-                var attrs = ref.attrs
-                return [
-                  _c(
-                    "v-btn",
-                    _vm._b(
-                      {
-                        attrs: { color: "pink", text: "" },
-                        on: {
-                          click: function($event) {
-                            return _vm.deleteLike(_vm.lastPostId, _vm.lastIndex)
-                          }
-                        }
-                      },
-                      "v-btn",
-                      attrs,
-                      false
-                    ),
-                    [_vm._v("\n            Close\n            ")]
-                  )
-                ]
-              }
-            }
-          ]),
-          model: {
-            value: _vm.snackbar,
-            callback: function($$v) {
-              _vm.snackbar = $$v
-            },
-            expression: "snackbar"
-          }
-        },
-        [_vm._v("\n        " + _vm._s(_vm.text) + "\n        ")]
       )
     ],
     1
@@ -84756,15 +83573,14 @@ function bootstrap() {
 /*!******************************************************!*\
   !*** ./resources/ts/components/ExampleComponent.vue ***!
   \******************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ExampleComponent_vue_vue_type_template_id_e6486658___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=template&id=e6486658& */ "./resources/ts/components/ExampleComponent.vue?vue&type=template&id=e6486658&");
 /* harmony import */ var _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ExampleComponent.vue?vue&type=script&lang=js& */ "./resources/ts/components/ExampleComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ExampleComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -84794,7 +83610,7 @@ component.options.__file = "resources/ts/components/ExampleComponent.vue"
 /*!*******************************************************************************!*\
   !*** ./resources/ts/components/ExampleComponent.vue?vue&type=script&lang=js& ***!
   \*******************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -87332,111 +86148,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileTemplate_vue_vue_type_template_id_71c68b9c___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileTemplate_vue_vue_type_template_id_71c68b9c___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
-
-
-
-/***/ }),
-
-/***/ "./resources/ts/components/templates/UserProfileTemplate.vue":
-/*!*******************************************************************!*\
-  !*** ./resources/ts/components/templates/UserProfileTemplate.vue ***!
-  \*******************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _UserProfileTemplate_vue_vue_type_template_id_0fb5fd51_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true& */ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true&");
-/* harmony import */ var _UserProfileTemplate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserProfileTemplate.vue?vue&type=script&lang=js& */ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _UserProfileTemplate_vue_vue_type_style_index_0_id_0fb5fd51_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css& */ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css&");
-/* harmony import */ var _UserProfileTemplate_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./UserProfileTemplate.vue?vue&type=style&index=1&lang=css& */ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
-
-
-
-
-
-
-/* normalize component */
-
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_4__["default"])(
-  _UserProfileTemplate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _UserProfileTemplate_vue_vue_type_template_id_0fb5fd51_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _UserProfileTemplate_vue_vue_type_template_id_0fb5fd51_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
-  false,
-  null,
-  "0fb5fd51",
-  null
-  
-)
-
-/* hot reload */
-if (false) { var api; }
-component.options.__file = "resources/ts/components/templates/UserProfileTemplate.vue"
-/* harmony default export */ __webpack_exports__["default"] = (component.exports);
-
-/***/ }),
-
-/***/ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=script&lang=js&":
-/*!********************************************************************************************!*\
-  !*** ./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=script&lang=js& ***!
-  \********************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./UserProfileTemplate.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css&":
-/*!****************************************************************************************************************************!*\
-  !*** ./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css& ***!
-  \****************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_0_id_0fb5fd51_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=0&id=0fb5fd51&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_0_id_0fb5fd51_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_0_id_0fb5fd51_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_0_id_0fb5fd51_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_0_id_0fb5fd51_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css&":
-/*!****************************************************************************************************!*\
-  !*** ./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css& ***!
-  \****************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./UserProfileTemplate.vue?vue&type=style&index=1&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=style&index=1&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true&":
-/*!**************************************************************************************************************!*\
-  !*** ./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true& ***!
-  \**************************************************************************************************************/
-/*! exports provided: render, staticRenderFns */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_template_id_0fb5fd51_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/UserProfileTemplate.vue?vue&type=template&id=0fb5fd51&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_template_id_0fb5fd51_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_UserProfileTemplate_vue_vue_type_template_id_0fb5fd51_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

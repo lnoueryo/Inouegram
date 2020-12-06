@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-stepper v-model="e1">
+        <v-stepper v-model="e1" class="elevation-0">
             <v-stepper-header>
                 <v-stepper-step :complete="e1 > 1" step="1">
                     画像のトリミング
@@ -86,7 +86,7 @@
                         </v-btn>
                         </v-bottom-navigation>
                     </v-card>
-                    <v-card class="overflow-hidden" height="550" width="500">
+                    <v-card class="overflow-hidden" height="550" width="500" flat>
                     <v-stepper v-model="toolStepper" style="width: 500px;">
                         <v-stepper-items>
                             <v-stepper-content step="1">
@@ -153,13 +153,13 @@
                             </v-stepper-content>
 
                             <v-stepper-content step="3">
-                                <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
+                                <v-card class="mb-12" color="grey lighten-1" height="200px" flat></v-card>
                             </v-stepper-content>
                         </v-stepper-items>
                     </v-stepper>
                     </v-card>
                     </v-layout>
-                    <v-stepper v-model="toolStepper" style="width: 1000px;">
+                    <v-stepper v-model="toolStepper" style="width: 1000px;" class="elevation-0">
                         <v-stepper-items>
                             <v-stepper-content step="1">
                                 <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
@@ -172,8 +172,8 @@
                                         <v-btn color="pink" @click="reset">reset</v-btn>
                                         <v-btn color="purple" @click="rotate">rotate</v-btn>
                                         <v-btn color="black" @click="back">back</v-btn>
-                                        <v-sheet elevation="8" max-width="520">
-                                            <v-slide-group v-model="model" class="pa-4" center-active show-arrows>
+                                        <v-sheet elevation="1" max-width="520">
+                                            <v-slide-group v-model="model" class="pa-3" center-active show-arrows>
                                                 <v-slide-item v-for="n in 13" :key="n" v-slot:default="{ active, toggle }">
                                                     <v-card :color="active ? 'primary' : 'grey lighten-1'" class="ma-1" height="117.3" width="113.3" @click="click">
                                                         <canvas :id="'pic' + n" height="113.3" width="113.3" @click="toggle"></canvas>
@@ -210,7 +210,13 @@
 
                 <v-stepper-content step="3">
                         <div class="d-flex pt-4 justify-content-around">
-                            <canvas id="concat" width="500" height="500"></canvas>
+                            <canvas id="concat" width="500" height="500" v-show="false"></canvas>
+                            <div v-if="showConcatImg">
+                                <v-carousel height="500" v-model="carousel">
+                                <!-- <v-carousel :height="dialogSize" v-model="carousel[postDialogIndex]"> -->
+                                    <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
+                                </v-carousel>
+                            </div>
                             <div class="pt-2 mx-auto"  style="width: 100%;max-width: 600px;">
                              <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
                             <v-textarea v-model="message" color="teal" counter maxlength="500">
@@ -223,9 +229,9 @@
                             </div>
                         </div>
                         <div>
-                            <v-btn color="primary" @click="e1=4">確認</v-btn>
+                            <v-btn color="primary" @click="e1=4" :disabled="confirmMessage">確認</v-btn>
                             <v-btn color="primary" @click="oneMoreImage">もう一枚投稿</v-btn>
-                            <v-btn text @click="e1=2">戻る</v-btn>
+                            <v-btn text @click="back2edit">戻る</v-btn>
                         </div>
                 </v-stepper-content>
 
@@ -267,17 +273,24 @@
                     </div>
                     <div>
                         <v-btn color="primary" @click="submit">保存</v-btn>
-                        <v-btn text @click="e1=2">戻る</v-btn>
+                        <v-btn text @click="e1=3">戻る</v-btn>
                     </div>
                 </v-stepper-content>
 
             </v-stepper-items>
         </v-stepper>
-    <div id="concatImages" class="d-flex justify-content-start"></div><v-btn color="primary" @click="submit" v-if="concatImageBtn">保存</v-btn>
-    <v-dialog
-      v-model="sizeDialog"
-      width="500"
-    >
+        <div v-if="showConcatImg">
+            <div class="d-flex justify-content-start">
+                <div v-for="(image, index) in concatImg" :key="index">
+                    <img width="250" :src="image">
+                    <div>
+                        <v-btn @click="deleteImage(index)">削除</v-btn>
+                    </div>
+                </div>
+            </div>
+        <v-btn color="primary" @click="confirmSave()">保存</v-btn>
+        </div>
+    <v-dialog v-model="sizeDialog" width="500">
 
       <v-card>
         <v-card-title class="headline grey lighten-2">
@@ -321,6 +334,7 @@ export default {
     },
     data() {
       return {
+          carousel: '',
           basicSize: '',
           mediaSize: '',
         sizeDialog: false,
@@ -375,6 +389,16 @@ export default {
       };
     },
     computed: {
+        confirmMessage(){
+            return this.message && this.title ? false : true;
+        },
+        showConcatImg(){
+            if(this.concatImg.length == 0){
+                return false;
+            } else {
+                return this.concatImg;
+            }
+        },
         toolStepper(){
             return Number(this.value) + 1;
         },
@@ -427,12 +451,12 @@ export default {
             var preview = document.getElementsByClassName('preview');
             var img = preview[0].getElementsByTagName('img');
             img[0].src = '';
-            var newImg = document.createElement("img");
-            newImg.src = this.concatImg[this.concatImg.length-1];
-            newImg.width = 250;
-            newImg.height = 250;
-            var concatImages = document.getElementById('concatImages')
-            concatImages.appendChild(newImg);
+            // var newImg = document.createElement("img");
+            // newImg.src = this.concatImg[this.concatImg.length-1];
+            // newImg.width = 250;
+            // newImg.height = 250;
+            // var concatImages = document.getElementById('concatImages')
+            // concatImages.appendChild(newImg);
         },
         loadImage(e){
             var preview = document.getElementById('preview');
@@ -471,6 +495,17 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        confirmSave(){
+            if(this.title && this.message){
+                if(this.e1 == 4){
+                    this.submit();
+                } else {
+                    this.e1 = 4;
+                }
+            } else {
+                this.e1 = 3;
+            }
         },
         getImage(){
             this.e1 = 3;
@@ -883,6 +918,22 @@ export default {
             text.y += dy;
             this.drawText();
         },
+        back2edit(){
+            this.e1 = 2;
+            this.concatImg.pop();
+        },
+        deleteImage(index){
+            this.concatImg.splice(index,1);
+            if(this.concatImg.length==0){
+                this.e1 = 1;
+                this.imgSrc = '';
+                this.stepBtn1 = true;
+                this.concatImageBtn = true;
+                var preview = document.getElementsByClassName('preview');
+                var img = preview[0].getElementsByTagName('img');
+                img[0].src = '';
+            }
+        }
     }
 };
 </script>
