@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Post;
 use App\Like;
 use App\Follower;
 use App\Comment;
@@ -86,6 +87,17 @@ class ApiController extends Controller
     public function followingUsers(Request $request){
         $following_users = User::whereIn('id', $request->usersId)->get();
         return $following_users;
+    }
+
+    public function likedPostUsers(Request $request){
+        $main_user_likes = Like::where('user_id', $request->id);
+        $liked_posts = Post::whereIn('id', $main_user_likes->get('post_id'));
+        $post_likes = Like::whereIn('post_id', $liked_posts->get('id'));
+        $post_likes_users = User::whereIn('id', $post_likes->get('user_id'));
+        $post_comments = Comment::whereIn('post_id', $liked_posts->get('id'));
+        $post_comments_users = User::whereIn('id', $post_comments->get('user_id'));
+        $res = ['userLikes' => $main_user_likes->get(), 'posts' => $liked_posts->get(), 'likes' => $post_likes->get(), 'likeUsers' => $post_likes_users->get(), 'comments' => $post_comments->get(), 'commentUsers' => $post_comments_users->get()];
+        return $res;
     }
 
 }

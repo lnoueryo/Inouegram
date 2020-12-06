@@ -36,3 +36,4 @@ Route::post('/followingUsers', 'ApiController@followingUsers');
 Route::post('/comment', 'ApiController@comment');
 
 Route::post('/delete_comment', 'ApiController@deleteComment');
+Route::get('/likedPostUsers', 'ApiController@likedPostUsers');
