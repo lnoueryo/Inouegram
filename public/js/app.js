@@ -22713,30 +22713,47 @@ var render = function() {
                 "div",
                 {
                   staticClass:
-                    "d-flex justify-content-start flex-wrap justify-content-around"
+                    "px-2 d-flex justify-content-start flex-wrap justify-content-around"
                 },
                 _vm._l(_vm.concatImg, function(image, index) {
-                  return _c("div", { key: index }, [
-                    _c("img", { attrs: { width: "100", src: image } }),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      [
-                        _c(
-                          "v-btn",
-                          {
-                            on: {
-                              click: function($event) {
-                                return _vm.deleteImage(index)
+                  return _c(
+                    "div",
+                    { key: index },
+                    [
+                      _c("v-img", {
+                        staticClass: "mb-1 red accent-3",
+                        attrs: {
+                          color: "red accent-3",
+                          width: "100",
+                          src: image
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: {
+                                color: "red accent-3",
+                                block: "",
+                                small: ""
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.deleteImage(index)
+                                }
                               }
-                            }
-                          },
-                          [_vm._v("削除")]
-                        )
-                      ],
-                      1
-                    )
-                  ])
+                            },
+                            [_vm._v("削除")]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
                 }),
                 0
               ),

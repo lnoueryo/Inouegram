@@ -249,11 +249,11 @@
             </v-stepper-items>
         </v-stepper>
         <div v-if="showConcatImg">
-            <div class="d-flex justify-content-start flex-wrap justify-content-around">
+            <div class="px-2 d-flex justify-content-start flex-wrap justify-content-around">
                 <div v-for="(image, index) in concatImg" :key="index">
-                    <img width="100" :src="image">
+                    <v-img class="mb-1 red accent-3" color="red accent-3" width="100" :src="image"></v-img>
                     <div>
-                        <v-btn @click="deleteImage(index)">削除</v-btn>
+                        <v-btn color="red accent-3" block small @click="deleteImage(index)">削除</v-btn>
                     </div>
                 </div>
             </div>
