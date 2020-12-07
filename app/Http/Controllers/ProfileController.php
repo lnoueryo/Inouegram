@@ -51,13 +51,12 @@ class ProfileController extends Controller
             return  0;
         }
     }
-// TODO:
     public function deletePost(Request $request) {
         $decoded_post = json_decode($request->post);
         $post = Post::find($decoded_post->id);
         $image = $decoded_post->image;
         for($i=0; $i<count($image); $i++){
-            Storage::delete($image[$i]->src);
+            Storage::delete($image[$i]);
         };
         $post->delete();
         $posts = Post::where('user_id', $post->user_id)->orderBy('updated_at', 'desc')->get();
