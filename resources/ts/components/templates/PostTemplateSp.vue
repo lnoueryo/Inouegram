@@ -923,8 +923,6 @@ export default {
                 this.imgSrc = '';
                 this.stepBtn1 = true;
                 this.concatImageBtn = true;
-                var preview = document.getElementsByClassName('preview');
-                var img = preview[0].getElementsByTagName('img');
                 img[0].src = '';
             }
         }

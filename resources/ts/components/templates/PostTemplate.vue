@@ -315,6 +315,14 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-snackbar v-model="titleMessagevalidation" :timeout="timeout">
+      {{ text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="titleMessagevalidation = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     </div>
 </template>
 
@@ -334,6 +342,9 @@ export default {
     },
     data() {
       return {
+      titleMessagevalidation: false,
+      text: 'タイトルと内容を書いてください',
+      timeout: 4000,
           carousel: '',
           basicSize: '',
           mediaSize: '',
@@ -345,6 +356,7 @@ export default {
         stepBtn1: true,
         e1: 1,
         concatImg: [],
+        imgBeforeConcat: [],
         imgSrc: '',
         value: 0,
         canvasMode: 'penBlack',
@@ -451,6 +463,19 @@ export default {
             var preview = document.getElementsByClassName('preview');
             var img = preview[0].getElementsByTagName('img');
             img[0].src = '';
+            this.coverctx.filter = 'grayscale(0%)';
+            this.globalAlpha = 1;
+            this.hexa = 'transparent';
+            this.model = '';
+            this.filters = '';
+            this.coverctx.globalCompositeOperation = 'source-over';
+            this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
+            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+            this.cover = document.getElementById("cover");
+            this.coverctx = this.cover.getContext("2d");
+            this.coverctx.globalAlpha = 1;
+            this.coverctx.globalCompositeOperation = 'source-over';
+            this.coverctx.filter = 'grayscale(0%)';
             // var newImg = document.createElement("img");
             // newImg.src = this.concatImg[this.concatImg.length-1];
             // newImg.width = 250;
@@ -505,6 +530,7 @@ export default {
                 }
             } else {
                 this.e1 = 3;
+                this.titleMessagevalidation = true
             }
         },
         getImage(){
@@ -514,6 +540,7 @@ export default {
             var cover = this.createImage(document.getElementById("cover"));
             var text = this.createImage(document.getElementById("text"));
             var drawCanvas = this.createImage(document.getElementById("drawCanvas"));
+            this.imgBeforeConcat.push([cover,text,drawCanvas]);
             // var image = this.createImage(this.canvas);
             drawCanvas.onload = function(){
                 concatCxt.drawImage(cover,0,0,500,500);
@@ -924,6 +951,7 @@ export default {
         },
         deleteImage(index){
             this.concatImg.splice(index,1);
+            this.imgBeforeConcat.splice(index,1);
             if(this.concatImg.length==0){
                 this.e1 = 1;
                 this.imgSrc = '';

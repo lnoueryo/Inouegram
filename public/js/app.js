@@ -2731,6 +2731,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2783,7 +2784,13 @@ __webpack_require__.r(__webpack_exports__);
   created: function created() {
     this.randomNumber = Math.floor(Math.random() * 5) + 1;
   },
+  mounted: function mounted() {
+    this.focusInput();
+  },
   methods: {
+    focusInput: function focusInput() {
+      this.$refs.focusThis.focus();
+    },
     login: function login() {
       this.errors = {};
       var self = this;
@@ -5964,6 +5971,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5981,6 +5996,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      titleMessagevalidation: false,
+      text: 'タイトルと内容を書いてください',
+      timeout: 4000,
       carousel: '',
       basicSize: '',
       mediaSize: '',
@@ -5992,6 +6010,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       stepBtn1: true,
       e1: 1,
       concatImg: [],
+      imgBeforeConcat: [],
       imgSrc: '',
       value: 0,
       canvasMode: 'penBlack',
@@ -6099,7 +6118,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.concatImageBtn = true;
       var preview = document.getElementsByClassName('preview');
       var img = preview[0].getElementsByTagName('img');
-      img[0].src = ''; // var newImg = document.createElement("img");
+      img[0].src = '';
+      this.coverctx.filter = 'grayscale(0%)';
+      this.globalAlpha = 1;
+      this.hexa = 'transparent';
+      this.model = '';
+      this.filters = '';
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.filterObject = {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      };
+      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      this.cover = document.getElementById("cover");
+      this.coverctx = this.cover.getContext("2d");
+      this.coverctx.globalAlpha = 1;
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.coverctx.filter = 'grayscale(0%)'; // var newImg = document.createElement("img");
       // newImg.src = this.concatImg[this.concatImg.length-1];
       // newImg.width = 250;
       // newImg.height = 250;
@@ -6152,6 +6193,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       } else {
         this.e1 = 3;
+        this.titleMessagevalidation = true;
       }
     },
     getImage: function getImage() {
@@ -6160,7 +6202,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var concatCxt = concat.getContext("2d");
       var cover = this.createImage(document.getElementById("cover"));
       var text = this.createImage(document.getElementById("text"));
-      var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
+      var drawCanvas = this.createImage(document.getElementById("drawCanvas"));
+      this.imgBeforeConcat.push([cover, text, drawCanvas]); // var image = this.createImage(this.canvas);
 
       drawCanvas.onload = function () {
         concatCxt.drawImage(cover, 0, 0, 500, 500);
@@ -6625,6 +6668,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     deleteImage: function deleteImage(index) {
       this.concatImg.splice(index, 1);
+      this.imgBeforeConcat.splice(index, 1);
 
       if (this.concatImg.length == 0) {
         this.e1 = 1;
@@ -7639,8 +7683,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.imgSrc = '';
         this.stepBtn1 = true;
         this.concatImageBtn = true;
-        var preview = document.getElementsByClassName('preview');
-        var img = preview[0].getElementsByTagName('img');
         img[0].src = '';
       }
     }
@@ -15487,6 +15529,31 @@ var render = function() {
                             required: "",
                             clearable: ""
                           },
+                          on: {
+                            keyup: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "enter",
+                                  13,
+                                  $event.key,
+                                  "Enter"
+                                )
+                              ) {
+                                return null
+                              }
+                              if (
+                                $event.ctrlKey ||
+                                $event.shiftKey ||
+                                $event.altKey ||
+                                $event.metaKey
+                              ) {
+                                return null
+                              }
+                              return _vm.login($event)
+                            }
+                          },
                           model: {
                             value: _vm.email,
                             callback: function($$v) {
@@ -15506,6 +15573,7 @@ var render = function() {
                           : _vm._e(),
                         _vm._v(" "),
                         _c("v-text-field", {
+                          ref: "focusThis",
                           attrs: {
                             placeholder: "パスワード",
                             counter: 10,
@@ -15517,6 +15585,29 @@ var render = function() {
                           on: {
                             "click:append": function($event) {
                               _vm.show = !_vm.show
+                            },
+                            keyup: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "enter",
+                                  13,
+                                  $event.key,
+                                  "Enter"
+                                )
+                              ) {
+                                return null
+                              }
+                              if (
+                                $event.ctrlKey ||
+                                $event.shiftKey ||
+                                $event.altKey ||
+                                $event.metaKey
+                              ) {
+                                return null
+                              }
+                              return _vm.login($event)
                             }
                           },
                           model: {
@@ -15548,7 +15639,7 @@ var render = function() {
                               "v-btn",
                               {
                                 staticClass: "mr-4",
-                                attrs: { color: "success" },
+                                attrs: { id: "abc", color: "success" },
                                 on: { click: _vm.login }
                               },
                               [
@@ -15714,6 +15805,29 @@ var render = function() {
                           on: {
                             "click:append": function($event) {
                               _vm.show = !_vm.show
+                            },
+                            keyup: function($event) {
+                              if (
+                                !$event.type.indexOf("key") &&
+                                _vm._k(
+                                  $event.keyCode,
+                                  "enter",
+                                  13,
+                                  $event.key,
+                                  "Enter"
+                                )
+                              ) {
+                                return null
+                              }
+                              if (
+                                $event.ctrlKey ||
+                                $event.shiftKey ||
+                                $event.altKey ||
+                                $event.metaKey
+                              ) {
+                                return null
+                              }
+                              return _vm.register($event)
                             }
                           },
                           model: {
@@ -21834,6 +21948,48 @@ var render = function() {
           )
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: { timeout: _vm.timeout },
+          scopedSlots: _vm._u([
+            {
+              key: "action",
+              fn: function(ref) {
+                var attrs = ref.attrs
+                return [
+                  _c(
+                    "v-btn",
+                    _vm._b(
+                      {
+                        attrs: { color: "blue", text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.titleMessagevalidation = false
+                          }
+                        }
+                      },
+                      "v-btn",
+                      attrs,
+                      false
+                    ),
+                    [_vm._v("\n      Close\n    ")]
+                  )
+                ]
+              }
+            }
+          ]),
+          model: {
+            value: _vm.titleMessagevalidation,
+            callback: function($$v) {
+              _vm.titleMessagevalidation = $$v
+            },
+            expression: "titleMessagevalidation"
+          }
+        },
+        [_vm._v("\n  " + _vm._s(_vm.text) + "\n  ")]
       )
     ],
     1
