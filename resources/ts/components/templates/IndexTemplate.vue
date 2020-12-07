@@ -1,5 +1,6 @@
 <template>
     <div class="px-1">
+        <template v-if="parsedUserPosts">
         <v-card class="mx-auto my-5 elevation-1" :max-width="dialogSize" v-for="(parsedUserPost,index) in parsedUserPosts" :key="index" v-resize="onResize" flat>
             <v-list>
                 <v-list-item :href="'/profile?id=' + postUser(parsedUserPost.user_id).id">
@@ -65,6 +66,12 @@
             <v-btn @click="sendComment(parsedUserPost.id, index)">投稿する</v-btn>
             </div>
         </v-card>
+        </template>
+        <template v-else>
+            <div>
+                友達を探しましょう
+            </div>
+        </template>
         <v-snackbar v-model="likeSnackbar">
             {{ text }}
             <template v-slot:action="{ attrs }">

@@ -101,25 +101,24 @@
                                     </div>
                                 </v-list>
                             </v-window-item>
-                            <!-- TODO:comment -->
                             <v-window-item :value="2">
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>Recent chat</v-subheader>
-                                <div v-for="(postComment, index) in postComments" :key="index">
-                                    <v-list-item v-if="commentUser(postComment.user_id)">
-                                        <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
-                                        <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
-                                        </v-list-item-avatar>
-                                        <v-list-item-content>
-                                        <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
-                                        </v-list-item-content>
-                                        <div>{{ postComment.text }}
-                                        </div>
+                                    <div v-for="(postComment, index) in postComments" :key="index">
+                                        <v-list-item v-if="commentUser(postComment.user_id)">
+                                            <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
+                                            <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                                            </v-list-item-avatar>
+                                            <v-list-item-content>
+                                            <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                            </v-list-item-content>
+                                            <div>{{ postComment.text }}
+                                            </div>
                                             <template v-if="commentUser(postComment.user_id).id==visitor.id">
                                                 <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
                                             </template>
-                                    </v-list-item>
-                                </div>
+                                        </v-list-item>
+                                    </div>
                                 </v-list>
                             </v-window-item>
                         </v-window>
@@ -173,9 +172,12 @@
                 </v-snackbar>
             </v-layout>
         </div>
+        <!-- <div v-else-if="!parsedUserPosts && visitor.id !== user.id" class="text-center" style="margin: auto;">
+            まだ投稿はありません
+        </div> -->
         <div v-else class="text-center" style="margin: auto;">
             まだ投稿はありません<br>
-            <v-btn href="/post">投稿する</v-btn>
+            <v-btn href="/post" v-if="visitor.id == user.id">投稿する</v-btn>
         </div>
     </div>
 </template>
@@ -278,9 +280,16 @@
                 var postComments = this.userComments.filter((userComment) => {
                     return userComment.post_id === this.postDialog.id;
                 })
-                return postComments.sort((a, b) => {
-                    return b.id - a.id;
-                });
+                if(postComments.length!==0 && postComments.length>1){
+                    return postComments.sort((a, b) => {
+                        return b.id - a.id;
+                    });
+                } else if(postComments.length==1){
+                    console.log(postComments)
+                    return postComments
+                } else {
+                    return false;
+                }
             } else {
                 return false
             }
@@ -471,12 +480,13 @@
                 text: this.comment,
             })
             .then(response => {
+                this.findCommentUsers(postId)
                 this.comment = '',
                 this.commentSnackbar = true;
                 this.lastPostId = postId;
                 this.lastIndex = index;
-                this.userComments.push(response.data)
                 this.window = 2;
+                this.userComments.push(response.data);
             })
             .catch(error => {
                 console.log('fail')
