@@ -40,12 +40,12 @@
                 <v-window-item :value="1">
                 <v-form ref="form" lazy-validation>
                 <!-- <h4 class="py-2">ログイン</h4> -->
-                <v-text-field class="py-2" v-model="email" placeholder="アドレス" label="Email" required clearable></v-text-field>
+                <v-text-field class="py-2" v-model="email" placeholder="アドレス" label="Email" required clearable @keyup.enter.exact="login"></v-text-field>
                 <div class="alert alert-danger" v-text="errors.email" v-if="errors.email"></div>
-                <v-text-field v-model="password" placeholder="パスワード" :counter="10" label="Password" required @click:append="show = !show" :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'"></v-text-field>
+                <v-text-field ref="focusThis" v-model="password" placeholder="パスワード" :counter="10" label="Password" required @click:append="show = !show" :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'" @keyup.enter.exact="login"></v-text-field>
                 <div class="alert alert-danger" v-text="errors.password" v-if="errors.password"></div>
                 <div class="d-flex" style="justify-content: space-between;">
-                <v-btn color="success" class="mr-4" @click="login">
+                <v-btn id="abc" color="success" class="mr-4" @click="login">
                 ログイン
                 </v-btn>
                 <v-btn color="indigo white--text" class="mr-4" @click="step++">
@@ -132,6 +132,7 @@
             autocomplete="new-password"
             class="input-group--focused py-2"
             @click:append="show = !show"
+            @keyup.enter.exact="register"
             v-model="registration.confirmationPassword"
           ></v-text-field>
         </v-card-text>
@@ -222,7 +223,13 @@
         created() {
             this.randomNumber =  Math.floor( Math.random () * 5)+1;
         },
+        mounted(){
+            this.focusInput();
+        },
         methods: {
+            focusInput() {
+                this.$refs.focusThis.focus();
+            },
             login(){
             this.errors = {};
             var self = this;
