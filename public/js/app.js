@@ -4374,6 +4374,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserComments', 'likedPosts', 'isMainUser'],
   data: function data() {
@@ -4498,9 +4500,17 @@ __webpack_require__.r(__webpack_exports__);
         var postComments = this.userComments.filter(function (userComment) {
           return userComment.post_id === _this4.postDialog.id;
         });
-        return postComments.sort(function (a, b) {
-          return b.id - a.id;
-        });
+
+        if (postComments.length !== 0 && postComments.length > 1) {
+          return postComments.sort(function (a, b) {
+            return b.id - a.id;
+          });
+        } else if (postComments.length == 1) {
+          console.log(postComments);
+          return postComments;
+        } else {
+          return false;
+        }
       } else {
         return false;
       }
@@ -4699,13 +4709,14 @@ __webpack_require__.r(__webpack_exports__);
         userId: this.visitor.id,
         text: this.comment
       }).then(function (response) {
+        _this13.findCommentUsers(postId);
+
         _this13.comment = '', _this13.commentSnackbar = true;
         _this13.lastPostId = postId;
         _this13.lastIndex = index;
+        _this13.window = 2;
 
         _this13.userComments.push(response.data);
-
-        _this13.window = 2;
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -5159,6 +5170,13 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -6928,6 +6946,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
 
 
 
@@ -6945,6 +6965,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      titleMessagevalidation: false,
+      text: 'タイトルと内容を書いてください',
+      timeout: 4000,
       carousel: '',
       type: 'hexa',
       hexa: '#FF000000',
@@ -6961,6 +6984,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       stepBtn1: true,
       e1: 1,
       concatImg: [],
+      imgBeforeConcat: [],
       imgSrc: '',
       value: 0,
       canvasMode: 'penBlack',
@@ -7078,7 +7102,29 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.e1 = 1;
       this.imgSrc = '';
       this.stepBtn1 = true;
-      this.concatImageBtn = true; // var newImg = document.createElement("img");
+      this.concatImageBtn = true;
+      this.coverctx.filter = 'grayscale(0%)';
+      this.globalAlpha = 1;
+      this.hexa = 'transparent';
+      this.model = '';
+      this.filters = '';
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.filterObject = {
+        'blur': 0,
+        'brightness': 100,
+        'contrast': 100,
+        'grayscale': 0,
+        'hueRotate': 0,
+        'invert': 0,
+        'saturate': 100,
+        'sepia': 0
+      };
+      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      this.cover = document.getElementById("cover");
+      this.coverctx = this.cover.getContext("2d");
+      this.coverctx.globalAlpha = 1;
+      this.coverctx.globalCompositeOperation = 'source-over';
+      this.coverctx.filter = 'grayscale(0%)'; // var newImg = document.createElement("img");
       // newImg.src = this.concatImg[this.concatImg.length-1];
       // newImg.width = 75;
       // newImg.height = 75;
@@ -7123,6 +7169,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }
       } else {
         this.e1 = 3;
+        this.titleMessagevalidation = true;
       }
     },
     getImage: function getImage() {
@@ -7132,6 +7179,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var cover = this.createImage(document.getElementById("cover"));
       var text = this.createImage(document.getElementById("text"));
       var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
+
+      this.imgBeforeConcat.push([cover, text, drawCanvas]);
 
       drawCanvas.onload = function () {
         concatCxt.drawImage(cover, 0, 0, 250, 250);
@@ -7583,6 +7632,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     deleteImage: function deleteImage(index) {
       this.concatImg.splice(index, 1);
+      this.imgBeforeConcat.splice(index, 1);
 
       if (this.concatImg.length == 0) {
         this.e1 = 1;
@@ -18339,7 +18389,7 @@ var render = function() {
                                                   _c("div", [
                                                     _vm._v(
                                                       _vm._s(postComment.text) +
-                                                        "\n                                    "
+                                                        "\n                                        "
                                                     )
                                                   ]),
                                                   _vm._v(" "),
@@ -18609,7 +18659,9 @@ var render = function() {
             _vm._v("\n        まだ投稿はありません"),
             _c("br"),
             _vm._v(" "),
-            _c("v-btn", { attrs: { href: "/post" } }, [_vm._v("投稿する")])
+            _vm.visitor.id == _vm.user.id
+              ? _c("v-btn", { attrs: { href: "/post" } }, [_vm._v("投稿する")])
+              : _vm._e()
           ],
           1
         )
@@ -19146,43 +19198,362 @@ var render = function() {
     "div",
     { staticClass: "px-1" },
     [
-      _vm._l(_vm.parsedUserPosts, function(parsedUserPost, index) {
-        return _c(
-          "v-card",
-          {
-            directives: [
+      _vm.parsedUserPosts
+        ? _vm._l(_vm.parsedUserPosts, function(parsedUserPost, index) {
+            return _c(
+              "v-card",
               {
-                name: "resize",
-                rawName: "v-resize",
-                value: _vm.onResize,
-                expression: "onResize"
-              }
-            ],
-            key: index,
-            staticClass: "mx-auto my-5 elevation-1",
-            attrs: { "max-width": _vm.dialogSize, flat: "" }
-          },
-          [
-            _c(
-              "v-list",
+                directives: [
+                  {
+                    name: "resize",
+                    rawName: "v-resize",
+                    value: _vm.onResize,
+                    expression: "onResize"
+                  }
+                ],
+                key: index,
+                staticClass: "mx-auto my-5 elevation-1",
+                attrs: { "max-width": _vm.dialogSize, flat: "" }
+              },
               [
                 _c(
-                  "v-list-item",
-                  {
-                    attrs: {
-                      href:
-                        "/profile?id=" + _vm.postUser(parsedUserPost.user_id).id
-                    }
-                  },
+                  "v-list",
                   [
                     _c(
-                      "v-list-item-avatar",
+                      "v-list-item",
+                      {
+                        attrs: {
+                          href:
+                            "/profile?id=" +
+                            _vm.postUser(parsedUserPost.user_id).id
+                        }
+                      },
                       [
-                        _c("v-img", {
+                        _c(
+                          "v-list-item-avatar",
+                          [
+                            _c("v-img", {
+                              attrs: {
+                                src:
+                                  "storage/image/avatar/" +
+                                  _vm.postUser(parsedUserPost.user_id)
+                                    .profile_image
+                              }
+                            })
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-list-item-content",
+                          [
+                            _c("v-list-item-title", [
+                              _vm._v(
+                                _vm._s(
+                                  _vm.postUser(parsedUserPost.user_id)
+                                    .screen_name
+                                )
+                              )
+                            ])
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "v-carousel",
+                  { attrs: { height: _vm.dialogSize } },
+                  _vm._l(parsedUserPost.image, function(image, i) {
+                    return _c("v-carousel-item", {
+                      key: i,
+                      attrs: {
+                        src: "storage/image/" + image,
+                        "reverse-transition": "fade-transition",
+                        transition: "fade-transition"
+                      }
+                    })
+                  }),
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "px-2" },
+                  [
+                    _c(
+                      "v-menu",
+                      {
+                        attrs: {
+                          "close-on-content-click": true,
+                          "nudge-width": 200,
+                          "offset-y": "",
+                          top: ""
+                        },
+                        scopedSlots: _vm._u(
+                          [
+                            {
+                              key: "activator",
+                              fn: function(ref) {
+                                var on = ref.on
+                                var attrs = ref.attrs
+                                return [
+                                  _c(
+                                    "v-btn",
+                                    _vm._g(
+                                      _vm._b(
+                                        {
+                                          attrs: {
+                                            icon: "",
+                                            color: _vm.isLike(parsedUserPost.id)
+                                              ? "pink"
+                                              : ""
+                                          }
+                                        },
+                                        "v-btn",
+                                        attrs,
+                                        false
+                                      ),
+                                      on
+                                    ),
+                                    [_c("v-icon", [_vm._v("mdi-heart")])],
+                                    1
+                                  )
+                                ]
+                              }
+                            }
+                          ],
+                          null,
+                          true
+                        ),
+                        model: {
+                          value: _vm.menu[index],
+                          callback: function($$v) {
+                            _vm.$set(_vm.menu, index, $$v)
+                          },
+                          expression: "menu[index]"
+                        }
+                      },
+                      [
+                        _vm._v(" "),
+                        _vm.isLike(parsedUserPost.id)
+                          ? _c(
+                              "v-card",
+                              [
+                                _c(
+                                  "v-card-actions",
+                                  [
+                                    _vm._l(_vm.btns, function(btn, key) {
+                                      return _c(
+                                        "v-btn",
+                                        {
+                                          key: key,
+                                          attrs: {
+                                            icon: "",
+                                            color:
+                                              _vm.isLike(parsedUserPost.id)
+                                                .reaction === key
+                                                ? btn.color
+                                                : ""
+                                          },
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.like(
+                                                key,
+                                                parsedUserPost.id,
+                                                parsedUserPost.user_id
+                                              )
+                                            }
+                                          }
+                                        },
+                                        [
+                                          _c("v-icon", [
+                                            _vm._v(_vm._s(btn.icon))
+                                          ])
+                                        ],
+                                        1
+                                      )
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-btn",
+                                      {
+                                        attrs: { icon: "" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.deleteLike(
+                                              parsedUserPost.id,
+                                              parsedUserPost.user_id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("v-icon", [
+                                          _vm._v("mdi-minus-circle")
+                                        ])
+                                      ],
+                                      1
+                                    )
+                                  ],
+                                  2
+                                )
+                              ],
+                              1
+                            )
+                          : _c(
+                              "v-card",
+                              [
+                                _c(
+                                  "v-card-actions",
+                                  _vm._l(_vm.btns, function(btn, key) {
+                                    return _c(
+                                      "v-btn",
+                                      {
+                                        key: key,
+                                        attrs: { icon: "" },
+                                        on: {
+                                          click: function($event) {
+                                            return _vm.like(
+                                              key,
+                                              parsedUserPost.id,
+                                              parsedUserPost.user_id
+                                            )
+                                          }
+                                        }
+                                      },
+                                      [
+                                        _c("v-icon", [_vm._v(_vm._s(btn.icon))])
+                                      ],
+                                      1
+                                    )
+                                  }),
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "px-1",
+                        staticStyle: {
+                          display: "inline-block",
+                          cursor: "pointer"
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.likeDialogOpen(parsedUserPost.id)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          _vm._s(_vm.totalLikeNumber(parsedUserPost.id)) + "人"
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "v-btn",
+                      { attrs: { icon: "" } },
+                      [
+                        _c(
+                          "v-icon",
+                          {
+                            attrs: {
+                              color: _vm.isMainUserComment(parsedUserPost.id)
+                                ? "orange"
+                                : ""
+                            }
+                          },
+                          [_vm._v("mdi-comment")]
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass: "px-1",
+                        staticStyle: {
+                          display: "inline-block",
+                          cursor: "pointer"
+                        },
+                        on: {
+                          click: function($event) {
+                            return _vm.commentDialogOpen(parsedUserPost.id)
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          _vm._s(_vm.totalCommentNumber(parsedUserPost.id)) +
+                            "人"
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "p",
+                      {
+                        staticClass:
+                          "text-h6 font-weight-light orange--text mb-2"
+                      },
+                      [_vm._v(_vm._s(parsedUserPost.title))]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticStyle: {
+                          "overflow-y": "scroll",
+                          "max-height": "110px"
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(parsedUserPost.text) +
+                            "\n                "
+                        )
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c("v-divider")
+                  ],
+                  1
+                ),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "d-flex align-center justify-space-around" },
+                  [
+                    _c(
+                      "v-col",
+                      { attrs: { cols: "8", md: "9" } },
+                      [
+                        _c("v-text-field", {
                           attrs: {
-                            src:
-                              "storage/image/avatar/" +
-                              _vm.postUser(parsedUserPost.user_id).profile_image
+                            color: "purple darken-2",
+                            label: "コメント",
+                            required: ""
+                          },
+                          model: {
+                            value: _vm.comment[index],
+                            callback: function($$v) {
+                              _vm.$set(_vm.comment, index, $$v)
+                            },
+                            expression: "comment[index]"
                           }
                         })
                       ],
@@ -19190,320 +19561,24 @@ var render = function() {
                     ),
                     _vm._v(" "),
                     _c(
-                      "v-list-item-content",
-                      [
-                        _c("v-list-item-title", [
-                          _vm._v(
-                            _vm._s(
-                              _vm.postUser(parsedUserPost.user_id).screen_name
-                            )
-                          )
-                        ])
-                      ],
-                      1
-                    )
-                  ],
-                  1
-                )
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "v-carousel",
-              { attrs: { height: _vm.dialogSize } },
-              _vm._l(parsedUserPost.image, function(image, i) {
-                return _c("v-carousel-item", {
-                  key: i,
-                  attrs: {
-                    src: "storage/image/" + image,
-                    "reverse-transition": "fade-transition",
-                    transition: "fade-transition"
-                  }
-                })
-              }),
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "px-2" },
-              [
-                _c(
-                  "v-menu",
-                  {
-                    attrs: {
-                      "close-on-content-click": true,
-                      "nudge-width": 200,
-                      "offset-y": "",
-                      top: ""
-                    },
-                    scopedSlots: _vm._u(
-                      [
-                        {
-                          key: "activator",
-                          fn: function(ref) {
-                            var on = ref.on
-                            var attrs = ref.attrs
-                            return [
-                              _c(
-                                "v-btn",
-                                _vm._g(
-                                  _vm._b(
-                                    {
-                                      attrs: {
-                                        icon: "",
-                                        color: _vm.isLike(parsedUserPost.id)
-                                          ? "pink"
-                                          : ""
-                                      }
-                                    },
-                                    "v-btn",
-                                    attrs,
-                                    false
-                                  ),
-                                  on
-                                ),
-                                [_c("v-icon", [_vm._v("mdi-heart")])],
-                                1
-                              )
-                            ]
+                      "v-btn",
+                      {
+                        on: {
+                          click: function($event) {
+                            return _vm.sendComment(parsedUserPost.id, index)
                           }
                         }
-                      ],
-                      null,
-                      true
-                    ),
-                    model: {
-                      value: _vm.menu[index],
-                      callback: function($$v) {
-                        _vm.$set(_vm.menu, index, $$v)
                       },
-                      expression: "menu[index]"
-                    }
-                  },
-                  [
-                    _vm._v(" "),
-                    _vm.isLike(parsedUserPost.id)
-                      ? _c(
-                          "v-card",
-                          [
-                            _c(
-                              "v-card-actions",
-                              [
-                                _vm._l(_vm.btns, function(btn, key) {
-                                  return _c(
-                                    "v-btn",
-                                    {
-                                      key: key,
-                                      attrs: {
-                                        icon: "",
-                                        color:
-                                          _vm.isLike(parsedUserPost.id)
-                                            .reaction === key
-                                            ? btn.color
-                                            : ""
-                                      },
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.like(
-                                            key,
-                                            parsedUserPost.id,
-                                            parsedUserPost.user_id
-                                          )
-                                        }
-                                      }
-                                    },
-                                    [_c("v-icon", [_vm._v(_vm._s(btn.icon))])],
-                                    1
-                                  )
-                                }),
-                                _vm._v(" "),
-                                _c(
-                                  "v-btn",
-                                  {
-                                    attrs: { icon: "" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.deleteLike(
-                                          parsedUserPost.id,
-                                          parsedUserPost.user_id
-                                        )
-                                      }
-                                    }
-                                  },
-                                  [_c("v-icon", [_vm._v("mdi-minus-circle")])],
-                                  1
-                                )
-                              ],
-                              2
-                            )
-                          ],
-                          1
-                        )
-                      : _c(
-                          "v-card",
-                          [
-                            _c(
-                              "v-card-actions",
-                              _vm._l(_vm.btns, function(btn, key) {
-                                return _c(
-                                  "v-btn",
-                                  {
-                                    key: key,
-                                    attrs: { icon: "" },
-                                    on: {
-                                      click: function($event) {
-                                        return _vm.like(
-                                          key,
-                                          parsedUserPost.id,
-                                          parsedUserPost.user_id
-                                        )
-                                      }
-                                    }
-                                  },
-                                  [_c("v-icon", [_vm._v(_vm._s(btn.icon))])],
-                                  1
-                                )
-                              }),
-                              1
-                            )
-                          ],
-                          1
-                        )
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass: "px-1",
-                    staticStyle: { display: "inline-block", cursor: "pointer" },
-                    on: {
-                      click: function($event) {
-                        return _vm.likeDialogOpen(parsedUserPost.id)
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      _vm._s(_vm.totalLikeNumber(parsedUserPost.id)) + "人"
-                    )
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "v-btn",
-                  { attrs: { icon: "" } },
-                  [
-                    _c(
-                      "v-icon",
-                      {
-                        attrs: {
-                          color: _vm.isMainUserComment(parsedUserPost.id)
-                            ? "orange"
-                            : ""
-                        }
-                      },
-                      [_vm._v("mdi-comment")]
+                      [_vm._v("投稿する")]
                     )
                   ],
                   1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticClass: "px-1",
-                    staticStyle: { display: "inline-block", cursor: "pointer" },
-                    on: {
-                      click: function($event) {
-                        return _vm.commentDialogOpen(parsedUserPost.id)
-                      }
-                    }
-                  },
-                  [
-                    _vm._v(
-                      _vm._s(_vm.totalCommentNumber(parsedUserPost.id)) + "人"
-                    )
-                  ]
-                ),
-                _vm._v(" "),
-                _c(
-                  "p",
-                  {
-                    staticClass: "text-h6 font-weight-light orange--text mb-2"
-                  },
-                  [_vm._v(_vm._s(parsedUserPost.title))]
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  {
-                    staticStyle: {
-                      "overflow-y": "scroll",
-                      "max-height": "110px"
-                    }
-                  },
-                  [
-                    _vm._v(
-                      "\n                " +
-                        _vm._s(parsedUserPost.text) +
-                        "\n                "
-                    )
-                  ]
-                ),
-                _vm._v(" "),
-                _c("v-divider")
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              { staticClass: "d-flex align-center justify-space-around" },
-              [
-                _c(
-                  "v-col",
-                  { attrs: { cols: "8", md: "9" } },
-                  [
-                    _c("v-text-field", {
-                      attrs: {
-                        color: "purple darken-2",
-                        label: "コメント",
-                        required: ""
-                      },
-                      model: {
-                        value: _vm.comment[index],
-                        callback: function($$v) {
-                          _vm.$set(_vm.comment, index, $$v)
-                        },
-                        expression: "comment[index]"
-                      }
-                    })
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "v-btn",
-                  {
-                    on: {
-                      click: function($event) {
-                        return _vm.sendComment(parsedUserPost.id, index)
-                      }
-                    }
-                  },
-                  [_vm._v("投稿する")]
                 )
               ],
               1
             )
-          ],
-          1
-        )
-      }),
+          })
+        : [_c("div", [_vm._v("\n            友達を探しましょう\n        ")])],
       _vm._v(" "),
       _c(
         "v-snackbar",
@@ -22399,6 +22474,8 @@ var render = function() {
                           _c(
                             "v-btn",
                             {
+                              staticClass: "elevation-5",
+                              staticStyle: { "z-index": "1" },
                               attrs: {
                                 fixed: "",
                                 left: "",
@@ -22413,7 +22490,8 @@ var render = function() {
                           _c(
                             "v-btn",
                             {
-                              staticStyle: { left: "90px" },
+                              staticClass: "elevation-5",
+                              staticStyle: { left: "90px", "z-index": "1" },
                               attrs: { fixed: "", bottom: "" },
                               on: {
                                 click: function($event) {
@@ -22461,14 +22539,39 @@ var render = function() {
                             }
                           },
                           _vm._l(_vm.showConcatImg, function(image, index) {
-                            return _c("v-carousel-item", {
-                              key: index,
-                              attrs: {
-                                src: image,
-                                "reverse-transition": "fade-transition",
-                                transition: "fade-transition"
-                              }
-                            })
+                            return _c(
+                              "v-carousel-item",
+                              {
+                                key: index,
+                                attrs: {
+                                  src: image,
+                                  "reverse-transition": "fade-transition",
+                                  transition: "fade-transition"
+                                }
+                              },
+                              [
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticStyle: { "z-index": "5" },
+                                    attrs: {
+                                      top: "",
+                                      right: "",
+                                      absolute: "",
+                                      color: "red accent-3",
+                                      small: ""
+                                    },
+                                    on: {
+                                      click: function($event) {
+                                        return _vm.deleteImage(index)
+                                      }
+                                    }
+                                  },
+                                  [_vm._v("削除")]
+                                )
+                              ],
+                              1
+                            )
                           }),
                           1
                         )
@@ -22480,7 +22583,7 @@ var render = function() {
                 _c(
                   "div",
                   {
-                    staticClass: "pt-2 mx-auto",
+                    staticClass: "pt-4 mx-auto",
                     staticStyle: { width: "100%", "max-width": "600px" }
                   },
                   [
@@ -22708,17 +22811,18 @@ var render = function() {
       _vm.showConcatImg
         ? _c(
             "div",
+            { staticClass: "px-4" },
             [
               _c(
                 "div",
                 {
-                  staticClass:
-                    "px-2 d-flex justify-content-start flex-wrap justify-content-around"
+                  staticClass: "d-flex flex-wrap mb-3",
+                  staticStyle: { "justify-content": "space-between" }
                 },
                 _vm._l(_vm.concatImg, function(image, index) {
                   return _c(
                     "div",
-                    { key: index },
+                    { key: index, staticClass: "mb-3" },
                     [
                       _c("v-img", {
                         staticClass: "mb-1 red accent-3",
@@ -22818,7 +22922,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("\n            I accept\n          ")]
+                    [_vm._v("I accept")]
                   )
                 ],
                 1
@@ -22828,6 +22932,48 @@ var render = function() {
           )
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: { timeout: _vm.timeout },
+          scopedSlots: _vm._u([
+            {
+              key: "action",
+              fn: function(ref) {
+                var attrs = ref.attrs
+                return [
+                  _c(
+                    "v-btn",
+                    _vm._b(
+                      {
+                        attrs: { color: "blue", text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.titleMessagevalidation = false
+                          }
+                        }
+                      },
+                      "v-btn",
+                      attrs,
+                      false
+                    ),
+                    [_vm._v("\n          Close\n        ")]
+                  )
+                ]
+              }
+            }
+          ]),
+          model: {
+            value: _vm.titleMessagevalidation,
+            callback: function($$v) {
+              _vm.titleMessagevalidation = $$v
+            },
+            expression: "titleMessagevalidation"
+          }
+        },
+        [_vm._v("\n      " + _vm._s(_vm.text) + "\n      ")]
       )
     ],
     1

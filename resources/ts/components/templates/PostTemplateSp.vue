@@ -175,8 +175,8 @@
                         </v-card-actions>
                     </v-card>
                     <div v-if="e1==2">
-                    <v-btn fixed left bottom color="primary" @click="getImage">決定</v-btn>
-                    <v-btn style="left: 90px" fixed bottom @click="e1 = 1;">戻る</v-btn>
+                    <v-btn class="elevation-5" fixed left bottom color="primary" style="z-index: 1;" @click="getImage">決定</v-btn>
+                    <v-btn class="elevation-5" style="left: 90px;z-index: 1;" fixed bottom @click="e1 = 1;">戻る</v-btn>
                     </div>
                 </v-stepper-content>
 <!--FIXME: タイトルと内容が埋もれる-->
@@ -184,10 +184,10 @@
                             <canvas id="concat" width="250" height="250" v-show="false"></canvas>
                             <div v-if="showConcatImg">
                                 <v-carousel height="300" v-model="carousel">
-                                    <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
+                                    <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"><v-btn style="z-index: 5;" top right absolute color="red accent-3" small @click="deleteImage(index)">削除</v-btn></v-carousel-item>
                                 </v-carousel>
                             </div>
-                            <div class="pt-2 mx-auto"  style="width: 100%;max-width: 600px;">
+                            <div class="pt-4 mx-auto"  style="width: 100%;max-width: 600px;">
                              <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
                             <v-textarea v-model="message" color="teal" rows="3" counter maxlength="250">
                                 <template v-slot:label>
@@ -248,9 +248,9 @@
 
             </v-stepper-items>
         </v-stepper>
-        <div v-if="showConcatImg">
-            <div class="px-2 d-flex justify-content-start flex-wrap justify-content-around">
-                <div v-for="(image, index) in concatImg" :key="index">
+        <div class="px-4" v-if="showConcatImg">
+            <div class="d-flex flex-wrap mb-3" style="justify-content: space-between;">
+                <div class="mb-3" v-for="(image, index) in concatImg" :key="index">
                     <v-img class="mb-1 red accent-3" color="red accent-3" width="100" :src="image"></v-img>
                     <div>
                         <v-btn color="red accent-3" block small @click="deleteImage(index)">削除</v-btn>
@@ -274,16 +274,18 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            text
-            @click="sizeDialog = false"
-          >
-            I accept
-          </v-btn>
+          <v-btn color="primary" text @click="sizeDialog = false">I accept</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-snackbar v-model="titleMessagevalidation" :timeout="timeout">
+      {{ text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="blue" text v-bind="attrs" @click="titleMessagevalidation = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
     </div>
 </template>
 
@@ -303,6 +305,9 @@ export default {
     },
     data() {
       return {
+      titleMessagevalidation: false,
+      text: 'タイトルと内容を書いてください',
+      timeout: 4000,
           carousel: '',
       type: 'hexa',
       hexa: '#FF000000',
@@ -319,6 +324,7 @@ export default {
         stepBtn1: true,
         e1: 1,
         concatImg: [],
+        imgBeforeConcat: [],
         imgSrc: '',
         value: 0,
         canvasMode: 'penBlack',
@@ -438,6 +444,20 @@ export default {
             this.imgSrc = '';
             this.stepBtn1 = true;
             this.concatImageBtn = true;
+
+            this.coverctx.filter = 'grayscale(0%)';
+            this.globalAlpha = 1;
+            this.hexa = 'transparent';
+            this.model = '';
+            this.filters = '';
+            this.coverctx.globalCompositeOperation = 'source-over';
+            this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
+            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+            this.cover = document.getElementById("cover");
+            this.coverctx = this.cover.getContext("2d");
+            this.coverctx.globalAlpha = 1;
+            this.coverctx.globalCompositeOperation = 'source-over';
+            this.coverctx.filter = 'grayscale(0%)';
             // var newImg = document.createElement("img");
             // newImg.src = this.concatImg[this.concatImg.length-1];
             // newImg.width = 75;
@@ -485,6 +505,7 @@ export default {
                 }
             } else {
                 this.e1 = 3;
+                this.titleMessagevalidation = true
             }
         },
         getImage(){
@@ -495,6 +516,7 @@ export default {
             var text = this.createImage(document.getElementById("text"));
             var drawCanvas = this.createImage(document.getElementById("drawCanvas"));
             // var image = this.createImage(this.canvas);
+            this.imgBeforeConcat.push([cover,text,drawCanvas]);
             drawCanvas.onload = function(){
                 concatCxt.drawImage(cover,0,0,250,250);
                 concatCxt.drawImage(text,0,0,250,250);
@@ -895,6 +917,7 @@ export default {
         },
         deleteImage(index){
             this.concatImg.splice(index,1);
+            this.imgBeforeConcat.splice(index,1);
             if(this.concatImg.length==0){
                 this.e1 = 1;
                 this.imgSrc = '';
