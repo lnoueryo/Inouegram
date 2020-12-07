@@ -390,7 +390,7 @@ export default {
                 this.lastIndex = index;
                 this.usersComments.push(response.data);
                 this.commentDialogOpen(postId);
-                this.comment = '';
+                this.comment = [];
             })
             .catch(error => {
                 console.log('fail')

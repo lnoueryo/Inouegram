@@ -5577,7 +5577,7 @@ __webpack_require__.r(__webpack_exports__);
 
         _this8.commentDialogOpen(postId);
 
-        _this8.comment = '';
+        _this8.comment = [];
       })["catch"](function (error) {
         console.log('fail');
       });
