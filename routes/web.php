@@ -35,4 +35,5 @@ Route::get('/profile', 'ProfileController@index')->middleware('auth');
 
 Route::get('auth/google', 'Auth\LoginController@redirectToGoogle');/*このアカウントはありますかとgoogleに問い合わせ*/
 Route::get('auth/google/callback', 'Auth\LoginController@handleGoogleCallback');/*その問い合わせに対する応答とその応答に対する処理*/
-Route::post('login/logout', 'Auth\LoginController@postLogout')->name('out');/*ログアウト*/
+Route::get('auth/github', 'Auth\LoginController@redirectToGithub');/*このアカウントはありますかとgoogleに問い合わせ*/
+Route::get('auth/github/callback', 'Auth\LoginController@handleGithubCallback');/*その問い合わせに対する応答とその応答に対する処理*/

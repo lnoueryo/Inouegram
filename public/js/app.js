@@ -2735,11 +2735,28 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['google-user'],
+  props: ['google-user', 'github-user'],
   data: function data() {
     return {
+      showq: false,
       gUser: this.googleUser,
+      hubUser: this.githubUser,
       avatar: '',
       show: false,
       email: '',
@@ -2798,7 +2815,19 @@ __webpack_require__.r(__webpack_exports__);
       that.toBase64Url(that.gUser.avatar, function (base64Url) {
         that.avatar = base64Url;
       });
+    } else if (this.hubUser) {
+      this.step = 2;
+      this.registration.name = this.hubUser.name;
+      this.hubUser.name ? this.registration.name = this.hubUser.name : this.registration.name = this.hubUser.nickname;
+      this.hubUser.nickname ? this.registration.screen_name = this.hubUser.nickname : this.registration.screen_name = this.hubUser.name;
+      this.registration.email = this.hubUser.email;
+      var that = this;
+      that.toBase64Url(that.hubUser.avatar, function (base64Url) {
+        that.avatar = base64Url;
+      });
     }
+
+    console.log(this.hubUser);
   },
   methods: {
     toBase64Url: function toBase64Url(url, callback) {
@@ -11475,7 +11504,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.example {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.example .hello {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%,-50%);\r\n  padding:0;\r\n  width: 100%;\r\n  max-width: 400px;\r\n  background-color: white;\r\n  /*文字の装飾は省略*/\n}\n.example #main {\r\n  width: 100%;\r\n  min-width: 1185px;\n}\n.example #logo {\r\n  width: 100%;\r\n  max-width: 757px;\n}\n#login input {\r\n      margin: 0;\n}\n#login input:-webkit-autofill {\r\n    background-color: white!important;\r\n    color: white!important;\r\n        -webkit-animation-name: onAutoFillStart;\r\n                animation-name: onAutoFillStart;\r\n    -webkit-transition: background-color 50000s ease-in-out 0s;\r\n    transition: background-color 50000s ease-in-out 0s;\n}\r\n  ", ""]);
+exports.push([module.i, "\n.example {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.example .hello {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%,-50%);\r\n  padding:0;\r\n  width: 100%;\r\n  max-width: 400px;\r\n  background-color: white;\r\n  /*文字の装飾は省略*/\n}\n.example #main {\r\n  width: 100%;\r\n  min-width: 1185px;\n}\n.example #logo {\r\n  width: 100%;\r\n  max-width: 757px;\n}\n#login input {\r\n      margin: 0;\n}\n#login input:-webkit-autofill {\r\n    background-color: white!important;\r\n    color: white!important;\r\n        -webkit-animation-name: onAutoFillStart;\r\n                animation-name: onAutoFillStart;\r\n    -webkit-transition: background-color 50000s ease-in-out 0s;\r\n    transition: background-color 50000s ease-in-out 0s;\n}\n.btn-google:hover .g {\r\n  color: rgba(66, 134, 244, 1);\r\n  transition: color 0.5s!important;\n}\n.btn-google .g {\r\n\r\n  transition: color 3s!important;\n}\n.btn-google:hover .o {\r\n  color: rgba(219, 69, 55, 1);\r\n  transition: color 1s!important;\n}\n.btn-google .o {\r\n  transition: color 2.5s!important;\n}\n.btn-google:hover .o2 {\r\n  color: rgba(244, 179, 0, 1);\r\n  transition: color 1.5s!important;\n}\n.btn-google .o2 {\r\n  transition: color 2s!important;\n}\n.btn-google:hover .g2 {\r\n  color: rgba(66, 134, 244, 1);\r\n    transition: color 2s!important;\n}\n.btn-google .g2 {\r\n    transition: color 1.5s!important;\n}\n.btn-google:hover .l {\r\n  color: rgba(15, 157, 88, 1);\r\n    transition: color 2.5s!important;\n}\n.btn-google .l {\r\n    transition: color 1s!important;\n}\n.btn-google:hover .e {\r\n  color: rgba(219, 69, 55, 1);\r\n    transition: color 3s!important;\n}\n.btn-google .e {\r\n    transition: color 0.5s!important;\n}\n.bounce-enter-active {\r\n  -webkit-animation: bounce-in .5s;\r\n          animation: bounce-in .5s;\n}\n.bounce-leave-active {\r\n  animation: bounce-in .5s reverse;\n}\n@-webkit-keyframes bounce-in {\n0% {\r\n    transform: scale(0);\n}\n50% {\r\n    transform: scale(1.5);\n}\n100% {\r\n    transform: scale(1);\n}\n}\n@keyframes bounce-in {\n0% {\r\n    transform: scale(0);\n}\n50% {\r\n    transform: scale(1.5);\n}\n100% {\r\n    transform: scale(1);\n}\n}\n#gitbtn {\r\n      /* background-color: black!important; */\r\n      transition: background-color 1s!important;\n}\n#gitbtn:hover {\r\n      background-color: transparent!important;\r\n      transition: background-color 1s!important;\n}\r\n  ", ""]);
 
 // exports
 
@@ -15703,10 +15732,76 @@ var render = function() {
                             _c(
                               "v-btn",
                               {
+                                staticClass: "mb-3 btn-google",
                                 staticStyle: { "max-width": "280px" },
                                 attrs: { href: "/auth/google", block: "" }
                               },
-                              [_vm._v("google")]
+                              [
+                                _c("span", { staticClass: "g" }, [_vm._v("g")]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "o" }, [_vm._v("o")]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "o2" }, [
+                                  _vm._v("o")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "g2" }, [
+                                  _vm._v("g")
+                                ]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "l" }, [_vm._v("l")]),
+                                _vm._v(" "),
+                                _c("span", { staticClass: "e" }, [_vm._v("e")])
+                              ]
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            on: {
+                              mouseover: function($event) {
+                                _vm.showq = true
+                              },
+                              mouseout: function($event) {
+                                _vm.showq = false
+                              }
+                            }
+                          },
+                          [
+                            _c(
+                              "v-btn",
+                              {
+                                staticClass: "grey--text lighten-1 black",
+                                staticStyle: { "max-width": "280px" },
+                                attrs: {
+                                  id: "gitbtn",
+                                  color: "grey darken-4",
+                                  href: "/auth/github",
+                                  block: ""
+                                }
+                              },
+                              [
+                                _vm._v("github\n                        "),
+                                _c(
+                                  "transition",
+                                  { attrs: { name: "bounce" } },
+                                  [
+                                    _vm.showq
+                                      ? _c("img", {
+                                          staticStyle: {
+                                            position: "absolute",
+                                            right: "0"
+                                          },
+                                          attrs: { src: "/image/github.png" }
+                                        })
+                                      : _vm._e()
+                                  ]
+                                )
+                              ],
+                              1
                             )
                           ],
                           1

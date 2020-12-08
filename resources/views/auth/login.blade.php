@@ -73,14 +73,12 @@
 </div>  --}}
 
 
-@isset($google_user)
+@if(isset($google_user))
 <login :google-user='@json($google_user)'></login>
+@elseif(isset($github_user))
+<login :github-user='@json($github_user)'></login>
 @else
 <login></login>
-<form action="/auth/google" method="post">
-    <input type="submit" value="google">
-    @csrf
-</form>
 @endisset
 
 @endsection

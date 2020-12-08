@@ -46,6 +46,11 @@ class LoginController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
+    public function redirectToGithub() {
+        // Github へのリダイレクト
+        return Socialite::driver('github')->stateless()->redirect();
+    }
+
     public function handleGoogleCallback() {
         // 返ってきたユーザーの情報を変数に格納
         $google_user = Socialite::driver('google')->stateless()->user();
@@ -67,6 +72,20 @@ class LoginController extends Controller
             //     $user->avatar = $google_user->avatar;
             //     $user->save();
             // }
+            Auth::login($user, true);
+            return redirect('/');
+            // ログイン処理
+        }
+    }
+    public function handleGithubCallback() {
+        $github_user = Socialite::driver('github')->stateless()->user();
+        // dd($github_user);
+        // email が合致するユーザーを取得
+        $user = User::where('email', $github_user->email)->first();
+        // 見つからなければ新しくユーザーを作成
+        if ($user == null) {
+            return view('auth.login', compact('github_user'));
+        } else {
             Auth::login($user, true);
             return redirect('/');
             // ログイン処理

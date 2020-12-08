@@ -53,7 +53,22 @@
                 </v-btn>
                 </div>
                 <div>
-                    <v-btn href="/auth/google" block style="max-width: 280px">google</v-btn>
+                    <v-btn class="mb-3 btn-google" href="/auth/google" block style="max-width: 280px">
+                    <span class="g">g</span>
+                    <span class="o">o</span>
+                    <span class="o2">o</span>
+                    <span class="g2">g</span>
+                    <span class="l">l</span>
+                    <span class="e">e</span>
+                    </v-btn>
+                </div>
+                <div @mouseover="showq = true" @mouseout="showq = false">
+                    <v-btn id="gitbtn" color="grey darken-4" class="grey--text lighten-1 black" href="/auth/github" block style="max-width: 280px">github
+                        <transition name="bounce">
+                            <img v-if="showq" style="position: absolute;right: 0;" src="/image/github.png">
+                        </transition>
+                    </v-btn>
+                        <!-- <div v-if="showq"><img src="/image/github.png"></div> -->
                 </div>
             </v-form>
                 </v-window-item>
@@ -192,10 +207,12 @@
 
 <script>
     export default {
-        props: ['google-user'],
+        props: ['google-user', 'github-user'],
         data(){
             return{
+                showq: false,
                 gUser: this.googleUser,
+                hubUser: this.githubUser,
                 avatar: '',
                 show: false,
                 email: '',
@@ -236,7 +253,18 @@
                 that.toBase64Url(that.gUser.avatar, function(base64Url){
                     that.avatar = base64Url;
                 });
+            } else if(this.hubUser){
+                this.step = 2;
+                this.registration.name = this.hubUser.name;
+                this.hubUser.name ? this.registration.name = this.hubUser.name : this.registration.name = this.hubUser.nickname;
+                this.hubUser.nickname ? this.registration.screen_name = this.hubUser.nickname : this.registration.screen_name = this.hubUser.name;
+                this.registration.email = this.hubUser.email;
+                var that = this;
+                that.toBase64Url(that.hubUser.avatar, function(base64Url){
+                    that.avatar = base64Url;
+                });
             }
+            console.log(this.hubUser)
         },
         methods: {
             toBase64Url(url, callback){
@@ -336,4 +364,85 @@
         animation-name: onAutoFillStart;
     transition: background-color 50000s ease-in-out 0s;
 }
+
+.btn-google:hover .g {
+  color: rgba(66, 134, 244, 1);
+  transition: color 0.5s!important;
+}
+.btn-google .g {
+
+  transition: color 3s!important;
+}
+
+.btn-google:hover .o {
+  color: rgba(219, 69, 55, 1);
+  transition: color 1s!important;
+}
+
+.btn-google .o {
+  transition: color 2.5s!important;
+}
+
+.btn-google:hover .o2 {
+  color: rgba(244, 179, 0, 1);
+  transition: color 1.5s!important;
+}
+
+.btn-google .o2 {
+  transition: color 2s!important;
+}
+
+.btn-google:hover .g2 {
+  color: rgba(66, 134, 244, 1);
+    transition: color 2s!important;
+}
+
+.btn-google .g2 {
+    transition: color 1.5s!important;
+}
+
+.btn-google:hover .l {
+  color: rgba(15, 157, 88, 1);
+    transition: color 2.5s!important;
+}
+
+.btn-google .l {
+    transition: color 1s!important;
+}
+
+.btn-google:hover .e {
+  color: rgba(219, 69, 55, 1);
+    transition: color 3s!important;
+}
+
+.btn-google .e {
+    transition: color 0.5s!important;
+}
+
+
+.bounce-enter-active {
+  animation: bounce-in .5s;
+}
+.bounce-leave-active {
+  animation: bounce-in .5s reverse;
+}
+@keyframes bounce-in {
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+  #gitbtn {
+      /* background-color: black!important; */
+      transition: background-color 1s!important;
+  }
+  #gitbtn:hover {
+      background-color: transparent!important;
+      transition: background-color 1s!important;
+  }
   </style>
