@@ -44,13 +44,16 @@
                 <div class="alert alert-danger" v-text="errors.email" v-if="errors.email"></div>
                 <v-text-field ref="focusThis" v-model="password" placeholder="パスワード" :counter="10" label="Password" required @click:append="show = !show" :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'" @keyup.enter.exact="login"></v-text-field>
                 <div class="alert alert-danger" v-text="errors.password" v-if="errors.password"></div>
-                <div class="d-flex" style="justify-content: space-between;">
-                <v-btn id="abc" color="success" class="mr-4" @click="login">
+                <div class="d-flex mb-5 justify-content-start">
+                <v-btn color="success" class="mr-4" @click="login">
                 ログイン
                 </v-btn>
-                <v-btn color="indigo white--text" class="mr-4" @click="step++">
+                <v-btn color="indigo white--text" @click="step++">
                 会員登録
                 </v-btn>
+                </div>
+                <div>
+                    <v-btn href="/auth/google" block style="max-width: 280px">google</v-btn>
                 </div>
             </v-form>
                 </v-window-item>
@@ -189,8 +192,11 @@
 
 <script>
     export default {
+        props: ['google-user'],
         data(){
             return{
+                gUser: this.googleUser,
+                avatar: '',
                 show: false,
                 email: '',
                 password: null,
@@ -208,10 +214,6 @@
             }
         },
         computed: {
-            // randomNumber(){
-            //     var randomNumber =  Math.floor( Math.random () * 5)+1;
-            //     return randomNumber;
-            // },
             currentTitle () {
                 switch (this.step) {
                 case 1: return 'ログイン'
@@ -225,8 +227,31 @@
         },
         mounted(){
             this.focusInput();
+            if(this.gUser){
+                this.step = 2;
+                this.registration.name = this.gUser.name;
+                this.gUser.nickname ? this.registration.screen_name = this.gUser.nickname : this.registration.screen_name = this.gUser.name;
+                this.registration.email = this.gUser.email;
+                var that = this;
+                that.toBase64Url(that.gUser.avatar, function(base64Url){
+                    that.avatar = base64Url;
+                });
+            }
         },
         methods: {
+            toBase64Url(url, callback){
+            var xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                var reader = new FileReader();
+                reader.onloadend = function() {
+                callback(reader.result);
+                }
+                reader.readAsDataURL(xhr.response);
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob';
+            xhr.send();
+            },
             focusInput() {
                 this.$refs.focusThis.focus();
             },
@@ -253,21 +278,22 @@
                 });
             },
             register() {
-            var url = '/register';
-            var params = {
-                name: this.registration.name,
-                screen_name: this.registration.screen_name,
-                email: this.registration.email,
-                password: this.registration.password,
-                password_confirmation: this.registration.confirmationPassword,
-            };
-            axios.post(url, params)
-            .then(() => location.href = '/home')
-            .catch(function (error) {
-                console.log(error)
-                .then(() => location.href = '/login')
-            });
-        },
+                var url = '/register';
+                var params = {
+                    name: this.registration.name,
+                    screen_name: this.registration.screen_name,
+                    email: this.registration.email,
+                    password: this.registration.password,
+                    password_confirmation: this.registration.confirmationPassword,
+                    profile_image: this.avatar
+                };
+                axios.post(url, params)
+                .then(() => location.href = '/home')
+                .catch(function (error) {
+                    console.log(error)
+                    .then(() => location.href = '/login')
+                });
+            },
         }
     }
 </script>

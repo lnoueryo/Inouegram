@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Storage;
 
 class RegisterController extends Controller
 {
@@ -64,11 +65,26 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        return User::create([
-            'name' => $data['name'],
-            'screen_name' => $data['screen_name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
+        if(isset($data['profile_image'])){
+            $base64_image = $data['profile_image'];
+            @list($type, $file_data) = explode(';', $base64_image);
+            @list(, $file_data) = explode(',', $file_data);
+            $imageName = str_random(10).'.'.'png';
+            Storage::disk('avatar')->put($imageName, base64_decode($file_data));
+            return User::create([
+                'name' => $data['name'],
+                'screen_name' => $data['screen_name'],
+                'email' => $data['email'],
+                'profile_image' => $imageName,
+                'password' => Hash::make($data['password']),
+            ]);
+        } else {
+            return User::create([
+                'name' => $data['name'],
+                'screen_name' => $data['screen_name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
+            ]);
+        }
     }
 }

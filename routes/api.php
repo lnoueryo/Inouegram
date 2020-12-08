@@ -55,3 +55,7 @@ Route::post('/jsonjson', function(Request $request){
     // }
     return 'hello';
 });
+
+// Route::post('/auth/google', function(){
+//     return Socialite::driver('google')->redirect();
+// });

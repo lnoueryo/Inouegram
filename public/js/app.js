@@ -2732,9 +2732,15 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['google-user'],
   data: function data() {
     return {
+      gUser: this.googleUser,
+      avatar: '',
       show: false,
       email: '',
       password: null,
@@ -2764,10 +2770,6 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   computed: {
-    // randomNumber(){
-    //     var randomNumber =  Math.floor( Math.random () * 5)+1;
-    //     return randomNumber;
-    // },
     currentTitle: function currentTitle() {
       switch (this.step) {
         case 1:
@@ -2786,8 +2788,36 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.focusInput();
+
+    if (this.gUser) {
+      this.step = 2;
+      this.registration.name = this.gUser.name;
+      this.gUser.nickname ? this.registration.screen_name = this.gUser.nickname : this.registration.screen_name = this.gUser.name;
+      this.registration.email = this.gUser.email;
+      var that = this;
+      that.toBase64Url(that.gUser.avatar, function (base64Url) {
+        that.avatar = base64Url;
+      });
+    }
   },
   methods: {
+    toBase64Url: function toBase64Url(url, callback) {
+      var xhr = new XMLHttpRequest();
+
+      xhr.onload = function () {
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+          callback(reader.result);
+        };
+
+        reader.readAsDataURL(xhr.response);
+      };
+
+      xhr.open('GET', url);
+      xhr.responseType = 'blob';
+      xhr.send();
+    },
     focusInput: function focusInput() {
       this.$refs.focusThis.focus();
     },
@@ -2820,7 +2850,8 @@ __webpack_require__.r(__webpack_exports__);
         screen_name: this.registration.screen_name,
         email: this.registration.email,
         password: this.registration.password,
-        password_confirmation: this.registration.confirmationPassword
+        password_confirmation: this.registration.confirmationPassword,
+        profile_image: this.avatar
       };
       axios.post(url, params).then(function () {
         return location.href = '/home';
@@ -15630,16 +15661,13 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "div",
-                          {
-                            staticClass: "d-flex",
-                            staticStyle: { "justify-content": "space-between" }
-                          },
+                          { staticClass: "d-flex mb-5 justify-content-start" },
                           [
                             _c(
                               "v-btn",
                               {
                                 staticClass: "mr-4",
-                                attrs: { id: "abc", color: "success" },
+                                attrs: { color: "success" },
                                 on: { click: _vm.login }
                               },
                               [
@@ -15652,7 +15680,6 @@ var render = function() {
                             _c(
                               "v-btn",
                               {
-                                staticClass: "mr-4",
                                 attrs: { color: "indigo white--text" },
                                 on: {
                                   click: function($event) {
@@ -15665,6 +15692,21 @@ var render = function() {
                                   "\n                会員登録\n                "
                                 )
                               ]
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          [
+                            _c(
+                              "v-btn",
+                              {
+                                staticStyle: { "max-width": "280px" },
+                                attrs: { href: "/auth/google", block: "" }
+                              },
+                              [_vm._v("google")]
                             )
                           ],
                           1
@@ -83834,6 +83876,7 @@ Object(_bootstrap__WEBPACK_IMPORTED_MODULE_1__["default"])();
 // Vuetify Icon
 
 // import '@fortawesome/fontawesome-free/css/all.css'
+// import VueSocialauth from 'vue-social-auth'
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].use(vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_4__["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].use(vuetify__WEBPACK_IMPORTED_MODULE_6___default.a);
@@ -83856,6 +83899,14 @@ const app = new vue__WEBPACK_IMPORTED_MODULE_0__["default"]({
         }
     }),
 });
+// Vue.use(VueSocialauth, {
+//     providers: {
+//       google: {
+//         clientId: '',
+//         redirectUri: '/auth/github/callback' // Your client app URL
+//       }
+//     }
+//   })
 
 
 /***/ }),

@@ -17,6 +17,8 @@ import 'vuetify/dist/vuetify.min.css';
 // Vuetify Icon
 import '@mdi/font/css/materialdesignicons.css'
 // import '@fortawesome/fontawesome-free/css/all.css'
+// import VueSocialauth from 'vue-social-auth'
+
 Vue.use(VueRouter);
 Vue.use(Vuex);
 Vue.use(Vuetify);
@@ -45,3 +47,12 @@ const app: any = new Vue({
         }
     }),
 });
+
+// Vue.use(VueSocialauth, {
+//     providers: {
+//       google: {
+//         clientId: '',
+//         redirectUri: '/auth/github/callback' // Your client app URL
+//       }
+//     }
+//   })
