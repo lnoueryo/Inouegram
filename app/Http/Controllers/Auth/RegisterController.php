@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Http\Request;
+use App\Events\UserActivationEmail;
+use Illuminate\Support\Facades\Auth;
 class RegisterController extends Controller
 {
     /*
@@ -76,15 +78,26 @@ class RegisterController extends Controller
                 'screen_name' => $data['screen_name'],
                 'email' => $data['email'],
                 'profile_image' => $imageName,
-                'password' => Hash::make($data['password']),
+                'password' => $data['password'],
+                // 'password' => Hash::make($data['password']),
             ]);
         } else {
             return User::create([
                 'name' => $data['name'],
                 'screen_name' => $data['screen_name'],
                 'email' => $data['email'],
-                'password' => Hash::make($data['password']),
+                'password' => $data['password'],
+                // 'password' => Hash::make($data['password']),
             ]);
         }
+    }
+    protected function registered(Request $request, $user)
+    {
+        event(new UserActivationEmail($user));
+
+        // $this->guard()->logout();
+        $user->password = Hash::make($user->password);
+        $user->save();
+        return Auth::login($user);
     }
 }
