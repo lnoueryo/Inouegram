@@ -10,6 +10,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Events\UserActivationEmail;
+use App\Jobs\SendMail;
 use Illuminate\Support\Facades\Auth;
 class RegisterController extends Controller
 {
@@ -94,10 +95,9 @@ class RegisterController extends Controller
     protected function registered(Request $request, $user)
     {
         event(new UserActivationEmail($user));
-
-        // $this->guard()->logout();
-        $user->password = Hash::make($user->password);
-        $user->save();
+        SendMail::dispatch($user);
+        // $user->password = Hash::make($user->password);
+        // $user->save();
         return Auth::login($user);
     }
 }

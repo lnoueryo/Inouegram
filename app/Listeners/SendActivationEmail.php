@@ -7,9 +7,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Mail\ActivationEmail;
 use Mail;
-
-class SendActivationEmail
+use Illuminate\Support\Facades\Hash;
+class SendActivationEmail implements ShouldQueue
 {
+
+    public $connection = 'database';
+
+    public $queue = 'default';
+
+    public $delay = 5;
     /**
      * Create the event listener.
      *
@@ -28,6 +34,7 @@ class SendActivationEmail
      */
     public function handle(UserActivationEmail $event)
     {
-        Mail::to($event->user->email)->send(new ActivationEmail($event->user));
+        $event->user->password = Hash::make($event->user->password);
+        $event->user->save();
     }
 }
