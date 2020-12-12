@@ -79,7 +79,7 @@
 
                             <v-window-item :value="1">
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
-                                <v-subheader>Recent chat</v-subheader>
+                                <v-subheader>いいね</v-subheader>
                                     <div>
                                         <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.id">
                                             <v-list-item-avatar>
@@ -103,20 +103,23 @@
                             </v-window-item>
                             <v-window-item :value="2">
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
-                                <v-subheader>Recent chat</v-subheader>
-                                    <div v-for="(postComment, index) in postComments" :key="index">
+                                <v-subheader>コメント</v-subheader>
+                                    <div v-for="(postComment, index) in postComments" :key="index" @mouseover="showDeleteBtn(postComment.user_id, index)" @mouseleave="hideDeleteBtn(postComment.user_id, index)">
                                         <v-list-item v-if="commentUser(postComment.user_id)">
-                                            <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">
+                                            <a :href="'/profile?id=' + postComment.user_id">
+                                            <v-list-item-avatar>
                                             <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
                                             </v-list-item-avatar>
+                                            </a>
                                             <v-list-item-content>
                                             <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                            {{ postComment.text }}
                                             </v-list-item-content>
-                                            <div>{{ postComment.text }}
-                                            </div>
-                                            <template v-if="commentUser(postComment.user_id).id==visitor.id">
-                                                <v-btn color="success" @click="deleteComment(postComment)">削除</v-btn>
-                                            </template>
+                                            <v-list-item-action v-if="commentUser(postComment.user_id).id==visitor.id">
+                                            <transition name="slide-fade">
+                                                    <v-btn color="success" @click="deleteComment(postComment)" v-if="isDeleteBtn[index]">削除</v-btn>
+                                            </transition>
+                                            </v-list-item-action>
                                         </v-list-item>
                                     </div>
                                 </v-list>
@@ -222,6 +225,7 @@
             timeout: 2000,
             text: 'deleted',
             likePosts: this.likedPosts,
+            isDeleteBtn: '',
         }
     },
     computed:{
@@ -296,6 +300,22 @@
         },
     },
     methods: {
+        showDeleteBtn(id, index){
+            if(this.commentUser(id).id==this.visitor.id){
+                this.isDeleteBtn[index] = true;
+                this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
+                    return el;
+                })
+            }
+        },
+        hideDeleteBtn(id, index){
+            if(this.commentUser(id).id==this.visitor.id){
+                this.isDeleteBtn[index] = false;
+                this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
+                    return el;
+                })
+            }
+        },
         iconType(userId){
             var userPostLikes = this.userPostLikes.filter((userPostLike) => {
                 return userPostLike.post_id === this.postDialog.id;
@@ -369,6 +389,9 @@
             .then(response => {
                 this.commentUsers = response.data;
                 this.postDialogId = id;
+                this.isDeleteBtn = response.data.filter((commentUser) => {
+                    return false;
+                })
             })
             .catch(error => {
                 console.log('fail')
@@ -574,11 +597,20 @@
 .pointer {
     cursor: pointer;
 }
-
-</style>
-<style>
-.v-dialog {
-    max-height: 700px!important;
+.slide-fade-enter-active {
+    transition: all .6s ease;
+}
+.slide-fade-leave-active {
+    transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-fade-enter, .slide-fade-leave-to {
+    transform: translateY(10px);
+    opacity: 0;
+}
+.v-list-item__action{
+    display: inline-flex;
+    min-width: 70px!important;
 }
 </style>
+
 

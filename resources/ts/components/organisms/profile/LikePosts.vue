@@ -514,9 +514,5 @@ export default {
 
 
 </style>
-<style>
-.v-dialog {
-    max-height: 700px!important;
-}
-</style>
+
 

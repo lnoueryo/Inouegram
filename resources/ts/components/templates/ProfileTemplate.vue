@@ -140,6 +140,6 @@ export default Vue.extend({
 </script>
 <style>
 .v-dialog {
-    max-height: 700px!important;
+    max-height: 750px!important;
 }
 </style>

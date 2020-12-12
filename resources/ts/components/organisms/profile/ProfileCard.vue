@@ -235,8 +235,3 @@ interface windowSize {
     }
 })
 </script>
-<style>
-.v-dialog {
-    max-height: 700px!important;
-}
-</style>
