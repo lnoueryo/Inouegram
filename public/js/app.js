@@ -2724,41 +2724,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['google-user', 'github-user'],
   data: function data() {
+    var _this = this;
+
     return {
+      initial: true,
       showq: false,
       gUser: this.googleUser,
       hubUser: this.githubUser,
       avatar: '',
-      show: false,
+      show1: false,
+      show2: false,
+      show3: false,
       email: '',
       password: null,
       remember: '',
@@ -2773,17 +2752,33 @@ __webpack_require__.r(__webpack_exports__);
         confirmationPassword: ''
       },
       show4: false,
-      rules: {
+      nameRules: [function (v) {
+        return !!v || '入力が必要です';
+      }],
+      nicknameRules: [function (v) {
+        return !!v || '入力が必要です';
+      }],
+      emailRules: [function (v) {
+        return !!v || '入力が必要です';
+      }, function (v) {
+        return /.+@.+\..+/.test(v) || 'E-mail must be valid';
+      }],
+      passwordRules: {
         required: function required(value) {
           return !!value || 'Required.';
         },
         min: function min(v) {
           return v.length >= 8 || 'Min 8 characters';
-        },
-        emailMatch: function emailMatch() {
-          return "The email and password you entered don't match";
         }
-      }
+      },
+      confirmationPasswordRules: {
+        match: function match(v) {
+          return v == _this.registration.password || 'no match';
+        }
+      },
+      valid: false,
+      registrationErrors: {} // registrationErrors: '',
+
     };
   },
   computed: {
@@ -2850,6 +2845,14 @@ __webpack_require__.r(__webpack_exports__);
     focusInput: function focusInput() {
       this.$refs.focusThis.focus();
     },
+    blurInput: function blurInput() {
+      var registrationArray = Object.values(this.registration).map(function (registration) {
+        return registration;
+      });
+      this.initial = registrationArray.some(function (registration) {
+        return registration === '';
+      });
+    },
     login: function login() {
       this.errors = {};
       var self = this;
@@ -2864,6 +2867,7 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         var responseErrors = error.response.data.errors;
         var errors = {};
+        console.log(responseErrors);
 
         for (var key in responseErrors) {
           errors[key] = responseErrors[key][0];
@@ -2873,6 +2877,8 @@ __webpack_require__.r(__webpack_exports__);
       });
     },
     register: function register() {
+      var _this2 = this;
+
       var url = '/register';
       var params = {
         name: this.registration.name,
@@ -2885,9 +2891,16 @@ __webpack_require__.r(__webpack_exports__);
       axios.post(url, params).then(function () {
         return location.href = '/home';
       })["catch"](function (error) {
-        console.log(error).then(function () {
-          return location.href = '/login';
-        });
+        // this.registrationErrors = error.response.data.errors;
+        var that = _this2;
+        var responseErrors = error.response.data.errors;
+        var errors = {};
+
+        for (var key in responseErrors) {
+          errors[key] = responseErrors[key][0];
+        }
+
+        that.registrationErrors = errors;
       });
     }
   }
@@ -15623,15 +15636,6 @@ var render = function() {
                           }
                         }),
                         _vm._v(" "),
-                        _vm.errors.email
-                          ? _c("div", {
-                              staticClass: "alert alert-danger",
-                              domProps: {
-                                textContent: _vm._s(_vm.errors.email)
-                              }
-                            })
-                          : _vm._e(),
-                        _vm._v(" "),
                         _c("v-text-field", {
                           ref: "focusThis",
                           attrs: {
@@ -15639,12 +15643,14 @@ var render = function() {
                             counter: 10,
                             label: "Password",
                             required: "",
-                            "append-icon": _vm.show ? "mdi-eye" : "mdi-eye-off",
-                            type: _vm.show ? "text" : "password"
+                            "append-icon": _vm.show1
+                              ? "mdi-eye"
+                              : "mdi-eye-off",
+                            type: _vm.show1 ? "text" : "password"
                           },
                           on: {
                             "click:append": function($event) {
-                              _vm.show = !_vm.show
+                              _vm.show1 = !_vm.show1
                             },
                             keyup: function($event) {
                               if (
@@ -15679,13 +15685,44 @@ var render = function() {
                           }
                         }),
                         _vm._v(" "),
-                        _vm.errors.password
-                          ? _c("div", {
-                              staticClass: "alert alert-danger",
-                              domProps: {
-                                textContent: _vm._s(_vm.errors.password)
-                              }
-                            })
+                        Object.keys(_vm.errors).length !== 0
+                          ? _c("div", [
+                              _c("div", { staticClass: "mb-3 mt-1" }, [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "error px-4 py-2",
+                                    staticStyle: {
+                                      "font-size": "smaller",
+                                      "font-weight": "500"
+                                    }
+                                  },
+                                  [
+                                    _vm.errors.email
+                                      ? _c("div", {
+                                          staticClass: "alert alert-danger",
+                                          domProps: {
+                                            textContent: _vm._s(
+                                              _vm.errors.email
+                                            )
+                                          }
+                                        })
+                                      : _vm._e(),
+                                    _vm._v(" "),
+                                    _vm.errors.password
+                                      ? _c("div", {
+                                          staticClass: "alert alert-danger",
+                                          domProps: {
+                                            textContent: _vm._s(
+                                              _vm.errors.password
+                                            )
+                                          }
+                                        })
+                                      : _vm._e()
+                                  ]
+                                )
+                              ])
+                            ])
                           : _vm._e(),
                         _vm._v(" "),
                         _c(
@@ -15820,168 +15857,212 @@ var render = function() {
                     _c(
                       "v-card-text",
                       [
-                        _c("v-text-field", {
-                          ref: "name",
-                          staticClass: "py-2",
-                          attrs: {
-                            rules: [
-                              function() {
-                                return !!_vm.name || "This field is required"
-                              }
-                            ],
-                            "error-messages": _vm.errorMessages,
-                            label: "名前",
-                            placeholder: "井上領",
-                            required: ""
-                          },
-                          model: {
-                            value: _vm.registration.name,
-                            callback: function($$v) {
-                              _vm.$set(_vm.registration, "name", $$v)
-                            },
-                            expression: "registration.name"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-text-field", {
-                          ref: "screen_name",
-                          staticClass: "py-2",
-                          attrs: {
-                            rules: [
-                              function() {
-                                return (
-                                  !!_vm.registration.screen_name ||
-                                  "This field is required"
-                                )
-                              }
-                            ],
-                            "error-messages": _vm.errorMessages,
-                            label: "ニックネーム",
-                            placeholder: "Rio",
-                            required: ""
-                          },
-                          model: {
-                            value: _vm.registration.screen_name,
-                            callback: function($$v) {
-                              _vm.$set(_vm.registration, "screen_name", $$v)
-                            },
-                            expression: "registration.screen_name"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-text-field", {
-                          staticClass: "py-2",
-                          attrs: {
-                            autocomplete: "new-password",
-                            rules: [
-                              function() {
-                                return (
-                                  !!_vm.registration.email ||
-                                  "This field is required"
-                                )
+                        _c(
+                          "v-form",
+                          {
+                            ref: "form",
+                            attrs: { "lazy-validation": "" },
+                            model: {
+                              value: _vm.valid,
+                              callback: function($$v) {
+                                _vm.valid = $$v
                               },
-                              function() {
-                                return (
-                                  (!!_vm.registration.email &&
-                                    _vm.registration.email.length <= 25) ||
-                                  "Address must be less than 25 characters"
-                                )
-                              },
-                              _vm.addressCheck
-                            ],
-                            label: "メールアドレス",
-                            placeholder: "mymemories@hello.com",
-                            counter: "25",
-                            required: ""
-                          },
-                          model: {
-                            value: _vm.registration.email,
-                            callback: function($$v) {
-                              _vm.$set(_vm.registration, "email", $$v)
-                            },
-                            expression: "registration.email"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-text-field", {
-                          staticClass: "input-group--focused py-2",
-                          attrs: {
-                            "append-icon": _vm.show ? "mdi-eye" : "mdi-eye-off",
-                            rules: [_vm.rules.required, _vm.rules.min],
-                            type: _vm.show ? "text" : "password",
-                            name: "input-10-2",
-                            label: "パスワード",
-                            hint: "At least 8 characters",
-                            autocomplete: "new-password"
-                          },
-                          on: {
-                            "click:append": function($event) {
-                              _vm.show = !_vm.show
+                              expression: "valid"
                             }
                           },
-                          model: {
-                            value: _vm.registration.password,
-                            callback: function($$v) {
-                              _vm.$set(_vm.registration, "password", $$v)
-                            },
-                            expression: "registration.password"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-text-field", {
-                          staticClass: "input-group--focused py-2",
-                          attrs: {
-                            "append-icon": _vm.show ? "mdi-eye" : "mdi-eye-off",
-                            rules: [_vm.rules.required, _vm.rules.min],
-                            type: _vm.show ? "text" : "password",
-                            name: "input-10-2",
-                            label: "パスワード確認",
-                            hint: "At least 8 characters",
-                            autocomplete: "new-password"
-                          },
-                          on: {
-                            "click:append": function($event) {
-                              _vm.show = !_vm.show
-                            },
-                            keyup: function($event) {
-                              if (
-                                !$event.type.indexOf("key") &&
-                                _vm._k(
-                                  $event.keyCode,
-                                  "enter",
-                                  13,
-                                  $event.key,
-                                  "Enter"
-                                )
-                              ) {
-                                return null
+                          [
+                            _c("v-text-field", {
+                              ref: "name",
+                              staticClass: "py-2",
+                              attrs: {
+                                rules: _vm.nameRules,
+                                label: "名前",
+                                placeholder: "井上領",
+                                required: ""
+                              },
+                              on: { input: _vm.blurInput },
+                              model: {
+                                value: _vm.registration.name,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.registration, "name", $$v)
+                                },
+                                expression: "registration.name"
                               }
-                              if (
-                                $event.ctrlKey ||
-                                $event.shiftKey ||
-                                $event.altKey ||
-                                $event.metaKey
-                              ) {
-                                return null
+                            }),
+                            _vm._v(" "),
+                            _c("v-text-field", {
+                              ref: "screen_name",
+                              staticClass: "py-2",
+                              attrs: {
+                                rules: _vm.nicknameRules,
+                                label: "ニックネーム",
+                                placeholder: "Rio",
+                                required: ""
+                              },
+                              on: { input: _vm.blurInput },
+                              model: {
+                                value: _vm.registration.screen_name,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.registration, "screen_name", $$v)
+                                },
+                                expression: "registration.screen_name"
                               }
-                              return _vm.register($event)
-                            }
-                          },
-                          model: {
-                            value: _vm.registration.confirmationPassword,
-                            callback: function($$v) {
-                              _vm.$set(
-                                _vm.registration,
-                                "confirmationPassword",
-                                $$v
-                              )
-                            },
-                            expression: "registration.confirmationPassword"
-                          }
-                        })
+                            }),
+                            _vm._v(" "),
+                            _c("v-text-field", {
+                              staticClass: "py-2",
+                              attrs: {
+                                autocomplete: "new-password",
+                                rules: _vm.emailRules,
+                                label: "メールアドレス",
+                                placeholder: "mymemories@hello.com",
+                                counter: "40",
+                                required: ""
+                              },
+                              on: { input: _vm.blurInput },
+                              model: {
+                                value: _vm.registration.email,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.registration, "email", $$v)
+                                },
+                                expression: "registration.email"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("v-text-field", {
+                              staticClass: "input-group--focused py-2",
+                              attrs: {
+                                "append-icon": _vm.show2
+                                  ? "mdi-eye"
+                                  : "mdi-eye-off",
+                                rules: [
+                                  _vm.passwordRules.required,
+                                  _vm.passwordRules.min
+                                ],
+                                type: _vm.show2 ? "text" : "password",
+                                name: "input-10-2",
+                                label: "パスワード",
+                                hint: "At least 8 characters",
+                                autocomplete: "new-password"
+                              },
+                              on: {
+                                input: _vm.blurInput,
+                                "click:append": function($event) {
+                                  _vm.show2 = !_vm.show2
+                                }
+                              },
+                              model: {
+                                value: _vm.registration.password,
+                                callback: function($$v) {
+                                  _vm.$set(_vm.registration, "password", $$v)
+                                },
+                                expression: "registration.password"
+                              }
+                            }),
+                            _vm._v(" "),
+                            _c("v-text-field", {
+                              staticClass: "input-group--focused py-2",
+                              attrs: {
+                                "append-icon": _vm.show3
+                                  ? "mdi-eye"
+                                  : "mdi-eye-off",
+                                rules: [
+                                  _vm.confirmationPasswordRules.required,
+                                  _vm.confirmationPasswordRules.match
+                                ],
+                                type: _vm.show3 ? "text" : "password",
+                                name: "input-10-2",
+                                label: "パスワード確認",
+                                hint: "At least 8 characters",
+                                autocomplete: "new-password"
+                              },
+                              on: {
+                                input: _vm.blurInput,
+                                "click:append": function($event) {
+                                  _vm.show3 = !_vm.show
+                                },
+                                keyup: function($event) {
+                                  if (
+                                    !$event.type.indexOf("key") &&
+                                    _vm._k(
+                                      $event.keyCode,
+                                      "enter",
+                                      13,
+                                      $event.key,
+                                      "Enter"
+                                    )
+                                  ) {
+                                    return null
+                                  }
+                                  if (
+                                    $event.ctrlKey ||
+                                    $event.shiftKey ||
+                                    $event.altKey ||
+                                    $event.metaKey
+                                  ) {
+                                    return null
+                                  }
+                                  return _vm.register($event)
+                                }
+                              },
+                              model: {
+                                value: _vm.registration.confirmationPassword,
+                                callback: function($$v) {
+                                  _vm.$set(
+                                    _vm.registration,
+                                    "confirmationPassword",
+                                    $$v
+                                  )
+                                },
+                                expression: "registration.confirmationPassword"
+                              }
+                            })
+                          ],
+                          1
+                        )
                       ],
                       1
                     ),
+                    _vm._v(" "),
+                    Object.keys(_vm.registrationErrors).length !== 0
+                      ? _c("div", [
+                          _c("div", { staticClass: "mb-2 px-4" }, [
+                            _c(
+                              "div",
+                              {
+                                staticClass: "error px-4 py-2",
+                                staticStyle: {
+                                  "font-size": "smaller",
+                                  "font-weight": "500"
+                                }
+                              },
+                              [
+                                _vm.registrationErrors.email
+                                  ? _c("div", {
+                                      staticClass: "alert alert-danger",
+                                      domProps: {
+                                        textContent: _vm._s(
+                                          _vm.registrationErrors.email
+                                        )
+                                      }
+                                    })
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _vm.registrationErrors.password
+                                  ? _c("div", {
+                                      staticClass: "alert alert-danger",
+                                      domProps: {
+                                        textContent: _vm._s(
+                                          _vm.registrationErrors.password
+                                        )
+                                      }
+                                    })
+                                  : _vm._e()
+                              ]
+                            )
+                          ])
+                        ])
+                      : _vm._e(),
                     _vm._v(" "),
                     _c(
                       "div",
@@ -16004,17 +16085,41 @@ var render = function() {
                           [_vm._v("\n                戻る\n                ")]
                         ),
                         _vm._v(" "),
-                        _c(
-                          "v-btn",
-                          {
-                            staticClass: "mr-4",
-                            attrs: { color: "indigo white--text" },
-                            on: { click: _vm.register }
-                          },
-                          [_vm._v("\n                登録\n                ")]
-                        )
+                        _vm.initial
+                          ? [
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "mr-4",
+                                  attrs: { disabled: "" }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                登録\n                "
+                                  )
+                                ]
+                              )
+                            ]
+                          : [
+                              _c(
+                                "v-btn",
+                                {
+                                  staticClass: "mr-4",
+                                  attrs: {
+                                    color: "indigo white--text",
+                                    disabled: !_vm.valid
+                                  },
+                                  on: { click: _vm.register }
+                                },
+                                [
+                                  _vm._v(
+                                    "\n                登録\n                "
+                                  )
+                                ]
+                              )
+                            ]
                       ],
-                      1
+                      2
                     )
                   ],
                   1

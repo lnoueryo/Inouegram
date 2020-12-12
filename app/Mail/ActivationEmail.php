@@ -31,6 +31,8 @@ class ActivationEmail extends Mailable
     {
         return $this->
         view('emails.activation')
+        ->subject('ご登録ありがとうございます')
+        ->from('popo62520908@gmail.com','mymemories')
         ->with(['user' => $this->user]);
     }
 }

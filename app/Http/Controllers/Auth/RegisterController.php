@@ -53,8 +53,8 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
-            'screen_name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:100'],
+            'screen_name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
@@ -96,8 +96,6 @@ class RegisterController extends Controller
     {
         event(new UserActivationEmail($user));
         SendMail::dispatch($user);
-        // $user->password = Hash::make($user->password);
-        // $user->save();
         return Auth::login($user);
     }
 }
