@@ -2365,7 +2365,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
                 if (typeof FileReader === 'function') {
-                  if (file.size < 2500000) {
+                  if (file.size < 5100000) {
                     reader = new FileReader();
 
                     reader.onload = function (event) {
@@ -2420,10 +2420,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     'input-file-image-btn': _atoms_InputFileImageBtn__WEBPACK_IMPORTED_MODULE_1__["default"]
+  },
+  data: function data() {
+    return {
+      show: false
+    };
   },
   methods: {
     // button'next'をクリックしたときの処理
@@ -2452,13 +2477,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 4:
                 if (typeof FileReader === 'function') {
-                  if (file.size < 2500000) {
+                  if (file.size < 5100000) {
+                    _this.show = true;
                     reader = new FileReader();
 
                     reader.onload = function (event) {
                       var imgSrc = event.target.result;
 
                       _this.$emit('selectedImage', imgSrc);
+
+                      _this.show = false;
                     };
 
                     reader.readAsDataURL(file);
@@ -7088,6 +7116,74 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -7105,12 +7201,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      currentImageDialog: false,
+      cropProgress: false,
       titleMessagevalidation: false,
       text: 'タイトルと内容を書いてください',
       timeout: 4000,
       carousel: '',
-      type: 'hexa',
-      hexa: '#FF000000',
       length: 4,
       onboarding: 0,
       basicSize: '',
@@ -7168,7 +7264,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       left: '100px',
       position: 'absolute',
       zIndex: 1
-    }), _ref;
+    }), _defineProperty(_ref, "type", 'hexa'), _defineProperty(_ref, "hexa", '#FF000000'), _ref;
   },
   computed: {
     confirmMessage: function confirmMessage() {
@@ -7245,7 +7341,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.concatImageBtn = true;
       this.coverctx.filter = 'grayscale(0%)';
       this.globalAlpha = 1;
-      this.hexa = 'transparent';
+      this.hexa = '#FF000000';
       this.model = '';
       this.filters = '';
       this.coverctx.globalCompositeOperation = 'source-over';
@@ -7264,12 +7360,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx = this.cover.getContext("2d");
       this.coverctx.globalAlpha = 1;
       this.coverctx.globalCompositeOperation = 'source-over';
-      this.coverctx.filter = 'grayscale(0%)'; // var newImg = document.createElement("img");
-      // newImg.src = this.concatImg[this.concatImg.length-1];
-      // newImg.width = 75;
-      // newImg.height = 75;
-      // var concatImages = document.getElementById('concatImages')
-      // concatImages.appendChild(newImg);
+      this.coverctx.filter = 'grayscale(0%)';
     },
     loadImage: function loadImage(e) {
       if (e == '') {
@@ -7392,6 +7483,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     clear: function clear() {
       this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
     },
+    cropStart: function cropStart() {
+      var that = this;
+      that.cropProgress = true;
+      setTimeout(function () {
+        that.cropImage();
+      }, 100);
+    },
     cropImage: function cropImage() {
       this.e1 = 2;
       this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
@@ -7416,27 +7514,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var canvasCtx = [];
       var coverImage = [];
       var that = this;
-      setTimeout(function () {
-        var _loop = function _loop(i) {
-          canvas[i] = document.getElementById("pic" + i);
-          canvasCtx[i] = canvas[i].getContext('2d');
-          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-          canvasCtx[i].globalAlpha = 1;
-          canvasCtx[i].globalCompositeOperation = 'source-over';
-          canvasCtx[i].filter = 'grayscale(0%)';
-          canvasCtx[i].clearRect(0, 0, 250, 250);
-          coverImage[i] = new Image();
-          coverImage[i].src = background.src;
-
-          coverImage[i].onload = function () {
-            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-          };
-        };
-
-        for (var i = 1; i < 14; i++) {
-          _loop(i);
-        }
-      }, 250);
+      that.cropProgress = false;
       this.coverctx.save();
     },
     back: function back() {
@@ -7516,32 +7594,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         that.coverctx.drawImage(background, 0, 0, 250, 250);
       };
 
-      var that = this;
-      var canvas = [];
-      var canvasCtx = [];
-      var coverImage = [];
-      var that = this;
-      setTimeout(function () {
-        var _loop2 = function _loop2(i) {
-          canvas[i] = document.getElementById("pic" + i);
-          canvasCtx[i] = canvas[i].getContext('2d');
-          canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-          canvasCtx[i].globalAlpha = 1;
-          canvasCtx[i].globalCompositeOperation = 'source-over';
-          canvasCtx[i].filter = 'grayscale(0%)';
-          canvasCtx[i].clearRect(0, 0, 250, 250);
-          coverImage[i] = new Image();
-          coverImage[i].src = background.src;
-
-          coverImage[i].onload = function () {
-            canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-          };
-        };
-
-        for (var i = 1; i < 14; i++) {
-          _loop2(i);
-        }
-      }, 250);
       this.coverctx.save();
       this.color = '#00000080'; // that.searchTimeOut();
     },
@@ -14256,13 +14308,13 @@ __webpack_require__.r(__webpack_exports__);
     },
     data() {
         return {
-            value: 0,
             likedPosts: '',
             postLikes: '',
             postLikeUsers: '',
             postComments: '',
             postCommentUsers: '',
             mainUserPostLikes: '',
+            value: 0,
         };
     },
     computed: {
@@ -15308,7 +15360,42 @@ var render = function() {
           },
           click: _vm.btnclick
         }
-      })
+      }),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { "hide-overlay": "", persistent: "", width: "300" },
+          model: {
+            value: _vm.show,
+            callback: function($$v) {
+              _vm.show = $$v
+            },
+            expression: "show"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            { attrs: { color: "primary", dark: "" } },
+            [
+              _c(
+                "v-card-text",
+                [
+                  _vm._v("\n        Please stand by\n        "),
+                  _c("v-progress-linear", {
+                    staticClass: "mb-0",
+                    attrs: { indeterminate: "", color: "white" }
+                  })
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
     ],
     1
   )
@@ -22167,6 +22254,24 @@ var render = function() {
   return _c(
     "div",
     [
+      _vm.e1 == 1
+        ? _c(
+            "v-btn",
+            {
+              staticStyle: { "z-index": "5" },
+              attrs: {
+                absolute: "",
+                top: "",
+                right: "",
+                color: "primary",
+                disabled: _vm.stepBtn1
+              },
+              on: { click: _vm.cropStart }
+            },
+            [_vm._v("トリミング")]
+          )
+        : _vm._e(),
+      _vm._v(" "),
       _c(
         "v-stepper",
         {
@@ -22248,15 +22353,6 @@ var render = function() {
                                 1
                               )
                         ]
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { color: "primary", disabled: _vm.stepBtn1 },
-                          on: { click: _vm.cropImage }
-                        },
-                        [_vm._v("トリミング")]
                       )
                     ],
                     1
@@ -22778,11 +22874,11 @@ var render = function() {
                             "v-btn",
                             {
                               staticClass: "elevation-5",
-                              staticStyle: { "z-index": "1" },
+                              staticStyle: { "z-index": "5" },
                               attrs: {
                                 fixed: "",
-                                left: "",
-                                bottom: "",
+                                right: "",
+                                top: "",
                                 color: "primary"
                               },
                               on: { click: _vm.getImage }
@@ -22794,8 +22890,8 @@ var render = function() {
                             "v-btn",
                             {
                               staticClass: "elevation-5",
-                              staticStyle: { left: "90px", "z-index": "1" },
-                              attrs: { fixed: "", bottom: "" },
+                              staticStyle: { right: "90px", "z-index": "5" },
+                              attrs: { fixed: "", top: "" },
                               on: {
                                 click: function($event) {
                                   _vm.e1 = 1
@@ -22807,7 +22903,79 @@ var render = function() {
                         ],
                         1
                       )
-                    : _vm._e()
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c(
+                    "v-bottom-navigation",
+                    {
+                      attrs: {
+                        fixed: "",
+                        bottom: "",
+                        "hide-on-scroll": "",
+                        "scroll-target": "#hide-on-scroll-example"
+                      },
+                      model: {
+                        value: _vm.value,
+                        callback: function($$v) {
+                          _vm.value = $$v
+                        },
+                        expression: "value"
+                      }
+                    },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: {
+                            color: "deep-purple accent-4",
+                            text: "",
+                            value: "0"
+                          },
+                          on: { click: _vm.pen }
+                        },
+                        [
+                          _c("span", [_vm._v("ペン")]),
+                          _vm._v(" "),
+                          _c("v-icon", [_vm._v("mdi-draw")])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        { attrs: { color: "deep-purple accent-4", text: "" } },
+                        [
+                          _c("span", [_vm._v("エフェクト")]),
+                          _vm._v(" "),
+                          _c("v-icon", [_vm._v("mdi-checkerboard")])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        { attrs: { color: "deep-purple accent-4", text: "" } },
+                        [
+                          _c("span", [_vm._v("テキスト")]),
+                          _vm._v(" "),
+                          _c("v-icon", [_vm._v("mdi-format-color-text")])
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        { attrs: { color: "deep-purple accent-4", text: "" } },
+                        [
+                          _c("span", [_vm._v("ダウンロード")]),
+                          _vm._v(" "),
+                          _c("v-icon", [_vm._v("mdi-briefcase-download")])
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
                 ],
                 1
               ),
@@ -22936,41 +23104,6 @@ var render = function() {
                         expression: "message"
                       }
                     })
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  [
-                    _c(
-                      "v-btn",
-                      {
-                        attrs: {
-                          color: "primary",
-                          disabled: _vm.confirmMessage
-                        },
-                        on: {
-                          click: function($event) {
-                            _vm.e1 = 4
-                          }
-                        }
-                      },
-                      [_vm._v("確認")]
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "v-btn",
-                      {
-                        attrs: { color: "purple" },
-                        on: { click: _vm.oneMoreImage }
-                      },
-                      [_vm._v("もう一枚投稿")]
-                    ),
-                    _vm._v(" "),
-                    _c("v-btn", { on: { click: _vm.back2edit } }, [
-                      _vm._v("戻る")
-                    ])
                   ],
                   1
                 )
@@ -23111,6 +23244,46 @@ var render = function() {
         1
       ),
       _vm._v(" "),
+      _c(
+        "div",
+        [
+          _vm.e1 == 3
+            ? _c(
+                "v-btn",
+                {
+                  staticStyle: { "z-index": "5" },
+                  attrs: {
+                    absolute: "",
+                    top: "",
+                    right: "",
+                    color: "primary",
+                    disabled: _vm.confirmMessage
+                  },
+                  on: {
+                    click: function($event) {
+                      _vm.e1 = 4
+                    }
+                  }
+                },
+                [_vm._v("確認")]
+              )
+            : _vm._e(),
+          _vm._v(" "),
+          _vm.e1 == 3
+            ? _c(
+                "v-btn",
+                {
+                  staticStyle: { right: "90px", "z-index": "5" },
+                  attrs: { absolute: "", top: "", right: "", color: "purple" },
+                  on: { click: _vm.oneMoreImage }
+                },
+                [_vm._v("追加")]
+              )
+            : _vm._e()
+        ],
+        1
+      ),
+      _vm._v(" "),
       _vm.showConcatImg
         ? _c(
             "div",
@@ -23199,12 +23372,12 @@ var render = function() {
             "v-card",
             [
               _c("v-card-title", { staticClass: "headline grey lighten-2" }, [
-                _vm._v("\n          Error\n        ")
+                _vm._v("\n          エラー\n        ")
               ]),
               _vm._v(" "),
               _c("v-card-text", [
                 _vm._v(
-                  "\n          Filesize is over. Less than 2.5M is allowed.\n        "
+                  "\n            ファイルサイズが上限を超えています。5M以下のイメージを選択してください\n        "
                 )
               ]),
               _vm._v(" "),
@@ -23225,7 +23398,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("I accept")]
+                    [_vm._v("閉じる")]
                   )
                 ],
                 1
@@ -23277,6 +23450,180 @@ var render = function() {
           }
         },
         [_vm._v("\n      " + _vm._s(_vm.text) + "\n      ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "v-overlay",
+        { attrs: { value: _vm.cropProgress } },
+        [
+          _c("v-progress-circular", {
+            attrs: { indeterminate: "", size: "64" }
+          })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-row",
+        { attrs: { justify: "center" } },
+        [
+          _c(
+            "v-dialog",
+            {
+              attrs: {
+                fullscreen: "",
+                "hide-overlay": "",
+                transition: "dialog-bottom-transition"
+              },
+              scopedSlots: _vm._u([
+                {
+                  key: "activator",
+                  fn: function(ref) {
+                    var on = ref.on
+                    var attrs = ref.attrs
+                    return [
+                      _c(
+                        "v-btn",
+                        _vm._g(
+                          _vm._b(
+                            {
+                              staticStyle: { bottom: "60px" },
+                              attrs: {
+                                absolute: "",
+                                right: "",
+                                color: "primary",
+                                dark: "",
+                                fab: ""
+                              }
+                            },
+                            "v-btn",
+                            attrs,
+                            false
+                          ),
+                          on
+                        ),
+                        [_vm._v("\n            Open\n            ")]
+                      )
+                    ]
+                  }
+                }
+              ]),
+              model: {
+                value: _vm.currentImageDialog,
+                callback: function($$v) {
+                  _vm.currentImageDialog = $$v
+                },
+                expression: "currentImageDialog"
+              }
+            },
+            [
+              _vm._v(" "),
+              _c(
+                "v-card",
+                { staticStyle: { height: "50" } },
+                [
+                  _c(
+                    "v-toolbar",
+                    { attrs: { dark: "", color: "primary" } },
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { icon: "", dark: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.currentImageDialog = false
+                            }
+                          }
+                        },
+                        [_c("v-icon", [_vm._v("mdi-close")])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c("v-toolbar-title", [_vm._v("Settings")]),
+                      _vm._v(" "),
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-toolbar-items",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { dark: "", text: "" },
+                              on: {
+                                click: function($event) {
+                                  _vm.currentImageDialog = false
+                                }
+                              }
+                            },
+                            [_vm._v("\n                Save\n                ")]
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-list",
+                    { attrs: { "three-line": "", subheader: "" } },
+                    [
+                      _c("v-subheader", [_vm._v("User Controls")]),
+                      _vm._v(" "),
+                      _c(
+                        "v-list-item",
+                        [
+                          _c(
+                            "v-list-item-content",
+                            [
+                              _c("v-list-item-title", [
+                                _vm._v("Content filtering")
+                              ]),
+                              _vm._v(" "),
+                              _c("v-list-item-subtitle", [
+                                _vm._v(
+                                  "Set the content filtering level to restrict apps that can be downloaded"
+                                )
+                              ])
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-list-item",
+                        [
+                          _c(
+                            "v-list-item-content",
+                            [
+                              _c("v-list-item-title", [_vm._v("Password")]),
+                              _vm._v(" "),
+                              _c("v-list-item-subtitle", [
+                                _vm._v(
+                                  "Require password for purchase or use password to restrict purchase"
+                                )
+                              ])
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
       )
     ],
     1
@@ -23351,49 +23698,6 @@ var render = function() {
         ],
         2
       ),
-      _vm._v(" "),
-      _vm.isMainUser
-        ? _c(
-            "v-bottom-navigation",
-            { attrs: { value: _vm.value, color: "teal", grow: "", fixed: "" } },
-            [
-              _c(
-                "v-btn",
-                {
-                  on: {
-                    click: function($event) {
-                      _vm.value = 0
-                    }
-                  }
-                },
-                [
-                  _c("span", [_vm._v("My Post")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-post")])
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  on: {
-                    click: function($event) {
-                      _vm.value = 1
-                    }
-                  }
-                },
-                [
-                  _c("span", [_vm._v("Like Post")]),
-                  _vm._v(" "),
-                  _c("v-icon", [_vm._v("mdi-heart")])
-                ],
-                1
-              )
-            ],
-            1
-          )
-        : _vm._e(),
       _vm._v(" "),
       _c(
         "v-btn",

@@ -22,7 +22,7 @@ export default {
                     return
                 }
             if (typeof FileReader === 'function') {
-                if(file.size<2500000){
+                if(file.size<5100000){
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         const imgSrc = event.target.result;

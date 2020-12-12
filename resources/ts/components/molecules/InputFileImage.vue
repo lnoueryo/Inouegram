@@ -1,6 +1,26 @@
 <template molecules>
     <div>
         <input-file-image-btn @input="selectedFile()" @click="btnclick" ref="input"></input-file-image-btn>
+        <v-dialog
+        v-model="show"
+        hide-overlay
+        persistent
+        width="300"
+        >
+        <v-card
+            color="primary"
+            dark
+        >
+            <v-card-text>
+            Please stand by
+            <v-progress-linear
+                indeterminate
+                color="white"
+                class="mb-0"
+            ></v-progress-linear>
+            </v-card-text>
+        </v-card>
+        </v-dialog>
     </div>
 </template>
 <script>
@@ -8,6 +28,11 @@ import InputFileImageBtn from '../atoms/InputFileImageBtn'
 export default {
     components: {
         'input-file-image-btn': InputFileImageBtn,
+    },
+    data(){
+        return {
+            show: false
+        }
     },
     methods: {
         // button'next'をクリックしたときの処理
@@ -22,11 +47,13 @@ export default {
                     return
                 }
             if (typeof FileReader === 'function') {
-                if(file.size<2500000){
+                if(file.size<5100000){
+                    this.show = true;
                     const reader = new FileReader();
                     reader.onload = (event) => {
                         const imgSrc = event.target.result;
                         this.$emit('selectedImage', imgSrc);
+                        this.show = false;
                     }
                     reader.readAsDataURL(file)
                 } else {

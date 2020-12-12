@@ -1,7 +1,7 @@
 <template>
     <div>
+        <v-btn style="z-index: 5;" absolute top right @click="cropStart" color="primary" :disabled="stepBtn1" v-if="e1==1">トリミング</v-btn>
         <v-stepper v-model="e1" class="elevation-0">
-
             <v-stepper-items>
                 <v-stepper-content step="1" class="pt-1">
                     <v-container>
@@ -29,7 +29,6 @@
                                 <input-file-image @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                         </v-layout>
-                    <v-btn @click="cropImage" color="primary" :disabled="stepBtn1">トリミング</v-btn>
                     </v-container>
                 </v-stepper-content>
 
@@ -46,24 +45,6 @@
                             <canvas id="cover" style="position: absolute; top: 0; left: 0;" width="250" height="250"></canvas>
                             <canvas id="text" :class="{index2: value == 2}" style="position: absolute;top: 0; left: 0;" width=250 height=250 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
                         </div>
-                        <!-- <v-bottom-navigation absolute hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
-                        <v-btn color="deep-purple accent-4" text　@click="pen" value="0">
-                            <span>ペン</span>
-                            <v-icon>mdi-draw</v-icon>
-                        </v-btn>
-                        <v-btn color="deep-purple accent-4" text>
-                            <span>エフェクト</span>
-                            <v-icon>mdi-checkerboard</v-icon>
-                        </v-btn>
-                        <v-btn color="deep-purple accent-4" text>
-                            <span>テキスト</span>
-                            <v-icon>mdi-format-color-text</v-icon>
-                        </v-btn>
-                        <v-btn color="deep-purple accent-4" text>
-                            <span>ダウンロード</span>
-                            <v-icon>mdi-briefcase-download</v-icon>
-                        </v-btn>
-                        </v-bottom-navigation> -->
                     </v-card>
                     <!-- <v-card class="overflow-hidden" height="550" width="250">
                     <v-stepper v-model="toolStepper" style="width: 250px;">
@@ -175,9 +156,27 @@
                         </v-card-actions>
                     </v-card>
                     <div v-if="e1==2">
-                    <v-btn class="elevation-5" fixed left bottom color="primary" style="z-index: 1;" @click="getImage">決定</v-btn>
-                    <v-btn class="elevation-5" style="left: 90px;z-index: 1;" fixed bottom @click="e1 = 1;">戻る</v-btn>
+                    <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="getImage">決定</v-btn>
+                    <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="e1 = 1;">戻る</v-btn>
                     </div>
+                       <v-bottom-navigation fixed bottom hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
+                        <v-btn color="deep-purple accent-4" text　@click="pen" value="0">
+                            <span>ペン</span>
+                            <v-icon>mdi-draw</v-icon>
+                        </v-btn>
+                        <v-btn color="deep-purple accent-4" text>
+                            <span>エフェクト</span>
+                            <v-icon>mdi-checkerboard</v-icon>
+                        </v-btn>
+                        <v-btn color="deep-purple accent-4" text>
+                            <span>テキスト</span>
+                            <v-icon>mdi-format-color-text</v-icon>
+                        </v-btn>
+                        <v-btn color="deep-purple accent-4" text>
+                            <span>ダウンロード</span>
+                            <v-icon>mdi-briefcase-download</v-icon>
+                        </v-btn>
+                        </v-bottom-navigation>
                 </v-stepper-content>
 <!--FIXME: タイトルと内容が埋もれる-->
                 <v-stepper-content step="3">
@@ -197,11 +196,6 @@
                                 </template>
                             </v-textarea>
                             </div>
-                        <div>
-                            <v-btn color="primary" @click="e1=4" :disabled="confirmMessage">確認</v-btn>
-                            <v-btn color="purple" @click="oneMoreImage">もう一枚投稿</v-btn>
-                            <v-btn @click="back2edit">戻る</v-btn>
-                        </div>
                 </v-stepper-content>
 
                 <v-stepper-content step="4">
@@ -248,6 +242,11 @@
 
             </v-stepper-items>
         </v-stepper>
+        <div>
+            <v-btn style="z-index: 5;" absolute top right color="primary" @click="e1=4" :disabled="confirmMessage" v-if="e1==3">確認</v-btn>
+            <v-btn style="right: 90px;z-index: 5;" absolute top right color="purple" @click="oneMoreImage" v-if="e1==3">追加</v-btn>
+            <!-- <v-btn @click="back2edit">戻る</v-btn> -->
+        </div>
         <div class="px-4" v-if="showConcatImg">
             <div class="d-flex flex-wrap mb-3" style="justify-content: space-between;">
                 <div class="mb-3" v-for="(image, index) in concatImg" :key="index">
@@ -263,18 +262,18 @@
 
       <v-card>
         <v-card-title class="headline grey lighten-2">
-          Error
+          エラー
         </v-card-title>
 
         <v-card-text>
-          Filesize is over. Less than 2.5M is allowed.
+            ファイルサイズが上限を超えています。5M以下のイメージを選択してください
         </v-card-text>
 
         <v-divider></v-divider>
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" text @click="sizeDialog = false">I accept</v-btn>
+          <v-btn color="primary" text @click="sizeDialog = false">閉じる</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -286,6 +285,75 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <v-overlay :value="cropProgress">
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-row justify="center">
+        <v-dialog
+        v-model="currentImageDialog"
+        fullscreen
+        hide-overlay
+        transition="dialog-bottom-transition"
+        >
+        <template v-slot:activator="{ on, attrs }">
+            <v-btn
+            absolute
+            right
+            style="bottom: 60px"
+            color="primary"
+            dark
+            v-bind="attrs"
+            v-on="on"
+            fab
+            >
+            Open
+            </v-btn>
+        </template>
+        <v-card style="height: 50;">
+            <v-toolbar
+            dark
+            color="primary"
+            >
+            <v-btn
+                icon
+                dark
+                @click="currentImageDialog = false"
+            >
+                <v-icon>mdi-close</v-icon>
+            </v-btn>
+            <v-toolbar-title>Settings</v-toolbar-title>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+                <v-btn
+                dark
+                text
+                @click="currentImageDialog = false"
+                >
+                Save
+                </v-btn>
+            </v-toolbar-items>
+            </v-toolbar>
+            <v-list
+            three-line
+            subheader
+            >
+            <v-subheader>User Controls</v-subheader>
+            <v-list-item>
+                <v-list-item-content>
+                <v-list-item-title>Content filtering</v-list-item-title>
+                <v-list-item-subtitle>Set the content filtering level to restrict apps that can be downloaded</v-list-item-subtitle>
+                </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+                <v-list-item-content>
+                <v-list-item-title>Password</v-list-item-title>
+                <v-list-item-subtitle>Require password for purchase or use password to restrict purchase</v-list-item-subtitle>
+                </v-list-item-content>
+            </v-list-item>
+            </v-list>
+        </v-card>
+        </v-dialog>
+    </v-row>
     </div>
 </template>
 
@@ -304,68 +372,70 @@ export default {
         ImageEditer,
     },
     data() {
-      return {
-      titleMessagevalidation: false,
-      text: 'タイトルと内容を書いてください',
-      timeout: 4000,
-          carousel: '',
-      type: 'hexa',
-      hexa: '#FF000000',
-      length: 4,
-      onboarding: 0,
-          basicSize: '',
-          mediaSize: '',
-          spSize: window.matchMedia('(max-width: 480px)'),
-        sizeDialog: false,
-        show: false,
-        title: '',
-        message: '',
-        concatImageBtn: false,
-        stepBtn1: true,
-        e1: 1,
-        concatImg: [],
-        imgBeforeConcat: [],
-        imgSrc: '',
-        value: 0,
-        canvasMode: 'penBlack',
-        drawCanvas: null,
-        drawCanvasctx: null,
-        isDrag: false,
-        cover: null,
-        coverctx: null,
-        penColor: '#000000',
-        lineWidth: 5,
-        lineCaps: ['square','butt','round'],
-        lineCap: 'round',
-        lineJoins: ['bebel','miter','round'],
-        lineJoin : 'round',
-        filterObject: {'blur': 0,'brightness': 100,'contrast': 100,'grayscale': 0,'hueRotate': 0,'invert': 0,'saturate': 100,'sepia': 0},
-        globalCompositeOperation: ['lighter', 'darken', 'overlay', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'],
-        isDrag: false,
-        model: null,
-        globalAlpha: 1,
-        timer: '',
-        filters: '',
-        croppedImage: '',
-        toggle_multiple: [],
-        textCanvas: '',
-        textCanvasctx: '',
-        texts: [],
-        selectedText: -1,
-        selectedEditText: -1,
-        offsetX: '',
-        offsetY: '',
-        scrollX: '',
-        scrollY: '',
-        startX: '',
-        startY: '',
-        isActive: false,
-        isActiveEditText: false,
-        dialog: false,
-        selectedEditTextMessage: '',
-        inputPosition: {fontSize: '15px', color: 'black', fontWeght: '250', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
-        selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '250', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
-      };
+        return {
+            currentImageDialog: false,
+            cropProgress: false,
+            titleMessagevalidation: false,
+            text: 'タイトルと内容を書いてください',
+            timeout: 4000,
+            carousel: '',
+            length: 4,
+            onboarding: 0,
+            basicSize: '',
+            mediaSize: '',
+            spSize: window.matchMedia('(max-width: 480px)'),
+            sizeDialog: false,
+            show: false,
+            title: '',
+            message: '',
+            concatImageBtn: false,
+            stepBtn1: true,
+            e1: 1,
+            concatImg: [],
+            imgBeforeConcat: [],
+            imgSrc: '',
+            value: 0,
+            canvasMode: 'penBlack',
+            drawCanvas: null,
+            drawCanvasctx: null,
+            isDrag: false,
+            cover: null,
+            coverctx: null,
+            penColor: '#000000',
+            lineWidth: 5,
+            lineCaps: ['square','butt','round'],
+            lineCap: 'round',
+            lineJoins: ['bebel','miter','round'],
+            lineJoin : 'round',
+            filterObject: {'blur': 0,'brightness': 100,'contrast': 100,'grayscale': 0,'hueRotate': 0,'invert': 0,'saturate': 100,'sepia': 0},
+            globalCompositeOperation: ['lighter', 'darken', 'overlay', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'],
+            isDrag: false,
+            model: null,
+            globalAlpha: 1,
+            timer: '',
+            filters: '',
+            croppedImage: '',
+            toggle_multiple: [],
+            textCanvas: '',
+            textCanvasctx: '',
+            texts: [],
+            selectedText: -1,
+            selectedEditText: -1,
+            offsetX: '',
+            offsetY: '',
+            scrollX: '',
+            scrollY: '',
+            startX: '',
+            startY: '',
+            isActive: false,
+            isActiveEditText: false,
+            dialog: false,
+            selectedEditTextMessage: '',
+            inputPosition: {fontSize: '15px', color: 'black', fontWeght: '250', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+            selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '250', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+            type: 'hexa',
+            hexa: '#FF000000',
+        };
     },
     computed: {
         confirmMessage(){
@@ -405,14 +475,14 @@ export default {
                 this.selectedInputPosition.fontSize = newValue + 'px';
             }
         },
-      color: {
-        get () {
-          return this[this.type]
+        color: {
+            get () {
+            return this[this.type]
+            },
+            set (v) {
+            this[this.type] = v
+            },
         },
-        set (v) {
-          this[this.type] = v
-        },
-      },
     },
     mounted(){
       // canvas
@@ -444,10 +514,9 @@ export default {
             this.imgSrc = '';
             this.stepBtn1 = true;
             this.concatImageBtn = true;
-
             this.coverctx.filter = 'grayscale(0%)';
             this.globalAlpha = 1;
-            this.hexa = 'transparent';
+            this.hexa = '#FF000000';
             this.model = '';
             this.filters = '';
             this.coverctx.globalCompositeOperation = 'source-over';
@@ -458,12 +527,6 @@ export default {
             this.coverctx.globalAlpha = 1;
             this.coverctx.globalCompositeOperation = 'source-over';
             this.coverctx.filter = 'grayscale(0%)';
-            // var newImg = document.createElement("img");
-            // newImg.src = this.concatImg[this.concatImg.length-1];
-            // newImg.width = 75;
-            // newImg.height = 75;
-            // var concatImages = document.getElementById('concatImages')
-            // concatImages.appendChild(newImg);
         },
         loadImage(e){
             if(e == ''){
@@ -581,6 +644,13 @@ export default {
         clear() {
           this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
         },
+        cropStart(){
+            let that = this;
+            that.cropProgress = true;
+            setTimeout(function(){
+                that.cropImage();
+            },100)
+        },
         cropImage(){
             this.e1 = 2;
             this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
@@ -603,22 +673,7 @@ export default {
             var canvasCtx = [];
             var coverImage = [];
             var that = this;
-            setTimeout(function () {
-                for (let i = 1; i < 14; i++) {
-                    canvas[i] = document.getElementById("pic" + i);
-                    canvasCtx[i] = canvas[i].getContext('2d');
-                    canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-                    canvasCtx[i].globalAlpha = 1;
-                    canvasCtx[i].globalCompositeOperation = 'source-over';
-                    canvasCtx[i].filter = 'grayscale(0%)';
-                    canvasCtx[i].clearRect(0, 0, 250, 250);
-                    coverImage[i] = new Image();
-                    coverImage[i].src = background.src;
-                    coverImage[i].onload = function () {
-                        canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-                    };
-                }
-            }, 250);
+            that.cropProgress = false;
             this.coverctx.save();
         },
         back() {
@@ -683,27 +738,6 @@ export default {
             background.onload = function(){
                     that.coverctx.drawImage(background,0,0,250,250);
                 }
-            var that = this;
-            var canvas = [];
-            var canvasCtx = [];
-            var coverImage = [];
-            var that = this;
-            setTimeout(function () {
-                for (let i = 1; i < 14; i++) {
-                    canvas[i] = document.getElementById("pic" + i);
-                    canvasCtx[i] = canvas[i].getContext('2d');
-                    canvasCtx[i].globalCompositeOperation = that.globalCompositeOperation[i - 1];
-                    canvasCtx[i].globalAlpha = 1;
-                    canvasCtx[i].globalCompositeOperation = 'source-over';
-                    canvasCtx[i].filter = 'grayscale(0%)';
-                    canvasCtx[i].clearRect(0, 0, 250, 250);
-                    coverImage[i] = new Image();
-                    coverImage[i].src = background.src;
-                    coverImage[i].onload = function () {
-                        canvasCtx[i].drawImage(coverImage[i], 0, 0, 113.3, 113.3);
-                    };
-                }
-            }, 250);
             this.coverctx.save();
             this.color = '#00000080';
             // that.searchTimeOut();

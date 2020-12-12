@@ -20,7 +20,7 @@
             a
         </template>
         </keep-alive>
-        <v-bottom-navigation :value="value" color="teal" grow fixed v-if="isMainUser">
+        <!-- <v-bottom-navigation :value="value" color="teal" grow fixed v-if="isMainUser">
             <v-btn @click="value = 0">
             <span>My Post</span>
 
@@ -32,13 +32,13 @@
 
             <v-icon>mdi-heart</v-icon>
             </v-btn>
-            <!-- TODO: -->
-            <!-- <v-btn  @click="value = 2">
+            TODO:
+            <v-btn  @click="value = 2">
             <span>Nearby</span>
 
             <v-icon>mdi-map-marker</v-icon>
-            </v-btn> -->
-        </v-bottom-navigation>
+            </v-btn>
+        </v-bottom-navigation> -->
         <v-btn medium fab fixed right :style="isMainUser ? 'bottom: 80px' : 'bottom: 10px'" @click="scrollTop()">
             <v-icon size="16">mdi-triangle</v-icon>
         </v-btn>
@@ -83,13 +83,13 @@ export default Vue.extend({
     },
     data (): DataType {
         return {
-            value: 0,
             likedPosts: '',
             postLikes: '',
             postLikeUsers: '',
             postComments: '',
             postCommentUsers: '',
             mainUserPostLikes: '',
+            value: 0,
         }
     },
     computed:{
