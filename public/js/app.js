@@ -2159,12 +2159,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['user'],
@@ -2173,9 +2167,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      clipped: false,
       drawer: false,
-      fixed: false,
       items: [{
         icon: 'mdi-home',
         title: 'ホーム',
@@ -2189,9 +2181,6 @@ __webpack_require__.r(__webpack_exports__);
         title: 'マイページ',
         to: '/profile?id=' + this.user.id
       }],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
       title: 'My Memories'
     };
   }
@@ -2722,14 +2711,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['google-user', 'github-user'],
   data: function data() {
     var _this = this;
 
     return {
+      loaded: false,
       initial: true,
       showq: false,
       gUser: this.googleUser,
@@ -2825,6 +2813,9 @@ __webpack_require__.r(__webpack_exports__);
     console.log(this.hubUser);
   },
   methods: {
+    isLoad: function isLoad() {
+      this.loaded = true;
+    },
     toBase64Url: function toBase64Url(url, callback) {
       var xhr = new XMLHttpRequest();
 
@@ -4456,6 +4447,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserComments', 'likedPosts', 'isMainUser'],
   data: function data() {
@@ -4503,7 +4497,8 @@ __webpack_require__.r(__webpack_exports__);
       snackbar: false,
       timeout: 2000,
       text: 'deleted',
-      likePosts: this.likedPosts
+      likePosts: this.likedPosts,
+      isDeleteBtn: ''
     };
   },
   computed: {
@@ -4597,6 +4592,22 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    showDeleteBtn: function showDeleteBtn(id, index) {
+      if (this.commentUser(id).id == this.visitor.id) {
+        this.isDeleteBtn[index] = true;
+        this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
+          return el;
+        });
+      }
+    },
+    hideDeleteBtn: function hideDeleteBtn(id, index) {
+      if (this.commentUser(id).id == this.visitor.id) {
+        this.isDeleteBtn[index] = false;
+        this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
+          return el;
+        });
+      }
+    },
     iconType: function iconType(userId) {
       var _this5 = this;
 
@@ -4676,6 +4687,9 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         _this8.commentUsers = response.data;
         _this8.postDialogId = id;
+        _this8.isDeleteBtn = response.data.filter(function (commentUser) {
+          return false;
+        });
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -5408,17 +5422,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['mainUser', 'posts', 'mainUserLikes', 'comments', 'likes', 'followingUsersInfo', 'likedUsers'],
   data: function data() {
@@ -5461,7 +5464,8 @@ __webpack_require__.r(__webpack_exports__);
       likeDialog: false,
       commentDialog: false,
       dialogPostId: '',
-      comment: []
+      comment: [],
+      isDeleteBtn: ''
     };
   },
   computed: {
@@ -5497,6 +5501,22 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    showDeleteBtn: function showDeleteBtn(id, index) {
+      if (this.commentUser(id).id == this.visitor.id) {
+        this.isDeleteBtn[index] = true;
+        this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
+          return el;
+        });
+      }
+    },
+    hideDeleteBtn: function hideDeleteBtn(id, index) {
+      if (this.commentUser(id).id == this.visitor.id) {
+        this.isDeleteBtn[index] = false;
+        this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
+          return el;
+        });
+      }
+    },
     iconType: function iconType(userId) {
       var _this2 = this;
 
@@ -5577,7 +5597,10 @@ __webpack_require__.r(__webpack_exports__);
       }).then(function (response) {
         _this5.commentDialog = true;
         _this5.commentUsers = response.data;
-        _this5.dialogPostId = id; // this.showBtn();
+        _this5.dialogPostId = id;
+        _this5.isDeleteBtn = response.data.filter(function (commentUser) {
+          return false;
+        });
       })["catch"](function (error) {
         console.log('fail');
       });
@@ -11517,7 +11540,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.example {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.example .hello {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%,-50%);\r\n  padding:0;\r\n  width: 100%;\r\n  max-width: 400px;\r\n  background-color: white;\r\n  /*文字の装飾は省略*/\n}\n.example #main {\r\n  width: 100%;\r\n  min-width: 1185px;\n}\n.example #logo {\r\n  width: 100%;\r\n  max-width: 757px;\n}\n#login input {\r\n      margin: 0;\n}\n#login input:-webkit-autofill {\r\n    background-color: white!important;\r\n    color: white!important;\r\n        -webkit-animation-name: onAutoFillStart;\r\n                animation-name: onAutoFillStart;\r\n    -webkit-transition: background-color 50000s ease-in-out 0s;\r\n    transition: background-color 50000s ease-in-out 0s;\n}\n.btn-google:hover .g {\r\n  color: rgba(66, 134, 244, 1);\r\n  transition: color 0.5s!important;\n}\n.btn-google .g {\r\n\r\n  transition: color 3s!important;\n}\n.btn-google:hover .o {\r\n  color: rgba(219, 69, 55, 1);\r\n  transition: color 1s!important;\n}\n.btn-google .o {\r\n  transition: color 2.5s!important;\n}\n.btn-google:hover .o2 {\r\n  color: rgba(244, 179, 0, 1);\r\n  transition: color 1.5s!important;\n}\n.btn-google .o2 {\r\n  transition: color 2s!important;\n}\n.btn-google:hover .g2 {\r\n  color: rgba(66, 134, 244, 1);\r\n    transition: color 2s!important;\n}\n.btn-google .g2 {\r\n    transition: color 1.5s!important;\n}\n.btn-google:hover .l {\r\n  color: rgba(15, 157, 88, 1);\r\n    transition: color 2.5s!important;\n}\n.btn-google .l {\r\n    transition: color 1s!important;\n}\n.btn-google:hover .e {\r\n  color: rgba(219, 69, 55, 1);\r\n    transition: color 3s!important;\n}\n.btn-google .e {\r\n    transition: color 0.5s!important;\n}\n.bounce-enter-active {\r\n  -webkit-animation: bounce-in .5s;\r\n          animation: bounce-in .5s;\n}\n.bounce-leave-active {\r\n  animation: bounce-in .5s reverse;\n}\n@-webkit-keyframes bounce-in {\n0% {\r\n    transform: scale(0);\n}\n50% {\r\n    transform: scale(1.5);\n}\n100% {\r\n    transform: scale(1);\n}\n}\n@keyframes bounce-in {\n0% {\r\n    transform: scale(0);\n}\n50% {\r\n    transform: scale(1.5);\n}\n100% {\r\n    transform: scale(1);\n}\n}\n#gitbtn {\r\n      /* background-color: black!important; */\r\n      transition: background-color 1s!important;\n}\n#gitbtn:hover {\r\n      background-color: transparent!important;\r\n      transition: background-color 1s!important;\n}\r\n  ", ""]);
+exports.push([module.i, "\n.example {\r\n  position: relative;\r\n  overflow: hidden;\n}\n.example .hello {\r\n  position: absolute;\r\n  top: 50%;\r\n  left: 50%;\r\n  transform: translate(-50%,-50%);\r\n  padding:0;\r\n  width: 100%;\r\n  max-width: 400px;\r\n  background-color: white;\r\n  /*文字の装飾は省略*/\n}\n.example #main {\r\n  width: 100%;\r\n  min-width: 1185px;\n}\n.example #logo {\r\n  width: 100%;\r\n  max-width: 757px;\n}\n#login input {\r\n      margin: 0;\n}\n#login input:-webkit-autofill {\r\n    background-color: white!important;\r\n    color: white!important;\r\n        -webkit-animation-name: onAutoFillStart;\r\n                animation-name: onAutoFillStart;\r\n    -webkit-transition: background-color 50000s ease-in-out 0s;\r\n    transition: background-color 50000s ease-in-out 0s;\n}\n.btn-google:hover .g {\r\n  color: rgba(66, 134, 244, 1);\r\n  transition: color 0.5s!important;\n}\n.btn-google .g {\r\n\r\n  transition: color 3s!important;\n}\n.btn-google:hover .o {\r\n  color: rgba(219, 69, 55, 1);\r\n  transition: color 1s!important;\n}\n.btn-google .o {\r\n  transition: color 2.5s!important;\n}\n.btn-google:hover .o2 {\r\n  color: rgba(244, 179, 0, 1);\r\n  transition: color 1.5s!important;\n}\n.btn-google .o2 {\r\n  transition: color 2s!important;\n}\n.btn-google:hover .g2 {\r\n  color: rgba(66, 134, 244, 1);\r\n    transition: color 2s!important;\n}\n.btn-google .g2 {\r\n    transition: color 1.5s!important;\n}\n.btn-google:hover .l {\r\n  color: rgba(15, 157, 88, 1);\r\n    transition: color 2.5s!important;\n}\n.btn-google .l {\r\n    transition: color 1s!important;\n}\n.btn-google:hover .e {\r\n  color: rgba(219, 69, 55, 1);\r\n    transition: color 3s!important;\n}\n.btn-google .e {\r\n    transition: color 0.5s!important;\n}\n.bounce-enter-active {\r\n  -webkit-animation: bounce-in .5s;\r\n          animation: bounce-in .5s;\n}\n.bounce-leave-active {\r\n  animation: bounce-in .5s reverse;\n}\n@-webkit-keyframes bounce-in {\n0% {\r\n    transform: scale(0);\n}\n50% {\r\n    transform: scale(1.5);\n}\n100% {\r\n    transform: scale(1);\n}\n}\n@keyframes bounce-in {\n0% {\r\n    transform: scale(0);\n}\n50% {\r\n    transform: scale(1.5);\n}\n100% {\r\n    transform: scale(1);\n}\n}\n#gitbtn {\r\n      /* background-color: black!important; */\r\n      transition: background-color 1s!important;\n}\n#gitbtn:hover {\r\n      background-color: transparent!important;\r\n      transition: background-color 1s!important;\n}\nimg {\r\n  opacity: 1;\r\n  transition: opacity 1s;\n}\nimg.hide {\r\n  opacity: 0;\n}\r\n  ", ""]);
 
 // exports
 
@@ -11600,44 +11623,6 @@ exports.push([module.i, "\n.slide-fade-enter-active[data-v-24ee9252],\r\n.slide-
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css&":
-/*!*********************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css& ***!
-  \*********************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.v-dialog {\r\n    max-height: 700px!important;\n}\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.v-dialog {\r\n    max-height: 700px!important;\n}\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css&":
 /*!*********************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css& ***!
@@ -11650,26 +11635,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 
 // module
-exports.push([module.i, "\n.slide-fade-enter-active[data-v-f11a15ba],\r\n.slide-fade-leave-active[data-v-f11a15ba],\r\n.slide-fade-move[data-v-f11a15ba] {\r\n  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);\r\n  transition-property: opacity, transform;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter[data-v-f11a15ba] {\r\n  opacity: 0;\r\n  transform: translateX(50px) scaleY(0.5);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter-to[data-v-f11a15ba] {\r\n  opacity: 1;\r\n  transform: translateX(0) scaleY(1);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-active[data-v-f11a15ba] {\r\n  position: absolute;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-to[data-v-f11a15ba] {\r\n  opacity: 0;\r\n  transform: scaleY(0);\r\n  transform-origin: center top;\r\n    transition: all 0.8s ease;\n}\r\n\r\n/* .theme--dark {\r\n    background-image: linear-gradient(25deg, rgba(255, 0, 0, 0.7), rgba(0, 255, 0, 0.7));\r\n    transition-duration: .7s;\r\n}\r\n\r\n.overlay{\r\n    opacity: 0;\r\n} */\n.v-card--reveal[data-v-f11a15ba] {\r\n  align-items: center;\r\n  bottom: 0;\r\n  justify-content: center;\r\n  opacity: .5;\r\n  position: absolute;\r\n  width: 100%;\n}\n.content[data-v-f11a15ba]{\r\n    overflow: hidden;\r\n    width: 100%;\r\n    overflow: hidden;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\n}\n.pointer[data-v-f11a15ba] {\r\n    cursor: pointer;\n}\r\n\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css&":
-/*!*********************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css& ***!
-  \*********************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n.v-dialog {\r\n    max-height: 700px!important;\n}\r\n", ""]);
+exports.push([module.i, "\n.slide-fade-enter-active[data-v-f11a15ba],\r\n.slide-fade-leave-active[data-v-f11a15ba],\r\n.slide-fade-move[data-v-f11a15ba] {\r\n  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);\r\n  transition-property: opacity, transform;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter[data-v-f11a15ba] {\r\n  opacity: 0;\r\n  transform: translateX(50px) scaleY(0.5);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter-to[data-v-f11a15ba] {\r\n  opacity: 1;\r\n  transform: translateX(0) scaleY(1);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-active[data-v-f11a15ba] {\r\n  position: absolute;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-to[data-v-f11a15ba] {\r\n  opacity: 0;\r\n  transform: scaleY(0);\r\n  transform-origin: center top;\r\n    transition: all 0.8s ease;\n}\r\n\r\n/* .theme--dark {\r\n    background-image: linear-gradient(25deg, rgba(255, 0, 0, 0.7), rgba(0, 255, 0, 0.7));\r\n    transition-duration: .7s;\r\n}\r\n\r\n.overlay{\r\n    opacity: 0;\r\n} */\n.v-card--reveal[data-v-f11a15ba] {\r\n  align-items: center;\r\n  bottom: 0;\r\n  justify-content: center;\r\n  opacity: .5;\r\n  position: absolute;\r\n  width: 100%;\n}\n.content[data-v-f11a15ba]{\r\n    overflow: hidden;\r\n    width: 100%;\r\n    overflow: hidden;\r\n    text-overflow: ellipsis;\r\n    white-space: nowrap;\n}\n.pointer[data-v-f11a15ba] {\r\n    cursor: pointer;\n}\n.slide-fade-enter-active[data-v-f11a15ba] {\r\n    transition: all .6s ease;\n}\n.slide-fade-leave-active[data-v-f11a15ba] {\r\n    transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter[data-v-f11a15ba], .slide-fade-leave-to[data-v-f11a15ba] {\r\n    transform: translateY(10px);\r\n    opacity: 0;\n}\n.v-list-item__action[data-v-f11a15ba]{\r\n    display: inline-flex;\r\n    min-width: 70px!important;\n}\r\n", ""]);
 
 // exports
 
@@ -11707,7 +11673,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\ninput{\n    margin: 0!important;\n}\n.scroll{\n    height: 200px;\n    overflow-y: scroll;\n}\n\n", ""]);
+exports.push([module.i, "\ninput{\n    margin: 0!important;\n}\n.scroll{\n    height: 200px;\n    overflow-y: scroll;\n}\n.slide-fade-enter-active {\n    transition: all .6s ease;\n}\n.slide-fade-leave-active {\n    transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);\n}\n.slide-fade-enter, .slide-fade-leave-to {\n    transform: translateX(10px);\n    opacity: 0;\n}\n", ""]);
 
 // exports
 
@@ -11764,7 +11730,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.v-dialog {\r\n    max-height: 700px!important;\n}\r\n", ""]);
+exports.push([module.i, "\n.v-dialog {\r\n    max-height: 750px!important;\n}\r\n", ""]);
 
 // exports
 
@@ -13217,66 +13183,6 @@ if(false) {}
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css&":
-/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css& ***!
-  \*************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./LikePosts.vue?vue&type=style&index=1&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css&":
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css& ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ProfileCard.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
 /***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css&":
 /*!*************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css& ***!
@@ -13286,36 +13192,6 @@ if(false) {}
 
 
 var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css&":
-/*!*************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css& ***!
-  \*************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./UserPosts.vue?vue&type=style&index=1&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css&");
 
 if(typeof content === 'string') content = [[module.i, content, '']];
 
@@ -15063,12 +14939,7 @@ var render = function() {
       _c(
         "v-navigation-drawer",
         {
-          attrs: {
-            "mini-variant": _vm.miniVariant,
-            clipped: _vm.clipped,
-            fixed: "",
-            app: ""
-          },
+          attrs: { fixed: "", app: "" },
           model: {
             value: _vm.drawer,
             callback: function($$v) {
@@ -15120,7 +14991,7 @@ var render = function() {
       _vm._v(" "),
       _c(
         "v-app-bar",
-        { attrs: { "clipped-left": _vm.clipped, fixed: "", app: "" } },
+        { attrs: { fixed: "", app: "" } },
         [
           _c("v-app-bar-nav-icon", {
             on: {
@@ -15130,43 +15001,6 @@ var render = function() {
               }
             }
           }),
-          _vm._v(" "),
-          _c(
-            "v-btn",
-            {
-              attrs: { icon: "" },
-              on: {
-                click: function($event) {
-                  $event.stopPropagation()
-                  _vm.miniVariant = !_vm.miniVariant
-                }
-              }
-            },
-            [
-              _c("v-icon", [
-                _vm._v(
-                  "mdi-" +
-                    _vm._s("chevron-" + (_vm.miniVariant ? "right" : "left"))
-                )
-              ])
-            ],
-            1
-          ),
-          _vm._v(" "),
-          _c(
-            "v-btn",
-            {
-              attrs: { icon: "" },
-              on: {
-                click: function($event) {
-                  $event.stopPropagation()
-                  _vm.clipped = !_vm.clipped
-                }
-              }
-            },
-            [_c("v-icon", [_vm._v("mdi-application")])],
-            1
-          ),
           _vm._v(" "),
           _c("v-toolbar-title", {
             domProps: { textContent: _vm._s(_vm.title) }
@@ -15541,445 +15375,127 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "example", attrs: { id: "login" } }, [
-    _vm._m(0),
+    _vm.loaded
+      ? _c("img", {
+          staticClass: "px-5 py-5",
+          class: { hide: !_vm.loaded, active: _vm.isActive },
+          staticStyle: { position: "absolute", "z-index": "2" },
+          attrs: { id: "logo", src: "/image/mymemories.png" }
+        })
+      : _vm._e(),
     _vm._v(" "),
     _c("img", {
+      class: { hide: !_vm.loaded, active: _vm.isActive },
       staticStyle: { width: "100%", position: "relative" },
-      attrs: { id: "main", src: "/image/login" + _vm.randomNumber + ".png" }
+      attrs: { id: "main", src: "/image/login" + _vm.randomNumber + ".png" },
+      on: { load: _vm.isLoad }
     }),
     _vm._v(" "),
-    _c(
-      "div",
-      { staticClass: "hello", staticStyle: { opacity: "0.95" } },
-      [
-        _c(
-          "v-card",
-          { staticClass: "mx-auto", attrs: { "max-width": "500" } },
+    _vm.loaded
+      ? _c(
+          "div",
+          { staticClass: "hello", staticStyle: { opacity: "0.95" } },
           [
             _c(
-              "v-card-title",
-              {
-                staticClass: "title font-weight-regular justify-space-between"
-              },
-              [
-                _c("h4", [_vm._v(_vm._s(_vm.currentTitle))]),
-                _vm._v(" "),
-                _c("v-avatar", {
-                  staticClass: "subheading white--text",
-                  attrs: { color: "primary lighten-2", size: "24" },
-                  domProps: { textContent: _vm._s(_vm.step) }
-                })
-              ],
-              1
-            ),
-            _vm._v(" "),
-            _c(
-              "v-window",
-              {
-                staticClass: "px-5 py-5",
-                model: {
-                  value: _vm.step,
-                  callback: function($$v) {
-                    _vm.step = $$v
-                  },
-                  expression: "step"
-                }
-              },
+              "v-card",
+              { staticClass: "mx-auto", attrs: { "max-width": "500" } },
               [
                 _c(
-                  "v-window-item",
-                  { attrs: { value: 1 } },
+                  "v-card-title",
+                  {
+                    staticClass:
+                      "title font-weight-regular justify-space-between"
+                  },
                   [
-                    _c(
-                      "v-form",
-                      { ref: "form", attrs: { "lazy-validation": "" } },
-                      [
-                        _c("v-text-field", {
-                          staticClass: "py-2",
-                          attrs: {
-                            placeholder: "アドレス",
-                            label: "Email",
-                            required: "",
-                            clearable: ""
-                          },
-                          on: {
-                            keyup: function($event) {
-                              if (
-                                !$event.type.indexOf("key") &&
-                                _vm._k(
-                                  $event.keyCode,
-                                  "enter",
-                                  13,
-                                  $event.key,
-                                  "Enter"
-                                )
-                              ) {
-                                return null
-                              }
-                              if (
-                                $event.ctrlKey ||
-                                $event.shiftKey ||
-                                $event.altKey ||
-                                $event.metaKey
-                              ) {
-                                return null
-                              }
-                              return _vm.login($event)
-                            }
-                          },
-                          model: {
-                            value: _vm.email,
-                            callback: function($$v) {
-                              _vm.email = $$v
-                            },
-                            expression: "email"
-                          }
-                        }),
-                        _vm._v(" "),
-                        _c("v-text-field", {
-                          ref: "focusThis",
-                          attrs: {
-                            placeholder: "パスワード",
-                            counter: 10,
-                            label: "Password",
-                            required: "",
-                            "append-icon": _vm.show1
-                              ? "mdi-eye"
-                              : "mdi-eye-off",
-                            type: _vm.show1 ? "text" : "password"
-                          },
-                          on: {
-                            "click:append": function($event) {
-                              _vm.show1 = !_vm.show1
-                            },
-                            keyup: function($event) {
-                              if (
-                                !$event.type.indexOf("key") &&
-                                _vm._k(
-                                  $event.keyCode,
-                                  "enter",
-                                  13,
-                                  $event.key,
-                                  "Enter"
-                                )
-                              ) {
-                                return null
-                              }
-                              if (
-                                $event.ctrlKey ||
-                                $event.shiftKey ||
-                                $event.altKey ||
-                                $event.metaKey
-                              ) {
-                                return null
-                              }
-                              return _vm.login($event)
-                            }
-                          },
-                          model: {
-                            value: _vm.password,
-                            callback: function($$v) {
-                              _vm.password = $$v
-                            },
-                            expression: "password"
-                          }
-                        }),
-                        _vm._v(" "),
-                        Object.keys(_vm.errors).length !== 0
-                          ? _c("div", [
-                              _c("div", { staticClass: "mb-3 mt-1" }, [
-                                _c(
-                                  "div",
-                                  {
-                                    staticClass: "error px-4 py-2",
-                                    staticStyle: {
-                                      "font-size": "smaller",
-                                      "font-weight": "500"
-                                    }
-                                  },
-                                  [
-                                    _vm.errors.email
-                                      ? _c("div", {
-                                          staticClass: "alert alert-danger",
-                                          domProps: {
-                                            textContent: _vm._s(
-                                              _vm.errors.email
-                                            )
-                                          }
-                                        })
-                                      : _vm._e(),
-                                    _vm._v(" "),
-                                    _vm.errors.password
-                                      ? _c("div", {
-                                          staticClass: "alert alert-danger",
-                                          domProps: {
-                                            textContent: _vm._s(
-                                              _vm.errors.password
-                                            )
-                                          }
-                                        })
-                                      : _vm._e()
-                                  ]
-                                )
-                              ])
-                            ])
-                          : _vm._e(),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "d-flex mb-5 justify-content-start" },
-                          [
-                            _c(
-                              "v-btn",
-                              {
-                                staticClass: "mr-4",
-                                attrs: { color: "success" },
-                                on: { click: _vm.login }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                ログイン\n                "
-                                )
-                              ]
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "v-btn",
-                              {
-                                attrs: { color: "indigo white--text" },
-                                on: {
-                                  click: function($event) {
-                                    _vm.step++
-                                  }
-                                }
-                              },
-                              [
-                                _vm._v(
-                                  "\n                会員登録\n                "
-                                )
-                              ]
-                            )
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          [
-                            _c(
-                              "v-btn",
-                              {
-                                staticClass: "mb-3 btn-google",
-                                staticStyle: { "max-width": "280px" },
-                                attrs: { href: "/auth/google", block: "" }
-                              },
-                              [
-                                _c("span", { staticClass: "g" }, [_vm._v("g")]),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "o" }, [_vm._v("o")]),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "o2" }, [
-                                  _vm._v("o")
-                                ]),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "g2" }, [
-                                  _vm._v("g")
-                                ]),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "l" }, [_vm._v("l")]),
-                                _vm._v(" "),
-                                _c("span", { staticClass: "e" }, [_vm._v("e")])
-                              ]
-                            )
-                          ],
-                          1
-                        ),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          {
-                            on: {
-                              mouseover: function($event) {
-                                _vm.showq = true
-                              },
-                              mouseout: function($event) {
-                                _vm.showq = false
-                              }
-                            }
-                          },
-                          [
-                            _c(
-                              "v-btn",
-                              {
-                                staticClass: "grey--text lighten-1 black",
-                                staticStyle: { "max-width": "280px" },
-                                attrs: {
-                                  id: "gitbtn",
-                                  color: "grey darken-4",
-                                  href: "/auth/github",
-                                  block: ""
-                                }
-                              },
-                              [
-                                _vm._v("github\n                        "),
-                                _c(
-                                  "transition",
-                                  { attrs: { name: "bounce" } },
-                                  [
-                                    _vm.showq
-                                      ? _c("img", {
-                                          staticStyle: {
-                                            position: "absolute",
-                                            right: "0"
-                                          },
-                                          attrs: { src: "/image/github.png" }
-                                        })
-                                      : _vm._e()
-                                  ]
-                                )
-                              ],
-                              1
-                            )
-                          ],
-                          1
-                        )
-                      ],
-                      1
-                    )
+                    _c("h4", [_vm._v(_vm._s(_vm.currentTitle))]),
+                    _vm._v(" "),
+                    _c("v-avatar", {
+                      staticClass: "subheading white--text",
+                      attrs: { color: "primary lighten-2", size: "24" },
+                      domProps: { textContent: _vm._s(_vm.step) }
+                    })
                   ],
                   1
                 ),
                 _vm._v(" "),
                 _c(
-                  "v-window-item",
-                  { attrs: { value: 2 } },
+                  "v-window",
+                  {
+                    staticClass: "px-5 py-5",
+                    model: {
+                      value: _vm.step,
+                      callback: function($$v) {
+                        _vm.step = $$v
+                      },
+                      expression: "step"
+                    }
+                  },
                   [
                     _c(
-                      "v-card-text",
+                      "v-window-item",
+                      { attrs: { value: 1 } },
                       [
                         _c(
                           "v-form",
-                          {
-                            ref: "form",
-                            attrs: { "lazy-validation": "" },
-                            model: {
-                              value: _vm.valid,
-                              callback: function($$v) {
-                                _vm.valid = $$v
-                              },
-                              expression: "valid"
-                            }
-                          },
+                          { ref: "form", attrs: { "lazy-validation": "" } },
                           [
                             _c("v-text-field", {
-                              ref: "name",
                               staticClass: "py-2",
                               attrs: {
-                                rules: _vm.nameRules,
-                                label: "名前",
-                                placeholder: "井上領",
-                                required: ""
-                              },
-                              on: { input: _vm.blurInput },
-                              model: {
-                                value: _vm.registration.name,
-                                callback: function($$v) {
-                                  _vm.$set(_vm.registration, "name", $$v)
-                                },
-                                expression: "registration.name"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("v-text-field", {
-                              ref: "screen_name",
-                              staticClass: "py-2",
-                              attrs: {
-                                rules: _vm.nicknameRules,
-                                label: "ニックネーム",
-                                placeholder: "Rio",
-                                required: ""
-                              },
-                              on: { input: _vm.blurInput },
-                              model: {
-                                value: _vm.registration.screen_name,
-                                callback: function($$v) {
-                                  _vm.$set(_vm.registration, "screen_name", $$v)
-                                },
-                                expression: "registration.screen_name"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("v-text-field", {
-                              staticClass: "py-2",
-                              attrs: {
-                                autocomplete: "new-password",
-                                rules: _vm.emailRules,
-                                label: "メールアドレス",
-                                placeholder: "mymemories@hello.com",
-                                counter: "40",
-                                required: ""
-                              },
-                              on: { input: _vm.blurInput },
-                              model: {
-                                value: _vm.registration.email,
-                                callback: function($$v) {
-                                  _vm.$set(_vm.registration, "email", $$v)
-                                },
-                                expression: "registration.email"
-                              }
-                            }),
-                            _vm._v(" "),
-                            _c("v-text-field", {
-                              staticClass: "input-group--focused py-2",
-                              attrs: {
-                                "append-icon": _vm.show2
-                                  ? "mdi-eye"
-                                  : "mdi-eye-off",
-                                rules: [
-                                  _vm.passwordRules.required,
-                                  _vm.passwordRules.min
-                                ],
-                                type: _vm.show2 ? "text" : "password",
-                                name: "input-10-2",
-                                label: "パスワード",
-                                hint: "At least 8 characters",
-                                autocomplete: "new-password"
+                                placeholder: "アドレス",
+                                label: "Email",
+                                required: "",
+                                clearable: ""
                               },
                               on: {
-                                input: _vm.blurInput,
-                                "click:append": function($event) {
-                                  _vm.show2 = !_vm.show2
+                                keyup: function($event) {
+                                  if (
+                                    !$event.type.indexOf("key") &&
+                                    _vm._k(
+                                      $event.keyCode,
+                                      "enter",
+                                      13,
+                                      $event.key,
+                                      "Enter"
+                                    )
+                                  ) {
+                                    return null
+                                  }
+                                  if (
+                                    $event.ctrlKey ||
+                                    $event.shiftKey ||
+                                    $event.altKey ||
+                                    $event.metaKey
+                                  ) {
+                                    return null
+                                  }
+                                  return _vm.login($event)
                                 }
                               },
                               model: {
-                                value: _vm.registration.password,
+                                value: _vm.email,
                                 callback: function($$v) {
-                                  _vm.$set(_vm.registration, "password", $$v)
+                                  _vm.email = $$v
                                 },
-                                expression: "registration.password"
+                                expression: "email"
                               }
                             }),
                             _vm._v(" "),
                             _c("v-text-field", {
-                              staticClass: "input-group--focused py-2",
+                              ref: "focusThis",
                               attrs: {
-                                "append-icon": _vm.show3
+                                placeholder: "パスワード",
+                                counter: 10,
+                                label: "Password",
+                                required: "",
+                                "append-icon": _vm.show1
                                   ? "mdi-eye"
                                   : "mdi-eye-off",
-                                rules: [
-                                  _vm.confirmationPasswordRules.required,
-                                  _vm.confirmationPasswordRules.match
-                                ],
-                                type: _vm.show3 ? "text" : "password",
-                                name: "input-10-2",
-                                label: "パスワード確認",
-                                hint: "At least 8 characters",
-                                autocomplete: "new-password"
+                                type: _vm.show1 ? "text" : "password"
                               },
                               on: {
-                                input: _vm.blurInput,
                                 "click:append": function($event) {
-                                  _vm.show3 = !_vm.show
+                                  _vm.show1 = !_vm.show1
                                 },
                                 keyup: function($event) {
                                   if (
@@ -16002,21 +15518,188 @@ var render = function() {
                                   ) {
                                     return null
                                   }
-                                  return _vm.register($event)
+                                  return _vm.login($event)
                                 }
                               },
                               model: {
-                                value: _vm.registration.confirmationPassword,
+                                value: _vm.password,
                                 callback: function($$v) {
-                                  _vm.$set(
-                                    _vm.registration,
-                                    "confirmationPassword",
-                                    $$v
-                                  )
+                                  _vm.password = $$v
                                 },
-                                expression: "registration.confirmationPassword"
+                                expression: "password"
                               }
-                            })
+                            }),
+                            _vm._v(" "),
+                            Object.keys(_vm.errors).length !== 0
+                              ? _c("div", [
+                                  _c("div", { staticClass: "mb-3 mt-1" }, [
+                                    _c(
+                                      "div",
+                                      {
+                                        staticClass: "error px-4 py-2",
+                                        staticStyle: {
+                                          "font-size": "smaller",
+                                          "font-weight": "500"
+                                        }
+                                      },
+                                      [
+                                        _vm.errors.email
+                                          ? _c("div", {
+                                              staticClass: "alert alert-danger",
+                                              domProps: {
+                                                textContent: _vm._s(
+                                                  _vm.errors.email
+                                                )
+                                              }
+                                            })
+                                          : _vm._e(),
+                                        _vm._v(" "),
+                                        _vm.errors.password
+                                          ? _c("div", {
+                                              staticClass: "alert alert-danger",
+                                              domProps: {
+                                                textContent: _vm._s(
+                                                  _vm.errors.password
+                                                )
+                                              }
+                                            })
+                                          : _vm._e()
+                                      ]
+                                    )
+                                  ])
+                                ])
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                staticClass: "d-flex mb-5 justify-content-start"
+                              },
+                              [
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticClass: "mr-4",
+                                    attrs: { color: "success" },
+                                    on: { click: _vm.login }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                ログイン\n                "
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c(
+                                  "v-btn",
+                                  {
+                                    attrs: { color: "indigo white--text" },
+                                    on: {
+                                      click: function($event) {
+                                        _vm.step++
+                                      }
+                                    }
+                                  },
+                                  [
+                                    _vm._v(
+                                      "\n                会員登録\n                "
+                                    )
+                                  ]
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              [
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticClass: "mb-3 btn-google",
+                                    staticStyle: { "max-width": "280px" },
+                                    attrs: { href: "/auth/google", block: "" }
+                                  },
+                                  [
+                                    _c("span", { staticClass: "g" }, [
+                                      _vm._v("g")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("span", { staticClass: "o" }, [
+                                      _vm._v("o")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("span", { staticClass: "o2" }, [
+                                      _vm._v("o")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("span", { staticClass: "g2" }, [
+                                      _vm._v("g")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("span", { staticClass: "l" }, [
+                                      _vm._v("l")
+                                    ]),
+                                    _vm._v(" "),
+                                    _c("span", { staticClass: "e" }, [
+                                      _vm._v("e")
+                                    ])
+                                  ]
+                                )
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "div",
+                              {
+                                on: {
+                                  mouseover: function($event) {
+                                    _vm.showq = true
+                                  },
+                                  mouseleave: function($event) {
+                                    _vm.showq = false
+                                  }
+                                }
+                              },
+                              [
+                                _c(
+                                  "v-btn",
+                                  {
+                                    staticClass: "grey--text lighten-1 black",
+                                    staticStyle: { "max-width": "280px" },
+                                    attrs: {
+                                      id: "gitbtn",
+                                      color: "grey darken-4",
+                                      href: "/auth/github",
+                                      block: ""
+                                    }
+                                  },
+                                  [
+                                    _vm._v("github\n                        "),
+                                    _c(
+                                      "transition",
+                                      { attrs: { name: "bounce" } },
+                                      [
+                                        _vm.showq
+                                          ? _c("img", {
+                                              staticStyle: {
+                                                position: "absolute",
+                                                right: "0"
+                                              },
+                                              attrs: {
+                                                src: "/image/github.png"
+                                              }
+                                            })
+                                          : _vm._e()
+                                      ]
+                                    )
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
                           ],
                           1
                         )
@@ -16024,163 +15707,340 @@ var render = function() {
                       1
                     ),
                     _vm._v(" "),
-                    Object.keys(_vm.registrationErrors).length !== 0
-                      ? _c("div", [
-                          _c("div", { staticClass: "mb-2 px-4" }, [
+                    _c(
+                      "v-window-item",
+                      { attrs: { value: 2 } },
+                      [
+                        _c(
+                          "v-card-text",
+                          [
                             _c(
-                              "div",
+                              "v-form",
                               {
-                                staticClass: "error px-4 py-2",
-                                staticStyle: {
-                                  "font-size": "smaller",
-                                  "font-weight": "500"
+                                ref: "form",
+                                attrs: { "lazy-validation": "" },
+                                model: {
+                                  value: _vm.valid,
+                                  callback: function($$v) {
+                                    _vm.valid = $$v
+                                  },
+                                  expression: "valid"
                                 }
                               },
                               [
-                                _vm.registrationErrors.email
-                                  ? _c("div", {
-                                      staticClass: "alert alert-danger",
-                                      domProps: {
-                                        textContent: _vm._s(
-                                          _vm.registrationErrors.email
-                                        )
-                                      }
-                                    })
-                                  : _vm._e(),
+                                _c("v-text-field", {
+                                  ref: "name",
+                                  staticClass: "py-2",
+                                  attrs: {
+                                    rules: _vm.nameRules,
+                                    label: "名前",
+                                    placeholder: "井上領",
+                                    required: ""
+                                  },
+                                  on: { input: _vm.blurInput },
+                                  model: {
+                                    value: _vm.registration.name,
+                                    callback: function($$v) {
+                                      _vm.$set(_vm.registration, "name", $$v)
+                                    },
+                                    expression: "registration.name"
+                                  }
+                                }),
                                 _vm._v(" "),
-                                _vm.registrationErrors.password
-                                  ? _c("div", {
-                                      staticClass: "alert alert-danger",
-                                      domProps: {
-                                        textContent: _vm._s(
-                                          _vm.registrationErrors.password
+                                _c("v-text-field", {
+                                  ref: "screen_name",
+                                  staticClass: "py-2",
+                                  attrs: {
+                                    rules: _vm.nicknameRules,
+                                    label: "ニックネーム",
+                                    placeholder: "Rio",
+                                    required: ""
+                                  },
+                                  on: { input: _vm.blurInput },
+                                  model: {
+                                    value: _vm.registration.screen_name,
+                                    callback: function($$v) {
+                                      _vm.$set(
+                                        _vm.registration,
+                                        "screen_name",
+                                        $$v
+                                      )
+                                    },
+                                    expression: "registration.screen_name"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("v-text-field", {
+                                  staticClass: "py-2",
+                                  attrs: {
+                                    autocomplete: "new-password",
+                                    rules: _vm.emailRules,
+                                    label: "メールアドレス",
+                                    placeholder: "mymemories@hello.com",
+                                    counter: "40",
+                                    required: ""
+                                  },
+                                  on: { input: _vm.blurInput },
+                                  model: {
+                                    value: _vm.registration.email,
+                                    callback: function($$v) {
+                                      _vm.$set(_vm.registration, "email", $$v)
+                                    },
+                                    expression: "registration.email"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("v-text-field", {
+                                  staticClass: "input-group--focused py-2",
+                                  attrs: {
+                                    "append-icon": _vm.show2
+                                      ? "mdi-eye"
+                                      : "mdi-eye-off",
+                                    rules: [
+                                      _vm.passwordRules.required,
+                                      _vm.passwordRules.min
+                                    ],
+                                    type: _vm.show2 ? "text" : "password",
+                                    name: "input-10-2",
+                                    label: "パスワード",
+                                    hint: "At least 8 characters",
+                                    autocomplete: "new-password"
+                                  },
+                                  on: {
+                                    input: _vm.blurInput,
+                                    "click:append": function($event) {
+                                      _vm.show2 = !_vm.show2
+                                    }
+                                  },
+                                  model: {
+                                    value: _vm.registration.password,
+                                    callback: function($$v) {
+                                      _vm.$set(
+                                        _vm.registration,
+                                        "password",
+                                        $$v
+                                      )
+                                    },
+                                    expression: "registration.password"
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("v-text-field", {
+                                  staticClass: "input-group--focused py-2",
+                                  attrs: {
+                                    "append-icon": _vm.show3
+                                      ? "mdi-eye"
+                                      : "mdi-eye-off",
+                                    rules: [
+                                      _vm.confirmationPasswordRules.required,
+                                      _vm.confirmationPasswordRules.match
+                                    ],
+                                    type: _vm.show3 ? "text" : "password",
+                                    name: "input-10-2",
+                                    label: "パスワード確認",
+                                    hint: "At least 8 characters",
+                                    autocomplete: "new-password"
+                                  },
+                                  on: {
+                                    input: _vm.blurInput,
+                                    "click:append": function($event) {
+                                      _vm.show3 = !_vm.show
+                                    },
+                                    keyup: function($event) {
+                                      if (
+                                        !$event.type.indexOf("key") &&
+                                        _vm._k(
+                                          $event.keyCode,
+                                          "enter",
+                                          13,
+                                          $event.key,
+                                          "Enter"
                                         )
+                                      ) {
+                                        return null
                                       }
-                                    })
-                                  : _vm._e()
-                              ]
+                                      if (
+                                        $event.ctrlKey ||
+                                        $event.shiftKey ||
+                                        $event.altKey ||
+                                        $event.metaKey
+                                      ) {
+                                        return null
+                                      }
+                                      return _vm.register($event)
+                                    }
+                                  },
+                                  model: {
+                                    value:
+                                      _vm.registration.confirmationPassword,
+                                    callback: function($$v) {
+                                      _vm.$set(
+                                        _vm.registration,
+                                        "confirmationPassword",
+                                        $$v
+                                      )
+                                    },
+                                    expression:
+                                      "registration.confirmationPassword"
+                                  }
+                                })
+                              ],
+                              1
                             )
-                          ])
-                        ])
-                      : _vm._e(),
-                    _vm._v(" "),
-                    _c(
-                      "div",
-                      {
-                        staticClass: "d-flex",
-                        staticStyle: { "justify-content": "space-between" }
-                      },
-                      [
-                        _c(
-                          "v-btn",
-                          {
-                            staticClass: "mr-4",
-                            attrs: { color: "white" },
-                            on: {
-                              click: function($event) {
-                                _vm.step--
-                              }
-                            }
-                          },
-                          [_vm._v("\n                戻る\n                ")]
+                          ],
+                          1
                         ),
                         _vm._v(" "),
-                        _vm.initial
-                          ? [
-                              _c(
-                                "v-btn",
-                                {
-                                  staticClass: "mr-4",
-                                  attrs: { disabled: "" }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                登録\n                "
-                                  )
-                                ]
-                              )
-                            ]
-                          : [
-                              _c(
-                                "v-btn",
-                                {
-                                  staticClass: "mr-4",
-                                  attrs: {
-                                    color: "indigo white--text",
-                                    disabled: !_vm.valid
+                        Object.keys(_vm.registrationErrors).length !== 0
+                          ? _c("div", [
+                              _c("div", { staticClass: "mb-2 px-4" }, [
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "error px-4 py-2",
+                                    staticStyle: {
+                                      "font-size": "smaller",
+                                      "font-weight": "500"
+                                    }
                                   },
-                                  on: { click: _vm.register }
-                                },
-                                [
-                                  _vm._v(
-                                    "\n                登録\n                "
+                                  [
+                                    _vm.registrationErrors.email
+                                      ? _c("div", {
+                                          staticClass: "alert alert-danger",
+                                          domProps: {
+                                            textContent: _vm._s(
+                                              _vm.registrationErrors.email
+                                            )
+                                          }
+                                        })
+                                      : _vm._e(),
+                                    _vm._v(" "),
+                                    _vm.registrationErrors.password
+                                      ? _c("div", {
+                                          staticClass: "alert alert-danger",
+                                          domProps: {
+                                            textContent: _vm._s(
+                                              _vm.registrationErrors.password
+                                            )
+                                          }
+                                        })
+                                      : _vm._e()
+                                  ]
+                                )
+                              ])
+                            ])
+                          : _vm._e(),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          {
+                            staticClass: "d-flex",
+                            staticStyle: { "justify-content": "space-between" }
+                          },
+                          [
+                            _c(
+                              "v-btn",
+                              {
+                                staticClass: "mr-4",
+                                attrs: { color: "white" },
+                                on: {
+                                  click: function($event) {
+                                    _vm.step--
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                戻る\n                "
+                                )
+                              ]
+                            ),
+                            _vm._v(" "),
+                            _vm.initial
+                              ? [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "mr-4",
+                                      attrs: { disabled: "" }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                登録\n                "
+                                      )
+                                    ]
                                   )
                                 ]
+                              : [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "mr-4",
+                                      attrs: {
+                                        color: "indigo white--text",
+                                        disabled: !_vm.valid
+                                      },
+                                      on: { click: _vm.register }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n                登録\n                "
+                                      )
+                                    ]
+                                  )
+                                ]
+                          ],
+                          2
+                        )
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c("v-window-item", { attrs: { value: 3 } }, [
+                      _c(
+                        "div",
+                        { staticClass: "pa-4 text-center" },
+                        [
+                          _c("v-img", {
+                            staticClass: "mb-4",
+                            attrs: {
+                              contain: "",
+                              height: "128",
+                              src:
+                                "https://cdn.vuetifyjs.com/images/logos/v.svg"
+                            }
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "h3",
+                            { staticClass: "title font-weight-light mb-2" },
+                            [
+                              _vm._v(
+                                "\n                        Welcome to Vuetify\n                    "
                               )
                             ]
-                      ],
-                      2
-                    )
+                          ),
+                          _vm._v(" "),
+                          _c("span", { staticClass: "caption grey--text" }, [
+                            _vm._v("Thanks for signing up!")
+                          ])
+                        ],
+                        1
+                      )
+                    ])
                   ],
                   1
-                ),
-                _vm._v(" "),
-                _c("v-window-item", { attrs: { value: 3 } }, [
-                  _c(
-                    "div",
-                    { staticClass: "pa-4 text-center" },
-                    [
-                      _c("v-img", {
-                        staticClass: "mb-4",
-                        attrs: {
-                          contain: "",
-                          height: "128",
-                          src: "https://cdn.vuetifyjs.com/images/logos/v.svg"
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "h3",
-                        { staticClass: "title font-weight-light mb-2" },
-                        [
-                          _vm._v(
-                            "\n                        Welcome to Vuetify\n                    "
-                          )
-                        ]
-                      ),
-                      _vm._v(" "),
-                      _c("span", { staticClass: "caption grey--text" }, [
-                        _vm._v("Thanks for signing up!")
-                      ])
-                    ],
-                    1
-                  )
-                ])
+                )
               ],
               1
             )
           ],
           1
         )
-      ],
-      1
-    )
+      : _vm._e()
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c("img", {
-        staticClass: "px-5 py-5",
-        staticStyle: { position: "absolute", "z-index": "1" },
-        attrs: { id: "logo", src: "/image/mymemories.png" }
-      })
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -18516,7 +18376,7 @@ var render = function() {
                                     attrs: { subheader: "" }
                                   },
                                   [
-                                    _c("v-subheader", [_vm._v("Recent chat")]),
+                                    _c("v-subheader", [_vm._v("いいね")]),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -18689,7 +18549,7 @@ var render = function() {
                                     attrs: { subheader: "" }
                                   },
                                   [
-                                    _c("v-subheader", [_vm._v("Recent chat")]),
+                                    _c("v-subheader", [_vm._v("コメント")]),
                                     _vm._v(" "),
                                     _vm._l(_vm.postComments, function(
                                       postComment,
@@ -18697,14 +18557,30 @@ var render = function() {
                                     ) {
                                       return _c(
                                         "div",
-                                        { key: index },
+                                        {
+                                          key: index,
+                                          on: {
+                                            mouseover: function($event) {
+                                              return _vm.showDeleteBtn(
+                                                postComment.user_id,
+                                                index
+                                              )
+                                            },
+                                            mouseleave: function($event) {
+                                              return _vm.hideDeleteBtn(
+                                                postComment.user_id,
+                                                index
+                                              )
+                                            }
+                                          }
+                                        },
                                         [
                                           _vm.commentUser(postComment.user_id)
                                             ? _c(
                                                 "v-list-item",
                                                 [
                                                   _c(
-                                                    "v-list-item-avatar",
+                                                    "a",
                                                     {
                                                       attrs: {
                                                         href:
@@ -18713,15 +18589,21 @@ var render = function() {
                                                       }
                                                     },
                                                     [
-                                                      _c("v-img", {
-                                                        attrs: {
-                                                          src:
-                                                            "storage/image/avatar/" +
-                                                            _vm.commentUser(
-                                                              postComment.user_id
-                                                            ).profile_image
-                                                        }
-                                                      })
+                                                      _c(
+                                                        "v-list-item-avatar",
+                                                        [
+                                                          _c("v-img", {
+                                                            attrs: {
+                                                              src:
+                                                                "storage/image/avatar/" +
+                                                                _vm.commentUser(
+                                                                  postComment.user_id
+                                                                ).profile_image
+                                                            }
+                                                          })
+                                                        ],
+                                                        1
+                                                      )
                                                     ],
                                                     1
                                                   ),
@@ -18737,44 +18619,69 @@ var render = function() {
                                                             ).screen_name
                                                           )
                                                         }
-                                                      })
+                                                      }),
+                                                      _vm._v(
+                                                        "\n                                        " +
+                                                          _vm._s(
+                                                            postComment.text
+                                                          ) +
+                                                          "\n                                        "
+                                                      )
                                                     ],
                                                     1
                                                   ),
                                                   _vm._v(" "),
-                                                  _c("div", [
-                                                    _vm._v(
-                                                      _vm._s(postComment.text) +
-                                                        "\n                                        "
-                                                    )
-                                                  ]),
-                                                  _vm._v(" "),
                                                   _vm.commentUser(
                                                     postComment.user_id
                                                   ).id == _vm.visitor.id
-                                                    ? [
-                                                        _c(
-                                                          "v-btn",
-                                                          {
-                                                            attrs: {
-                                                              color: "success"
-                                                            },
-                                                            on: {
-                                                              click: function(
-                                                                $event
-                                                              ) {
-                                                                return _vm.deleteComment(
-                                                                  postComment
-                                                                )
+                                                    ? _c(
+                                                        "v-list-item-action",
+                                                        [
+                                                          _c(
+                                                            "transition",
+                                                            {
+                                                              attrs: {
+                                                                name:
+                                                                  "slide-fade"
                                                               }
-                                                            }
-                                                          },
-                                                          [_vm._v("削除")]
-                                                        )
-                                                      ]
+                                                            },
+                                                            [
+                                                              _vm.isDeleteBtn[
+                                                                index
+                                                              ]
+                                                                ? _c(
+                                                                    "v-btn",
+                                                                    {
+                                                                      attrs: {
+                                                                        color:
+                                                                          "success"
+                                                                      },
+                                                                      on: {
+                                                                        click: function(
+                                                                          $event
+                                                                        ) {
+                                                                          return _vm.deleteComment(
+                                                                            postComment
+                                                                          )
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    [
+                                                                      _vm._v(
+                                                                        "削除"
+                                                                      )
+                                                                    ]
+                                                                  )
+                                                                : _vm._e()
+                                                            ],
+                                                            1
+                                                          )
+                                                        ],
+                                                        1
+                                                      )
                                                     : _vm._e()
                                                 ],
-                                                2
+                                                1
                                               )
                                             : _vm._e()
                                         ],
@@ -20165,20 +20072,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("\n                Disagree\n            ")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { color: "green darken-1", text: "" },
-                      on: {
-                        click: function($event) {
-                          _vm.likeDialog = false
-                        }
-                      }
-                    },
-                    [_vm._v("\n                Agree\n            ")]
+                    [_vm._v("\n                閉じる\n            ")]
                   )
                 ],
                 1
@@ -20210,7 +20104,7 @@ var render = function() {
                 "v-list",
                 { attrs: { subheader: "" } },
                 [
-                  _c("v-subheader", [_vm._v("Recent chat")]),
+                  _c("v-subheader", [_vm._v("コメント")]),
                   _vm._v(" "),
                   _c(
                     "div",
@@ -20223,24 +20117,46 @@ var render = function() {
                     _vm._l(_vm.postComments, function(postComment, index) {
                       return _c(
                         "v-list-item",
-                        { key: index },
+                        {
+                          key: index,
+                          on: {
+                            mouseover: function($event) {
+                              return _vm.showDeleteBtn(
+                                postComment.user_id,
+                                index
+                              )
+                            },
+                            mouseleave: function($event) {
+                              return _vm.hideDeleteBtn(
+                                postComment.user_id,
+                                index
+                              )
+                            }
+                          }
+                        },
                         [
                           _c(
-                            "v-list-item-avatar",
+                            "a",
                             {
                               attrs: {
                                 href: "/profile?id=" + postComment.user_id
                               }
                             },
                             [
-                              _c("v-img", {
-                                attrs: {
-                                  src:
-                                    "storage/image/avatar/" +
-                                    _vm.commentUser(postComment.user_id)
-                                      .profile_image
-                                }
-                              })
+                              _c(
+                                "v-list-item-avatar",
+                                [
+                                  _c("v-img", {
+                                    attrs: {
+                                      src:
+                                        "storage/image/avatar/" +
+                                        _vm.commentUser(postComment.user_id)
+                                          .profile_image
+                                    }
+                                  })
+                                ],
+                                1
+                              )
                             ],
                             1
                           ),
@@ -20255,46 +20171,48 @@ var render = function() {
                                       .screen_name
                                   )
                                 }
-                              })
+                              }),
+                              _vm._v(
+                                "\n                    " +
+                                  _vm._s(postComment.text) +
+                                  "\n                    "
+                              )
                             ],
                             1
                           ),
                           _vm._v(" "),
-                          _c(
-                            "div",
-                            [
-                              _vm._v(
-                                _vm._s(postComment.text) +
-                                  "\n                        "
-                              ),
-                              _vm.commentUser(postComment.user_id).id ==
-                              _vm.visitor.id
-                                ? [
-                                    _c(
-                                      "v-btn",
-                                      {
-                                        attrs: { color: "success" },
-                                        on: {
-                                          click: function($event) {
-                                            return _vm.deleteComment(
-                                              postComment
-                                            )
-                                          }
-                                        }
-                                      },
-                                      [_vm._v("削除")]
-                                    )
-                                  ]
-                                : [
-                                    _c(
-                                      "v-btn",
-                                      { attrs: { color: "success" } },
-                                      [_vm._v("a")]
-                                    )
-                                  ]
-                            ],
-                            2
-                          )
+                          _vm.commentUser(postComment.user_id).id ==
+                          _vm.visitor.id
+                            ? _c(
+                                "v-list-item-action",
+                                [
+                                  _c(
+                                    "transition",
+                                    { attrs: { name: "slide-fade" } },
+                                    [
+                                      _vm.isDeleteBtn[index]
+                                        ? _c(
+                                            "v-btn",
+                                            {
+                                              attrs: { color: "success" },
+                                              on: {
+                                                click: function($event) {
+                                                  return _vm.deleteComment(
+                                                    postComment
+                                                  )
+                                                }
+                                              }
+                                            },
+                                            [_vm._v("削除")]
+                                          )
+                                        : _vm._e()
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            : _vm._e()
                         ],
                         1
                       )
@@ -20320,20 +20238,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("\n                Disagree\n            ")]
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { color: "green darken-1", text: "" },
-                      on: {
-                        click: function($event) {
-                          _vm.commentDialog = false
-                        }
-                      }
-                    },
-                    [_vm._v("\n                Agree\n            ")]
+                    [_vm._v("\n                閉じる\n            ")]
                   )
                 ],
                 1
@@ -85727,9 +85632,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _LikePosts_vue_vue_type_template_id_24ee9252_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./LikePosts.vue?vue&type=template&id=24ee9252&scoped=true& */ "./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=template&id=24ee9252&scoped=true&");
 /* harmony import */ var _LikePosts_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LikePosts.vue?vue&type=script&lang=js& */ "./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _LikePosts_vue_vue_type_style_index_0_id_24ee9252_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./LikePosts.vue?vue&type=style&index=0&id=24ee9252&scoped=true&lang=css& */ "./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=0&id=24ee9252&scoped=true&lang=css&");
-/* harmony import */ var _LikePosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./LikePosts.vue?vue&type=style&index=1&lang=css& */ "./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -85738,7 +85641,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_4__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _LikePosts_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _LikePosts_vue_vue_type_template_id_24ee9252_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
   _LikePosts_vue_vue_type_template_id_24ee9252_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -85786,22 +85689,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css&":
-/*!**************************************************************************************************!*\
-  !*** ./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css& ***!
-  \**************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_LikePosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./LikePosts.vue?vue&type=style&index=1&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=style&index=1&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_LikePosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_LikePosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_LikePosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_LikePosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
 /***/ "./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=template&id=24ee9252&scoped=true&":
 /*!************************************************************************************************************!*\
   !*** ./resources/ts/components/organisms/profile/LikePosts.vue?vue&type=template&id=24ee9252&scoped=true& ***!
@@ -85831,9 +85718,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ProfileCard_vue_vue_type_template_id_328b1574___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProfileCard.vue?vue&type=template&id=328b1574& */ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=template&id=328b1574&");
 /* harmony import */ var _ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ProfileCard.vue?vue&type=script&lang=ts& */ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts&");
-/* empty/unused harmony star reexport *//* harmony import */ var _ProfileCard_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./ProfileCard.vue?vue&type=style&index=0&lang=css& */ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -85841,7 +85726,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__["default"],
   _ProfileCard_vue_vue_type_template_id_328b1574___WEBPACK_IMPORTED_MODULE_0__["render"],
   _ProfileCard_vue_vue_type_template_id_328b1574___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -85870,22 +85755,6 @@ component.options.__file = "resources/ts/components/organisms/profile/ProfileCar
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/ts-loader??ref--5!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ProfileCard.vue?vue&type=script&lang=ts& */ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts&");
 /* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__["default"]); 
-
-/***/ }),
-
-/***/ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css&":
-/*!****************************************************************************************************!*\
-  !*** ./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css& ***!
-  \****************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ProfileCard.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=style&index=0&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
 
 /***/ }),
 
@@ -85919,9 +85788,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _UserPosts_vue_vue_type_template_id_f11a15ba_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./UserPosts.vue?vue&type=template&id=f11a15ba&scoped=true& */ "./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=template&id=f11a15ba&scoped=true&");
 /* harmony import */ var _UserPosts_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./UserPosts.vue?vue&type=script&lang=js& */ "./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _UserPosts_vue_vue_type_style_index_0_id_f11a15ba_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css& */ "./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css&");
-/* harmony import */ var _UserPosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./UserPosts.vue?vue&type=style&index=1&lang=css& */ "./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -85930,7 +85797,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_4__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _UserPosts_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _UserPosts_vue_vue_type_template_id_f11a15ba_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
   _UserPosts_vue_vue_type_template_id_f11a15ba_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
@@ -85974,22 +85841,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_0_id_f11a15ba_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=0&id=f11a15ba&scoped=true&lang=css&");
 /* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_0_id_f11a15ba_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_0_id_f11a15ba_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
 /* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_0_id_f11a15ba_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_0_id_f11a15ba_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css&":
-/*!**************************************************************************************************!*\
-  !*** ./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css& ***!
-  \**************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/style-loader!../../../../../node_modules/css-loader??ref--7-1!../../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../../node_modules/postcss-loader/src??ref--7-2!../../../../../node_modules/vue-loader/lib??vue-loader-options!./UserPosts.vue?vue&type=style&index=1&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=style&index=1&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_UserPosts_vue_vue_type_style_index_1_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
 
 
 /***/ }),
