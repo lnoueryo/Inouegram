@@ -1,10 +1,8 @@
 <template>
     <div id="login" class="example">
-        <div>
-        <img  class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 1;"/>
-        </div>
-        <img id="main" :src="'/image/login'+randomNumber+'.png'" style="width: 100%; position: relative">
-        <div class="hello" style="opacity: 0.95;">
+        <img :class="{hide: !loaded, active: isActive}" class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 2;" v-if="loaded"/>
+        <img :class="{hide: !loaded, active: isActive}" id="main" :src="'/image/login'+randomNumber+'.png'" style="width: 100%; position: relative;" @load="isLoad">
+        <div class="hello" style="opacity: 0.95;" v-if="loaded">
             <v-card class="mx-auto" max-width="500">
                 <v-card-title class="title font-weight-regular justify-space-between">
                 <h4>{{ currentTitle }}</h4>
@@ -43,7 +41,7 @@
                     <span class="e">e</span>
                     </v-btn>
                 </div>
-                <div @mouseover="showq = true" @mouseout="showq = false">
+                <div @mouseover="showq = true" @mouseleave="showq = false">
                     <v-btn id="gitbtn" color="grey darken-4" class="grey--text lighten-1 black" href="/auth/github" block style="max-width: 280px">github
                         <transition name="bounce">
                             <img v-if="showq" style="position: absolute;right: 0;" src="/image/github.png">
@@ -184,6 +182,7 @@
         props: ['google-user', 'github-user'],
         data(){
             return{
+              loaded: false,
                 initial: true,
                 showq: false,
                 gUser: this.googleUser,
@@ -259,6 +258,9 @@
             console.log(this.hubUser)
         },
         methods: {
+          isLoad(){
+            this.loaded = true;
+          },
             toBase64Url(url, callback){
             var xhr = new XMLHttpRequest();
             xhr.onload = function() {
@@ -452,4 +454,11 @@
       background-color: transparent!important;
       transition: background-color 1s!important;
   }
+  img {
+  opacity: 1;
+  transition: opacity 1s;
+}
+img.hide {
+  opacity: 0;
+}
   </style>
