@@ -2159,6 +2159,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['user'],
@@ -2167,6 +2169,11 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      size: true,
+      windowSize: {
+        x: 0,
+        y: 0
+      },
       drawer: false,
       items: [{
         icon: 'mdi-home',
@@ -2183,6 +2190,14 @@ __webpack_require__.r(__webpack_exports__);
       }],
       title: 'My Memories'
     };
+  },
+  methods: {
+    onResize: function onResize() {
+      this.windowSize = {
+        x: window.innerWidth,
+        y: window.innerHeight
+      };
+    }
   }
 });
 
@@ -7184,6 +7199,43 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -7208,7 +7260,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       timeout: 4000,
       carousel: '',
       length: 4,
-      onboarding: 0,
+      coverItem: 0,
+      textItem: 0,
+      editItems: 0,
       basicSize: '',
       mediaSize: '',
       spSize: window.matchMedia('(max-width: 480px)'),
@@ -7249,7 +7303,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }, _defineProperty(_ref, "isDrag", false), _defineProperty(_ref, "model", null), _defineProperty(_ref, "globalAlpha", 1), _defineProperty(_ref, "timer", ''), _defineProperty(_ref, "filters", ''), _defineProperty(_ref, "croppedImage", ''), _defineProperty(_ref, "toggle_multiple", []), _defineProperty(_ref, "textCanvas", ''), _defineProperty(_ref, "textCanvasctx", ''), _defineProperty(_ref, "texts", []), _defineProperty(_ref, "selectedText", -1), _defineProperty(_ref, "selectedEditText", -1), _defineProperty(_ref, "offsetX", ''), _defineProperty(_ref, "offsetY", ''), _defineProperty(_ref, "scrollX", ''), _defineProperty(_ref, "scrollY", ''), _defineProperty(_ref, "startX", ''), _defineProperty(_ref, "startY", ''), _defineProperty(_ref, "isActive", false), _defineProperty(_ref, "isActiveEditText", false), _defineProperty(_ref, "dialog", false), _defineProperty(_ref, "selectedEditTextMessage", ''), _defineProperty(_ref, "inputPosition", {
       fontSize: '15px',
       color: 'black',
-      fontWeght: '250',
+      fontWeght: '280',
       fontStyle: 'normal',
       top: '100px',
       left: '100px',
@@ -7258,7 +7312,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }), _defineProperty(_ref, "selectedInputPosition", {
       fontSize: '15px',
       color: 'black',
-      fontWeght: '250',
+      fontWeght: '280',
       fontStyle: 'normal',
       top: '100px',
       left: '100px',
@@ -7328,11 +7382,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     this.mediaSize = window.innerWidth;
   },
   methods: {
-    next: function next() {
-      this.onboarding = this.onboarding + 1 === this.length ? 0 : this.onboarding + 1;
+    coverNext: function coverNext() {
+      this.coverItem = this.coverItem + 1 === this.length ? 0 : this.coverItem + 1;
     },
-    prev: function prev() {
-      this.onboarding = this.onboarding - 1 < 0 ? this.length - 1 : this.onboarding - 1;
+    coverPrev: function coverPrev() {
+      this.coverItem = this.coverItem - 1 < 0 ? this.length - 1 : this.coverItem - 1;
+    },
+    textNext: function textNext() {
+      this.textItem = this.textItem + 1 === this.length ? 0 : this.textItem + 1;
+    },
+    textPrev: function textPrev() {
+      this.textItem = this.textItem - 1 < 0 ? this.length - 1 : this.textItem - 1;
     },
     oneMoreImage: function oneMoreImage() {
       this.e1 = 1;
@@ -7373,8 +7433,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.$refs.cropper.replace(e);
         var newImg = document.createElement("img");
         newImg.src = this.concatImg[this.concatImg.length - 1];
-        newImg.width = 250;
-        newImg.height = 250;
+        newImg.width = 280;
+        newImg.height = 280;
         var concatImages = document.getElementById('concatImages');
         concatImages.appendChild(newImg);
       }
@@ -7414,9 +7474,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.imgBeforeConcat.push([cover, text, drawCanvas]);
 
       drawCanvas.onload = function () {
-        concatCxt.drawImage(cover, 0, 0, 250, 250);
-        concatCxt.drawImage(text, 0, 0, 250, 250);
-        concatCxt.drawImage(drawCanvas, 0, 0, 250, 250);
+        concatCxt.drawImage(cover, 0, 0, 280, 280);
+        concatCxt.drawImage(text, 0, 0, 280, 280);
+        concatCxt.drawImage(drawCanvas, 0, 0, 280, 280);
       };
 
       var that = this;
@@ -7475,6 +7535,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.drawCanvasctx.lineTo(x, y);
       this.drawCanvasctx.stroke();
       this.isDrag = true;
+      console.log('touch');
     },
     dragEnd: function dragEnd() {
       this.drawCanvasctx.closePath();
@@ -7494,19 +7555,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.e1 = 2;
       this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       this.cover = document.getElementById("cover");
-      this.drawCanvasctx.clearRect(0, 0, 250, 250);
-      this.textCanvasctx.clearRect(0, 0, 250, 250);
+      this.drawCanvasctx.clearRect(0, 0, 280, 280);
+      this.textCanvasctx.clearRect(0, 0, 280, 280);
       this.coverctx = this.cover.getContext("2d");
       this.coverctx.globalAlpha = 1;
       this.coverctx.globalCompositeOperation = 'source-over';
       this.coverctx.filter = 'grayscale(0%)';
-      this.coverctx.clearRect(0, 0, 250, 250);
+      this.coverctx.clearRect(0, 0, 280, 280);
       var background = new Image();
       background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       var that = this;
 
       background.onload = function () {
-        that.coverctx.drawImage(background, 0, 0, 250, 250);
+        that.coverctx.drawImage(background, 0, 0, 280, 280);
       };
 
       var that = this;
@@ -7518,54 +7579,54 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx.save();
     },
     back: function back() {
-      this.coverctx.clearRect(0, 0, 250, 250);
+      this.coverctx.clearRect(0, 0, 280, 280);
       this.coverctx.restore();
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
       };
 
-      this.coverctx.fillRect(0, 0, 250, 250);
+      this.coverctx.fillRect(0, 0, 280, 280);
     },
     rotate: function rotate() {
-      this.coverctx.clearRect(0, 0, 250, 250);
-      this.coverctx.translate(250, 0);
+      this.coverctx.clearRect(0, 0, 280, 280);
+      this.coverctx.translate(280, 0);
       this.coverctx.rotate(90 * Math.PI / 180);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillStyle = this.color;
-      this.coverctx.fillRect(0, 0, 250, 250);
+      this.coverctx.fillRect(0, 0, 280, 280);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
         that.coverctx.save();
       };
     },
     click: function click(key) {
-      this.coverctx.clearRect(0, 0, 250, 250);
+      this.coverctx.clearRect(0, 0, 280, 280);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillStyle = this.hexa;
-      this.coverctx.fillRect(0, 0, 250, 250);
+      this.coverctx.fillRect(0, 0, 280, 280);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[key - 1];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
         that.coverctx.save();
       };
     },
     reset: function reset() {
       this.coverctx.filter = 'grayscale(0%)';
       this.globalAlpha = 1;
-      this.hexa = 'transparent';
+      this.hexa = '#FF000000';
       this.model = '';
       this.filters = '';
       this.coverctx.globalCompositeOperation = 'source-over';
@@ -7585,17 +7646,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.coverctx.globalAlpha = 1;
       this.coverctx.globalCompositeOperation = 'source-over';
       this.coverctx.filter = 'grayscale(0%)';
-      this.coverctx.clearRect(0, 0, 250, 250);
+      this.coverctx.clearRect(0, 0, 280, 280);
       var background = new Image();
       background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       var that = this;
 
       background.onload = function () {
-        that.coverctx.drawImage(background, 0, 0, 250, 250);
+        that.coverctx.drawImage(background, 0, 0, 280, 280);
       };
 
-      this.coverctx.save();
-      this.color = '#00000080'; // that.searchTimeOut();
+      this.coverctx.save(); // this.color = '#00000080';
+      // that.searchTimeOut();
     },
     searchTimeOut2: function searchTimeOut2() {
       var _this2 = this;
@@ -7624,17 +7685,17 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }, 200);
     },
     colorImage: function colorImage() {
-      this.coverctx.clearRect(0, 0, 250, 250);
+      this.coverctx.clearRect(0, 0, 280, 280);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillStyle = this.hexa;
-      this.coverctx.fillRect(0, 0, 250, 250);
+      this.coverctx.fillRect(0, 0, 280, 280);
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
         that.coverctx.save();
       };
     },
@@ -7660,18 +7721,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       ;
       var filters = filtersArray.join(' ');
       this.filters = filters;
-      this.coverctx.clearRect(0, 0, 250, 250);
+      this.coverctx.clearRect(0, 0, 280, 280);
       this.coverctx.globalAlpha = this.globalAlpha;
       this.coverctx.fillstyle = this.hexa;
       this.coverctx.filter = this.filters;
       this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-      this.coverctx.fillRect(0, 0, 250, 250);
+      this.coverctx.fillRect(0, 0, 280, 280);
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
         that.coverctx.save();
       };
     },
@@ -7683,8 +7744,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var positionY = clientRect.top + window.pageYOffset;
       this.startX = clickX - positionX;
       this.startY = clickY - positionY;
-      this.inputPosition.width = 250 - this.startX + 'px';
-      this.selectedInputPosition.width = 250 - this.startX + 'px';
+      this.inputPosition.width = 280 - this.startX + 'px';
+      this.selectedInputPosition.width = 280 - this.startX + 'px';
 
       for (var i = 0; i < this.texts.length; i++) {
         if (this.textHittest(this.startX, this.startY, i)) {
@@ -11763,7 +11824,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\n#select {\r\n    margin: auto;\r\n    max-width: 400px;\r\n    width: 100%;\n}\r\n\r\n", ""]);
+exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\n#select {\r\n    margin: auto;\r\n    max-width: 400px;\r\n    width: 100%;\n}\n.v-stepper__content {\r\n    padding: 0;\n}\n.v-color-picker__controls {\r\n    padding: 5px;\n}\n.v-chip.v-size--default {\r\n    font-size: 12px;\r\n    height: 26px;\n}\r\n", ""]);
 
 // exports
 
@@ -14985,84 +15046,98 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c(
-        "v-navigation-drawer",
-        {
-          attrs: { fixed: "", app: "" },
-          model: {
-            value: _vm.drawer,
-            callback: function($$v) {
-              _vm.drawer = $$v
-            },
-            expression: "drawer"
+  return _c("div", [
+    _c(
+      "div",
+      {
+        directives: [
+          {
+            name: "resize",
+            rawName: "v-resize",
+            value: _vm.onResize,
+            expression: "onResize"
           }
-        },
-        [
-          _c(
-            "v-list",
-            [
-              _vm._l(_vm.items, function(item, i) {
-                return _c(
+        ]
+      },
+      [
+        _c(
+          "v-navigation-drawer",
+          {
+            attrs: { fixed: "", app: "" },
+            model: {
+              value: _vm.drawer,
+              callback: function($$v) {
+                _vm.drawer = $$v
+              },
+              expression: "drawer"
+            }
+          },
+          [
+            _c(
+              "v-list",
+              [
+                _vm._l(_vm.items, function(item, i) {
+                  return _c(
+                    "v-list-item",
+                    { key: i, attrs: { href: item.to, router: "", exact: "" } },
+                    [
+                      _c(
+                        "v-list-item-action",
+                        [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-list-item-content",
+                        [
+                          _c("v-list-item-title", {
+                            domProps: { textContent: _vm._s(item.title) }
+                          })
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  )
+                }),
+                _vm._v(" "),
+                _c(
                   "v-list-item",
-                  { key: i, attrs: { href: item.to, router: "", exact: "" } },
-                  [
-                    _c(
-                      "v-list-item-action",
-                      [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
-                      1
-                    ),
-                    _vm._v(" "),
-                    _c(
-                      "v-list-item-content",
-                      [
-                        _c("v-list-item-title", {
-                          domProps: { textContent: _vm._s(item.title) }
-                        })
-                      ],
-                      1
-                    )
-                  ],
+                  [_c("v-list-item-content", [_c("search-field")], 1)],
                   1
                 )
-              }),
-              _vm._v(" "),
-              _c(
-                "v-list-item",
-                [_c("v-list-item-content", [_c("search-field")], 1)],
-                1
-              )
-            ],
-            2
-          )
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-app-bar",
-        { attrs: { fixed: "", app: "" } },
-        [
-          _c("v-app-bar-nav-icon", {
-            on: {
-              click: function($event) {
-                $event.stopPropagation()
-                _vm.drawer = !_vm.drawer
+              ],
+              2
+            )
+          ],
+          1
+        ),
+        _vm._v(" "),
+        _c(
+          "v-app-bar",
+          { attrs: { fixed: "", app: "" } },
+          [
+            _c("v-app-bar-nav-icon", {
+              on: {
+                click: function($event) {
+                  $event.stopPropagation()
+                  _vm.drawer = !_vm.drawer
+                }
               }
-            }
-          }),
-          _vm._v(" "),
-          _c("v-toolbar-title", {
-            domProps: { textContent: _vm._s(_vm.title) }
-          })
-        ],
-        1
-      )
-    ],
-    1
-  )
+            }),
+            _vm._v(" "),
+            _vm.windowSize.x > 480
+              ? _c("v-toolbar-title", {
+                  domProps: { textContent: _vm._s(_vm.title) }
+                })
+              : _vm._e()
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -22293,56 +22368,37 @@ var render = function() {
                 { staticClass: "pt-1", attrs: { step: "1" } },
                 [
                   _c(
-                    "v-container",
+                    "v-layout",
+                    { attrs: { "justify-space-around": "", wrap: "" } },
                     [
-                      _c(
-                        "v-layout",
-                        { attrs: { "justify-space-around": "", wrap: "" } },
-                        [
-                          _vm.imgSrc !== ""
-                            ? _c(
+                      _vm.imgSrc !== ""
+                        ? _c(
+                            "div",
+                            [
+                              _c("vue-cropper", {
+                                ref: "cropper",
+                                attrs: {
+                                  guides: true,
+                                  "view-mode": 2,
+                                  "auto-crop-area": 0.5,
+                                  "min-container-width": 280,
+                                  "min-container-height": 280,
+                                  background: true,
+                                  rotatable: false,
+                                  src: _vm.imgSrc,
+                                  "img-style": {
+                                    width: 350 + "px",
+                                    height: 350 + "px"
+                                  },
+                                  "aspect-ratio": 1 / 1,
+                                  "drag-mode": "crop"
+                                }
+                              }),
+                              _vm._v(" "),
+                              _c(
                                 "div",
                                 [
-                                  _c("vue-cropper", {
-                                    ref: "cropper",
-                                    attrs: {
-                                      guides: true,
-                                      "view-mode": 2,
-                                      "auto-crop-area": 0.5,
-                                      "min-container-width": 250,
-                                      "min-container-height": 250,
-                                      background: true,
-                                      rotatable: false,
-                                      src: _vm.imgSrc,
-                                      "img-style": {
-                                        width: 250 + "px",
-                                        height: 250 + "px"
-                                      },
-                                      "aspect-ratio": 1 / 1,
-                                      "drag-mode": "crop"
-                                    }
-                                  }),
-                                  _vm._v(" "),
-                                  _c(
-                                    "div",
-                                    [
-                                      _c("input-file", {
-                                        on: {
-                                          selectedImage: function($event) {
-                                            return _vm.loadImage($event)
-                                          }
-                                        }
-                                      })
-                                    ],
-                                    1
-                                  )
-                                ],
-                                1
-                              )
-                            : _c(
-                                "div",
-                                [
-                                  _c("input-file-image", {
+                                  _c("input-file", {
                                     on: {
                                       selectedImage: function($event) {
                                         return _vm.loadImage($event)
@@ -22352,10 +22408,23 @@ var render = function() {
                                 ],
                                 1
                               )
-                        ]
-                      )
-                    ],
-                    1
+                            ],
+                            1
+                          )
+                        : _c(
+                            "div",
+                            [
+                              _c("input-file-image", {
+                                on: {
+                                  selectedImage: function($event) {
+                                    return _vm.loadImage($event)
+                                  }
+                                }
+                              })
+                            ],
+                            1
+                          )
+                    ]
                   )
                 ],
                 1
@@ -22370,7 +22439,7 @@ var render = function() {
                     {
                       staticClass: "overflow-hidden",
                       staticStyle: { margin: "auto" },
-                      attrs: { height: "250", width: "250" }
+                      attrs: { height: "280", width: "280" }
                     },
                     [
                       _c(
@@ -22452,43 +22521,51 @@ var render = function() {
                             : _vm._e(),
                           _vm._v(" "),
                           _c("canvas", {
-                            class: { eraser: _vm.canvasMode === "eraser" },
+                            class:
+                              { eraser: _vm.canvasMode === "eraser" } +
+                              { index2: _vm.editItems === 1 },
                             staticStyle: {
                               position: "absolute",
-                              "z-index": "0",
                               top: "0",
-                              left: "0"
+                              left: "0",
+                              "z-index": "1"
                             },
                             attrs: {
                               id: "drawCanvas",
-                              width: "250",
-                              height: "250"
+                              width: "280",
+                              height: "280"
                             },
                             on: {
                               mousedown: _vm.dragStart,
+                              touchstart: _vm.dragStart,
                               mouseup: _vm.dragEnd,
+                              touchend: _vm.dragEnd,
                               mouseout: _vm.dragEnd,
-                              mousemove: _vm.draw
+                              mousemove: _vm.draw,
+                              "&touchmove": function($event) {
+                                return _vm.draw($event)
+                              }
                             }
                           }),
                           _vm._v(" "),
                           _c("canvas", {
+                            class: { index2: _vm.editItems === 0 },
                             staticStyle: {
                               position: "absolute",
                               top: "0",
                               left: "0"
                             },
-                            attrs: { id: "cover", width: "250", height: "250" }
+                            attrs: { id: "cover", width: "280", height: "280" }
                           }),
                           _vm._v(" "),
                           _c("canvas", {
-                            class: { index2: _vm.value == 2 },
+                            class: { index2: _vm.editItems === 2 },
                             staticStyle: {
                               position: "absolute",
                               top: "0",
                               left: "0"
                             },
-                            attrs: { id: "text", width: "250", height: "250" },
+                            attrs: { id: "text", width: "280", height: "280" },
                             on: {
                               dblclick: _vm.selectText,
                               mousedown: function($event) {
@@ -22524,13 +22601,12 @@ var render = function() {
                       _c(
                         "v-window",
                         {
-                          staticClass: "px-2 mt-2",
                           model: {
-                            value: _vm.onboarding,
+                            value: _vm.editItems,
                             callback: function($$v) {
-                              _vm.onboarding = $$v
+                              _vm.editItems = $$v
                             },
-                            expression: "onboarding"
+                            expression: "editItems"
                           }
                         },
                         [
@@ -22538,67 +22614,389 @@ var render = function() {
                             "v-window-item",
                             { attrs: { value: 0 } },
                             [
-                              _c("v-slider", {
-                                staticStyle: { "margin-top": "35px" },
-                                attrs: {
-                                  label: "opacity",
-                                  min: "4",
-                                  max: "10",
-                                  "thumb-label": "always",
-                                  "thumb-color": "pink",
-                                  color: "pink"
+                              _c(
+                                "v-window",
+                                {
+                                  staticClass: "px-2 mt-2",
+                                  model: {
+                                    value: _vm.coverItem,
+                                    callback: function($$v) {
+                                      _vm.coverItem = $$v
+                                    },
+                                    expression: "coverItem"
+                                  }
                                 },
-                                on: { input: _vm.searchTimeOut2 },
-                                model: {
-                                  value: _vm.opacity,
-                                  callback: function($$v) {
-                                    _vm.opacity = $$v
-                                  },
-                                  expression: "opacity"
-                                }
-                              }),
+                                [
+                                  _c(
+                                    "v-window-item",
+                                    { attrs: { value: 0 } },
+                                    [
+                                      _c("v-slider", {
+                                        staticStyle: { "margin-top": "35px" },
+                                        attrs: {
+                                          label: "blur",
+                                          min: "0",
+                                          max: "10",
+                                          "thumb-label": "always",
+                                          "thumb-color": "purple",
+                                          color: "purple"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.blur,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "blur",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.blur"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "brightness",
+                                          min: "35",
+                                          max: "280",
+                                          "thumb-label": "always",
+                                          "thumb-color": "red",
+                                          color: "red"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.brightness,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "brightness",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.brightness"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { color: "pink" },
+                                          on: { click: _vm.reset }
+                                        },
+                                        [_vm._v("reset")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          attrs: { color: "purple" },
+                                          on: { click: _vm.rotate }
+                                        },
+                                        [_vm._v("rotate")]
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-window-item",
+                                    { attrs: { value: 1 } },
+                                    [
+                                      _c("v-slider", {
+                                        staticStyle: { "margin-top": "35px" },
+                                        attrs: {
+                                          label: "contrast",
+                                          min: "0",
+                                          max: "400",
+                                          "thumb-label": "always",
+                                          "thumb-color": "orange",
+                                          color: "orange"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.contrast,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "contrast",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.contrast"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "grayscale",
+                                          min: "0",
+                                          max: "100",
+                                          "thumb-label": "always",
+                                          "thumb-color": "indigo",
+                                          color: "indigo"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.grayscale,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "grayscale",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.grayscale"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "hue-rotate",
+                                          min: "0",
+                                          max: "359",
+                                          "thumb-label": "always",
+                                          "thumb-color": "green",
+                                          color: "green"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.hueRotate,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "hueRotate",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.hueRotate"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-window-item",
+                                    { attrs: { value: 2 } },
+                                    [
+                                      _c("v-slider", {
+                                        staticStyle: { "margin-top": "35px" },
+                                        attrs: {
+                                          label: "invert",
+                                          min: "0",
+                                          max: "100",
+                                          "thumb-label": "always",
+                                          "thumb-color": "deep-purple",
+                                          color: "deep-purple"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.invert,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "invert",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.invert"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "saturate",
+                                          min: "0",
+                                          max: "280",
+                                          "thumb-label": "always",
+                                          "thumb-color": "light-blue",
+                                          color: "light-blue"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.saturate,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "saturate",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.saturate"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "sepia",
+                                          min: "0",
+                                          max: "100",
+                                          "thumb-label": "always",
+                                          "thumb-color": "lime",
+                                          color: "lime"
+                                        },
+                                        on: { input: _vm.searchTimeOut3 },
+                                        model: {
+                                          value: _vm.filterObject.sepia,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.filterObject,
+                                              "sepia",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "filterObject.sepia"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-window-item",
+                                    { attrs: { value: 3 } },
+                                    [
+                                      _c("v-color-picker", {
+                                        staticClass: "ma-2",
+                                        attrs: {
+                                          "hide-canvas": "",
+                                          "hide-inputs": ""
+                                        },
+                                        on: { input: _vm.searchTimeOut2 },
+                                        model: {
+                                          value: _vm.color,
+                                          callback: function($$v) {
+                                            _vm.color = $$v
+                                          },
+                                          expression: "color"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-chip-group",
+                                        {
+                                          attrs: {
+                                            column: "",
+                                            "active-class": "primary--text"
+                                          }
+                                        },
+                                        _vm._l(
+                                          _vm.globalCompositeOperation,
+                                          function(tag, index) {
+                                            return _c(
+                                              "v-chip",
+                                              {
+                                                key: index,
+                                                on: {
+                                                  click: function($event) {
+                                                    return _vm.click(index)
+                                                  }
+                                                }
+                                              },
+                                              [
+                                                _vm._v(
+                                                  "\n                                                " +
+                                                    _vm._s(tag) +
+                                                    "\n                                            "
+                                                )
+                                              ]
+                                            )
+                                          }
+                                        ),
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              ),
                               _vm._v(" "),
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "blur",
-                                  min: "0",
-                                  max: "10",
-                                  "thumb-label": "always",
-                                  "thumb-color": "purple",
-                                  color: "purple"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.blur,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.filterObject, "blur", $$v)
-                                  },
-                                  expression: "filterObject.blur"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "brightness",
-                                  min: "35",
-                                  max: "250",
-                                  "thumb-label": "always",
-                                  "thumb-color": "red",
-                                  color: "red"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.brightness,
-                                  callback: function($$v) {
-                                    _vm.$set(
-                                      _vm.filterObject,
-                                      "brightness",
-                                      $$v
-                                    )
-                                  },
-                                  expression: "filterObject.brightness"
-                                }
-                              })
+                              _c(
+                                "v-card-actions",
+                                { staticClass: "justify-space-between" },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { text: "" },
+                                      on: { click: _vm.coverPrev }
+                                    },
+                                    [
+                                      _c("v-icon", [_vm._v("mdi-chevron-left")])
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-item-group",
+                                    {
+                                      staticClass: "text-center",
+                                      attrs: { mandatory: "" },
+                                      model: {
+                                        value: _vm.coverItem,
+                                        callback: function($$v) {
+                                          _vm.coverItem = $$v
+                                        },
+                                        expression: "coverItem"
+                                      }
+                                    },
+                                    _vm._l(_vm.length, function(n) {
+                                      return _c("v-item", {
+                                        key: "btn-" + n,
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var active = ref.active
+                                                var toggle = ref.toggle
+                                                return [
+                                                  _c(
+                                                    "v-btn",
+                                                    {
+                                                      attrs: {
+                                                        "input-value": active,
+                                                        icon: ""
+                                                      },
+                                                      on: { click: toggle }
+                                                    },
+                                                    [
+                                                      _c("v-icon", [
+                                                        _vm._v("mdi-record")
+                                                      ])
+                                                    ],
+                                                    1
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      })
+                                    }),
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { text: "" },
+                                      on: { click: _vm.coverNext }
+                                    },
+                                    [
+                                      _c("v-icon", [
+                                        _vm._v("mdi-chevron-right")
+                                      ])
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
                             ],
                             1
                           ),
@@ -22607,369 +23005,191 @@ var render = function() {
                             "v-window-item",
                             { attrs: { value: 1 } },
                             [
-                              _c("v-slider", {
-                                staticStyle: { "margin-top": "35px" },
-                                attrs: {
-                                  label: "contrast",
-                                  min: "0",
-                                  max: "400",
-                                  "thumb-label": "always",
-                                  "thumb-color": "orange",
-                                  color: "orange"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.contrast,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.filterObject, "contrast", $$v)
-                                  },
-                                  expression: "filterObject.contrast"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "grayscale",
-                                  min: "0",
-                                  max: "100",
-                                  "thumb-label": "always",
-                                  "thumb-color": "indigo",
-                                  color: "indigo"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.grayscale,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.filterObject, "grayscale", $$v)
-                                  },
-                                  expression: "filterObject.grayscale"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "hue-rotate",
-                                  min: "0",
-                                  max: "359",
-                                  "thumb-label": "always",
-                                  "thumb-color": "green",
-                                  color: "green"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.hueRotate,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.filterObject, "hueRotate", $$v)
-                                  },
-                                  expression: "filterObject.hueRotate"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-window-item",
-                            { attrs: { value: 2 } },
-                            [
-                              _c("v-slider", {
-                                staticStyle: { "margin-top": "35px" },
-                                attrs: {
-                                  label: "invert",
-                                  min: "0",
-                                  max: "100",
-                                  "thumb-label": "always",
-                                  "thumb-color": "deep-purple",
-                                  color: "deep-purple"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.invert,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.filterObject, "invert", $$v)
-                                  },
-                                  expression: "filterObject.invert"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "saturate",
-                                  min: "0",
-                                  max: "250",
-                                  "thumb-label": "always",
-                                  "thumb-color": "light-blue",
-                                  color: "light-blue"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.saturate,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.filterObject, "saturate", $$v)
-                                  },
-                                  expression: "filterObject.saturate"
-                                }
-                              }),
-                              _vm._v(" "),
-                              _c("v-slider", {
-                                attrs: {
-                                  label: "sepia",
-                                  min: "0",
-                                  max: "100",
-                                  "thumb-label": "always",
-                                  "thumb-color": "lime",
-                                  color: "lime"
-                                },
-                                on: { input: _vm.searchTimeOut3 },
-                                model: {
-                                  value: _vm.filterObject.sepia,
-                                  callback: function($$v) {
-                                    _vm.$set(_vm.filterObject, "sepia", $$v)
-                                  },
-                                  expression: "filterObject.sepia"
-                                }
-                              })
-                            ],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-window-item",
-                            { attrs: { value: 3 } },
-                            [
-                              _c("v-color-picker", {
-                                staticClass: "ma-2",
-                                attrs: { "hide-canvas": "", "hide-inputs": "" },
-                                on: { input: _vm.searchTimeOut2 },
-                                model: {
-                                  value: _vm.color,
-                                  callback: function($$v) {
-                                    _vm.color = $$v
-                                  },
-                                  expression: "color"
-                                }
-                              }),
-                              _vm._v(" "),
                               _c(
-                                "v-chip-group",
+                                "v-window",
                                 {
-                                  attrs: {
-                                    column: "",
-                                    "active-class": "primary--text"
+                                  staticClass: "px-2 mt-2",
+                                  model: {
+                                    value: _vm.textItem,
+                                    callback: function($$v) {
+                                      _vm.textItem = $$v
+                                    },
+                                    expression: "textItem"
                                   }
                                 },
-                                _vm._l(_vm.globalCompositeOperation, function(
-                                  tag,
-                                  index
-                                ) {
-                                  return _c(
-                                    "v-chip",
-                                    {
-                                      key: index,
-                                      on: {
-                                        click: function($event) {
-                                          return _vm.click(index)
+                                [
+                                  _c("v-color-picker", {
+                                    staticClass: "mb-5 ml-3",
+                                    on: { input: _vm.searchTimeOut },
+                                    model: {
+                                      value: _vm.penColor,
+                                      callback: function($$v) {
+                                        _vm.penColor = $$v
+                                      },
+                                      expression: "penColor"
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12", sm: "11" } },
+                                    [
+                                      _c("v-slider", {
+                                        attrs: {
+                                          label: "lineWidth",
+                                          min: "4",
+                                          max: "25",
+                                          "thumb-label": "always",
+                                          "thumb-color": "pink",
+                                          color: "pink"
+                                        },
+                                        on: { input: _vm.searchTimeOut },
+                                        model: {
+                                          value: _vm.lineWidth,
+                                          callback: function($$v) {
+                                            _vm.lineWidth = $$v
+                                          },
+                                          expression: "lineWidth"
                                         }
-                                      }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    {
+                                      staticClass: "d-flex",
+                                      attrs: { cols: "12", sm: "12" }
                                     },
                                     [
-                                      _vm._v(
-                                        "\n                                        " +
-                                          _vm._s(tag) +
-                                          "\n                                    "
-                                      )
-                                    ]
+                                      _c("v-select", {
+                                        staticClass: "px-1",
+                                        attrs: {
+                                          items: _vm.lineCaps,
+                                          label: "lineCap",
+                                          outlined: ""
+                                        },
+                                        on: { input: _vm.searchTimeOut },
+                                        model: {
+                                          value: _vm.lineCap,
+                                          callback: function($$v) {
+                                            _vm.lineCap = $$v
+                                          },
+                                          expression: "lineCap"
+                                        }
+                                      }),
+                                      _vm._v(" "),
+                                      _c("v-select", {
+                                        staticClass: "px-1",
+                                        attrs: {
+                                          items: _vm.lineJoins,
+                                          label: "lineJoin",
+                                          outlined: ""
+                                        },
+                                        on: { input: _vm.searchTimeOut },
+                                        model: {
+                                          value: _vm.lineJoin,
+                                          callback: function($$v) {
+                                            _vm.lineJoin = $$v
+                                          },
+                                          expression: "lineJoin "
+                                        }
+                                      })
+                                    ],
+                                    1
                                   )
-                                }),
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "v-card-actions",
+                                { staticClass: "justify-space-between" },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { text: "" },
+                                      on: { click: _vm.textPrev }
+                                    },
+                                    [
+                                      _c("v-icon", [_vm._v("mdi-chevron-left")])
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-item-group",
+                                    {
+                                      staticClass: "text-center",
+                                      attrs: { mandatory: "" },
+                                      model: {
+                                        value: _vm.textItem,
+                                        callback: function($$v) {
+                                          _vm.textItem = $$v
+                                        },
+                                        expression: "textItem"
+                                      }
+                                    },
+                                    _vm._l(_vm.length, function(n) {
+                                      return _c("v-item", {
+                                        key: "btn-" + n,
+                                        scopedSlots: _vm._u(
+                                          [
+                                            {
+                                              key: "default",
+                                              fn: function(ref) {
+                                                var active = ref.active
+                                                var toggle = ref.toggle
+                                                return [
+                                                  _c(
+                                                    "v-btn",
+                                                    {
+                                                      attrs: {
+                                                        "input-value": active,
+                                                        icon: ""
+                                                      },
+                                                      on: { click: toggle }
+                                                    },
+                                                    [
+                                                      _c("v-icon", [
+                                                        _vm._v("mdi-record")
+                                                      ])
+                                                    ],
+                                                    1
+                                                  )
+                                                ]
+                                              }
+                                            }
+                                          ],
+                                          null,
+                                          true
+                                        )
+                                      })
+                                    }),
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: { text: "" },
+                                      on: { click: _vm.textNext }
+                                    },
+                                    [
+                                      _c("v-icon", [
+                                        _vm._v("mdi-chevron-right")
+                                      ])
+                                    ],
+                                    1
+                                  )
+                                ],
                                 1
                               )
                             ],
                             1
                           )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-card-actions",
-                        { staticClass: "justify-space-between" },
-                        [
-                          _c(
-                            "v-btn",
-                            { attrs: { text: "" }, on: { click: _vm.prev } },
-                            [_c("v-icon", [_vm._v("mdi-chevron-left")])],
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-item-group",
-                            {
-                              staticClass: "text-center",
-                              attrs: { mandatory: "" },
-                              model: {
-                                value: _vm.onboarding,
-                                callback: function($$v) {
-                                  _vm.onboarding = $$v
-                                },
-                                expression: "onboarding"
-                              }
-                            },
-                            _vm._l(_vm.length, function(n) {
-                              return _c("v-item", {
-                                key: "btn-" + n,
-                                scopedSlots: _vm._u(
-                                  [
-                                    {
-                                      key: "default",
-                                      fn: function(ref) {
-                                        var active = ref.active
-                                        var toggle = ref.toggle
-                                        return [
-                                          _c(
-                                            "v-btn",
-                                            {
-                                              attrs: {
-                                                "input-value": active,
-                                                icon: ""
-                                              },
-                                              on: { click: toggle }
-                                            },
-                                            [
-                                              _c("v-icon", [
-                                                _vm._v("mdi-record")
-                                              ])
-                                            ],
-                                            1
-                                          )
-                                        ]
-                                      }
-                                    }
-                                  ],
-                                  null,
-                                  true
-                                )
-                              })
-                            }),
-                            1
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            { attrs: { text: "" }, on: { click: _vm.next } },
-                            [_c("v-icon", [_vm._v("mdi-chevron-right")])],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _vm.e1 == 2
-                    ? _c(
-                        "div",
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              staticClass: "elevation-5",
-                              staticStyle: { "z-index": "5" },
-                              attrs: {
-                                fixed: "",
-                                right: "",
-                                top: "",
-                                color: "primary"
-                              },
-                              on: { click: _vm.getImage }
-                            },
-                            [_vm._v("決定")]
-                          ),
-                          _vm._v(" "),
-                          _c(
-                            "v-btn",
-                            {
-                              staticClass: "elevation-5",
-                              staticStyle: { right: "90px", "z-index": "5" },
-                              attrs: { fixed: "", top: "" },
-                              on: {
-                                click: function($event) {
-                                  _vm.e1 = 1
-                                }
-                              }
-                            },
-                            [_vm._v("戻る")]
-                          )
-                        ],
-                        1
-                      )
-                    : _vm._e(),
-                  _vm._v(" "),
-                  _c(
-                    "v-bottom-navigation",
-                    {
-                      attrs: {
-                        fixed: "",
-                        bottom: "",
-                        "hide-on-scroll": "",
-                        "scroll-target": "#hide-on-scroll-example"
-                      },
-                      model: {
-                        value: _vm.value,
-                        callback: function($$v) {
-                          _vm.value = $$v
-                        },
-                        expression: "value"
-                      }
-                    },
-                    [
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: {
-                            color: "deep-purple accent-4",
-                            text: "",
-                            value: "0"
-                          },
-                          on: { click: _vm.pen }
-                        },
-                        [
-                          _c("span", [_vm._v("ペン")]),
-                          _vm._v(" "),
-                          _c("v-icon", [_vm._v("mdi-draw")])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        { attrs: { color: "deep-purple accent-4", text: "" } },
-                        [
-                          _c("span", [_vm._v("エフェクト")]),
-                          _vm._v(" "),
-                          _c("v-icon", [_vm._v("mdi-checkerboard")])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        { attrs: { color: "deep-purple accent-4", text: "" } },
-                        [
-                          _c("span", [_vm._v("テキスト")]),
-                          _vm._v(" "),
-                          _c("v-icon", [_vm._v("mdi-format-color-text")])
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        { attrs: { color: "deep-purple accent-4", text: "" } },
-                        [
-                          _c("span", [_vm._v("ダウンロード")]),
-                          _vm._v(" "),
-                          _c("v-icon", [_vm._v("mdi-briefcase-download")])
                         ],
                         1
                       )
@@ -22979,6 +23199,88 @@ var render = function() {
                 ],
                 1
               ),
+              _vm._v(" "),
+              _vm.e1 == 2 && _vm.editItems == 0
+                ? _c(
+                    "div",
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          staticClass: "elevation-5",
+                          staticStyle: { "z-index": "5" },
+                          attrs: {
+                            fixed: "",
+                            right: "",
+                            top: "",
+                            color: "primary"
+                          },
+                          on: {
+                            click: function($event) {
+                              _vm.editItems = 1
+                            }
+                          }
+                        },
+                        [_vm._v("次へ")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          staticClass: "elevation-5",
+                          staticStyle: { right: "90px", "z-index": "5" },
+                          attrs: { fixed: "", top: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.e1 = 1
+                            }
+                          }
+                        },
+                        [_vm._v("戻る")]
+                      )
+                    ],
+                    1
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.e1 == 2 && _vm.editItems == 1
+                ? _c(
+                    "div",
+                    [
+                      _c(
+                        "v-btn",
+                        {
+                          staticClass: "elevation-5",
+                          staticStyle: { "z-index": "5" },
+                          attrs: {
+                            fixed: "",
+                            right: "",
+                            top: "",
+                            color: "primary"
+                          },
+                          on: { click: _vm.getImage }
+                        },
+                        [_vm._v("決定")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          staticClass: "elevation-5",
+                          staticStyle: { right: "90px", "z-index": "5" },
+                          attrs: { fixed: "", top: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.editItems = 0
+                            }
+                          }
+                        },
+                        [_vm._v("戻る")]
+                      )
+                    ],
+                    1
+                  )
+                : _vm._e(),
               _vm._v(" "),
               _c("v-stepper-content", { attrs: { step: "3" } }, [
                 _c("canvas", {
@@ -22990,7 +23292,7 @@ var render = function() {
                       expression: "false"
                     }
                   ],
-                  attrs: { id: "concat", width: "250", height: "250" }
+                  attrs: { id: "concat", width: "280", height: "280" }
                 }),
                 _vm._v(" "),
                 _vm.showConcatImg
@@ -23000,7 +23302,7 @@ var render = function() {
                         _c(
                           "v-carousel",
                           {
-                            attrs: { height: "300" },
+                            attrs: { height: "280" },
                             model: {
                               value: _vm.carousel,
                               callback: function($$v) {
@@ -23078,7 +23380,7 @@ var render = function() {
                         color: "teal",
                         rows: "3",
                         counter: "",
-                        maxlength: "250"
+                        maxlength: "280"
                       },
                       scopedSlots: _vm._u([
                         {
@@ -23119,7 +23421,7 @@ var render = function() {
                       {
                         staticClass: "mx-auto my-5",
                         staticStyle: { width: "100%" },
-                        attrs: { "max-width": "300" }
+                        attrs: { "max-width": "280" }
                       },
                       [
                         _c(
@@ -23152,7 +23454,7 @@ var render = function() {
                         _vm._v(" "),
                         _c(
                           "v-carousel",
-                          { attrs: { height: "300", width: "300" } },
+                          { attrs: { height: "280", width: "280" } },
                           _vm._l(_vm.concatImg, function(image, i) {
                             return _c("v-carousel-item", {
                               key: i,
@@ -23358,7 +23660,7 @@ var render = function() {
       _c(
         "v-dialog",
         {
-          attrs: { width: "250" },
+          attrs: { width: "280" },
           model: {
             value: _vm.sizeDialog,
             callback: function($$v) {
@@ -23459,169 +23761,6 @@ var render = function() {
           _c("v-progress-circular", {
             attrs: { indeterminate: "", size: "64" }
           })
-        ],
-        1
-      ),
-      _vm._v(" "),
-      _c(
-        "v-row",
-        { attrs: { justify: "center" } },
-        [
-          _c(
-            "v-dialog",
-            {
-              attrs: {
-                fullscreen: "",
-                "hide-overlay": "",
-                transition: "dialog-bottom-transition"
-              },
-              scopedSlots: _vm._u([
-                {
-                  key: "activator",
-                  fn: function(ref) {
-                    var on = ref.on
-                    var attrs = ref.attrs
-                    return [
-                      _c(
-                        "v-btn",
-                        _vm._g(
-                          _vm._b(
-                            {
-                              staticStyle: { bottom: "60px" },
-                              attrs: {
-                                absolute: "",
-                                right: "",
-                                color: "primary",
-                                dark: "",
-                                fab: ""
-                              }
-                            },
-                            "v-btn",
-                            attrs,
-                            false
-                          ),
-                          on
-                        ),
-                        [_vm._v("\n            Open\n            ")]
-                      )
-                    ]
-                  }
-                }
-              ]),
-              model: {
-                value: _vm.currentImageDialog,
-                callback: function($$v) {
-                  _vm.currentImageDialog = $$v
-                },
-                expression: "currentImageDialog"
-              }
-            },
-            [
-              _vm._v(" "),
-              _c(
-                "v-card",
-                { staticStyle: { height: "50" } },
-                [
-                  _c(
-                    "v-toolbar",
-                    { attrs: { dark: "", color: "primary" } },
-                    [
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: { icon: "", dark: "" },
-                          on: {
-                            click: function($event) {
-                              _vm.currentImageDialog = false
-                            }
-                          }
-                        },
-                        [_c("v-icon", [_vm._v("mdi-close")])],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c("v-toolbar-title", [_vm._v("Settings")]),
-                      _vm._v(" "),
-                      _c("v-spacer"),
-                      _vm._v(" "),
-                      _c(
-                        "v-toolbar-items",
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { dark: "", text: "" },
-                              on: {
-                                click: function($event) {
-                                  _vm.currentImageDialog = false
-                                }
-                              }
-                            },
-                            [_vm._v("\n                Save\n                ")]
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-list",
-                    { attrs: { "three-line": "", subheader: "" } },
-                    [
-                      _c("v-subheader", [_vm._v("User Controls")]),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-item",
-                        [
-                          _c(
-                            "v-list-item-content",
-                            [
-                              _c("v-list-item-title", [
-                                _vm._v("Content filtering")
-                              ]),
-                              _vm._v(" "),
-                              _c("v-list-item-subtitle", [
-                                _vm._v(
-                                  "Set the content filtering level to restrict apps that can be downloaded"
-                                )
-                              ])
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "v-list-item",
-                        [
-                          _c(
-                            "v-list-item-content",
-                            [
-                              _c("v-list-item-title", [_vm._v("Password")]),
-                              _vm._v(" "),
-                              _c("v-list-item-subtitle", [
-                                _vm._v(
-                                  "Require password for purchase or use password to restrict purchase"
-                                )
-                              ])
-                            ],
-                            1
-                          )
-                        ],
-                        1
-                      )
-                    ],
-                    1
-                  )
-                ],
-                1
-              )
-            ],
-            1
-          )
         ],
         1
       )

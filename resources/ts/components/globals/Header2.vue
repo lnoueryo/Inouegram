@@ -1,5 +1,6 @@
 <template>
     <div>
+      <div v-resize="onResize">
         <v-navigation-drawer v-model="drawer" fixed app>
         <v-list>
             <v-list-item v-for="(item, i) in items" :key="i" :href="item.to" router exact>
@@ -22,8 +23,9 @@
         </v-navigation-drawer>
         <v-app-bar fixed app>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-            <v-toolbar-title v-text="title" />
+            <v-toolbar-title v-text="title" v-if="windowSize.x>480"/>
         </v-app-bar>
+      </div>
     </div>
 </template>
 
@@ -36,6 +38,11 @@ export default {
   },
   data () {
     return {
+      size: true,
+      windowSize: {
+          x: 0,
+          y: 0,
+      },
       drawer: false,
       items: [
         {
@@ -57,5 +64,10 @@ export default {
       title: 'My Memories',
     }
   },
+  methods: {
+    onResize () {
+      this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+    },
+  }
 }
 </script>

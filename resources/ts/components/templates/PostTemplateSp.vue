@@ -4,7 +4,7 @@
         <v-stepper v-model="e1" class="elevation-0">
             <v-stepper-items>
                 <v-stepper-content step="1" class="pt-1">
-                    <v-container>
+                    <!-- <v-container> -->
                         <v-layout justify-space-around wrap>
                             <div v-if="imgSrc !== ''">
                                 <vue-cropper
@@ -12,12 +12,12 @@
                                     :guides="true"
                                     :view-mode="2"
                                     :auto-crop-area="0.5"
-                                    :min-container-width="250"
-                                    :min-container-height="250"
+                                    :min-container-width="280"
+                                    :min-container-height="280"
                                     :background="true"
                                     :rotatable="false"
                                     :src="imgSrc"
-                                    :img-style="{ 'width': 250 + 'px', 'height': 250 + 'px' }"
+                                    :img-style="{ 'width': 350 + 'px', 'height': 350 + 'px' }"
                                     :aspect-ratio="1 / 1"
                                     drag-mode="crop"
                                 />
@@ -29,11 +29,11 @@
                                 <input-file-image @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                         </v-layout>
-                    </v-container>
+                    <!-- </v-container> -->
                 </v-stepper-content>
 
                 <v-stepper-content step="2" class="pt-1">
-                    <v-card class="overflow-hidden" height="250" width="250" style="margin: auto;">
+                    <v-card class="overflow-hidden" height="280" width="280" style="margin: auto;">
                         <div id="canvas-area" style="position: relative">
                             <div v-if="isActive">
                                 <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
@@ -41,13 +41,13 @@
                             <div v-if="isActiveEditText">
                                 <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
                             </div>
-                            <canvas id="drawCanvas" style="position: absolute; z-index: 0;top: 0; left: 0;" v-bind:class="{eraser: canvasMode === 'eraser'}" width="250" height="250" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
-                            <canvas id="cover" style="position: absolute; top: 0; left: 0;" width="250" height="250"></canvas>
-                            <canvas id="text" :class="{index2: value == 2}" style="position: absolute;top: 0; left: 0;" width=250 height=250 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
+                            <canvas id="drawCanvas" style="position: absolute;top: 0; left: 0;z-index: 1;" :class="{eraser: canvasMode === 'eraser'}+{index2: editItems === 1}" width="280" height="280" @mousedown="dragStart" @touchstart="dragStart" @mouseup="dragEnd" @touchend="dragEnd" @mouseout="dragEnd" @mousemove="draw" @touchmove.passive="draw"></canvas>
+                            <canvas id="cover" :class="{index2: editItems === 0}" style="position: absolute; top: 0; left: 0;" width="280" height="280"></canvas>
+                            <canvas id="text" :class="{index2: editItems === 2}" style="position: absolute;top: 0; left: 0;" width=280 height=280 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
                         </div>
                     </v-card>
-                    <!-- <v-card class="overflow-hidden" height="550" width="250">
-                    <v-stepper v-model="toolStepper" style="width: 250px;">
+                    <!-- <v-card class="overflow-hidden" height="550" width="280">
+                    <v-stepper v-model="toolStepper" style="width: 280px;">
                         <v-stepper-items>
                             <v-stepper-content step="1">
                             <v-card-title>Pen</v-card-title>
@@ -113,53 +113,83 @@
                         </v-stepper-items>
                     </v-stepper> -->
                     <v-card flat tile max-width="300" style="margin: auto">
-                        <v-window v-model="onboarding" class="px-2 mt-2">
+                        <v-window v-model="editItems">
                             <v-window-item :value="0">
-                                <v-slider style="margin-top: 35px" label="opacity" v-model.lazy="opacity" min="4" max="10" thumb-label="always" @input="searchTimeOut2" thumb-color="pink" color="pink"></v-slider>
-                                <v-slider label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3" thumb-color="purple" color="purple"></v-slider>
-                                <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="250" thumb-label="always" @input="searchTimeOut3" thumb-color="red"  color="red"></v-slider>
-                            </v-window-item>
+                                <v-window v-model="coverItem" class="px-2 mt-2">
+                                    <v-window-item :value="0">
+                                        <!-- <v-slider style="margin-top: 35px" label="opacity" v-model.lazy="opacity" min="4" max="10" thumb-label="always" @input="searchTimeOut2" thumb-color="pink" color="pink"></v-slider> -->
+                                        <v-slider style="margin-top: 35px" label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3" thumb-color="purple" color="purple"></v-slider>
+                                        <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="280" thumb-label="always" @input="searchTimeOut3" thumb-color="red"  color="red"></v-slider>
+                                        <v-btn color="pink" @click="reset">reset</v-btn>
+                                        <v-btn color="purple" @click="rotate">rotate</v-btn>
+                                        <!-- <v-btn color="black" @click="back">back</v-btn> -->
+                                    </v-window-item>
 
+                                    <v-window-item :value="1">
+                                        <v-slider style="margin-top: 35px" label="contrast" v-model.lazy="filterObject.contrast" min="0" max="400" thumb-label="always" @input="searchTimeOut3" thumb-color="orange" color="orange"></v-slider>
+                                        <v-slider label="grayscale" v-model.lazy="filterObject.grayscale" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="indigo" color="indigo"></v-slider>
+                                        <v-slider label="hue-rotate" v-model.lazy="filterObject.hueRotate" min="0" max="359" thumb-label="always" @input="searchTimeOut3" thumb-color="green" color="green"></v-slider>
+                                    </v-window-item>
+                                    <v-window-item :value="2">
+                                        <v-slider style="margin-top: 35px" label="invert" v-model.lazy="filterObject.invert" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="deep-purple" color="deep-purple"></v-slider>
+                                        <v-slider label="saturate" v-model.lazy="filterObject.saturate" min="0" max="280" thumb-label="always" @input="searchTimeOut3" thumb-color="light-blue" color="light-blue"></v-slider>
+                                        <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="lime" color="lime"></v-slider>
+                                    </v-window-item>
+                                    <v-window-item :value="3">
+                                        <v-color-picker v-model="color" hide-canvas class="ma-2" @input="searchTimeOut2" hide-inputs></v-color-picker>
+                                        <v-chip-group column active-class="primary--text">
+                                            <v-chip v-for="(tag, index) in globalCompositeOperation" :key="index" @click="click(index)">
+                                                {{ tag }}
+                                            </v-chip>
+                                        </v-chip-group>
+                                    </v-window-item>
+                                </v-window>
+                                <v-card-actions class="justify-space-between">
+                                    <v-btn text @click="coverPrev">
+                                        <v-icon>mdi-chevron-left</v-icon>
+                                    </v-btn>
+                                    <v-item-group v-model="coverItem" class="text-center" mandatory>
+                                        <v-item v-for="n in length" :key="`btn-${n}`" v-slot="{ active, toggle }">
+                                            <v-btn :input-value="active" icon @click="toggle">
+                                                <v-icon>mdi-record</v-icon>
+                                            </v-btn>
+                                        </v-item>
+                                    </v-item-group>
+                                    <v-btn text @click="coverNext">
+                                        <v-icon>mdi-chevron-right</v-icon>
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-window-item>
                             <v-window-item :value="1">
-                                <v-slider style="margin-top: 35px" label="contrast" v-model.lazy="filterObject.contrast" min="0" max="400" thumb-label="always" @input="searchTimeOut3" thumb-color="orange" color="orange"></v-slider>
-                                <v-slider label="grayscale" v-model.lazy="filterObject.grayscale" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="indigo" color="indigo"></v-slider>
-                                <v-slider label="hue-rotate" v-model.lazy="filterObject.hueRotate" min="0" max="359" thumb-label="always" @input="searchTimeOut3" thumb-color="green" color="green"></v-slider>
-                            </v-window-item>
-                            <v-window-item :value="2">
-                                <v-slider style="margin-top: 35px" label="invert" v-model.lazy="filterObject.invert" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="deep-purple" color="deep-purple"></v-slider>
-                                <v-slider label="saturate" v-model.lazy="filterObject.saturate" min="0" max="250" thumb-label="always" @input="searchTimeOut3" thumb-color="light-blue" color="light-blue"></v-slider>
-                                <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="lime" color="lime"></v-slider>
-                            </v-window-item>
-                            <v-window-item :value="3">
-                                <v-color-picker v-model="color" hide-canvas class="ma-2" @input="searchTimeOut2" hide-inputs></v-color-picker>
-                                <v-chip-group column active-class="primary--text">
-                                    <v-chip v-for="(tag, index) in globalCompositeOperation" :key="index" @click="click(index)">
-                                        {{ tag }}
-                                    </v-chip>
-                                </v-chip-group>
+                                <v-window v-model="textItem" class="px-2 mt-2">
+                                    <v-color-picker class="mb-5 ml-3" v-model="penColor" @input="searchTimeOut"></v-color-picker>
+                                    <v-col cols="12" sm="11">
+                                            <v-slider label="lineWidth" v-model.lazy="lineWidth" min="4" max="25" thumb-label="always" @input="searchTimeOut" thumb-color="pink" color="pink"></v-slider>
+                                    </v-col>
+                                    <v-col cols="12" sm="12" class="d-flex">
+                                        <v-select class="px-1" v-model="lineCap" :items="lineCaps" label="lineCap" outlined @input="searchTimeOut"></v-select>
+                                        <v-select class="px-1" v-model="lineJoin " :items="lineJoins" label="lineJoin" outlined @input="searchTimeOut"></v-select>
+                                    </v-col>
+                                </v-window>
+                                <v-card-actions class="justify-space-between">
+                                    <v-btn text @click="textPrev">
+                                        <v-icon>mdi-chevron-left</v-icon>
+                                    </v-btn>
+                                    <v-item-group v-model="textItem" class="text-center" mandatory>
+                                        <v-item v-for="n in length" :key="`btn-${n}`" v-slot="{ active, toggle }">
+                                            <v-btn :input-value="active" icon @click="toggle">
+                                                <v-icon>mdi-record</v-icon>
+                                            </v-btn>
+                                        </v-item>
+                                    </v-item-group>
+                                    <v-btn text @click="textNext">
+                                        <v-icon>mdi-chevron-right</v-icon>
+                                    </v-btn>
+                                </v-card-actions>
                             </v-window-item>
                         </v-window>
-                        <v-card-actions class="justify-space-between">
-                            <v-btn text @click="prev">
-                                <v-icon>mdi-chevron-left</v-icon>
-                            </v-btn>
-                            <v-item-group v-model="onboarding" class="text-center" mandatory>
-                                <v-item v-for="n in length" :key="`btn-${n}`" v-slot="{ active, toggle }">
-                                    <v-btn :input-value="active" icon @click="toggle">
-                                        <v-icon>mdi-record</v-icon>
-                                    </v-btn>
-                                </v-item>
-                            </v-item-group>
-                            <v-btn text @click="next">
-                                <v-icon>mdi-chevron-right</v-icon>
-                            </v-btn>
-                        </v-card-actions>
                     </v-card>
-                    <div v-if="e1==2">
-                    <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="getImage">決定</v-btn>
-                    <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="e1 = 1;">戻る</v-btn>
-                    </div>
-                       <v-bottom-navigation fixed bottom hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
+                    <!-- <v-bottom-navigation fixed bottom hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">
                         <v-btn color="deep-purple accent-4" text　@click="pen" value="0">
                             <span>ペン</span>
                             <v-icon>mdi-draw</v-icon>
@@ -176,19 +206,27 @@
                             <span>ダウンロード</span>
                             <v-icon>mdi-briefcase-download</v-icon>
                         </v-btn>
-                        </v-bottom-navigation>
+                    </v-bottom-navigation> -->
                 </v-stepper-content>
 <!--FIXME: タイトルと内容が埋もれる-->
+                    <div v-if="e1==2&&editItems==0">
+                    <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="editItems = 1">次へ</v-btn>
+                    <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="e1 = 1;">戻る</v-btn>
+                    </div>
+                    <div v-if="e1==2&&editItems==1">
+                    <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="getImage">決定</v-btn>
+                    <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="editItems = 0;">戻る</v-btn>
+                    </div>
                 <v-stepper-content step="3">
-                            <canvas id="concat" width="250" height="250" v-show="false"></canvas>
+                            <canvas id="concat" width="280" height="280" v-show="false"></canvas>
                             <div v-if="showConcatImg">
-                                <v-carousel height="300" v-model="carousel">
+                                <v-carousel height="280" v-model="carousel">
                                     <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"><v-btn style="z-index: 5;" top right absolute color="red accent-3" small @click="deleteImage(index)">削除</v-btn></v-carousel-item>
                                 </v-carousel>
                             </div>
                             <div class="pt-4 mx-auto"  style="width: 100%;max-width: 600px;">
                              <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
-                            <v-textarea v-model="message" color="teal" rows="3" counter maxlength="250">
+                            <v-textarea v-model="message" color="teal" rows="3" counter maxlength="280">
                                 <template v-slot:label>
                                     <div>
                                     内容 <small>(content)</small>
@@ -200,8 +238,7 @@
 
                 <v-stepper-content step="4">
                     <div class="d-flex">
-                    <!-- <v-img :src="img" max-width="250" v-for="(img, index) in concatImg" :key="index"></v-img> -->
-                        <v-card class="mx-auto my-5" max-width="300" style="width: 100%">
+                        <v-card class="mx-auto my-5" max-width="280" style="width: 100%">
                             <v-list>
                                 <v-list-item>
                                     <v-list-item-avatar>
@@ -214,7 +251,7 @@
 
                                 </v-list-item>
                             </v-list>
-                            <v-carousel height="300" width="300">
+                            <v-carousel height="280" width="280">
                                 <v-carousel-item v-for="(image,i) in concatImg" :key="i" :src="image" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                             </v-carousel>
                             <v-btn icon>
@@ -258,7 +295,7 @@
             </div>
         <v-btn color="primary" @click="confirmSave()">保存</v-btn>
         </div>
-    <v-dialog v-model="sizeDialog" width="250">
+    <v-dialog v-model="sizeDialog" width="280">
 
       <v-card>
         <v-card-title class="headline grey lighten-2">
@@ -288,7 +325,7 @@
     <v-overlay :value="cropProgress">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <v-row justify="center">
+    <!-- <v-row justify="center">
         <v-dialog
         v-model="currentImageDialog"
         fullscreen
@@ -353,7 +390,7 @@
             </v-list>
         </v-card>
         </v-dialog>
-    </v-row>
+    </v-row> -->
     </div>
 </template>
 
@@ -380,7 +417,9 @@ export default {
             timeout: 4000,
             carousel: '',
             length: 4,
-            onboarding: 0,
+            coverItem: 0,
+            textItem: 0,
+            editItems: 0,
             basicSize: '',
             mediaSize: '',
             spSize: window.matchMedia('(max-width: 480px)'),
@@ -431,8 +470,8 @@ export default {
             isActiveEditText: false,
             dialog: false,
             selectedEditTextMessage: '',
-            inputPosition: {fontSize: '15px', color: 'black', fontWeght: '250', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
-            selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '250', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+            inputPosition: {fontSize: '15px', color: 'black', fontWeght: '280', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+            selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '280', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
             type: 'hexa',
             hexa: '#FF000000',
         };
@@ -499,16 +538,26 @@ export default {
         this.mediaSize = window.innerWidth;
     },
     methods: {
-      next () {
-        this.onboarding = this.onboarding + 1 === this.length
-          ? 0
-          : this.onboarding + 1
-      },
-      prev () {
-        this.onboarding = this.onboarding - 1 < 0
-          ? this.length - 1
-          : this.onboarding - 1
-      },
+        coverNext () {
+            this.coverItem = this.coverItem + 1 === this.length
+            ? 0
+            : this.coverItem + 1
+        },
+        coverPrev () {
+            this.coverItem = this.coverItem - 1 < 0
+            ? this.length - 1
+            : this.coverItem - 1
+        },
+        textNext () {
+            this.textItem = this.textItem + 1 === this.length
+            ? 0
+            : this.textItem + 1
+        },
+        textPrev () {
+            this.textItem = this.textItem - 1 < 0
+            ? this.length - 1
+            : this.textItem - 1
+        },
         oneMoreImage(){
             this.e1 = 1;
             this.imgSrc = '';
@@ -539,8 +588,8 @@ export default {
                 this.$refs.cropper.replace(e);
                 var newImg = document.createElement("img");
                 newImg.src = this.concatImg[this.concatImg.length-1];
-                newImg.width = 250;
-                newImg.height = 250;
+                newImg.width = 280;
+                newImg.height = 280;
                 var concatImages = document.getElementById('concatImages')
                 concatImages.appendChild(newImg);
             }
@@ -581,9 +630,9 @@ export default {
             // var image = this.createImage(this.canvas);
             this.imgBeforeConcat.push([cover,text,drawCanvas]);
             drawCanvas.onload = function(){
-                concatCxt.drawImage(cover,0,0,250,250);
-                concatCxt.drawImage(text,0,0,250,250);
-                concatCxt.drawImage(drawCanvas,0,0,250,250);
+                concatCxt.drawImage(cover,0,0,280,280);
+                concatCxt.drawImage(text,0,0,280,280);
+                concatCxt.drawImage(drawCanvas,0,0,280,280);
             };
             let that = this;
             setTimeout(function(){
@@ -636,6 +685,7 @@ export default {
           this.drawCanvasctx.lineTo(x, y);
           this.drawCanvasctx.stroke();
           this.isDrag = true;
+          console.log('touch')
         },
         dragEnd() {
           this.drawCanvasctx.closePath();
@@ -655,18 +705,18 @@ export default {
             this.e1 = 2;
             this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             this.cover = document.getElementById("cover");
-            this.drawCanvasctx.clearRect(0, 0, 250, 250);
-            this.textCanvasctx.clearRect(0, 0, 250, 250);
+            this.drawCanvasctx.clearRect(0, 0, 280, 280);
+            this.textCanvasctx.clearRect(0, 0, 280, 280);
             this.coverctx = this.cover.getContext("2d");
             this.coverctx.globalAlpha = 1;
             this.coverctx.globalCompositeOperation = 'source-over';
             this.coverctx.filter = 'grayscale(0%)';
-            this.coverctx.clearRect(0, 0, 250, 250);
+            this.coverctx.clearRect(0, 0, 280, 280);
             var background = new Image();
             background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             var that = this;
             background.onload = function(){
-                    that.coverctx.drawImage(background,0,0,250,250);
+                    that.coverctx.drawImage(background,0,0,280,280);
                 }
             var that = this;
             var canvas = [];
@@ -677,50 +727,50 @@ export default {
             this.coverctx.save();
         },
         back() {
-            this.coverctx.clearRect(0, 0, 250, 250);
+            this.coverctx.clearRect(0, 0, 280, 280);
             this.coverctx.restore();
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
             };
-            this.coverctx.fillRect(0, 0, 250, 250);
+            this.coverctx.fillRect(0, 0, 280, 280);
         },
         rotate() {
-            this.coverctx.clearRect(0, 0, 250, 250);
-            this.coverctx.translate(250, 0);
+            this.coverctx.clearRect(0, 0, 280, 280);
+            this.coverctx.translate(280, 0);
             this.coverctx.rotate(90 * Math.PI / 180);
             this.coverctx.globalAlpha = this.globalAlpha;
             this.coverctx.fillStyle = this.color;
-            this.coverctx.fillRect(0, 0, 250, 250);
+            this.coverctx.fillRect(0, 0, 280, 280);
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
                 that.coverctx.save();
             };
         },
         click(key) {
-            this.coverctx.clearRect(0, 0, 250, 250);
+            this.coverctx.clearRect(0, 0, 280, 280);
             this.coverctx.globalAlpha = this.globalAlpha;
             this.coverctx.fillStyle = this.hexa;
-            this.coverctx.fillRect(0, 0, 250, 250);
+            this.coverctx.fillRect(0, 0, 280, 280);
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[key-1];
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
                 that.coverctx.save();
             };
         },
         reset() {
             this.coverctx.filter = 'grayscale(0%)';
             this.globalAlpha = 1;
-            this.hexa = 'transparent';
+            this.hexa = '#FF000000';
             this.model = '';
             this.filters = '';
             this.coverctx.globalCompositeOperation = 'source-over';
@@ -731,15 +781,15 @@ export default {
             this.coverctx.globalAlpha = 1;
             this.coverctx.globalCompositeOperation = 'source-over';
             this.coverctx.filter = 'grayscale(0%)';
-            this.coverctx.clearRect(0, 0, 250, 250);
+            this.coverctx.clearRect(0, 0, 280, 280);
             var background = new Image();
             background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             var that = this;
             background.onload = function(){
-                    that.coverctx.drawImage(background,0,0,250,250);
+                    that.coverctx.drawImage(background,0,0,280,280);
                 }
             this.coverctx.save();
-            this.color = '#00000080';
+            // this.color = '#00000080';
             // that.searchTimeOut();
         },
         searchTimeOut2() {
@@ -762,16 +812,16 @@ export default {
             }, 200);
         },
         colorImage() {
-            this.coverctx.clearRect(0, 0, 250, 250);
+            this.coverctx.clearRect(0, 0, 280, 280);
             this.coverctx.globalAlpha = this.globalAlpha;
             this.coverctx.fillStyle = this.hexa;
-            this.coverctx.fillRect(0, 0, 250, 250);
+            this.coverctx.fillRect(0, 0, 280, 280);
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
                 that.coverctx.save();
             };
         },
@@ -794,17 +844,17 @@ export default {
             };
             var filters = filtersArray.join(' ');
             this.filters = filters;
-            this.coverctx.clearRect(0, 0, 250, 250);
+            this.coverctx.clearRect(0, 0, 280, 280);
             this.coverctx.globalAlpha = this.globalAlpha;
             this.coverctx.fillstyle = this.hexa;
             this.coverctx.filter = this.filters;
             this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-            this.coverctx.fillRect(0, 0, 250, 250);
+            this.coverctx.fillRect(0, 0, 280, 280);
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 250, 250);
+                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
                 that.coverctx.save();
             };
         },
@@ -816,8 +866,8 @@ export default {
             var positionY = clientRect.top + window.pageYOffset ;
             this.startX = clickX - positionX ;
             this.startY = clickY - positionY ;
-            this.inputPosition.width = 250 - this.startX + 'px';
-            this.selectedInputPosition.width = 250 - this.startX + 'px';
+            this.inputPosition.width = 280 - this.startX + 'px';
+            this.selectedInputPosition.width = 280 - this.startX + 'px';
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
                   this.isActiveEditText = true;
@@ -995,5 +1045,14 @@ export default {
     max-width: 400px;
     width: 100%;
 }
-
+.v-stepper__content {
+    padding: 0;
+}
+.v-color-picker__controls {
+    padding: 5px;
+}
+.v-chip.v-size--default {
+    font-size: 12px;
+    height: 26px;
+}
 </style>
