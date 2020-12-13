@@ -113,6 +113,7 @@
                             <v-window-item :value="1">
                                 <v-window v-model="drawItem" class="px-2 mt-2" touchless>
                                     <v-window-item :value="0">
+                                        <v-btn id="pen-button" class="align-self-start mr-2" @click="pen">ペン</v-btn>
                                         <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
                                         <v-btn id="clear-button" class="align-self-start mr-2" @click="clear">クリア</v-btn>
                                         <div class="py-4">
@@ -982,7 +983,7 @@ export default {
 <style>
 
 .eraser {
-    cursor: url('/storage/image/eraser.png') 15 15,auto;
+    cursor: url('/image/eraser.png') 15 15,auto;
     z-index: 5
 }
 #newText {

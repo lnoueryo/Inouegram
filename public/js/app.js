@@ -7194,6 +7194,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
 
 
 
@@ -11770,7 +11771,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\r\n\r\n\r\n", ""]);
+exports.push([module.i, "\n.eraser {\r\n    cursor: url('/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\r\n\r\n\r\n", ""]);
 
 // exports
 
@@ -11789,7 +11790,7 @@ exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-
 
 
 // module
-exports.push([module.i, "\n.eraser {\r\n    cursor: url('/storage/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\n#select {\r\n    margin: auto;\r\n    max-width: 400px;\r\n    width: 100%;\n}\n.v-stepper__content {\r\n    padding: 0;\n}\n.v-color-picker__controls {\r\n    padding: 5px;\n}\n.v-chip.v-size--default {\r\n    font-size: 12px;\r\n    height: 26px;\n}\r\n", ""]);
+exports.push([module.i, "\n.eraser {\r\n    cursor: url('/image/eraser.png') 15 15,auto;\r\n    z-index: 5\n}\n#newText {\r\n　outline: none!important;\r\n  /* height: 64px; */\n}\n#newText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n#selectedText {\r\n　outline: none!important;\r\n  height: 64px;\n}\n#selectedText:focus {\r\n  outline: none!important;\r\n  border: none!important;\n}\n.index2{\r\n  z-index: 2;\n}\n#select {\r\n    margin: auto;\r\n    max-width: 400px;\r\n    width: 100%;\n}\n.v-stepper__content {\r\n    padding: 0;\n}\n.v-color-picker__controls {\r\n    padding: 5px;\n}\n.v-chip.v-size--default {\r\n    font-size: 12px;\r\n    height: 26px;\n}\r\n", ""]);
 
 // exports
 
@@ -22986,6 +22987,16 @@ var render = function() {
                                     "v-window-item",
                                     { attrs: { value: 0 } },
                                     [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "align-self-start mr-2",
+                                          attrs: { id: "pen-button" },
+                                          on: { click: _vm.pen }
+                                        },
+                                        [_vm._v("ペン")]
+                                      ),
+                                      _vm._v(" "),
                                       _c(
                                         "v-btn",
                                         {

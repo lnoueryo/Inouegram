@@ -969,7 +969,7 @@ export default {
 <style>
 
 .eraser {
-    cursor: url('/storage/image/eraser.png') 15 15,auto;
+    cursor: url('/image/eraser.png') 15 15,auto;
     z-index: 5
 }
 #newText {
