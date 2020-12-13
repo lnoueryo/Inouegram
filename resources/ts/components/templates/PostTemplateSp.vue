@@ -22,11 +22,11 @@
                                     drag-mode="crop"
                                 />
                             <div>
-                                <input-file size="479" @selectedImage="loadImage($event)"></input-file>
+                                <input-file :size="size" @selectedImage="loadImage($event)"></input-file>
                             </div>
                             </div>
                             <div v-else>
-                                <input-file-image size="479" @selectedImage="loadImage($event)"></input-file-image>
+                                <input-file-image :size="size" @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                         </v-layout>
                     <!-- </v-container> -->
@@ -434,6 +434,7 @@ export default {
             selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '280', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
             type: 'hexa',
             hexa: '#FF000000',
+            size: 479,
         };
     },
     computed: {

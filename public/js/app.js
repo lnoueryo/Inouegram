@@ -2397,7 +2397,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       _this.$emit('selectedImage', '');
                     }
                   } else {
-                    if (file.size < 5100000) {
+                    if (file.size < 6100000) {
                       _reader = new FileReader();
 
                       _reader.onload = function (event) {
@@ -2526,7 +2526,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                       _this.$emit('selectedImage', '');
                     }
                   } else {
-                    if (file.size < 5100000) {
+                    if (file.size < 6100000) {
                       _reader = new FileReader();
 
                       _reader.onload = function (event) {
@@ -6167,6 +6167,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      size: 1100,
       titleMessagevalidation: false,
       text: 'タイトルと内容を書いてください',
       timeout: 4000,
@@ -7310,7 +7311,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       left: '100px',
       position: 'absolute',
       zIndex: 1
-    }), _defineProperty(_ref, "type", 'hexa'), _defineProperty(_ref, "hexa", '#FF000000'), _ref;
+    }), _defineProperty(_ref, "type", 'hexa'), _defineProperty(_ref, "hexa", '#FF000000'), _defineProperty(_ref, "size", 479), _ref;
   },
   computed: {
     confirmMessage: function confirmMessage() {
@@ -20588,7 +20589,7 @@ var render = function() {
                                 "div",
                                 [
                                   _c("input-file-image", {
-                                    attrs: { size: "1100" },
+                                    attrs: { size: _vm.size },
                                     on: {
                                       selectedImage: function($event) {
                                         return _vm.loadImage($event)
@@ -20608,7 +20609,7 @@ var render = function() {
                               }),
                               _vm._v(" "),
                               _c("input-file", {
-                                attrs: { size: "1100" },
+                                attrs: { size: _vm.size },
                                 on: {
                                   selectedImage: function($event) {
                                     return _vm.loadImage($event)
@@ -22271,7 +22272,7 @@ var render = function() {
               _vm._v(" "),
               _c("v-card-text", [
                 _vm._v(
-                  "\n      Filesize is over. Less than 2.5M is allowed.\n    "
+                  "\n      ファイルサイズが上限を超えています。6M以下のイメージを選択してください\n    "
                 )
               ]),
               _vm._v(" "),
@@ -22444,7 +22445,7 @@ var render = function() {
                                 "div",
                                 [
                                   _c("input-file", {
-                                    attrs: { size: "479" },
+                                    attrs: { size: _vm.size },
                                     on: {
                                       selectedImage: function($event) {
                                         return _vm.loadImage($event)
@@ -22461,7 +22462,7 @@ var render = function() {
                             "div",
                             [
                               _c("input-file-image", {
-                                attrs: { size: "479" },
+                                attrs: { size: _vm.size },
                                 on: {
                                   selectedImage: function($event) {
                                     return _vm.loadImage($event)

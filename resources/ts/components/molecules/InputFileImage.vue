@@ -59,7 +59,7 @@ export default {
                         this.$emit('selectedImage', '');
                     }
                 } else {
-                    if(file.size<5100000){
+                    if(file.size<6100000){
                         const reader = new FileReader();
                         reader.onload = (event) => {
                             const imgSrc = event.target.result;

@@ -41,11 +41,11 @@
                                 />
                             </div>
                             <div v-else>
-                                <input-file-image size="1100" @selectedImage="loadImage($event)"></input-file-image>
+                                <input-file-image :size="size" @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                             <div>
                             <div id="preview" class="preview"/>
-                            <input-file size="1100" @selectedImage="loadImage($event)"></input-file>
+                            <input-file :size="size" @selectedImage="loadImage($event)"></input-file>
                             </div>
                         </v-layout>
                     </v-container>
@@ -298,7 +298,7 @@
         </v-card-title>
 
         <v-card-text>
-          Filesize is over. Less than 2.5M is allowed.
+          ファイルサイズが上限を超えています。6M以下のイメージを選択してください
         </v-card-text>
 
         <v-divider></v-divider>
@@ -342,6 +342,7 @@ export default {
     },
     data() {
       return {
+          size: 1100,
       titleMessagevalidation: false,
       text: 'タイトルと内容を書いてください',
       timeout: 4000,
