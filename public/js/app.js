@@ -7194,48 +7194,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 
 
@@ -7259,9 +7217,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       text: 'タイトルと内容を書いてください',
       timeout: 4000,
       carousel: '',
-      length: 4,
+      coverLength: 4,
       coverItem: 0,
-      textItem: 0,
+      drawLength: 2,
+      drawItem: 0,
       editItems: 0,
       basicSize: '',
       mediaSize: '',
@@ -7383,19 +7342,22 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: {
     coverNext: function coverNext() {
-      this.coverItem = this.coverItem + 1 === this.length ? 0 : this.coverItem + 1;
+      this.coverItem = this.coverItem + 1 === this.coverLength ? 0 : this.coverItem + 1;
     },
     coverPrev: function coverPrev() {
-      this.coverItem = this.coverItem - 1 < 0 ? this.length - 1 : this.coverItem - 1;
+      this.coverItem = this.coverItem - 1 < 0 ? this.coverLength - 1 : this.coverItem - 1;
     },
-    textNext: function textNext() {
-      this.textItem = this.textItem + 1 === this.length ? 0 : this.textItem + 1;
+    drawNext: function drawNext() {
+      this.drawItem = this.drawItem + 1 === this.drawLength ? 0 : this.drawItem + 1;
     },
-    textPrev: function textPrev() {
-      this.textItem = this.textItem - 1 < 0 ? this.length - 1 : this.textItem - 1;
+    drawPrev: function drawPrev() {
+      this.drawItem = this.drawItem - 1 < 0 ? this.drawLength - 1 : this.drawItem - 1;
     },
     oneMoreImage: function oneMoreImage() {
       this.e1 = 1;
+      this.editItems = 0;
+      this.coverItem = 0;
+      this.drawItem = 0;
       this.imgSrc = '';
       this.stepBtn1 = true;
       this.concatImageBtn = true;
@@ -7518,8 +7480,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.drawCanvasctx.globalCompositeOperation = 'destination-out';
     },
     draw: function draw(e) {
-      var x = e.layerX;
-      var y = e.layerY;
+      var rect = e.target.getBoundingClientRect();
+      var touch = e.targetTouches[0];
+      var x = touch.clientX - rect.left;
+      var y = touch.clientY - rect.top;
 
       if (!this.isDrag) {
         return;
@@ -7529,13 +7493,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.drawCanvasctx.stroke();
     },
     dragStart: function dragStart(e) {
-      var x = e.layerX;
-      var y = e.layerY;
+      var rect = e.target.getBoundingClientRect();
+      var touch = e.targetTouches[0];
+      var x = touch.clientX - rect.left;
+      var y = touch.clientY - rect.top;
       this.drawCanvasctx.beginPath();
       this.drawCanvasctx.lineTo(x, y);
       this.drawCanvasctx.stroke();
       this.isDrag = true;
-      console.log('touch');
     },
     dragEnd: function dragEnd() {
       this.drawCanvasctx.closePath();
@@ -22335,7 +22300,7 @@ var render = function() {
             {
               staticStyle: { "z-index": "5" },
               attrs: {
-                absolute: "",
+                fixed: "",
                 top: "",
                 right: "",
                 color: "primary",
@@ -22536,15 +22501,12 @@ var render = function() {
                               height: "280"
                             },
                             on: {
-                              mousedown: _vm.dragStart,
-                              touchstart: _vm.dragStart,
-                              mouseup: _vm.dragEnd,
+                              touchstart: function($event) {
+                                $event.preventDefault()
+                                return _vm.dragStart($event)
+                              },
                               touchend: _vm.dragEnd,
-                              mouseout: _vm.dragEnd,
-                              mousemove: _vm.draw,
-                              "&touchmove": function($event) {
-                                return _vm.draw($event)
-                              }
+                              touchmove: _vm.draw
                             }
                           }),
                           _vm._v(" "),
@@ -22601,6 +22563,7 @@ var render = function() {
                       _c(
                         "v-window",
                         {
+                          attrs: { touchless: "" },
                           model: {
                             value: _vm.editItems,
                             callback: function($$v) {
@@ -22942,7 +22905,7 @@ var render = function() {
                                         expression: "coverItem"
                                       }
                                     },
-                                    _vm._l(_vm.length, function(n) {
+                                    _vm._l(_vm.coverLength, function(n) {
                                       return _c("v-item", {
                                         key: "btn-" + n,
                                         scopedSlots: _vm._u(
@@ -23009,93 +22972,140 @@ var render = function() {
                                 "v-window",
                                 {
                                   staticClass: "px-2 mt-2",
+                                  attrs: { touchless: "" },
                                   model: {
-                                    value: _vm.textItem,
+                                    value: _vm.drawItem,
                                     callback: function($$v) {
-                                      _vm.textItem = $$v
+                                      _vm.drawItem = $$v
                                     },
-                                    expression: "textItem"
+                                    expression: "drawItem"
                                   }
                                 },
                                 [
-                                  _c("v-color-picker", {
-                                    staticClass: "mb-5 ml-3",
-                                    on: { input: _vm.searchTimeOut },
-                                    model: {
-                                      value: _vm.penColor,
-                                      callback: function($$v) {
-                                        _vm.penColor = $$v
-                                      },
-                                      expression: "penColor"
-                                    }
-                                  }),
-                                  _vm._v(" "),
                                   _c(
-                                    "v-col",
-                                    { attrs: { cols: "12", sm: "11" } },
+                                    "v-window-item",
+                                    { attrs: { value: 0 } },
                                     [
-                                      _c("v-slider", {
-                                        attrs: {
-                                          label: "lineWidth",
-                                          min: "4",
-                                          max: "25",
-                                          "thumb-label": "always",
-                                          "thumb-color": "pink",
-                                          color: "pink"
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "align-self-start mr-2",
+                                          attrs: { id: "eraser-button" },
+                                          on: { click: _vm.eraser }
                                         },
-                                        on: { input: _vm.searchTimeOut },
-                                        model: {
-                                          value: _vm.lineWidth,
-                                          callback: function($$v) {
-                                            _vm.lineWidth = $$v
-                                          },
-                                          expression: "lineWidth"
-                                        }
-                                      })
+                                        [_vm._v("消しゴム")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "align-self-start mr-2",
+                                          attrs: { id: "clear-button" },
+                                          on: { click: _vm.clear }
+                                        },
+                                        [_vm._v("クリア")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "div",
+                                        { staticClass: "py-4" },
+                                        [
+                                          _c("v-color-picker", {
+                                            staticClass: "mb-5",
+                                            attrs: {
+                                              "canvas-height": "75",
+                                              "dot-size": "20",
+                                              "hide-inputs": ""
+                                            },
+                                            on: { input: _vm.searchTimeOut },
+                                            model: {
+                                              value: _vm.penColor,
+                                              callback: function($$v) {
+                                                _vm.penColor = $$v
+                                              },
+                                              expression: "penColor"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
                                     ],
                                     1
                                   ),
                                   _vm._v(" "),
                                   _c(
-                                    "v-col",
-                                    {
-                                      staticClass: "d-flex",
-                                      attrs: { cols: "12", sm: "12" }
-                                    },
+                                    "v-window-item",
+                                    { attrs: { value: 1 } },
                                     [
-                                      _c("v-select", {
-                                        staticClass: "px-1",
-                                        attrs: {
-                                          items: _vm.lineCaps,
-                                          label: "lineCap",
-                                          outlined: ""
+                                      _c(
+                                        "v-col",
+                                        {
+                                          staticClass: "d-flex",
+                                          attrs: { cols: "12", sm: "12" }
                                         },
-                                        on: { input: _vm.searchTimeOut },
-                                        model: {
-                                          value: _vm.lineCap,
-                                          callback: function($$v) {
-                                            _vm.lineCap = $$v
-                                          },
-                                          expression: "lineCap"
-                                        }
-                                      }),
+                                        [
+                                          _c("v-select", {
+                                            staticClass: "px-1",
+                                            attrs: {
+                                              items: _vm.lineCaps,
+                                              label: "lineCap",
+                                              outlined: ""
+                                            },
+                                            on: { input: _vm.searchTimeOut },
+                                            model: {
+                                              value: _vm.lineCap,
+                                              callback: function($$v) {
+                                                _vm.lineCap = $$v
+                                              },
+                                              expression: "lineCap"
+                                            }
+                                          }),
+                                          _vm._v(" "),
+                                          _c("v-select", {
+                                            staticClass: "px-1",
+                                            attrs: {
+                                              items: _vm.lineJoins,
+                                              label: "lineJoin",
+                                              outlined: ""
+                                            },
+                                            on: { input: _vm.searchTimeOut },
+                                            model: {
+                                              value: _vm.lineJoin,
+                                              callback: function($$v) {
+                                                _vm.lineJoin = $$v
+                                              },
+                                              expression: "lineJoin "
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      ),
                                       _vm._v(" "),
-                                      _c("v-select", {
-                                        staticClass: "px-1",
-                                        attrs: {
-                                          items: _vm.lineJoins,
-                                          label: "lineJoin",
-                                          outlined: ""
-                                        },
-                                        on: { input: _vm.searchTimeOut },
-                                        model: {
-                                          value: _vm.lineJoin,
-                                          callback: function($$v) {
-                                            _vm.lineJoin = $$v
-                                          },
-                                          expression: "lineJoin "
-                                        }
-                                      })
+                                      _c(
+                                        "v-col",
+                                        { attrs: { cols: "12", sm: "11" } },
+                                        [
+                                          _c("v-slider", {
+                                            attrs: {
+                                              label: "lineWidth",
+                                              min: "2",
+                                              max: "25",
+                                              "thumb-label": "always",
+                                              "thumb-color": "pink",
+                                              color: "pink"
+                                            },
+                                            on: { input: _vm.searchTimeOut },
+                                            model: {
+                                              value: _vm.lineWidth,
+                                              callback: function($$v) {
+                                                _vm.lineWidth = $$v
+                                              },
+                                              expression: "lineWidth"
+                                            }
+                                          })
+                                        ],
+                                        1
+                                      )
                                     ],
                                     1
                                   )
@@ -23111,7 +23121,7 @@ var render = function() {
                                     "v-btn",
                                     {
                                       attrs: { text: "" },
-                                      on: { click: _vm.textPrev }
+                                      on: { click: _vm.drawPrev }
                                     },
                                     [
                                       _c("v-icon", [_vm._v("mdi-chevron-left")])
@@ -23125,14 +23135,14 @@ var render = function() {
                                       staticClass: "text-center",
                                       attrs: { mandatory: "" },
                                       model: {
-                                        value: _vm.textItem,
+                                        value: _vm.drawItem,
                                         callback: function($$v) {
-                                          _vm.textItem = $$v
+                                          _vm.drawItem = $$v
                                         },
-                                        expression: "textItem"
+                                        expression: "drawItem"
                                       }
                                     },
-                                    _vm._l(_vm.length, function(n) {
+                                    _vm._l(_vm.drawLength, function(n) {
                                       return _c("v-item", {
                                         key: "btn-" + n,
                                         scopedSlots: _vm._u(
@@ -23175,7 +23185,7 @@ var render = function() {
                                     "v-btn",
                                     {
                                       attrs: { text: "" },
-                                      on: { click: _vm.textNext }
+                                      on: { click: _vm.drawNext }
                                     },
                                     [
                                       _c("v-icon", [
@@ -23330,7 +23340,7 @@ var render = function() {
                                     attrs: {
                                       top: "",
                                       right: "",
-                                      absolute: "",
+                                      fixed: "",
                                       color: "red accent-3",
                                       small: ""
                                     },
@@ -23388,9 +23398,7 @@ var render = function() {
                           fn: function() {
                             return [
                               _c("div", [
-                                _vm._v(
-                                  "\n                                    内容 "
-                                ),
+                                _vm._v("\n                            内容 "),
                                 _c("small", [_vm._v("(content)")])
                               ])
                             ]
@@ -23555,7 +23563,7 @@ var render = function() {
                 {
                   staticStyle: { "z-index": "5" },
                   attrs: {
-                    absolute: "",
+                    fixed: "",
                     top: "",
                     right: "",
                     color: "primary",
@@ -23576,7 +23584,7 @@ var render = function() {
                 "v-btn",
                 {
                   staticStyle: { right: "90px", "z-index": "5" },
-                  attrs: { absolute: "", top: "", right: "", color: "purple" },
+                  attrs: { fixed: "", top: "", right: "", color: "purple" },
                   on: { click: _vm.oneMoreImage }
                 },
                 [_vm._v("追加")]

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-btn style="z-index: 5;" absolute top right @click="cropStart" color="primary" :disabled="stepBtn1" v-if="e1==1">トリミング</v-btn>
+        <v-btn style="z-index: 5;" fixed top right @click="cropStart" color="primary" :disabled="stepBtn1" v-if="e1==1">トリミング</v-btn>
         <v-stepper v-model="e1" class="elevation-0">
             <v-stepper-items>
                 <v-stepper-content step="1" class="pt-1">
@@ -41,63 +41,13 @@
                             <div v-if="isActiveEditText">
                                 <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
                             </div>
-                            <canvas id="drawCanvas" style="position: absolute;top: 0; left: 0;z-index: 1;" :class="{eraser: canvasMode === 'eraser'}+{index2: editItems === 1}" width="280" height="280" @mousedown="dragStart" @touchstart="dragStart" @mouseup="dragEnd" @touchend="dragEnd" @mouseout="dragEnd" @mousemove="draw" @touchmove.passive="draw"></canvas>
+                            <canvas id="drawCanvas" style="position: absolute;top: 0; left: 0;z-index: 1;" :class="{eraser: canvasMode === 'eraser'}+{index2: editItems === 1}" width="280" height="280" @touchstart.prevent="dragStart" @touchend="dragEnd" @touchmove="draw"></canvas>
                             <canvas id="cover" :class="{index2: editItems === 0}" style="position: absolute; top: 0; left: 0;" width="280" height="280"></canvas>
                             <canvas id="text" :class="{index2: editItems === 2}" style="position: absolute;top: 0; left: 0;" width=280 height=280 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
                         </div>
                     </v-card>
-                    <!-- <v-card class="overflow-hidden" height="550" width="280">
-                    <v-stepper v-model="toolStepper" style="width: 280px;">
-                        <v-stepper-items>
-                            <v-stepper-content step="1">
-                            <v-card-title>Pen</v-card-title>
-                                    <v-color-picker class="mb-5 ml-3" v-model="penColor" @input="searchTimeOut"></v-color-picker>
-                            <v-col cols="12" sm="11">
-                                    <v-slider label="lineWidth" v-model.lazy="lineWidth" min="4" max="25" thumb-label="always" @input="searchTimeOut" thumb-color="pink" color="pink"></v-slider>
-                            </v-col>
-                                    <v-col cols="12" sm="12" class="d-flex">
-                                        <v-select class="px-1" v-model="lineCap" :items="lineCaps" label="lineCap" outlined @input="searchTimeOut"></v-select>
-                                        <v-select class="px-1" v-model="lineJoin " :items="lineJoins" label="lineJoin" outlined @input="searchTimeOut"></v-select>
-                                    </v-col>
-                            </v-stepper-content>
-
-                            <v-stepper-content step="3">
-                                <v-card class="mb-12" color="grey lighten-1" height="200px"></v-card>
-                            </v-stepper-content>
-                        </v-stepper-items>
-                    </v-stepper>
-                    </v-card> -->
                     <!-- <v-stepper v-model="toolStepper" style="width: 1000px;">
                         <v-stepper-items>
-                            <v-stepper-content step="1">
-                                <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
-                                <v-btn id="clear-button" class="align-self-start mr-2" @click="clear">クリア</v-btn>
-                            </v-stepper-content>
-
-                            <v-stepper-content step="2">
-                                <v-col cols="12" sm="12" class="d-flex">
-                                    <v-row>
-                                        <v-btn color="pink" @click="reset">reset</v-btn>
-                                        <v-btn color="purple" @click="rotate">rotate</v-btn>
-                                        <v-btn color="black" @click="back">back</v-btn>
-                                        <v-sheet elevation="8" max-width="520">
-                                            <v-slide-group v-model="model" class="pa-4" center-active show-arrows>
-                                                <v-slide-item v-for="n in 13" :key="n" v-slot:default="{ active, toggle }">
-                                                    <v-card :color="active ? 'primary' : 'grey lighten-1'" class="ma-1" height="117.3" width="113.3" @click="click">
-                                                        <canvas :id="'pic' + n" height="113.3" width="113.3" @click="toggle"></canvas>
-                                                        <v-row class="fill-height" align="center" justify="center">
-                                                            <v-scale-transition>
-                                                                <v-icon v-if="active" color="white" size="48" v-text="'mdi-close-circle-outline'"></v-icon>
-                                                            </v-scale-transition>
-                                                        </v-row>
-                                                    </v-card>
-                                                </v-slide-item>
-                                            </v-slide-group>
-                                        </v-sheet>
-                                    </v-row>
-                                    <v-color-picker v-model="color" @input="searchTimeOut2" hide-inputs></v-color-picker>
-                                </v-col>
-                            </v-stepper-content>
 
                             <v-stepper-content step="3">
                                 <div v-if="isActive">
@@ -113,7 +63,7 @@
                         </v-stepper-items>
                     </v-stepper> -->
                     <v-card flat tile max-width="300" style="margin: auto">
-                        <v-window v-model="editItems">
+                        <v-window v-model="editItems" touchless>
                             <v-window-item :value="0">
                                 <v-window v-model="coverItem" class="px-2 mt-2">
                                     <v-window-item :value="0">
@@ -136,7 +86,7 @@
                                         <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="lime" color="lime"></v-slider>
                                     </v-window-item>
                                     <v-window-item :value="3">
-                                        <v-color-picker v-model="color" hide-canvas class="ma-2" @input="searchTimeOut2" hide-inputs></v-color-picker>
+                                        <v-color-picker v-model="color" hide-canvas hide-inputs class="ma-2" @input="searchTimeOut2"></v-color-picker>
                                         <v-chip-group column active-class="primary--text">
                                             <v-chip v-for="(tag, index) in globalCompositeOperation" :key="index" @click="click(index)">
                                                 {{ tag }}
@@ -149,7 +99,7 @@
                                         <v-icon>mdi-chevron-left</v-icon>
                                     </v-btn>
                                     <v-item-group v-model="coverItem" class="text-center" mandatory>
-                                        <v-item v-for="n in length" :key="`btn-${n}`" v-slot="{ active, toggle }">
+                                        <v-item v-for="n in coverLength" :key="`btn-${n}`" v-slot="{ active, toggle }">
                                             <v-btn :input-value="active" icon @click="toggle">
                                                 <v-icon>mdi-record</v-icon>
                                             </v-btn>
@@ -161,28 +111,36 @@
                                 </v-card-actions>
                             </v-window-item>
                             <v-window-item :value="1">
-                                <v-window v-model="textItem" class="px-2 mt-2">
-                                    <v-color-picker class="mb-5 ml-3" v-model="penColor" @input="searchTimeOut"></v-color-picker>
-                                    <v-col cols="12" sm="11">
-                                            <v-slider label="lineWidth" v-model.lazy="lineWidth" min="4" max="25" thumb-label="always" @input="searchTimeOut" thumb-color="pink" color="pink"></v-slider>
-                                    </v-col>
+                                <v-window v-model="drawItem" class="px-2 mt-2" touchless>
+                                    <v-window-item :value="0">
+                                        <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
+                                        <v-btn id="clear-button" class="align-self-start mr-2" @click="clear">クリア</v-btn>
+                                        <div class="py-4">
+                                            <v-color-picker class="mb-5" canvas-height="75" dot-size="20" hide-inputs v-model="penColor" @input="searchTimeOut"></v-color-picker>
+                                        </div>
+                                    </v-window-item>
+                                    <v-window-item :value="1">
                                     <v-col cols="12" sm="12" class="d-flex">
                                         <v-select class="px-1" v-model="lineCap" :items="lineCaps" label="lineCap" outlined @input="searchTimeOut"></v-select>
                                         <v-select class="px-1" v-model="lineJoin " :items="lineJoins" label="lineJoin" outlined @input="searchTimeOut"></v-select>
                                     </v-col>
+                                    <v-col cols="12" sm="11">
+                                            <v-slider label="lineWidth" v-model.lazy="lineWidth" min="2" max="25" thumb-label="always" @input="searchTimeOut" thumb-color="pink" color="pink"></v-slider>
+                                    </v-col>
+                                    </v-window-item>
                                 </v-window>
                                 <v-card-actions class="justify-space-between">
-                                    <v-btn text @click="textPrev">
+                                    <v-btn text @click="drawPrev">
                                         <v-icon>mdi-chevron-left</v-icon>
                                     </v-btn>
-                                    <v-item-group v-model="textItem" class="text-center" mandatory>
-                                        <v-item v-for="n in length" :key="`btn-${n}`" v-slot="{ active, toggle }">
+                                    <v-item-group v-model="drawItem" class="text-center" mandatory>
+                                        <v-item v-for="n in drawLength" :key="`btn-${n}`" v-slot="{ active, toggle }">
                                             <v-btn :input-value="active" icon @click="toggle">
                                                 <v-icon>mdi-record</v-icon>
                                             </v-btn>
                                         </v-item>
                                     </v-item-group>
-                                    <v-btn text @click="textNext">
+                                    <v-btn text @click="drawNext">
                                         <v-icon>mdi-chevron-right</v-icon>
                                     </v-btn>
                                 </v-card-actions>
@@ -209,31 +167,31 @@
                     </v-bottom-navigation> -->
                 </v-stepper-content>
 <!--FIXME: タイトルと内容が埋もれる-->
-                    <div v-if="e1==2&&editItems==0">
-                    <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="editItems = 1">次へ</v-btn>
-                    <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="e1 = 1;">戻る</v-btn>
-                    </div>
-                    <div v-if="e1==2&&editItems==1">
-                    <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="getImage">決定</v-btn>
-                    <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="editItems = 0;">戻る</v-btn>
-                    </div>
+                <div v-if="e1==2&&editItems==0">
+                <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="editItems = 1">次へ</v-btn>
+                <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="e1 = 1;">戻る</v-btn>
+                </div>
+                <div v-if="e1==2&&editItems==1">
+                <v-btn class="elevation-5" fixed right top color="primary" style="z-index: 5;" @click="getImage">決定</v-btn>
+                <v-btn class="elevation-5" style="right: 90px;z-index: 5;" fixed top @click="editItems = 0;">戻る</v-btn>
+                </div>
                 <v-stepper-content step="3">
-                            <canvas id="concat" width="280" height="280" v-show="false"></canvas>
-                            <div v-if="showConcatImg">
-                                <v-carousel height="280" v-model="carousel">
-                                    <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"><v-btn style="z-index: 5;" top right absolute color="red accent-3" small @click="deleteImage(index)">削除</v-btn></v-carousel-item>
-                                </v-carousel>
+                    <canvas id="concat" width="280" height="280" v-show="false"></canvas>
+                    <div v-if="showConcatImg">
+                        <v-carousel height="280" v-model="carousel">
+                            <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"><v-btn style="z-index: 5;" top right fixed color="red accent-3" small @click="deleteImage(index)">削除</v-btn></v-carousel-item>
+                        </v-carousel>
+                    </div>
+                    <div class="pt-4 mx-auto"  style="width: 100%;max-width: 600px;">
+                        <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
+                    <v-textarea v-model="message" color="teal" rows="3" counter maxlength="280">
+                        <template v-slot:label>
+                            <div>
+                            内容 <small>(content)</small>
                             </div>
-                            <div class="pt-4 mx-auto"  style="width: 100%;max-width: 600px;">
-                             <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
-                            <v-textarea v-model="message" color="teal" rows="3" counter maxlength="280">
-                                <template v-slot:label>
-                                    <div>
-                                    内容 <small>(content)</small>
-                                    </div>
-                                </template>
-                            </v-textarea>
-                            </div>
+                        </template>
+                    </v-textarea>
+                    </div>
                 </v-stepper-content>
 
                 <v-stepper-content step="4">
@@ -280,8 +238,8 @@
             </v-stepper-items>
         </v-stepper>
         <div>
-            <v-btn style="z-index: 5;" absolute top right color="primary" @click="e1=4" :disabled="confirmMessage" v-if="e1==3">確認</v-btn>
-            <v-btn style="right: 90px;z-index: 5;" absolute top right color="purple" @click="oneMoreImage" v-if="e1==3">追加</v-btn>
+            <v-btn style="z-index: 5;" fixed top right color="primary" @click="e1=4" :disabled="confirmMessage" v-if="e1==3">確認</v-btn>
+            <v-btn style="right: 90px;z-index: 5;" fixed top right color="purple" @click="oneMoreImage" v-if="e1==3">追加</v-btn>
             <!-- <v-btn @click="back2edit">戻る</v-btn> -->
         </div>
         <div class="px-4" v-if="showConcatImg">
@@ -416,9 +374,10 @@ export default {
             text: 'タイトルと内容を書いてください',
             timeout: 4000,
             carousel: '',
-            length: 4,
+            coverLength: 4,
             coverItem: 0,
-            textItem: 0,
+            drawLength: 2,
+            drawItem: 0,
             editItems: 0,
             basicSize: '',
             mediaSize: '',
@@ -539,27 +498,30 @@ export default {
     },
     methods: {
         coverNext () {
-            this.coverItem = this.coverItem + 1 === this.length
+            this.coverItem = this.coverItem + 1 === this.coverLength
             ? 0
             : this.coverItem + 1
         },
         coverPrev () {
             this.coverItem = this.coverItem - 1 < 0
-            ? this.length - 1
+            ? this.coverLength - 1
             : this.coverItem - 1
         },
-        textNext () {
-            this.textItem = this.textItem + 1 === this.length
+        drawNext () {
+            this.drawItem = this.drawItem + 1 === this.drawLength
             ? 0
-            : this.textItem + 1
+            : this.drawItem + 1
         },
-        textPrev () {
-            this.textItem = this.textItem - 1 < 0
-            ? this.length - 1
-            : this.textItem - 1
+        drawPrev () {
+            this.drawItem = this.drawItem - 1 < 0
+            ? this.drawLength - 1
+            : this.drawItem - 1
         },
         oneMoreImage(){
             this.e1 = 1;
+            this.editItems = 0;
+            this.coverItem = 0;
+            this.drawItem = 0;
             this.imgSrc = '';
             this.stepBtn1 = true;
             this.concatImageBtn = true;
@@ -670,8 +632,10 @@ export default {
           this.drawCanvasctx.globalCompositeOperation = 'destination-out';
         },
         draw(e) {
-          var x = e.layerX
-          var y = e.layerY
+            var rect = e.target.getBoundingClientRect();
+          var touch =e.targetTouches[0];
+          var x = touch.clientX - rect.left;
+          var y = touch.clientY - rect.top;
           if(!this.isDrag) {
             return;
           }
@@ -679,13 +643,14 @@ export default {
           this.drawCanvasctx.stroke();
         },
         dragStart(e) {
-          var x = e.layerX
-          var y = e.layerY
+            var rect = e.target.getBoundingClientRect();
+          var touch =e.targetTouches[0];
+          var x = touch.clientX - rect.left;
+          var y = touch.clientY - rect.top;
           this.drawCanvasctx.beginPath();
           this.drawCanvasctx.lineTo(x, y);
           this.drawCanvasctx.stroke();
           this.isDrag = true;
-          console.log('touch')
         },
         dragEnd() {
           this.drawCanvasctx.closePath();
