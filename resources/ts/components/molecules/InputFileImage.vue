@@ -26,6 +26,7 @@
 <script>
 import InputFileImageBtn from '../atoms/InputFileImageBtn'
 export default {
+    props: ['size'],
     components: {
         'input-file-image-btn': InputFileImageBtn,
     },
