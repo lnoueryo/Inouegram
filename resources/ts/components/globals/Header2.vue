@@ -23,7 +23,7 @@
         </v-navigation-drawer>
         <v-app-bar fixed app>
             <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
-            <v-toolbar-title v-text="title" v-if="windowSize.x>480"/>
+            <v-toolbar-title v-text="title"/>
         </v-app-bar>
       </div>
     </div>
@@ -61,7 +61,7 @@ export default {
           to: '/profile?id=' + this.user.id,
         },
       ],
-      title: 'My Memories',
+      title: 'MyMemories',
     }
   },
   methods: {
@@ -71,3 +71,9 @@ export default {
   }
 }
 </script>
+<style scoped>
+  .v-application--is-ltr .v-toolbar__content>.v-btn.v-btn--icon:first-child+.v-toolbar__title, .v-application--is-ltr .v-toolbar__extension>.v-btn.v-btn--icon:first-child+.v-toolbar__title {
+    padding-left: 0;
+    font-size: 1.15rem;
+}
+</style>

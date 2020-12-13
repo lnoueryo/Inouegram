@@ -22,11 +22,11 @@
                                     drag-mode="crop"
                                 />
                             <div>
-                                <input-file @selectedImage="loadImage($event)"></input-file>
+                                <input-file size="479" @selectedImage="loadImage($event)"></input-file>
                             </div>
                             </div>
                             <div v-else>
-                                <input-file-image @selectedImage="loadImage($event)"></input-file-image>
+                                <input-file-image size="479" @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                         </v-layout>
                     <!-- </v-container> -->
@@ -70,7 +70,7 @@
                                         <!-- <v-slider style="margin-top: 35px" label="opacity" v-model.lazy="opacity" min="4" max="10" thumb-label="always" @input="searchTimeOut2" thumb-color="pink" color="pink"></v-slider> -->
                                         <v-slider style="margin-top: 35px" label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3" thumb-color="purple" color="purple"></v-slider>
                                         <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="280" thumb-label="always" @input="searchTimeOut3" thumb-color="red"  color="red"></v-slider>
-                                        <v-btn color="pink" @click="reset">reset</v-btn>
+                                        <v-btn color="pink" @click="resetStart">reset</v-btn>
                                         <v-btn color="purple" @click="rotate">rotate</v-btn>
                                         <!-- <v-btn color="black" @click="back">back</v-btn> -->
                                     </v-window-item>
@@ -262,7 +262,7 @@
         </v-card-title>
 
         <v-card-text>
-            ファイルサイズが上限を超えています。5M以下のイメージを選択してください
+            ファイルサイズが上限を超えています。4M以下のイメージを選択してください
         </v-card-text>
 
         <v-divider></v-divider>
@@ -476,10 +476,10 @@ export default {
         },
         color: {
             get () {
-            return this[this.type]
+                return this[this.type]
             },
             set (v) {
-            this[this.type] = v
+                this[this.type] = v
             },
         },
     },
@@ -685,10 +685,6 @@ export default {
                     that.coverctx.drawImage(background,0,0,280,280);
                 }
             var that = this;
-            var canvas = [];
-            var canvasCtx = [];
-            var coverImage = [];
-            var that = this;
             that.cropProgress = false;
             this.coverctx.save();
         },
@@ -733,19 +729,20 @@ export default {
                 that.coverctx.save();
             };
         },
+        resetStart(){
+            let that = this;
+            that.cropProgress = true;
+            setTimeout(function(){
+                that.reset();
+            },100)
+        },
         reset() {
-            this.coverctx.filter = 'grayscale(0%)';
             this.globalAlpha = 1;
             this.hexa = '#FF000000';
             this.model = '';
             this.filters = '';
             this.coverctx.globalCompositeOperation = 'source-over';
             this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
-            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
-            this.cover = document.getElementById("cover");
-            this.coverctx = this.cover.getContext("2d");
-            this.coverctx.globalAlpha = 1;
-            this.coverctx.globalCompositeOperation = 'source-over';
             this.coverctx.filter = 'grayscale(0%)';
             this.coverctx.clearRect(0, 0, 280, 280);
             var background = new Image();
@@ -753,6 +750,7 @@ export default {
             var that = this;
             background.onload = function(){
                     that.coverctx.drawImage(background,0,0,280,280);
+                    that.cropProgress = false;
                 }
             this.coverctx.save();
             // this.color = '#00000080';

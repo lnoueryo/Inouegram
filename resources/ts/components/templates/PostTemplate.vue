@@ -41,11 +41,11 @@
                                 />
                             </div>
                             <div v-else>
-                                <input-file-image @selectedImage="loadImage($event)"></input-file-image>
+                                <input-file-image size="1100" @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                             <div>
                             <div id="preview" class="preview"/>
-                            <input-file @selectedImage="loadImage($event)"></input-file>
+                            <input-file size="1100" @selectedImage="loadImage($event)"></input-file>
                             </div>
                         </v-layout>
                     </v-container>

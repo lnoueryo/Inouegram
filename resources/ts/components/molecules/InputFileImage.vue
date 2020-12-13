@@ -47,19 +47,29 @@ export default {
                     return
                 }
             if (typeof FileReader === 'function') {
-                if(file.size<5100000){
-                    this.show = true;
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const imgSrc = event.target.result;
-                        this.$emit('selectedImage', imgSrc);
-                        this.show = false;
+                if(this.size<480){
+                    if(file.size<4100000){
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const imgSrc = event.target.result;
+                            this.$emit('selectedImage', imgSrc);
+                        }
+                        reader.readAsDataURL(file)
+                    } else {
+                        this.$emit('selectedImage', '');
                     }
-                    reader.readAsDataURL(file)
                 } else {
-                    this.$emit('selectedImage', '');
+                    if(file.size<5100000){
+                        const reader = new FileReader();
+                        reader.onload = (event) => {
+                            const imgSrc = event.target.result;
+                            this.$emit('selectedImage', imgSrc);
+                        }
+                        reader.readAsDataURL(file)
+                    } else {
+                        this.$emit('selectedImage', '');
+                    }
                 }
-
             } else {
                 alert('Sorry, FileReader API not supported')
             }
