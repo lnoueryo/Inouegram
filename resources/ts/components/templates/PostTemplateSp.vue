@@ -65,28 +65,28 @@
                     <v-card flat tile max-width="300" style="margin: auto">
                         <v-window v-model="editItems" touchless>
                             <v-window-item :value="0">
-                                <v-window v-model="coverItem" class="px-2 mt-2">
+                                <v-window v-model="coverItem" class="px-2 mt-2" touchless>
                                     <v-window-item :value="0">
                                         <!-- <v-slider style="margin-top: 35px" label="opacity" v-model.lazy="opacity" min="4" max="10" thumb-label="always" @input="searchTimeOut2" thumb-color="pink" color="pink"></v-slider> -->
-                                        <v-slider style="margin-top: 35px" label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3" thumb-color="purple" color="purple"></v-slider>
-                                        <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="280" thumb-label="always" @input="searchTimeOut3" thumb-color="red"  color="red"></v-slider>
-                                        <v-btn color="pink" @click="resetStart">reset</v-btn>
-                                        <v-btn color="purple" @click="rotate">rotate</v-btn>
+                                        <v-slider style="margin-top: 35px" label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="purple" color="purple"></v-slider>
+                                        <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="280" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="red"  color="red"></v-slider>
+                                        <v-btn color="pink" @click="resetStart(coverctx)">reset</v-btn>
+                                        <v-btn color="purple" @click="rotate(coverctx)">rotate</v-btn>
                                         <!-- <v-btn color="black" @click="back">back</v-btn> -->
                                     </v-window-item>
 
                                     <v-window-item :value="1">
-                                        <v-slider style="margin-top: 35px" label="contrast" v-model.lazy="filterObject.contrast" min="0" max="400" thumb-label="always" @input="searchTimeOut3" thumb-color="orange" color="orange"></v-slider>
-                                        <v-slider label="grayscale" v-model.lazy="filterObject.grayscale" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="indigo" color="indigo"></v-slider>
-                                        <v-slider label="hue-rotate" v-model.lazy="filterObject.hueRotate" min="0" max="359" thumb-label="always" @input="searchTimeOut3" thumb-color="green" color="green"></v-slider>
+                                        <v-slider style="margin-top: 35px" label="contrast" v-model.lazy="filterObject.contrast" min="0" max="400" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="orange" color="orange"></v-slider>
+                                        <v-slider label="grayscale" v-model.lazy="filterObject.grayscale" min="0" max="100" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="indigo" color="indigo"></v-slider>
+                                        <v-slider label="hue-rotate" v-model.lazy="filterObject.hueRotate" min="0" max="359" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="green" color="green"></v-slider>
                                     </v-window-item>
                                     <v-window-item :value="2">
-                                        <v-slider style="margin-top: 35px" label="invert" v-model.lazy="filterObject.invert" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="deep-purple" color="deep-purple"></v-slider>
-                                        <v-slider label="saturate" v-model.lazy="filterObject.saturate" min="0" max="280" thumb-label="always" @input="searchTimeOut3" thumb-color="light-blue" color="light-blue"></v-slider>
-                                        <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3" thumb-color="lime" color="lime"></v-slider>
+                                        <v-slider style="margin-top: 35px" label="invert" v-model.lazy="filterObject.invert" min="0" max="100" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="deep-purple" color="deep-purple"></v-slider>
+                                        <v-slider label="saturate" v-model.lazy="filterObject.saturate" min="0" max="280" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="light-blue" color="light-blue"></v-slider>
+                                        <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3(coverctx)" thumb-color="lime" color="lime"></v-slider>
                                     </v-window-item>
                                     <v-window-item :value="3">
-                                        <v-color-picker v-model="color" hide-canvas hide-inputs class="ma-2" @input="searchTimeOut2"></v-color-picker>
+                                        <v-color-picker v-model="color" hide-canvas hide-inputs class="ma-2" @input="searchTimeOut2(coverctx)"></v-color-picker>
                                         <v-chip-group column active-class="primary--text">
                                             <v-chip v-for="(tag, index) in globalCompositeOperation" :key="index" @click="click(index)">
                                                 {{ tag }}
@@ -113,20 +113,20 @@
                             <v-window-item :value="1">
                                 <v-window v-model="drawItem" class="px-2 mt-2" touchless>
                                     <v-window-item :value="0">
-                                        <v-btn id="pen-button" class="align-self-start mr-2" @click="pen">ペン</v-btn>
-                                        <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
-                                        <v-btn id="clear-button" class="align-self-start mr-2" @click="clear">クリア</v-btn>
+                                        <v-btn id="pen-button" class="align-self-start mr-2" @click="pen(drawCanvasctx)">ペン</v-btn>
+                                        <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser(drawCanvasctx)" >消しゴム</v-btn>
+                                        <v-btn id="clear-button" class="align-self-start mr-2" @click="clear(drawCanvasctx)">クリア</v-btn>
                                         <div class="py-4">
-                                            <v-color-picker class="mb-5" canvas-height="75" dot-size="20" hide-inputs v-model="penColor" @input="searchTimeOut"></v-color-picker>
+                                            <v-color-picker class="mb-5" canvas-height="75" dot-size="20" hide-inputs v-model="penColor" @input="searchTimeOut(drawCanvasctx)"></v-color-picker>
                                         </div>
                                     </v-window-item>
                                     <v-window-item :value="1">
                                     <v-col cols="12" sm="12" class="d-flex">
-                                        <v-select class="px-1" v-model="lineCap" :items="lineCaps" label="lineCap" outlined @input="searchTimeOut"></v-select>
-                                        <v-select class="px-1" v-model="lineJoin " :items="lineJoins" label="lineJoin" outlined @input="searchTimeOut"></v-select>
+                                        <v-select class="px-1" v-model="lineCap" :items="lineCaps" label="lineCap" outlined @input="searchTimeOut(drawCanvasctx)"></v-select>
+                                        <v-select class="px-1" v-model="lineJoin " :items="lineJoins" label="lineJoin" outlined @input="searchTimeOut(drawCanvasctx)"></v-select>
                                     </v-col>
                                     <v-col cols="12" sm="11">
-                                            <v-slider label="lineWidth" v-model.lazy="lineWidth" min="2" max="25" thumb-label="always" @input="searchTimeOut" thumb-color="pink" color="pink"></v-slider>
+                                            <v-slider label="lineWidth" v-model.lazy="lineWidth" min="2" max="25" thumb-label="always" @input="searchTimeOut(drawCanvasctx)" thumb-color="pink" color="pink"></v-slider>
                                     </v-col>
                                     </v-window-item>
                                 </v-window>
@@ -243,16 +243,34 @@
             <v-btn style="right: 90px;z-index: 5;" fixed top right color="purple" @click="oneMoreImage" v-if="e1==3">追加</v-btn>
             <!-- <v-btn @click="back2edit">戻る</v-btn> -->
         </div>
-        <div class="px-4" v-if="showConcatImg">
-            <div class="d-flex flex-wrap mb-3" style="justify-content: space-between;">
+        <div v-if="showConcatImg">
+            <!-- <div class="d-flex flex-wrap mb-3" style="justify-content: space-between;">
                 <div class="mb-3" v-for="(image, index) in concatImg" :key="index">
                     <v-img class="mb-1 red accent-3" color="red accent-3" width="100" :src="image"></v-img>
-                    <div>
+                    <div class="mb-1">
                         <v-btn color="red accent-3" block small @click="deleteImage(index)">削除</v-btn>
                     </div>
+                    <div>
+                        <v-btn color="green accent-3" block small @click="editImage(index)">編集</v-btn>
+                    </div>
                 </div>
-            </div>
-        <v-btn color="primary" @click="confirmSave()">保存</v-btn>
+            </div> -->
+            <v-sheet class="mx-auto" elevation="0" max-width="800">
+                <v-slide-group v-model="model" active-class="success" show-arrows>
+                <v-slide-item v-for="(image, index) in concatImg" :key="index">
+                    <v-card class="ma-4">
+                        <v-img class="mb-1" width="100" :src="image"></v-img>
+                        <div class="mb-1">
+                            <v-btn color="red accent-3" block small @click="deleteImage(index)">削除</v-btn>
+                        </div>
+                        <!-- <div>
+                            <v-btn color="green accent-3" block small @click="editImageStart(index)">編集</v-btn>
+                        </div> -->
+                    </v-card>
+                </v-slide-item>
+                </v-slide-group>
+                <v-btn class="ml-4" color="primary" @click="confirmSave()">保存</v-btn>
+            </v-sheet>
         </div>
     <v-dialog v-model="sizeDialog" width="280">
 
@@ -285,68 +303,114 @@
         <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <!-- <v-row justify="center">
-        <v-dialog
-        v-model="currentImageDialog"
-        fullscreen
-        hide-overlay
-        transition="dialog-bottom-transition"
-        >
-        <template v-slot:activator="{ on, attrs }">
-            <v-btn
-            absolute
-            right
-            style="bottom: 60px"
-            color="primary"
-            dark
-            v-bind="attrs"
-            v-on="on"
-            fab
-            >
-            Open
-            </v-btn>
-        </template>
+        <v-dialog v-model="currentImageDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card style="height: 50;">
-            <v-toolbar
-            dark
-            color="primary"
-            >
-            <v-btn
-                icon
-                dark
-                @click="currentImageDialog = false"
-            >
+            <v-toolbar dark color="primary">
+            <v-btn icon dark @click="currentImageDialog = false">
                 <v-icon>mdi-close</v-icon>
             </v-btn>
-            <v-toolbar-title>Settings</v-toolbar-title>
+            <v-btn dark text @click="newEditItems = 0">フィルター</v-btn>
+            <v-btn dark text @click="newEditItems = 1">ペン</v-btn>
             <v-spacer></v-spacer>
             <v-toolbar-items>
-                <v-btn
-                dark
-                text
-                @click="currentImageDialog = false"
-                >
+                <v-btn dark text @click="editImageSaveStart(editIndex)">
                 Save
                 </v-btn>
             </v-toolbar-items>
             </v-toolbar>
-            <v-list
-            three-line
-            subheader
-            >
-            <v-subheader>User Controls</v-subheader>
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Content filtering</v-list-item-title>
-                <v-list-item-subtitle>Set the content filtering level to restrict apps that can be downloaded</v-list-item-subtitle>
-                </v-list-item-content>
-            </v-list-item>
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Password</v-list-item-title>
-                <v-list-item-subtitle>Require password for purchase or use password to restrict purchase</v-list-item-subtitle>
-                </v-list-item-content>
-            </v-list-item>
-            </v-list>
+            <v-card class="overflow-hidden" height="280" width="280" style="margin: auto;">
+                <div id="canvas-area" style="position: relative">
+                    <canvas id="editDrawCanvas" :class="{index2: newEditItems === 1}" style="position: absolute;top: 0; left: 0;z-index: 1;" width="280" height="280" @touchstart.prevent="dragStart" @touchend="dragEnd" @touchmove="draw"></canvas>
+                    <canvas id="editCover" style="position: absolute; top: 0; left: 0;z-index: 0;" width="280" height="280"></canvas>
+                    <canvas id="text" :class="{index2: newEditItems === 0}" style="position: absolute;top: 0; left: 0;" width=280 height=280 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
+                    <canvas id="edittedImage" width="280" height="280" v-show="false"></canvas>
+                    <canvas id="editcroppedOriginalImage" style="" width="280" height="280" v-show="false"></canvas>
+                </div>
+            </v-card>
+            <v-card flat tile max-width="300" style="margin: auto">
+                <v-window v-model="newEditItems" touchless>
+                    <v-window-item :value="0">
+                        <v-window v-model="newCoverItem" class="px-2 mt-2" touchless>
+                            <v-window-item :value="0">
+                                <v-slider style="margin-top: 35px" label="blur" v-model.lazy="filterObject.blur" min="0" max="10" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="purple" color="purple"></v-slider>
+                                <v-slider label="brightness" v-model.lazy="filterObject.brightness" min="35" max="280" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="red"  color="red"></v-slider>
+                                <v-btn color="pink" @click="resetStart(editCoverctx)">reset</v-btn>
+                                <v-btn color="purple" @click="rotate(editCoverctx)">rotate</v-btn>
+                            </v-window-item>
+
+                            <v-window-item :value="1">
+                                <v-slider style="margin-top: 35px" label="contrast" v-model.lazy="filterObject.contrast" min="0" max="400" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="orange" color="orange"></v-slider>
+                                <v-slider label="grayscale" v-model.lazy="filterObject.grayscale" min="0" max="100" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="indigo" color="indigo"></v-slider>
+                                <v-slider label="hue-rotate" v-model.lazy="filterObject.hueRotate" min="0" max="359" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="green" color="green"></v-slider>
+                            </v-window-item>
+                            <v-window-item :value="2">
+                                <v-slider style="margin-top: 35px" label="invert" v-model.lazy="filterObject.invert" min="0" max="100" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="deep-purple" color="deep-purple"></v-slider>
+                                <v-slider label="saturate" v-model.lazy="filterObject.saturate" min="0" max="280" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="light-blue" color="light-blue"></v-slider>
+                                <v-slider label="sepia" v-model.lazy="filterObject.sepia" min="0" max="100" thumb-label="always" @input="searchTimeOut3(editCoverctx)" thumb-color="lime" color="lime"></v-slider>
+                            </v-window-item>
+                            <v-window-item :value="3">
+                                <v-color-picker v-model="color" hide-canvas hide-inputs class="ma-2" @input="searchTimeOut2(editCoverctx)"></v-color-picker>
+                                <v-chip-group column active-class="primary--text">
+                                    <v-chip v-for="(tag, index) in globalCompositeOperation" :key="index" @click="click(index)">
+                                        {{ tag }}
+                                    </v-chip>
+                                </v-chip-group>
+                            </v-window-item>
+                        </v-window>
+                        <v-card-actions class="justify-space-between">
+                            <v-btn text @click="newCoverPrev">
+                                <v-icon>mdi-chevron-left</v-icon>
+                            </v-btn>
+                            <v-item-group v-model="newCoverItem" class="text-center" mandatory>
+                                <v-item v-for="n in coverLength" :key="`btn-${n}`" v-slot="{ active, toggle }">
+                                    <v-btn :input-value="active" icon @click="toggle">
+                                        <v-icon>mdi-record</v-icon>
+                                    </v-btn>
+                                </v-item>
+                            </v-item-group>
+                            <v-btn text @click="newCoverNext">
+                                <v-icon>mdi-chevron-right</v-icon>
+                            </v-btn>
+                        </v-card-actions>
+                    </v-window-item>
+                    <v-window-item :value="1">
+                        <v-window v-model="newDrawItem" class="px-2 mt-2" touchless>
+                            <v-window-item :value="0">
+                                <v-btn id="pen-button" class="align-self-start mr-2" @click="pen(editDrawCanvasctx)">ペン</v-btn>
+                                <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser(editDrawCanvasctx)" >消しゴム</v-btn>
+                                <v-btn id="clear-button" class="align-self-start mr-2" @click="clear(editDrawCanvasctx)">クリア</v-btn>
+                                <div class="py-4">
+                                    <v-color-picker class="mb-5" canvas-height="75" dot-size="20" hide-inputs v-model="penColor" @input="searchTimeOut(editDrawCanvasctx)"></v-color-picker>
+                                </div>
+                            </v-window-item>
+                            <v-window-item :value="1">
+                            <v-col cols="12" sm="12" class="d-flex">
+                                <v-select class="px-1" v-model="lineCap" :items="lineCaps" label="lineCap" outlined @input="searchTimeOut(editDrawCanvasctx)"></v-select>
+                                <v-select class="px-1" v-model="lineJoin " :items="lineJoins" label="lineJoin" outlined @input="searchTimeOut(editDrawCanvasctx)"></v-select>
+                            </v-col>
+                            <v-col cols="12" sm="11">
+                                    <v-slider label="lineWidth" v-model.lazy="lineWidth" min="2" max="25" thumb-label="always" @input="searchTimeOut(editDrawCanvasctx)" thumb-color="pink" color="pink"></v-slider>
+                            </v-col>
+                            </v-window-item>
+                        </v-window>
+                        <v-card-actions class="justify-space-between">
+                            <v-btn text @click="newDrawPrev">
+                                <v-icon>mdi-chevron-left</v-icon>
+                            </v-btn>
+                            <v-item-group v-model="newDrawItem" class="text-center" mandatory>
+                                <v-item v-for="n in drawLength" :key="`btn-${n}`" v-slot="{ active, toggle }">
+                                    <v-btn :input-value="active" icon @click="toggle">
+                                        <v-icon>mdi-record</v-icon>
+                                    </v-btn>
+                                </v-item>
+                            </v-item-group>
+                            <v-btn text @click="newDrawNext">
+                                <v-icon>mdi-chevron-right</v-icon>
+                            </v-btn>
+                        </v-card-actions>
+                    </v-window-item>
+                </v-window>
+            </v-card>
         </v-card>
         </v-dialog>
     </v-row> -->
@@ -435,6 +499,13 @@ export default {
             type: 'hexa',
             hexa: '#FF000000',
             size: 479,
+            editDrawCanvasctx: '',
+            editCoverctx: '',
+            editcroppedOriginalImagectx: '',
+            editIndex: '',
+            newEditItems: 0,
+            newCoverItem: 0,
+            newDrawItem: 0,
         };
     },
     computed: {
@@ -509,6 +580,16 @@ export default {
             ? this.coverLength - 1
             : this.coverItem - 1
         },
+        newCoverNext () {
+            this.newCoverItem = this.newCoverItem + 1 === this.coverLength
+            ? 0
+            : this.newCoverItem + 1
+        },
+        newCoverPrev () {
+            this.newCoverItem = this.newCoverItem - 1 < 0
+            ? this.coverLength - 1
+            : this.newCoverItem - 1
+        },
         drawNext () {
             this.drawItem = this.drawItem + 1 === this.drawLength
             ? 0
@@ -519,27 +600,36 @@ export default {
             ? this.drawLength - 1
             : this.drawItem - 1
         },
+        newDrawNext () {
+            this.newDrawItem = this.newDrawItem + 1 === this.drawLength
+            ? 0
+            : this.newDrawItem + 1
+        },
+        newDrawPrev () {
+            this.newDrawItem = this.newDrawItem - 1 < 0
+            ? this.drawLength - 1
+            : this.newDrawItem - 1
+        },
         oneMoreImage(){
             this.e1 = 1;
+            this.editItems = 0;
             this.editItems = 0;
             this.coverItem = 0;
             this.drawItem = 0;
             this.imgSrc = '';
             this.stepBtn1 = true;
             this.concatImageBtn = true;
-            this.coverctx.filter = 'grayscale(0%)';
             this.globalAlpha = 1;
             this.hexa = '#FF000000';
             this.model = '';
             this.filters = '';
-            this.coverctx.globalCompositeOperation = 'source-over';
             this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
-            this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+            // this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             this.cover = document.getElementById("cover");
             this.coverctx = this.cover.getContext("2d");
-            this.coverctx.globalAlpha = 1;
             this.coverctx.globalCompositeOperation = 'source-over';
             this.coverctx.filter = 'grayscale(0%)';
+            this.coverctx.globalAlpha = 1;
         },
         loadImage(e){
             if(e == ''){
@@ -591,8 +681,10 @@ export default {
             var cover = this.createImage(document.getElementById("cover"));
             var text = this.createImage(document.getElementById("text"));
             var drawCanvas = this.createImage(document.getElementById("drawCanvas"));
-            // var image = this.createImage(this.canvas);
-            this.imgBeforeConcat.push([cover,text,drawCanvas]);
+            var coverSrc = document.getElementById("cover").toDataURL('image/png');
+            var drawCanvasSrc = document.getElementById("drawCanvas").toDataURL('image/png');
+            var croppedOriginalImage = this.croppedImage;
+            this.imgBeforeConcat.push([coverSrc,drawCanvasSrc,croppedOriginalImage]);
             drawCanvas.onload = function(){
                 concatCxt.drawImage(cover,0,0,280,280);
                 concatCxt.drawImage(text,0,0,280,280);
@@ -609,29 +701,29 @@ export default {
             image.src = context.toDataURL();
             return image;
         },
-        searchTimeOut() {
+        searchTimeOut(ctx) {
             if (this.timer) {
                 clearTimeout(this.timer);
                 this.timer = null;
             }
             this.timer = setTimeout(() => {
-                this.pen()
+                this.pen(ctx)
             }, 200);
         },
-        pen(){
+        pen(ctx){
           this.canvasMode = 'pen'
-          this.drawCanvasctx.globalCompositeOperation = 'source-over';
-          this.drawCanvasctx.lineCap = this.lineCap;
-          this.drawCanvasctx.lineJoin = this.lineJoin;
-          this.drawCanvasctx.lineWidth = this.lineWidth;
-          this.drawCanvasctx.strokeStyle = this.penColor;
+          ctx.globalCompositeOperation = 'source-over';
+          ctx.lineCap = this.lineCap;
+          ctx.lineJoin = this.lineJoin;
+          ctx.lineWidth = this.lineWidth;
+          ctx.strokeStyle = this.penColor;
         },
-        eraser() {
+        eraser(ctx) {
           this.canvasMode = 'eraser'
-          this.drawCanvasctx.lineCap = 'square';
-          this.drawCanvasctx.lineJoin = 'square';
-          this.drawCanvasctx.lineWidth = 30;
-          this.drawCanvasctx.globalCompositeOperation = 'destination-out';
+          ctx.lineCap = 'square';
+          ctx.lineJoin = 'square';
+          ctx.lineWidth = 30;
+          ctx.globalCompositeOperation = 'destination-out';
         },
         draw(e) {
             var rect = e.target.getBoundingClientRect();
@@ -641,25 +733,25 @@ export default {
           if(!this.isDrag) {
             return;
           }
-          this.drawCanvasctx.lineTo(x, y);
-          this.drawCanvasctx.stroke();
+          e.target.getContext('2d').lineTo(x, y);
+          e.target.getContext('2d').stroke();
         },
         dragStart(e) {
             var rect = e.target.getBoundingClientRect();
           var touch =e.targetTouches[0];
           var x = touch.clientX - rect.left;
           var y = touch.clientY - rect.top;
-          this.drawCanvasctx.beginPath();
-          this.drawCanvasctx.lineTo(x, y);
-          this.drawCanvasctx.stroke();
+          e.target.getContext('2d').beginPath();
+          e.target.getContext('2d').lineTo(x, y);
+          e.target.getContext('2d').stroke();
           this.isDrag = true;
         },
-        dragEnd() {
-          this.drawCanvasctx.closePath();
+        dragEnd(e) {
+          e.target.getContext('2d').closePath();
           this.isDrag = false;
         },
-        clear() {
-          this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+        clearctx(ctx) {
+          ctx.clearRect(0, 0, 280, 280);
         },
         cropStart(){
             let that = this;
@@ -700,20 +792,20 @@ export default {
             };
             this.coverctx.fillRect(0, 0, 280, 280);
         },
-        rotate() {
-            this.coverctx.clearRect(0, 0, 280, 280);
-            this.coverctx.translate(280, 0);
-            this.coverctx.rotate(90 * Math.PI / 180);
-            this.coverctx.globalAlpha = this.globalAlpha;
-            this.coverctx.fillStyle = this.color;
-            this.coverctx.fillRect(0, 0, 280, 280);
-            this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+        rotate(ctx) {
+            ctx.clearRect(0, 0, 280, 280);
+            ctx.translate(280, 0);
+            ctx.rotate(90 * Math.PI / 180);
+            ctx.globalAlpha = this.globalAlpha;
+            ctx.fillStyle = this.color;
+            ctx.fillRect(0, 0, 280, 280);
+            ctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
-                that.coverctx.save();
+                ctx.drawImage(picImage, 0, 0, 280, 280);
+                ctx.save();
             };
         },
         click(key) {
@@ -730,43 +822,51 @@ export default {
                 that.coverctx.save();
             };
         },
-        resetStart(){
+        resetStart(ctx){
             let that = this;
             that.cropProgress = true;
             setTimeout(function(){
-                that.reset();
+                that.reset(ctx);
             },100)
         },
-        reset() {
+        reset(ctx) {
             this.globalAlpha = 1;
             this.hexa = '#FF000000';
             this.model = '';
             this.filters = '';
-            this.coverctx.globalCompositeOperation = 'source-over';
+            ctx.globalCompositeOperation = 'source-over';
             this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
-            this.coverctx.filter = 'grayscale(0%)';
-            this.coverctx.clearRect(0, 0, 280, 280);
+            ctx.filter = 'grayscale(0%)';
+            ctx.clearRect(0, 0, 280, 280);
             var background = new Image();
             background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
             var that = this;
             background.onload = function(){
-                    that.coverctx.drawImage(background,0,0,280,280);
+                    ctx.drawImage(background,0,0,280,280);
                     that.cropProgress = false;
                 }
-            this.coverctx.save();
-            // this.color = '#00000080';
-            // that.searchTimeOut();
+            ctx.save();
         },
-        searchTimeOut2() {
+        searchTimeOut2(ctx) {
             if (this.timer) {
                 clearTimeout(this.timer);
                 this.timer = null;
             }
             this.timer = setTimeout(() => {
-                this.colorImage();
+                this.colorImage(ctx);
             }, 200);
         },
-        searchTimeOut3() {
+        searchTimeOut3(ctx) {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+            this.timer = setTimeout(() => {
+                this.filter(ctx);
+                this.colorImage(ctx);
+            }, 200);
+        },
+        searchTimeOut4() {
             if (this.timer) {
                 clearTimeout(this.timer);
                 this.timer = null;
@@ -776,21 +876,21 @@ export default {
                 this.colorImage();
             }, 200);
         },
-        colorImage() {
-            this.coverctx.clearRect(0, 0, 280, 280);
-            this.coverctx.globalAlpha = this.globalAlpha;
-            this.coverctx.fillStyle = this.hexa;
-            this.coverctx.fillRect(0, 0, 280, 280);
-            this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+        colorImage(ctx) {
+            ctx.clearRect(0, 0, 280, 280);
+            ctx.globalAlpha = this.globalAlpha;
+            ctx.fillStyle = this.hexa;
+            ctx.fillRect(0, 0, 280, 280);
+            ctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
             var picImage = new Image();
             picImage.src = this.croppedImage;
             var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
-                that.coverctx.save();
+                ctx.drawImage(picImage, 0, 0, 280, 280);
+                ctx.save();
             };
         },
-        filter() {
+        filter(ctx) {
             var filterKeys = Object.keys(this.filterObject);
             var filterValues = Object.values(this.filterObject);
             var filtersArray = [];
@@ -809,18 +909,17 @@ export default {
             };
             var filters = filtersArray.join(' ');
             this.filters = filters;
-            this.coverctx.clearRect(0, 0, 280, 280);
-            this.coverctx.globalAlpha = this.globalAlpha;
-            this.coverctx.fillstyle = this.hexa;
-            this.coverctx.filter = this.filters;
-            this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-            this.coverctx.fillRect(0, 0, 280, 280);
+            ctx.clearRect(0, 0, 280, 280);
+            ctx.globalAlpha = this.globalAlpha;
+            ctx.fillstyle = this.hexa;
+            ctx.filter = this.filters;
+            ctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+            ctx.fillRect(0, 0, 280, 280);
             var picImage = new Image();
             picImage.src = this.croppedImage;
-            var that = this;
             picImage.onload = function () {
-                that.coverctx.drawImage(picImage, 0, 0, 280, 280);
-                that.coverctx.save();
+                ctx.drawImage(picImage, 0, 0, 280, 280);
+                ctx.save();
             };
         },
         selectText(event){
@@ -964,6 +1063,45 @@ export default {
             this.e1 = 2;
             this.concatImg.pop();
         },
+        editImageStart(index){
+            let that = this;
+            that.cropProgress = true;
+            that.currentImageDialog = true;
+            that.editIndex = index;
+            setTimeout(function(){
+                that.editImage(index);
+            },100)
+        },
+        editImage(index){
+            var editDrawCanvas = document.getElementById('editDrawCanvas');
+            var editDrawCanvasctx = editDrawCanvas.getContext('2d');
+            this.editDrawCanvasctx = editDrawCanvasctx;
+
+            var editCover = document.getElementById('editCover');
+            var editCoverctx = editCover.getContext('2d');
+            this.editCoverctx = editCoverctx;
+
+            var editcroppedOriginalImage = document.getElementById('editcroppedOriginalImage');
+            var editcroppedOriginalImagectx = editcroppedOriginalImage.getContext('2d');
+            this.editcroppedOriginalImagectx = editcroppedOriginalImagectx;
+            console.log(this.imgBeforeConcat[index][2])
+            // let that = this;
+            var coverImage = this.editNewImage(this.imgBeforeConcat[index][0]);
+            var drawCanvasImage = this.editNewImage(this.imgBeforeConcat[index][1]);
+            var croppedOriginalImage = this.editNewImage(this.imgBeforeConcat[index][2]);
+            let that = this;
+            croppedOriginalImage.onload = function(){
+                editCoverctx.drawImage(coverImage,0,0,280,280);
+                editDrawCanvasctx.drawImage(drawCanvasImage,0,0,280,280);
+                editcroppedOriginalImagectx.drawImage(croppedOriginalImage,0,0,280,280);
+                that.cropProgress = false;
+            };
+        },
+        editNewImage(base64){
+            var image = new Image;
+            image.src = base64;
+            return image;
+        },
         deleteImage(index){
             this.concatImg.splice(index,1);
             this.imgBeforeConcat.splice(index,1);
@@ -972,9 +1110,50 @@ export default {
                 this.imgSrc = '';
                 this.stepBtn1 = true;
                 this.concatImageBtn = true;
+                this.editItems = 0;
                 img[0].src = '';
             }
-        }
+        },
+        editImageSaveStart(index){
+            let that = this;
+            that.cropProgress = true;
+            that.currentImageDialog = false;
+            that.editIndex = '';
+            setTimeout(function(){
+                that.editImageSave(index);
+            },100)
+        },
+        editImageSave(index){
+            var edittedImage = document.getElementById('edittedImage');
+            var edittedImagecxt = edittedImage.getContext("2d");
+            var editCoverImage = this.createImage(document.getElementById("editCover"));
+            var editDrawCanvasImage = this.createImage(document.getElementById('editDrawCanvas'));
+            var editcroppedOriginalImage = this.createImage(document.getElementById('editcroppedOriginalImage'));
+
+            var coverSrc = document.getElementById("editCover").toDataURL('image/png');
+            var drawCanvasSrc = document.getElementById("editDrawCanvas").toDataURL('image/png');
+            var editcroppedOriginalImageSrc = document.getElementById("editcroppedOriginalImage").toDataURL('image/png');
+            
+            this.imgBeforeConcat[index] = [coverSrc,drawCanvasSrc,editcroppedOriginalImageSrc];
+
+            editcroppedOriginalImage.onload = function(){
+                edittedImagecxt.drawImage(editCoverImage,0,0,280,280);
+                edittedImagecxt.drawImage(editDrawCanvasImage,0,0,280,280);
+            };
+            let that = this;
+            setTimeout(function(){
+                var edittedImageSrc = document.getElementById('edittedImage').toDataURL('image/png');
+                that.concatImg[index] = edittedImageSrc;
+                that.cropProgress = false;
+                that.globalAlpha = 1;
+                that.hexa = '#FF000000';
+                that.model = '';
+                that.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
+                edittedImage.globalCompositeOperation = 'source-over';
+                edittedImage.filter = 'grayscale(0%)';
+                edittedImage.globalAlpha = 1;
+            }, 200);
+        },
     }
 };
 </script>
