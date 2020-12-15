@@ -257,17 +257,17 @@
             </div> -->
             <v-sheet class="mx-auto" elevation="0" max-width="800">
                 <v-slide-group v-model="model" active-class="success" show-arrows>
-                <v-slide-item v-for="(image, index) in concatImg" :key="index">
-                    <v-card class="ma-4">
-                        <v-img class="mb-1" width="100" :src="image"></v-img>
-                        <div class="mb-1">
-                            <v-btn color="red accent-3" block small @click="deleteImage(index)">削除</v-btn>
-                        </div>
-                        <!-- <div>
-                            <v-btn color="green accent-3" block small @click="editImageStart(index)">編集</v-btn>
-                        </div> -->
-                    </v-card>
-                </v-slide-item>
+                    <v-slide-item v-for="(image, index) in concatImg" :key="index">
+                        <v-card class="ma-4">
+                            <v-img class="mb-1" width="100" :src="image"></v-img>
+                            <div class="mb-1">
+                                <v-btn color="red accent-3" block small @click="deleteImage(index)">削除</v-btn>
+                            </div>
+                            <!-- <div>
+                                <v-btn color="green accent-3" block small @click="editImageStart(index)">編集</v-btn>
+                            </div> -->
+                        </v-card>
+                    </v-slide-item>
                 </v-slide-group>
                 <v-btn class="ml-4" color="primary" @click="confirmSave()">保存</v-btn>
             </v-sheet>
@@ -751,7 +751,7 @@ export default {
           e.target.getContext('2d').closePath();
           this.isDrag = false;
         },
-        clearctx(ctx) {
+        clear(ctx) {
           ctx.clearRect(0, 0, 280, 280);
         },
         cropStart(){

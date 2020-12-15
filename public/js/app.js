@@ -7619,7 +7619,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       e.target.getContext('2d').closePath();
       this.isDrag = false;
     },
-    clearctx: function clearctx(ctx) {
+    clear: function clear(ctx) {
       ctx.clearRect(0, 0, 280, 280);
     },
     cropStart: function cropStart() {
