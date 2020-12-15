@@ -7512,6 +7512,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
     },
     submit: function submit() {
+      this.cropProgress = true;
       var fd = new FormData();
       fd.append("cropped_image", JSON.stringify(this.concatImg));
       fd.append("title", this.title);
@@ -7519,7 +7520,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       fd.append("userId", this.user.id);
       axios.post('/api/create', fd).then(function (response) {
         return window.location.href = '/';
-      })["catch"](function (error) {
+      }, this.cropProgress = true)["catch"](function (error) {
         console.log(error);
       });
     },
@@ -8017,6 +8018,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.imgSrc = '';
         this.stepBtn1 = true;
         this.concatImageBtn = true;
+        this.globalAlpha = 1;
+        this.hexa = '#FF000000';
+        this.model = '';
+        this.filters = '';
+        this.filterObject = {
+          'blur': 0,
+          'brightness': 100,
+          'contrast': 100,
+          'grayscale': 0,
+          'hueRotate': 0,
+          'invert': 0,
+          'saturate': 100,
+          'sepia': 0
+        };
+        this.coverctx.globalCompositeOperation = 'source-over';
+        this.coverctx.filter = 'grayscale(0%)';
+        this.coverctx.globalAlpha = 1;
         this.editItems = 0;
         img[0].src = '';
       }

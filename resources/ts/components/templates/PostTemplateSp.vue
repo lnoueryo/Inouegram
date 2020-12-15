@@ -649,6 +649,7 @@ export default {
             }
         },
         submit(){
+            this.cropProgress = true;
             let fd= new FormData();
             fd.append("cropped_image", JSON.stringify(this.concatImg));
             fd.append("title", this.title);
@@ -656,7 +657,7 @@ export default {
             fd.append("userId", this.user.id);
             axios.post('/api/create', fd)
             .then(
-                response => (window.location.href = '/')
+                response => (window.location.href = '/'),this.cropProgress = true
             )
             .catch(function (error) {
                 console.log(error);
@@ -1110,6 +1111,14 @@ export default {
                 this.imgSrc = '';
                 this.stepBtn1 = true;
                 this.concatImageBtn = true;
+                this.globalAlpha = 1;
+                this.hexa = '#FF000000';
+                this.model = '';
+                this.filters = '';
+                this.filterObject = {'blur': 0, 'brightness': 100, 'contrast': 100, 'grayscale': 0, 'hueRotate': 0, 'invert': 0, 'saturate': 100, 'sepia': 0};
+                this.coverctx.globalCompositeOperation = 'source-over';
+                this.coverctx.filter = 'grayscale(0%)';
+                this.coverctx.globalAlpha = 1;
                 this.editItems = 0;
                 img[0].src = '';
             }
