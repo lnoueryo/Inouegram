@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-resize="onResize">
         <v-card class="mx-auto" max-width="800" tile flat elevation="1">
             <div v-if="requestedUserInfo.bg_image">
                 <v-img style="border-radius: 5px" :aspect-ratio="16/9" :src="'storage/image/background/' + requestedUserInfo.bg_image" @click="btnclick"></v-img>
@@ -65,6 +65,29 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <v-dialog v-model="sizeDialog" width="500">
+            <v-card>
+                <v-card-title class="headline grey lighten-2">
+                Error
+                </v-card-title>
+
+                <v-card-text>
+                ファイルサイズが上限を超えています。3M以下のイメージを選択してください
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="primary" text @click="sizeDialog = false">
+                    I accept
+                </v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+        <v-overlay :value="progress">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 
@@ -79,7 +102,9 @@ export type DataType = {
     followingUsers: User[] | string,
     windowSize: windowSize,
     changeBgDialog: boolean,
-    changingBgData: string | null
+    changingBgData: string | null,
+    sizeDialog: boolean,
+    progress: boolean,
 }
 
 interface User {
@@ -112,6 +137,8 @@ interface windowSize {
             },
             changeBgDialog: false,
             changingBgData: '',
+            sizeDialog: false,
+            progress: false,
         }
     },
     computed:{
@@ -152,39 +179,88 @@ interface windowSize {
         },
         async changeAvatar(event: any){
             var file = event.target.files[0];
-            var reader = new FileReader();
-            reader.readAsDataURL(file);
-            var avatarData;
-            var that = this;
-            reader.onload = function(e: any) {
-                avatarData = e.target.result;
-            let fd= new FormData();
-            fd.append("avatarData", avatarData);
-            fd.append("userId", that.user.id as any);
-            axios.post('/api/upload2', fd)
-            .then(
-                response => {
-                    that.user = response.data;
+            if (typeof FileReader === 'function') {
+                if(this.windowSize.x<480){
+                    if(file.size<3100000){
+                        this.progress = true;
+                        var reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        var avatarData;
+                        var that = this;
+                        reader.onload = function(e: any) {
+                            avatarData = e.target.result;
+                            let fd= new FormData();
+                            fd.append("avatarData", avatarData);
+                            fd.append("userId", that.user.id as any);
+                            axios.post('/api/upload2', fd)
+                            .then(
+                                response => {
+                                    that.user = response.data;
+                                    that.progress = false;
+                                }
+                            )
+                            .catch(function (error: string) {
+                                console.log(error);
+                                that.progress = false;
+                            });
+                        }
+                    } else {
+                        this.sizeDialog = true;
+                    }
+                } else {
+                    var reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    var avatarData;
+                    var that = this;
+                    reader.onload = function(e: any) {
+                        avatarData = e.target.result;
+                        let fd= new FormData();
+                        fd.append("avatarData", avatarData);
+                        fd.append("userId", that.user.id as any);
+                        axios.post('/api/upload2', fd)
+                        .then(
+                            response => {
+                                that.user = response.data;
+                            }
+                        )
+                        .catch(function (error: string) {
+                            console.log(error);
+                        });
+                    }
                 }
-            )
-            .catch(function (error: string) {
-                console.log(error);
-            });
             }
         },
         upload(event: any): void{
             if(event.target instanceof HTMLInputElement){
             var file = event.target.files[0];
-            var reader = new FileReader();
-            var that = this;
-                reader.onload = function(e: any) {
-                    that.changingBgData = e.target.result as string | null;
-                    that.changeBgDialog = true;
+                if(this.windowSize.x<480){
+                    if(file.size<3100000){
+                        this.progress = true;
+                        var reader = new FileReader();
+                        var that = this;
+                            reader.onload = function(e: any) {
+                                that.changingBgData = e.target.result as string | null;
+                                that.changeBgDialog = true;
+                                that.progress = false;
+                            }
+                            reader.readAsDataURL(file);
+                    } else {
+                        this.sizeDialog = true;
+                    }
+                } else {
+                    this.progress = true;
+                    var reader = new FileReader();
+                    var that = this;
+                        reader.onload = function(e: any) {
+                            that.changingBgData = e.target.result as string | null;
+                            that.changeBgDialog = true;
+                        }
+                    reader.readAsDataURL(file);
                 }
-                reader.readAsDataURL(file);
             } else {
                 this.changeBgDialog = false;
             }
+            
         },
         btnclick(): void {
             if(this.visitor.id == this.user.id){
@@ -231,6 +307,9 @@ interface windowSize {
             .catch(function (error) {
                 console.log(error);
             });
+        },
+        onResize () {
+            this.windowSize = { x: window.innerWidth, y: window.innerHeight }
         },
     }
 })

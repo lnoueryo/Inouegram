@@ -7229,6 +7229,70 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -7312,7 +7376,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       left: '100px',
       position: 'absolute',
       zIndex: 1
-    }), _defineProperty(_ref, "type", 'hexa'), _defineProperty(_ref, "hexa", '#FF000000'), _defineProperty(_ref, "size", 479), _ref;
+    }), _defineProperty(_ref, "type", 'hexa'), _defineProperty(_ref, "hexa", '#FF000000'), _defineProperty(_ref, "size", 479), _defineProperty(_ref, "editDrawCanvasctx", ''), _defineProperty(_ref, "editCoverctx", ''), _defineProperty(_ref, "editcroppedOriginalImagectx", ''), _defineProperty(_ref, "editIndex", ''), _defineProperty(_ref, "newEditItems", 0), _defineProperty(_ref, "newCoverItem", 0), _defineProperty(_ref, "newDrawItem", 0), _ref;
   },
   computed: {
     confirmMessage: function confirmMessage() {
@@ -7382,26 +7446,37 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     coverPrev: function coverPrev() {
       this.coverItem = this.coverItem - 1 < 0 ? this.coverLength - 1 : this.coverItem - 1;
     },
+    newCoverNext: function newCoverNext() {
+      this.newCoverItem = this.newCoverItem + 1 === this.coverLength ? 0 : this.newCoverItem + 1;
+    },
+    newCoverPrev: function newCoverPrev() {
+      this.newCoverItem = this.newCoverItem - 1 < 0 ? this.coverLength - 1 : this.newCoverItem - 1;
+    },
     drawNext: function drawNext() {
       this.drawItem = this.drawItem + 1 === this.drawLength ? 0 : this.drawItem + 1;
     },
     drawPrev: function drawPrev() {
       this.drawItem = this.drawItem - 1 < 0 ? this.drawLength - 1 : this.drawItem - 1;
     },
+    newDrawNext: function newDrawNext() {
+      this.newDrawItem = this.newDrawItem + 1 === this.drawLength ? 0 : this.newDrawItem + 1;
+    },
+    newDrawPrev: function newDrawPrev() {
+      this.newDrawItem = this.newDrawItem - 1 < 0 ? this.drawLength - 1 : this.newDrawItem - 1;
+    },
     oneMoreImage: function oneMoreImage() {
       this.e1 = 1;
+      this.editItems = 0;
       this.editItems = 0;
       this.coverItem = 0;
       this.drawItem = 0;
       this.imgSrc = '';
       this.stepBtn1 = true;
       this.concatImageBtn = true;
-      this.coverctx.filter = 'grayscale(0%)';
       this.globalAlpha = 1;
       this.hexa = '#FF000000';
       this.model = '';
       this.filters = '';
-      this.coverctx.globalCompositeOperation = 'source-over';
       this.filterObject = {
         'blur': 0,
         'brightness': 100,
@@ -7411,13 +7486,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         'invert': 0,
         'saturate': 100,
         'sepia': 0
-      };
-      this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+      }; // this.croppedImage = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
+
       this.cover = document.getElementById("cover");
       this.coverctx = this.cover.getContext("2d");
-      this.coverctx.globalAlpha = 1;
       this.coverctx.globalCompositeOperation = 'source-over';
       this.coverctx.filter = 'grayscale(0%)';
+      this.coverctx.globalAlpha = 1;
     },
     loadImage: function loadImage(e) {
       if (e == '') {
@@ -7466,9 +7541,11 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var concatCxt = concat.getContext("2d");
       var cover = this.createImage(document.getElementById("cover"));
       var text = this.createImage(document.getElementById("text"));
-      var drawCanvas = this.createImage(document.getElementById("drawCanvas")); // var image = this.createImage(this.canvas);
-
-      this.imgBeforeConcat.push([cover, text, drawCanvas]);
+      var drawCanvas = this.createImage(document.getElementById("drawCanvas"));
+      var coverSrc = document.getElementById("cover").toDataURL('image/png');
+      var drawCanvasSrc = document.getElementById("drawCanvas").toDataURL('image/png');
+      var croppedOriginalImage = this.croppedImage;
+      this.imgBeforeConcat.push([coverSrc, drawCanvasSrc, croppedOriginalImage]);
 
       drawCanvas.onload = function () {
         concatCxt.drawImage(cover, 0, 0, 280, 280);
@@ -7487,7 +7564,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       image.src = context.toDataURL();
       return image;
     },
-    searchTimeOut: function searchTimeOut() {
+    searchTimeOut: function searchTimeOut(ctx) {
       var _this = this;
 
       if (this.timer) {
@@ -7496,23 +7573,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.timer = setTimeout(function () {
-        _this.pen();
+        _this.pen(ctx);
       }, 200);
     },
-    pen: function pen() {
+    pen: function pen(ctx) {
       this.canvasMode = 'pen';
-      this.drawCanvasctx.globalCompositeOperation = 'source-over';
-      this.drawCanvasctx.lineCap = this.lineCap;
-      this.drawCanvasctx.lineJoin = this.lineJoin;
-      this.drawCanvasctx.lineWidth = this.lineWidth;
-      this.drawCanvasctx.strokeStyle = this.penColor;
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.lineCap = this.lineCap;
+      ctx.lineJoin = this.lineJoin;
+      ctx.lineWidth = this.lineWidth;
+      ctx.strokeStyle = this.penColor;
     },
-    eraser: function eraser() {
+    eraser: function eraser(ctx) {
       this.canvasMode = 'eraser';
-      this.drawCanvasctx.lineCap = 'square';
-      this.drawCanvasctx.lineJoin = 'square';
-      this.drawCanvasctx.lineWidth = 30;
-      this.drawCanvasctx.globalCompositeOperation = 'destination-out';
+      ctx.lineCap = 'square';
+      ctx.lineJoin = 'square';
+      ctx.lineWidth = 30;
+      ctx.globalCompositeOperation = 'destination-out';
     },
     draw: function draw(e) {
       var rect = e.target.getBoundingClientRect();
@@ -7524,25 +7601,25 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return;
       }
 
-      this.drawCanvasctx.lineTo(x, y);
-      this.drawCanvasctx.stroke();
+      e.target.getContext('2d').lineTo(x, y);
+      e.target.getContext('2d').stroke();
     },
     dragStart: function dragStart(e) {
       var rect = e.target.getBoundingClientRect();
       var touch = e.targetTouches[0];
       var x = touch.clientX - rect.left;
       var y = touch.clientY - rect.top;
-      this.drawCanvasctx.beginPath();
-      this.drawCanvasctx.lineTo(x, y);
-      this.drawCanvasctx.stroke();
+      e.target.getContext('2d').beginPath();
+      e.target.getContext('2d').lineTo(x, y);
+      e.target.getContext('2d').stroke();
       this.isDrag = true;
     },
-    dragEnd: function dragEnd() {
-      this.drawCanvasctx.closePath();
+    dragEnd: function dragEnd(e) {
+      e.target.getContext('2d').closePath();
       this.isDrag = false;
     },
-    clear: function clear() {
-      this.drawCanvasctx.clearRect(0, 0, this.drawCanvas.width, this.drawCanvas.height);
+    clearctx: function clearctx(ctx) {
+      ctx.clearRect(0, 0, 280, 280);
     },
     cropStart: function cropStart() {
       var that = this;
@@ -7587,21 +7664,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
       this.coverctx.fillRect(0, 0, 280, 280);
     },
-    rotate: function rotate() {
-      this.coverctx.clearRect(0, 0, 280, 280);
-      this.coverctx.translate(280, 0);
-      this.coverctx.rotate(90 * Math.PI / 180);
-      this.coverctx.globalAlpha = this.globalAlpha;
-      this.coverctx.fillStyle = this.color;
-      this.coverctx.fillRect(0, 0, 280, 280);
-      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+    rotate: function rotate(ctx) {
+      ctx.clearRect(0, 0, 280, 280);
+      ctx.translate(280, 0);
+      ctx.rotate(90 * Math.PI / 180);
+      ctx.globalAlpha = this.globalAlpha;
+      ctx.fillStyle = this.color;
+      ctx.fillRect(0, 0, 280, 280);
+      ctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
-        that.coverctx.save();
+        ctx.drawImage(picImage, 0, 0, 280, 280);
+        ctx.save();
       };
     },
     click: function click(key) {
@@ -7619,19 +7696,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         that.coverctx.save();
       };
     },
-    resetStart: function resetStart() {
+    resetStart: function resetStart(ctx) {
       var that = this;
       that.cropProgress = true;
       setTimeout(function () {
-        that.reset();
+        that.reset(ctx);
       }, 100);
     },
-    reset: function reset() {
+    reset: function reset(ctx) {
       this.globalAlpha = 1;
       this.hexa = '#FF000000';
       this.model = '';
       this.filters = '';
-      this.coverctx.globalCompositeOperation = 'source-over';
+      ctx.globalCompositeOperation = 'source-over';
       this.filterObject = {
         'blur': 0,
         'brightness': 100,
@@ -7642,21 +7719,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         'saturate': 100,
         'sepia': 0
       };
-      this.coverctx.filter = 'grayscale(0%)';
-      this.coverctx.clearRect(0, 0, 280, 280);
+      ctx.filter = 'grayscale(0%)';
+      ctx.clearRect(0, 0, 280, 280);
       var background = new Image();
       background.src = this.$refs.cropper.getCroppedCanvas().toDataURL('image/png');
       var that = this;
 
       background.onload = function () {
-        that.coverctx.drawImage(background, 0, 0, 280, 280);
+        ctx.drawImage(background, 0, 0, 280, 280);
         that.cropProgress = false;
       };
 
-      this.coverctx.save(); // this.color = '#00000080';
-      // that.searchTimeOut();
+      ctx.save();
     },
-    searchTimeOut2: function searchTimeOut2() {
+    searchTimeOut2: function searchTimeOut2(ctx) {
       var _this2 = this;
 
       if (this.timer) {
@@ -7665,10 +7741,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.timer = setTimeout(function () {
-        _this2.colorImage();
+        _this2.colorImage(ctx);
       }, 200);
     },
-    searchTimeOut3: function searchTimeOut3() {
+    searchTimeOut3: function searchTimeOut3(ctx) {
       var _this3 = this;
 
       if (this.timer) {
@@ -7677,27 +7753,41 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.timer = setTimeout(function () {
-        _this3.filter();
+        _this3.filter(ctx);
 
-        _this3.colorImage();
+        _this3.colorImage(ctx);
       }, 200);
     },
-    colorImage: function colorImage() {
-      this.coverctx.clearRect(0, 0, 280, 280);
-      this.coverctx.globalAlpha = this.globalAlpha;
-      this.coverctx.fillStyle = this.hexa;
-      this.coverctx.fillRect(0, 0, 280, 280);
-      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+    searchTimeOut4: function searchTimeOut4() {
+      var _this4 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this4.filter();
+
+        _this4.colorImage();
+      }, 200);
+    },
+    colorImage: function colorImage(ctx) {
+      ctx.clearRect(0, 0, 280, 280);
+      ctx.globalAlpha = this.globalAlpha;
+      ctx.fillStyle = this.hexa;
+      ctx.fillRect(0, 0, 280, 280);
+      ctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
       var picImage = new Image();
       picImage.src = this.croppedImage;
       var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
-        that.coverctx.save();
+        ctx.drawImage(picImage, 0, 0, 280, 280);
+        ctx.save();
       };
     },
-    filter: function filter() {
+    filter: function filter(ctx) {
       var filterKeys = Object.keys(this.filterObject);
       var filterValues = Object.values(this.filterObject);
       var filtersArray = [];
@@ -7719,19 +7809,18 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       ;
       var filters = filtersArray.join(' ');
       this.filters = filters;
-      this.coverctx.clearRect(0, 0, 280, 280);
-      this.coverctx.globalAlpha = this.globalAlpha;
-      this.coverctx.fillstyle = this.hexa;
-      this.coverctx.filter = this.filters;
-      this.coverctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
-      this.coverctx.fillRect(0, 0, 280, 280);
+      ctx.clearRect(0, 0, 280, 280);
+      ctx.globalAlpha = this.globalAlpha;
+      ctx.fillstyle = this.hexa;
+      ctx.filter = this.filters;
+      ctx.globalCompositeOperation = this.globalCompositeOperation[this.model];
+      ctx.fillRect(0, 0, 280, 280);
       var picImage = new Image();
       picImage.src = this.croppedImage;
-      var that = this;
 
       picImage.onload = function () {
-        that.coverctx.drawImage(picImage, 0, 0, 280, 280);
-        that.coverctx.save();
+        ctx.drawImage(picImage, 0, 0, 280, 280);
+        ctx.save();
       };
     },
     selectText: function selectText(event) {
@@ -7881,6 +7970,44 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.e1 = 2;
       this.concatImg.pop();
     },
+    editImageStart: function editImageStart(index) {
+      var that = this;
+      that.cropProgress = true;
+      that.currentImageDialog = true;
+      that.editIndex = index;
+      setTimeout(function () {
+        that.editImage(index);
+      }, 100);
+    },
+    editImage: function editImage(index) {
+      var editDrawCanvas = document.getElementById('editDrawCanvas');
+      var editDrawCanvasctx = editDrawCanvas.getContext('2d');
+      this.editDrawCanvasctx = editDrawCanvasctx;
+      var editCover = document.getElementById('editCover');
+      var editCoverctx = editCover.getContext('2d');
+      this.editCoverctx = editCoverctx;
+      var editcroppedOriginalImage = document.getElementById('editcroppedOriginalImage');
+      var editcroppedOriginalImagectx = editcroppedOriginalImage.getContext('2d');
+      this.editcroppedOriginalImagectx = editcroppedOriginalImagectx;
+      console.log(this.imgBeforeConcat[index][2]); // let that = this;
+
+      var coverImage = this.editNewImage(this.imgBeforeConcat[index][0]);
+      var drawCanvasImage = this.editNewImage(this.imgBeforeConcat[index][1]);
+      var croppedOriginalImage = this.editNewImage(this.imgBeforeConcat[index][2]);
+      var that = this;
+
+      croppedOriginalImage.onload = function () {
+        editCoverctx.drawImage(coverImage, 0, 0, 280, 280);
+        editDrawCanvasctx.drawImage(drawCanvasImage, 0, 0, 280, 280);
+        editcroppedOriginalImagectx.drawImage(croppedOriginalImage, 0, 0, 280, 280);
+        that.cropProgress = false;
+      };
+    },
+    editNewImage: function editNewImage(base64) {
+      var image = new Image();
+      image.src = base64;
+      return image;
+    },
     deleteImage: function deleteImage(index) {
       this.concatImg.splice(index, 1);
       this.imgBeforeConcat.splice(index, 1);
@@ -7890,8 +8017,57 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.imgSrc = '';
         this.stepBtn1 = true;
         this.concatImageBtn = true;
+        this.editItems = 0;
         img[0].src = '';
       }
+    },
+    editImageSaveStart: function editImageSaveStart(index) {
+      var that = this;
+      that.cropProgress = true;
+      that.currentImageDialog = false;
+      that.editIndex = '';
+      setTimeout(function () {
+        that.editImageSave(index);
+      }, 100);
+    },
+    editImageSave: function editImageSave(index) {
+      var edittedImage = document.getElementById('edittedImage');
+      var edittedImagecxt = edittedImage.getContext("2d");
+      var editCoverImage = this.createImage(document.getElementById("editCover"));
+      var editDrawCanvasImage = this.createImage(document.getElementById('editDrawCanvas'));
+      var editcroppedOriginalImage = this.createImage(document.getElementById('editcroppedOriginalImage'));
+      var coverSrc = document.getElementById("editCover").toDataURL('image/png');
+      var drawCanvasSrc = document.getElementById("editDrawCanvas").toDataURL('image/png');
+      var editcroppedOriginalImageSrc = document.getElementById("editcroppedOriginalImage").toDataURL('image/png');
+      this.imgBeforeConcat[index] = [coverSrc, drawCanvasSrc, editcroppedOriginalImageSrc];
+
+      editcroppedOriginalImage.onload = function () {
+        edittedImagecxt.drawImage(editCoverImage, 0, 0, 280, 280);
+        edittedImagecxt.drawImage(editDrawCanvasImage, 0, 0, 280, 280);
+      };
+
+      var that = this;
+      setTimeout(function () {
+        var edittedImageSrc = document.getElementById('edittedImage').toDataURL('image/png');
+        that.concatImg[index] = edittedImageSrc;
+        that.cropProgress = false;
+        that.globalAlpha = 1;
+        that.hexa = '#FF000000';
+        that.model = '';
+        that.filterObject = {
+          'blur': 0,
+          'brightness': 100,
+          'contrast': 100,
+          'grayscale': 0,
+          'hueRotate': 0,
+          'invert': 0,
+          'saturate': 100,
+          'sepia': 0
+        };
+        edittedImage.globalCompositeOperation = 'source-over';
+        edittedImage.filter = 'grayscale(0%)';
+        edittedImage.globalAlpha = 1;
+      }, 200);
     }
   }
 });
@@ -14254,6 +14430,8 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
             },
             changeBgDialog: false,
             changingBgData: '',
+            sizeDialog: false,
+            progress: false,
         };
     },
     computed: {
@@ -14295,35 +14473,85 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         changeAvatar(event) {
             return __awaiter(this, void 0, void 0, function* () {
                 var file = event.target.files[0];
-                var reader = new FileReader();
-                reader.readAsDataURL(file);
-                var avatarData;
-                var that = this;
-                reader.onload = function (e) {
-                    avatarData = e.target.result;
-                    let fd = new FormData();
-                    fd.append("avatarData", avatarData);
-                    fd.append("userId", that.user.id);
-                    axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/upload2', fd)
-                        .then(response => {
-                        that.user = response.data;
-                    })
-                        .catch(function (error) {
-                        console.log(error);
-                    });
-                };
+                if (typeof FileReader === 'function') {
+                    if (this.windowSize.x < 480) {
+                        if (file.size < 3100000) {
+                            this.progress = true;
+                            var reader = new FileReader();
+                            reader.readAsDataURL(file);
+                            var avatarData;
+                            var that = this;
+                            reader.onload = function (e) {
+                                avatarData = e.target.result;
+                                let fd = new FormData();
+                                fd.append("avatarData", avatarData);
+                                fd.append("userId", that.user.id);
+                                axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/upload2', fd)
+                                    .then(response => {
+                                    that.user = response.data;
+                                    that.progress = false;
+                                })
+                                    .catch(function (error) {
+                                    console.log(error);
+                                    that.progress = false;
+                                });
+                            };
+                        }
+                        else {
+                            this.sizeDialog = true;
+                        }
+                    }
+                    else {
+                        var reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        var avatarData;
+                        var that = this;
+                        reader.onload = function (e) {
+                            avatarData = e.target.result;
+                            let fd = new FormData();
+                            fd.append("avatarData", avatarData);
+                            fd.append("userId", that.user.id);
+                            axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/upload2', fd)
+                                .then(response => {
+                                that.user = response.data;
+                            })
+                                .catch(function (error) {
+                                console.log(error);
+                            });
+                        };
+                    }
+                }
             });
         },
         upload(event) {
             if (event.target instanceof HTMLInputElement) {
                 var file = event.target.files[0];
-                var reader = new FileReader();
-                var that = this;
-                reader.onload = function (e) {
-                    that.changingBgData = e.target.result;
-                    that.changeBgDialog = true;
-                };
-                reader.readAsDataURL(file);
+                if (this.windowSize.x < 480) {
+                    if (file.size < 3100000) {
+                        this.progress = true;
+                        var reader = new FileReader();
+                        var that = this;
+                        reader.onload = function (e) {
+                            that.changingBgData = e.target.result;
+                            that.changeBgDialog = true;
+                            that.progress = false;
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                    else {
+                        this.sizeDialog = true;
+                    }
+                }
+                else {
+                    this.progress = true;
+                    var reader = new FileReader();
+                    var that = this;
+                    reader.onload = function (e) {
+                        that.changingBgData = e.target.result;
+                        that.changeBgDialog = true;
+                    };
+                    reader.readAsDataURL(file);
+                }
             }
             else {
                 this.changeBgDialog = false;
@@ -14372,6 +14600,9 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
                 .catch(function (error) {
                 console.log(error);
             });
+        },
+        onResize() {
+            this.windowSize = { x: window.innerWidth, y: window.innerHeight };
         },
     }
 }));
@@ -17693,6 +17924,16 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    {
+      directives: [
+        {
+          name: "resize",
+          rawName: "v-resize",
+          value: _vm.onResize,
+          expression: "onResize"
+        }
+      ]
+    },
     [
       _c(
         "v-card",
@@ -17996,6 +18237,72 @@ var render = function() {
             ],
             1
           )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-dialog",
+        {
+          attrs: { width: "500" },
+          model: {
+            value: _vm.sizeDialog,
+            callback: function($$v) {
+              _vm.sizeDialog = $$v
+            },
+            expression: "sizeDialog"
+          }
+        },
+        [
+          _c(
+            "v-card",
+            [
+              _c("v-card-title", { staticClass: "headline grey lighten-2" }, [
+                _vm._v("\n            Error\n            ")
+              ]),
+              _vm._v(" "),
+              _c("v-card-text", [
+                _vm._v(
+                  "\n            ファイルサイズが上限を超えています。3M以下のイメージを選択してください\n            "
+                )
+              ]),
+              _vm._v(" "),
+              _c("v-divider"),
+              _vm._v(" "),
+              _c(
+                "v-card-actions",
+                [
+                  _c("v-spacer"),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      attrs: { color: "primary", text: "" },
+                      on: {
+                        click: function($event) {
+                          _vm.sizeDialog = false
+                        }
+                      }
+                    },
+                    [_vm._v("\n                I accept\n            ")]
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-overlay",
+        { attrs: { value: _vm.progress } },
+        [
+          _c("v-progress-circular", {
+            attrs: { indeterminate: "", size: "64" }
+          })
         ],
         1
       )
@@ -22665,6 +22972,7 @@ var render = function() {
                                 "v-window",
                                 {
                                   staticClass: "px-2 mt-2",
+                                  attrs: { touchless: "" },
                                   model: {
                                     value: _vm.coverItem,
                                     callback: function($$v) {
@@ -22688,7 +22996,13 @@ var render = function() {
                                           "thumb-color": "purple",
                                           color: "purple"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.blur,
                                           callback: function($$v) {
@@ -22711,7 +23025,13 @@ var render = function() {
                                           "thumb-color": "red",
                                           color: "red"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.brightness,
                                           callback: function($$v) {
@@ -22729,7 +23049,13 @@ var render = function() {
                                         "v-btn",
                                         {
                                           attrs: { color: "pink" },
-                                          on: { click: _vm.resetStart }
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.resetStart(
+                                                _vm.coverctx
+                                              )
+                                            }
+                                          }
                                         },
                                         [_vm._v("reset")]
                                       ),
@@ -22738,7 +23064,11 @@ var render = function() {
                                         "v-btn",
                                         {
                                           attrs: { color: "purple" },
-                                          on: { click: _vm.rotate }
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.rotate(_vm.coverctx)
+                                            }
+                                          }
                                         },
                                         [_vm._v("rotate")]
                                       )
@@ -22760,7 +23090,13 @@ var render = function() {
                                           "thumb-color": "orange",
                                           color: "orange"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.contrast,
                                           callback: function($$v) {
@@ -22783,7 +23119,13 @@ var render = function() {
                                           "thumb-color": "indigo",
                                           color: "indigo"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.grayscale,
                                           callback: function($$v) {
@@ -22806,7 +23148,13 @@ var render = function() {
                                           "thumb-color": "green",
                                           color: "green"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.hueRotate,
                                           callback: function($$v) {
@@ -22837,7 +23185,13 @@ var render = function() {
                                           "thumb-color": "deep-purple",
                                           color: "deep-purple"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.invert,
                                           callback: function($$v) {
@@ -22860,7 +23214,13 @@ var render = function() {
                                           "thumb-color": "light-blue",
                                           color: "light-blue"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.saturate,
                                           callback: function($$v) {
@@ -22883,7 +23243,13 @@ var render = function() {
                                           "thumb-color": "lime",
                                           color: "lime"
                                         },
-                                        on: { input: _vm.searchTimeOut3 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut3(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.filterObject.sepia,
                                           callback: function($$v) {
@@ -22910,7 +23276,13 @@ var render = function() {
                                           "hide-canvas": "",
                                           "hide-inputs": ""
                                         },
-                                        on: { input: _vm.searchTimeOut2 },
+                                        on: {
+                                          input: function($event) {
+                                            return _vm.searchTimeOut2(
+                                              _vm.coverctx
+                                            )
+                                          }
+                                        },
                                         model: {
                                           value: _vm.color,
                                           callback: function($$v) {
@@ -23075,7 +23447,11 @@ var render = function() {
                                         {
                                           staticClass: "align-self-start mr-2",
                                           attrs: { id: "pen-button" },
-                                          on: { click: _vm.pen }
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.pen(_vm.drawCanvasctx)
+                                            }
+                                          }
                                         },
                                         [_vm._v("ペン")]
                                       ),
@@ -23085,7 +23461,13 @@ var render = function() {
                                         {
                                           staticClass: "align-self-start mr-2",
                                           attrs: { id: "eraser-button" },
-                                          on: { click: _vm.eraser }
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.eraser(
+                                                _vm.drawCanvasctx
+                                              )
+                                            }
+                                          }
                                         },
                                         [_vm._v("消しゴム")]
                                       ),
@@ -23095,7 +23477,13 @@ var render = function() {
                                         {
                                           staticClass: "align-self-start mr-2",
                                           attrs: { id: "clear-button" },
-                                          on: { click: _vm.clear }
+                                          on: {
+                                            click: function($event) {
+                                              return _vm.clear(
+                                                _vm.drawCanvasctx
+                                              )
+                                            }
+                                          }
                                         },
                                         [_vm._v("クリア")]
                                       ),
@@ -23111,7 +23499,13 @@ var render = function() {
                                               "dot-size": "20",
                                               "hide-inputs": ""
                                             },
-                                            on: { input: _vm.searchTimeOut },
+                                            on: {
+                                              input: function($event) {
+                                                return _vm.searchTimeOut(
+                                                  _vm.drawCanvasctx
+                                                )
+                                              }
+                                            },
                                             model: {
                                               value: _vm.penColor,
                                               callback: function($$v) {
@@ -23145,7 +23539,13 @@ var render = function() {
                                               label: "lineCap",
                                               outlined: ""
                                             },
-                                            on: { input: _vm.searchTimeOut },
+                                            on: {
+                                              input: function($event) {
+                                                return _vm.searchTimeOut(
+                                                  _vm.drawCanvasctx
+                                                )
+                                              }
+                                            },
                                             model: {
                                               value: _vm.lineCap,
                                               callback: function($$v) {
@@ -23162,7 +23562,13 @@ var render = function() {
                                               label: "lineJoin",
                                               outlined: ""
                                             },
-                                            on: { input: _vm.searchTimeOut },
+                                            on: {
+                                              input: function($event) {
+                                                return _vm.searchTimeOut(
+                                                  _vm.drawCanvasctx
+                                                )
+                                              }
+                                            },
                                             model: {
                                               value: _vm.lineJoin,
                                               callback: function($$v) {
@@ -23188,7 +23594,13 @@ var render = function() {
                                               "thumb-color": "pink",
                                               color: "pink"
                                             },
-                                            on: { input: _vm.searchTimeOut },
+                                            on: {
+                                              input: function($event) {
+                                                return _vm.searchTimeOut(
+                                                  _vm.drawCanvasctx
+                                                )
+                                              }
+                                            },
                                             model: {
                                               value: _vm.lineWidth,
                                               callback: function($$v) {
@@ -23691,68 +24103,88 @@ var render = function() {
       _vm.showConcatImg
         ? _c(
             "div",
-            { staticClass: "px-4" },
             [
               _c(
-                "div",
+                "v-sheet",
                 {
-                  staticClass: "d-flex flex-wrap mb-3",
-                  staticStyle: { "justify-content": "space-between" }
+                  staticClass: "mx-auto",
+                  attrs: { elevation: "0", "max-width": "800" }
                 },
-                _vm._l(_vm.concatImg, function(image, index) {
-                  return _c(
-                    "div",
-                    { key: index, staticClass: "mb-3" },
-                    [
-                      _c("v-img", {
-                        staticClass: "mb-1 red accent-3",
-                        attrs: {
-                          color: "red accent-3",
-                          width: "100",
-                          src: image
-                        }
-                      }),
-                      _vm._v(" "),
-                      _c(
-                        "div",
+                [
+                  _c(
+                    "v-slide-group",
+                    {
+                      attrs: { "active-class": "success", "show-arrows": "" },
+                      model: {
+                        value: _vm.model,
+                        callback: function($$v) {
+                          _vm.model = $$v
+                        },
+                        expression: "model"
+                      }
+                    },
+                    _vm._l(_vm.concatImg, function(image, index) {
+                      return _c(
+                        "v-slide-item",
+                        { key: index },
                         [
                           _c(
-                            "v-btn",
-                            {
-                              attrs: {
-                                color: "red accent-3",
-                                block: "",
-                                small: ""
-                              },
-                              on: {
-                                click: function($event) {
-                                  return _vm.deleteImage(index)
-                                }
-                              }
-                            },
-                            [_vm._v("削除")]
+                            "v-card",
+                            { staticClass: "ma-4" },
+                            [
+                              _c("v-img", {
+                                staticClass: "mb-1",
+                                attrs: { width: "100", src: image }
+                              }),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                { staticClass: "mb-1" },
+                                [
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        color: "red accent-3",
+                                        block: "",
+                                        small: ""
+                                      },
+                                      on: {
+                                        click: function($event) {
+                                          return _vm.deleteImage(index)
+                                        }
+                                      }
+                                    },
+                                    [_vm._v("削除")]
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
                           )
                         ],
                         1
                       )
-                    ],
+                    }),
                     1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-btn",
+                    {
+                      staticClass: "ml-4",
+                      attrs: { color: "primary" },
+                      on: {
+                        click: function($event) {
+                          return _vm.confirmSave()
+                        }
+                      }
+                    },
+                    [_vm._v("保存")]
                   )
-                }),
-                0
-              ),
-              _vm._v(" "),
-              _c(
-                "v-btn",
-                {
-                  attrs: { color: "primary" },
-                  on: {
-                    click: function($event) {
-                      return _vm.confirmSave()
-                    }
-                  }
-                },
-                [_vm._v("保存")]
+                ],
+                1
               )
             ],
             1
