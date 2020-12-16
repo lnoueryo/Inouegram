@@ -1,7 +1,7 @@
 <template>
     <div id="login" class="example">
-        <img :class="{hide: !loaded, active: isActive}" class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 2;" v-if="loaded"/>
-        <img :class="{hide: !loaded, active: isActive}" id="main" :src="'/image/login'+randomNumber+'.png'" style="width: 100%; position: relative;" @load="isLoad">
+        <img class="px-5 py-5" id="logo" src="/image/mymemories.png" style="position: absolute; z-index: 2;" v-if="loaded"/>
+        <img id="main" :src="'/image/login'+randomNumber+'.png'" style="width: 100%; position: relative;" @load="isLoad">
         <div class="hello" style="opacity: 0.95;" v-if="loaded">
             <v-card class="mx-auto" max-width="500">
                 <v-card-title class="title font-weight-regular justify-space-between">
@@ -9,7 +9,22 @@
                 <v-avatar color="primary lighten-2" class="subheading white--text" size="24" v-text="step"></v-avatar>
                 </v-card-title>
 
-                <v-window class="px-5 py-5" v-model="step">
+                <v-window class="px-5 py-5" v-model="step" touchless>
+                  <v-window-item :value="0">
+                    <v-form ref="form">
+                      <v-text-field class="py-2" v-model="resetEmail" placeholder="アドレス" label="Email" required clearable @keyup.enter.exact="sendPasswordResetLink" autocomplete="new-password"></v-text-field>
+                    <div v-if="Object.keys(resetErrors).length !== 0">
+                      <div class="mb-2 px-4">
+                        <div class="error px-4 py-2" style="font-size: smaller;font-weight: 500;">
+                          <div class="alert alert-danger" v-text="resetErrors.email" v-if="resetErrors.email"></div>
+                          <div class="alert alert-danger" v-text="resetErrors.password" v-if="resetErrors.password"></div>
+                        </div>
+                      </div>
+                    </div>
+                      <v-btn color="success" class="mr-4" @click="sendPasswordResetLink">メール送信</v-btn>
+                      <v-btn class="mr-4" @click="step++">ログイン画面</v-btn>
+                    </v-form>
+                  </v-window-item>
                 <v-window-item :value="1">
                 <v-form ref="form" lazy-validation>
                 <!-- <h4 class="py-2">ログイン</h4> -->
@@ -31,6 +46,7 @@
                 会員登録
                 </v-btn>
                 </div>
+                <a class="btn btn-link mb-3" style="display: block;" @click="step--">パスワードをお忘れの場合</a>
                 <div>
                     <v-btn class="mb-3 btn-google" href="/auth/google" block style="max-width: 280px">
                     <span class="g">g</span>
@@ -174,6 +190,17 @@
                 </v-card-actions> -->
             </v-card>
         </div>
+        <v-overlay :value="progress">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
+        <v-snackbar v-model="emailSnackbar" :timeout="timeout">
+            メールが送信されました
+            <template v-slot:action="{ attrs }">
+                <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+                閉じる
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
@@ -182,6 +209,11 @@
         props: ['google-user', 'github-user'],
         data(){
             return{
+              resetErrors: {},
+              emailSnackbar: false,
+              timeout: 2000,
+              progress: false,
+              resetEmail: '',
               loaded: false,
                 initial: true,
                 showq: false,
@@ -226,7 +258,7 @@
                 switch (this.step) {
                 case 1: return 'ログイン'
                 case 2: return '会員登録'
-                default: return 'Account created'
+                default: return 'パスワード再設定'
                 }
             }
         },
@@ -331,134 +363,158 @@
                     that.registrationErrors = errors;
                 });
             },
+            sendPasswordResetLink(){
+              this.progress = true;
+                var url = '/password/email';
+                var params = {
+                  email: this.resetEmail,
+                };
+                axios.post(url, params)
+                .then((response) => {
+                  this.progress = false,
+                  this.step = 1,
+                  this.emailSnackbar = true
+                })
+                .catch((error) => {
+                    this.progress = false;
+                    let that = this;
+                    var responseErrors = error.response.data.errors;
+                    console.log(error.response.data.errors)
+                    var errors = {};
+                    for(var key in responseErrors) {
+                        errors[key] = responseErrors[key][0];
+                    }
+                    that.resetErrors = errors;
+                });
+            }
         }
     }
 </script>
 
 <style>
-.example {
-  position: relative;
-  overflow: hidden;
-  }
+    .example {
+      position: relative;
+      overflow: hidden;
+      }
 
-.example .hello {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  -ms-transform: translate(-50%,-50%);
-  -webkit-transform: translate(-50%,-50%);
-  transform: translate(-50%,-50%);
-  padding:0;
-  width: 100%;
-  max-width: 400px;
-  background-color: white;
-  /*文字の装飾は省略*/
-  }
+    .example .hello {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      -ms-transform: translate(-50%,-50%);
+      -webkit-transform: translate(-50%,-50%);
+      transform: translate(-50%,-50%);
+      padding:0;
+      width: 100%;
+      max-width: 400px;
+      background-color: white;
+      /*文字の装飾は省略*/
+      }
 
-.example #main {
-  width: 100%;
-  min-width: 1185px;
-  }
-.example #logo {
-  width: 100%;
-  max-width: 757px;
-  }
-  #login input {
-      margin: 0;
-  }
+    .example #main {
+      width: 100%;
+      min-width: 1185px;
+      }
+    .example #logo {
+      width: 100%;
+      max-width: 757px;
+      }
+      #login input {
+          margin: 0;
+      }
 
-  #login input:-webkit-autofill {
-    background-color: white!important;
-    color: white!important;
-        animation-name: onAutoFillStart;
-    transition: background-color 50000s ease-in-out 0s;
-}
+      #login input:-webkit-autofill {
+        background-color: white!important;
+        color: white!important;
+            animation-name: onAutoFillStart;
+        transition: background-color 50000s ease-in-out 0s;
+    }
 
-.btn-google:hover .g {
-  color: rgba(66, 134, 244, 1);
-  transition: color 0.5s!important;
-}
-.btn-google .g {
+    .btn-google:hover .g {
+      color: rgba(66, 134, 244, 1);
+      transition: color 0.5s!important;
+    }
+    .btn-google .g {
 
-  transition: color 3s!important;
-}
+      transition: color 3s!important;
+    }
 
-.btn-google:hover .o {
-  color: rgba(219, 69, 55, 1);
-  transition: color 1s!important;
-}
+    .btn-google:hover .o {
+      color: rgba(219, 69, 55, 1);
+      transition: color 1s!important;
+    }
 
-.btn-google .o {
-  transition: color 2.5s!important;
-}
+    .btn-google .o {
+      transition: color 2.5s!important;
+    }
 
-.btn-google:hover .o2 {
-  color: rgba(244, 179, 0, 1);
-  transition: color 1.5s!important;
-}
+    .btn-google:hover .o2 {
+      color: rgba(244, 179, 0, 1);
+      transition: color 1.5s!important;
+    }
 
-.btn-google .o2 {
-  transition: color 2s!important;
-}
+    .btn-google .o2 {
+      transition: color 2s!important;
+    }
 
-.btn-google:hover .g2 {
-  color: rgba(66, 134, 244, 1);
-    transition: color 2s!important;
-}
+    .btn-google:hover .g2 {
+      color: rgba(66, 134, 244, 1);
+        transition: color 2s!important;
+    }
 
-.btn-google .g2 {
-    transition: color 1.5s!important;
-}
+    .btn-google .g2 {
+        transition: color 1.5s!important;
+    }
 
-.btn-google:hover .l {
-  color: rgba(15, 157, 88, 1);
-    transition: color 2.5s!important;
-}
+    .btn-google:hover .l {
+      color: rgba(15, 157, 88, 1);
+        transition: color 2.5s!important;
+    }
 
-.btn-google .l {
-    transition: color 1s!important;
-}
+    .btn-google .l {
+        transition: color 1s!important;
+    }
 
-.btn-google:hover .e {
-  color: rgba(219, 69, 55, 1);
-    transition: color 3s!important;
-}
+    .btn-google:hover .e {
+      color: rgba(219, 69, 55, 1);
+        transition: color 3s!important;
+    }
 
-.btn-google .e {
-    transition: color 0.5s!important;
-}
+    .btn-google .e {
+        transition: color 0.5s!important;
+    }
 
 
-.bounce-enter-active {
-  animation: bounce-in .5s;
-}
-.bounce-leave-active {
-  animation: bounce-in .5s reverse;
-}
-@keyframes bounce-in {
-  0% {
-    transform: scale(0);
-  }
-  50% {
-    transform: scale(1.5);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-  #gitbtn {
-      /* background-color: black!important; */
-      transition: background-color 1s!important;
-  }
-  #gitbtn:hover {
-      background-color: transparent!important;
-      transition: background-color 1s!important;
-  }
-  img {
-  opacity: 1;
-  transition: opacity 1s;
-}
-img.hide {
-  opacity: 0;
-}
+    .bounce-enter-active {
+      animation: bounce-in .5s;
+    }
+    .bounce-leave-active {
+      animation: bounce-in .5s reverse;
+    }
+    @keyframes bounce-in {
+      0% {
+        transform: scale(0);
+      }
+      50% {
+        transform: scale(1.5);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+      #gitbtn {
+          /* background-color: black!important; */
+          transition: background-color 1s!important;
+      }
+      #gitbtn:hover {
+          background-color: transparent!important;
+          transition: background-color 1s!important;
+      }
+      img {
+      opacity: 1;
+      transition: opacity 1s;
+    }
+    img.hide {
+      opacity: 0;
+    }
   </style>

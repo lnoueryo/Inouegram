@@ -180,7 +180,9 @@
                     <canvas id="concat" width="280" height="280" v-show="false"></canvas>
                     <div v-if="showConcatImg">
                         <v-carousel height="280" v-model="carousel">
-                            <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"><v-btn style="z-index: 5;" top right fixed color="red accent-3" small @click="deleteImage(index)">削除</v-btn></v-carousel-item>
+                            <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition">
+                                <!-- <v-btn style="position: absolute;z-index: 5;" top right fixed color="red accent-3" small @click="deleteImage(index)">削除</v-btn> -->
+                            </v-carousel-item>
                         </v-carousel>
                     </div>
                     <div class="pt-4 mx-auto"  style="width: 100%;max-width: 600px;">
@@ -230,10 +232,6 @@
                             </v-card-subtitle>
                         </v-card>
                     </div>
-                    <div>
-                        <v-btn color="primary" @click="submit">保存</v-btn>
-                        <v-btn text @click="e1=3">戻る</v-btn>
-                    </div>
                 </v-stepper-content>
 
             </v-stepper-items>
@@ -242,6 +240,8 @@
             <v-btn style="z-index: 5;" fixed top right color="primary" @click="e1=4" :disabled="confirmMessage" v-if="e1==3">確認</v-btn>
             <v-btn style="right: 90px;z-index: 5;" fixed top right color="purple" @click="oneMoreImage" v-if="e1==3">追加</v-btn>
             <!-- <v-btn @click="back2edit">戻る</v-btn> -->
+            <v-btn fixed top right style="z-index: 5;" color="primary" @click="submit" v-if="e1==4">保存</v-btn>
+            <v-btn style="right: 90px;z-index: 5;" fixed top right @click="e1=3" v-if="e1==4">戻る</v-btn>
         </div>
         <div v-if="showConcatImg">
             <!-- <div class="d-flex flex-wrap mb-3" style="justify-content: space-between;">
