@@ -13,14 +13,14 @@
                   <v-window-item :value="0">
                     <v-form ref="form">
                       <v-text-field class="py-2" v-model="resetEmail" placeholder="アドレス" label="Email" required clearable @keyup.enter.exact="sendPasswordResetLink" autocomplete="new-password"></v-text-field>
-                    <div v-if="Object.keys(resetErrors).length !== 0">
-                      <div class="mb-2 px-4">
-                        <div class="error px-4 py-2" style="font-size: smaller;font-weight: 500;">
-                          <div class="alert alert-danger" v-text="resetErrors.email" v-if="resetErrors.email"></div>
-                          <div class="alert alert-danger" v-text="resetErrors.password" v-if="resetErrors.password"></div>
+                        <div v-if="Object.keys(resetErrors).length !== 0">
+                          <div class="mb-2 px-4">
+                            <div class="error px-4 py-2" style="font-size: smaller;font-weight: 500;">
+                              <div class="alert alert-danger" v-text="resetErrors.email" v-if="resetErrors.email"></div>
+                              <div class="alert alert-danger" v-text="resetErrors.password" v-if="resetErrors.password"></div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
                       <v-btn color="success" class="mr-4" @click="sendPasswordResetLink">メール送信</v-btn>
                       <v-btn class="mr-4" @click="step++">ログイン画面</v-btn>
                     </v-form>

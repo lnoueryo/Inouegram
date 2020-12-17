@@ -14695,6 +14695,25 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
             changingBgData: '',
             sizeDialog: false,
             progress: false,
+            profileDialog: false,
+            nameRules: [
+                (v) => !!v || '入力が必要です',
+            ],
+            nicknameRules: [
+                (v) => !!v || '入力が必要です',
+            ],
+            emailRules: [
+                (v) => !!v || '入力が必要です',
+                (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            valid: false,
+            showPassword: false,
+            passwordRules: {
+                required: (value) => !!value || '入力が必要です.',
+                min: (v) => v.length >= 8 || '8文字以上です',
+            },
+            profile: { name: this.mainUser.name, screen_name: this.mainUser.screen_name, email: this.mainUser.email, password: '' },
+            changeProfileErrors: '',
         };
     },
     computed: {
@@ -14866,6 +14885,31 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
         },
         onResize() {
             this.windowSize = { x: window.innerWidth, y: window.innerHeight };
+        },
+        changeProfile() {
+            axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/changeProfile', {
+                'id': this.mainUser.id, 'name': this.profile.name, 'screen_name': this.profile.screen_name, 'email': this.profile.email, password: this.profile.password
+            })
+                .then(response => {
+                this.user = response.data;
+                this.profileDialog = false;
+                this.profile.password = '';
+                this.resetValidation();
+            })
+                .catch((error) => {
+                var responseErrors = error.response.data.errors;
+                var errors = {};
+                // let that = this;
+                for (var key in responseErrors) {
+                    errors[key] = responseErrors[key][0];
+                }
+                console.log(errors);
+                this.changeProfileErrors = errors;
+            });
+        },
+        resetValidation() {
+            let element = this.$refs.form;
+            element.resetValidation();
         },
     }
 }));
@@ -18799,17 +18843,22 @@ var render = function() {
                   _vm._v(" "),
                   _c(
                     "v-list-item-subtitle",
-                    {
-                      staticStyle: { cursor: "pointer" },
-                      on: {
-                        click: function($event) {
-                          return _vm.findFollowingUsers()
-                        }
-                      }
-                    },
+                    { staticStyle: { cursor: "pointer" } },
                     [
-                      _vm._v(
-                        "フォロワー" + _vm._s(_vm.userFollowedNumer) + "人"
+                      _c(
+                        "span",
+                        {
+                          on: {
+                            click: function($event) {
+                              return _vm.findFollowingUsers()
+                            }
+                          }
+                        },
+                        [
+                          _vm._v(
+                            "フォロワー" + _vm._s(_vm.userFollowedNumer) + "人"
+                          )
+                        ]
                       )
                     ]
                   )
@@ -18823,15 +18872,39 @@ var render = function() {
                     { staticClass: "font-weight-light grey--text title mb-2" },
                     [
                       _c(
-                        "v-btn",
-                        {
-                          attrs: { small: "", elevation: "2" },
-                          on: { click: _vm.logout }
-                        },
-                        [_vm._v("ログアウト")]
+                        "div",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { small: "", block: "", elevation: "2" },
+                              on: { click: _vm.logout }
+                            },
+                            [_vm._v("ログアウト")]
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: { small: "", elevation: "2", dark: "" },
+                              on: {
+                                click: function($event) {
+                                  _vm.profileDialog = true
+                                }
+                              }
+                            },
+                            [_vm._v("プロフィール")]
+                          )
+                        ],
+                        1
                       )
-                    ],
-                    1
+                    ]
                   )
                 : _c(
                     "div",
@@ -19088,6 +19161,260 @@ var render = function() {
           _c("v-progress-circular", {
             attrs: { indeterminate: "", size: "64" }
           })
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-row",
+        { attrs: { justify: "center" } },
+        [
+          _c(
+            "v-dialog",
+            {
+              attrs: { "max-width": "600px" },
+              model: {
+                value: _vm.profileDialog,
+                callback: function($$v) {
+                  _vm.profileDialog = $$v
+                },
+                expression: "profileDialog"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", [
+                    _c("span", { staticClass: "headline" }, [
+                      _vm._v("プロフィール")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-text",
+                    [
+                      _c(
+                        "v-container",
+                        [
+                          _c(
+                            "v-form",
+                            {
+                              ref: "form",
+                              attrs: { "lazy-validation": "" },
+                              model: {
+                                value: _vm.valid,
+                                callback: function($$v) {
+                                  _vm.valid = $$v
+                                },
+                                expression: "valid"
+                              }
+                            },
+                            [
+                              _c(
+                                "v-row",
+                                [
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12", sm: "6", md: "6" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "名前",
+                                          required: "",
+                                          rules: _vm.nameRules
+                                        },
+                                        model: {
+                                          value: _vm.profile.name,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.profile, "name", $$v)
+                                          },
+                                          expression: "profile.name"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12", sm: "6", md: "6" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "ニックネーム",
+                                          rules: _vm.nicknameRules
+                                        },
+                                        model: {
+                                          value: _vm.profile.screen_name,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.profile,
+                                              "screen_name",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "profile.screen_name"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "メールアドレス",
+                                          required: "",
+                                          rules: _vm.emailRules
+                                        },
+                                        model: {
+                                          value: _vm.profile.email,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.profile, "email", $$v)
+                                          },
+                                          expression: "profile.email"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12" } },
+                                    [
+                                      _c("v-text-field", {
+                                        staticClass:
+                                          "input-group--focused py-2",
+                                        attrs: {
+                                          "append-icon": _vm.showPassword
+                                            ? "mdi-eye"
+                                            : "mdi-eye-off",
+                                          rules: [
+                                            _vm.passwordRules.required,
+                                            _vm.passwordRules.min
+                                          ],
+                                          type: _vm.showPassword
+                                            ? "text"
+                                            : "password",
+                                          name: "input-10-2",
+                                          label: "パスワード",
+                                          hint: "8文字以上です",
+                                          autocomplete: "new-password"
+                                        },
+                                        on: {
+                                          "click:append": function($event) {
+                                            _vm.showPassword = !_vm.showPassword
+                                          }
+                                        },
+                                        model: {
+                                          value: _vm.profile.password,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.profile,
+                                              "password",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "profile.password"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  Object.keys(_vm.changeProfileErrors)
+                                    .length !== 0
+                                    ? _c("div", [
+                                        _c(
+                                          "div",
+                                          { staticClass: "mb-2 px-4" },
+                                          [
+                                            _c(
+                                              "div",
+                                              {
+                                                staticClass: "error px-4 py-2",
+                                                staticStyle: {
+                                                  "font-size": "smaller",
+                                                  "font-weight": "500"
+                                                }
+                                              },
+                                              [
+                                                _vm.changeProfileErrors.password
+                                                  ? _c("div", {
+                                                      staticClass:
+                                                        "alert alert-danger",
+                                                      domProps: {
+                                                        textContent: _vm._s(
+                                                          _vm
+                                                            .changeProfileErrors
+                                                            .password
+                                                        )
+                                                      }
+                                                    })
+                                                  : _vm._e()
+                                              ]
+                                            )
+                                          ]
+                                        )
+                                      ])
+                                    : _vm._e()
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "blue darken-1", text: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.profileDialog = false
+                            }
+                          }
+                        },
+                        [_vm._v("\n                Close\n            ")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: {
+                            color: "blue darken-1",
+                            text: "",
+                            disabled: !_vm.valid
+                          },
+                          on: { click: _vm.changeProfile }
+                        },
+                        [_vm._v("\n                Save\n            ")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
         ],
         1
       )

@@ -8,6 +8,8 @@ use App\Post;
 use App\Like;
 use App\Follower;
 use App\Comment;
+use App\Rules\HashCheck;
+use Illuminate\Support\Facades\Hash;
 class ApiController extends Controller
 {
     public function search(Request $request){
@@ -98,6 +100,18 @@ class ApiController extends Controller
         $post_comments_users = User::whereIn('id', $post_comments->get('user_id'));
         $res = ['userLikes' => $main_user_likes->get(), 'posts' => $liked_posts->get(), 'likes' => $post_likes->get(), 'likeUsers' => $post_likes_users->get(), 'comments' => $post_comments->get(), 'commentUsers' => $post_comments_users->get()];
         return $res;
+    }
+
+    public function changeProfile(Request $request){
+        $request->validate([
+            'password' => new HashCheck($request->id),
+        ]);
+        $user = User::find($request->id);
+        $user->name = $request->name;
+        $user->screen_name = $request->screen_name;
+        $user->email = $request->email;
+        $user->save();
+        return $user;
     }
 
 }

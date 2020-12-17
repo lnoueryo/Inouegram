@@ -16,10 +16,15 @@
                 <v-list-item-content>
                     <v-list-item-title class="title" style="margin-top:10px;">{{requestedUserInfo.screen_name}}</v-list-item-title>
                     <v-list-item-subtitle>{{requestedUserInfo.name}}</v-list-item-subtitle>
-                    <v-list-item-subtitle @click="findFollowingUsers()" style="cursor: pointer;">フォロワー{{ userFollowedNumer }}人</v-list-item-subtitle>
+                    <v-list-item-subtitle style="cursor: pointer;"><span @click="findFollowingUsers()">フォロワー{{ userFollowedNumer }}人</span></v-list-item-subtitle>
                 </v-list-item-content>
                 <div class="font-weight-light grey--text title mb-2" v-if="visitor.id == user.id">
-                    <v-btn @click="logout" small elevation="2">ログアウト</v-btn>
+                    <div>
+                        <v-btn @click="logout" small block elevation="2">ログアウト</v-btn>
+                    </div>
+                    <div>
+                        <v-btn small elevation="2" dark @click="profileDialog = true">プロフィール</v-btn>
+                    </div>
                 </div>
                 <div v-else>
                     <v-btn elevation="1" :color="isFollowed ? 'error' : 'primary'" @click="follow(isFollowed);">
@@ -88,6 +93,58 @@
         <v-overlay :value="progress">
             <v-progress-circular indeterminate size="64"></v-progress-circular>
         </v-overlay>
+        <v-row justify="center">
+            <v-dialog v-model="profileDialog" max-width="600px">
+            <v-card>
+                <v-card-title>
+                <span class="headline">プロフィール</span>
+                </v-card-title>
+                <v-card-text>
+                <v-container>
+                    <v-form ref="form" v-model="valid" lazy-validation>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field v-model="profile.name" label="名前" required :rules="nameRules"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field v-model="profile.screen_name" label="ニックネーム" :rules="nicknameRules"></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field v-model="profile.email" label="メールアドレス" required :rules="emailRules"></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="[passwordRules.required, passwordRules.min]" :type="showPassword ? 'text' : 'password'" name="input-10-2"
+                                    label="パスワード"
+                                    hint="8文字以上です"
+                                    autocomplete="new-password"
+                                    class="input-group--focused py-2"
+                                    @click:append="showPassword = !showPassword"
+                                    v-model="profile.password"
+                                    ></v-text-field>
+                            </v-col>
+                            <div v-if="Object.keys(changeProfileErrors).length !== 0">
+                            <div class="mb-2 px-4">
+                                <div class="error px-4 py-2" style="font-size: smaller;font-weight: 500;">
+                                <div class="alert alert-danger" v-text="changeProfileErrors.password" v-if="changeProfileErrors.password"></div>
+                                </div>
+                            </div>
+                            </div>
+                        </v-row>
+                    </v-form>
+                </v-container>
+                </v-card-text>
+                <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="profileDialog = false">
+                    Close
+                </v-btn>
+                <v-btn color="blue darken-1" text @click="changeProfile" :disabled="!valid">
+                    Save
+                </v-btn>
+                </v-card-actions>
+            </v-card>
+            </v-dialog>
+        </v-row>
     </div>
 </template>
 
@@ -105,10 +162,22 @@ export type DataType = {
     changingBgData: string | null,
     sizeDialog: boolean,
     progress: boolean,
+    profileDialog: boolean,
+    nameRules: any,
+    nicknameRules: any,
+    emailRules: any,
+    valid: boolean,
+    showPassword: boolean,
+    passwordRules: any,
+    profile: any,
+    changeProfileErrors: any
 }
 
 interface User {
     id: number;
+    name: string;
+    screen_name: string;
+    email: string;
 }
 interface Follower {
     following_id: number;
@@ -139,6 +208,25 @@ interface windowSize {
             changingBgData: '',
             sizeDialog: false,
             progress: false,
+            profileDialog: false,
+            nameRules: [
+                (v: any) => !!v || '入力が必要です',
+            ],
+            nicknameRules: [
+                (v: any) => !!v || '入力が必要です',
+            ],
+            emailRules: [
+                (v: any) => !!v || '入力が必要です',
+                (v: any) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            valid: false,
+            showPassword: false,
+            passwordRules: {
+                required: (value: any) => !!value || '入力が必要です.',
+                min: (v: any) => v.length >= 8 || '8文字以上です',
+            },
+            profile: {name: this.mainUser.name, screen_name: this.mainUser.screen_name, email: this.mainUser.email, password: ''},
+            changeProfileErrors: '',
         }
     },
     computed:{
@@ -311,6 +399,33 @@ interface windowSize {
         onResize () {
             this.windowSize = { x: window.innerWidth, y: window.innerHeight }
         },
+        changeProfile(){
+            axios.post('/api/changeProfile', {
+                'id': this.mainUser.id,'name': this.profile.name, 'screen_name': this.profile.screen_name, 'email': this.profile.email, password: this.profile.password
+            })
+            .then(
+                response => {
+                    this.user = response.data;
+                    this.profileDialog = false;
+                    this.profile.password = '';
+                    this.resetValidation();
+                }
+            )
+            .catch((error) => {
+                var responseErrors = error.response.data.errors;
+                var errors: any = {};
+                // let that = this;
+                for(var key in responseErrors) {
+                    errors[key] = responseErrors[key][0];
+                }
+                console.log(errors)
+                this.changeProfileErrors = errors;
+            });
+        },
+        resetValidation () {
+        let element: HTMLElement | any = this.$refs.form;
+        element.resetValidation();
+      },
     }
 })
 </script>

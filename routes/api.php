@@ -37,6 +37,7 @@ Route::post('/comment', 'ApiController@comment');
 
 Route::post('/delete_comment', 'ApiController@deleteComment');
 Route::get('/likedPostUsers', 'ApiController@likedPostUsers');
+Route::post('/changeProfile', 'ApiController@changeProfile');
 Route::post('/jsonjson', function(Request $request){
 
     for ($i=0; $i < count($request->json); $i++) {
