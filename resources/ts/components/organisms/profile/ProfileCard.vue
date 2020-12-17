@@ -138,13 +138,28 @@
                 <v-btn color="blue darken-1" text @click="profileDialog = false">
                     Close
                 </v-btn>
-                <v-btn color="blue darken-1" text @click="changeProfile" :disabled="!valid">
-                    Save
-                </v-btn>
+                <template v-if="profile.password">
+                    <v-btn color="blue darken-1" text @click="changeProfile" :disabled="!valid">
+                        Save
+                    </v-btn>
+                </template>
+                <template v-else>
+                    <v-btn color="blue darken-1" text @click="changeProfile" disabled>
+                        Save
+                    </v-btn>
+                </template>
                 </v-card-actions>
             </v-card>
             </v-dialog>
         </v-row>
+        <v-snackbar v-model="saveSnackbar" :timeout="timeout">
+            プロフィールが変更されました。
+            <template v-slot:action="{ attrs }">
+                <v-btn color="blue" text v-bind="attrs" @click="saveSnackbar = false">
+                閉じる
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
@@ -170,7 +185,9 @@ export type DataType = {
     showPassword: boolean,
     passwordRules: any,
     profile: any,
-    changeProfileErrors: any
+    changeProfileErrors: any,
+    saveSnackbar: boolean,
+    timeout: number,
 }
 
 interface User {
@@ -227,6 +244,8 @@ interface windowSize {
             },
             profile: {name: this.mainUser.name, screen_name: this.mainUser.screen_name, email: this.mainUser.email, password: ''},
             changeProfileErrors: '',
+            saveSnackbar: false,
+            timeout: 2000,
         }
     },
     computed:{
@@ -405,6 +424,7 @@ interface windowSize {
             })
             .then(
                 response => {
+                    this.saveSnackbar = true;
                     this.user = response.data;
                     this.profileDialog = false;
                     this.profile.password = '';
@@ -414,7 +434,6 @@ interface windowSize {
             .catch((error) => {
                 var responseErrors = error.response.data.errors;
                 var errors: any = {};
-                // let that = this;
                 for(var key in responseErrors) {
                     errors[key] = responseErrors[key][0];
                 }

@@ -14714,6 +14714,8 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
             },
             profile: { name: this.mainUser.name, screen_name: this.mainUser.screen_name, email: this.mainUser.email, password: '' },
             changeProfileErrors: '',
+            saveSnackbar: false,
+            timeout: 2000,
         };
     },
     computed: {
@@ -14891,6 +14893,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
                 'id': this.mainUser.id, 'name': this.profile.name, 'screen_name': this.profile.screen_name, 'email': this.profile.email, password: this.profile.password
             })
                 .then(response => {
+                this.saveSnackbar = true;
                 this.user = response.data;
                 this.profileDialog = false;
                 this.profile.password = '';
@@ -14899,7 +14902,6 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
                 .catch((error) => {
                 var responseErrors = error.response.data.errors;
                 var errors = {};
-                // let that = this;
                 for (var key in responseErrors) {
                     errors[key] = responseErrors[key][0];
                 }
@@ -16957,7 +16959,7 @@ var render = function() {
                         attrs: { color: "blue", text: "" },
                         on: {
                           click: function($event) {
-                            _vm.snackbar = false
+                            _vm.emailSnackbar = false
                           }
                         }
                       },
@@ -19394,20 +19396,45 @@ var render = function() {
                         [_vm._v("\n                Close\n            ")]
                       ),
                       _vm._v(" "),
-                      _c(
-                        "v-btn",
-                        {
-                          attrs: {
-                            color: "blue darken-1",
-                            text: "",
-                            disabled: !_vm.valid
-                          },
-                          on: { click: _vm.changeProfile }
-                        },
-                        [_vm._v("\n                Save\n            ")]
-                      )
+                      _vm.profile.password
+                        ? [
+                            _c(
+                              "v-btn",
+                              {
+                                attrs: {
+                                  color: "blue darken-1",
+                                  text: "",
+                                  disabled: !_vm.valid
+                                },
+                                on: { click: _vm.changeProfile }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                    Save\n                "
+                                )
+                              ]
+                            )
+                          ]
+                        : [
+                            _c(
+                              "v-btn",
+                              {
+                                attrs: {
+                                  color: "blue darken-1",
+                                  text: "",
+                                  disabled: ""
+                                },
+                                on: { click: _vm.changeProfile }
+                              },
+                              [
+                                _vm._v(
+                                  "\n                    Save\n                "
+                                )
+                              ]
+                            )
+                          ]
                     ],
-                    1
+                    2
                   )
                 ],
                 1
@@ -19417,6 +19444,48 @@ var render = function() {
           )
         ],
         1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-snackbar",
+        {
+          attrs: { timeout: _vm.timeout },
+          scopedSlots: _vm._u([
+            {
+              key: "action",
+              fn: function(ref) {
+                var attrs = ref.attrs
+                return [
+                  _c(
+                    "v-btn",
+                    _vm._b(
+                      {
+                        attrs: { color: "blue", text: "" },
+                        on: {
+                          click: function($event) {
+                            _vm.saveSnackbar = false
+                          }
+                        }
+                      },
+                      "v-btn",
+                      attrs,
+                      false
+                    ),
+                    [_vm._v("\n            閉じる\n            ")]
+                  )
+                ]
+              }
+            }
+          ]),
+          model: {
+            value: _vm.saveSnackbar,
+            callback: function($$v) {
+              _vm.saveSnackbar = $$v
+            },
+            expression: "saveSnackbar"
+          }
+        },
+        [_vm._v("\n        プロフィールが変更されました。\n        ")]
       )
     ],
     1

@@ -196,7 +196,7 @@
         <v-snackbar v-model="emailSnackbar" :timeout="timeout">
             メールが送信されました
             <template v-slot:action="{ attrs }">
-                <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+                <v-btn color="blue" text v-bind="attrs" @click="emailSnackbar = false">
                 閉じる
                 </v-btn>
             </template>
