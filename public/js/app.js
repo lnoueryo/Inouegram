@@ -18978,7 +18978,7 @@ var render = function() {
                 "v-list",
                 { attrs: { subheader: "" } },
                 [
-                  _c("v-subheader"),
+                  _c("v-subheader", [_vm._v("フォロワー")]),
                   _vm._v(" "),
                   _c(
                     "div",
@@ -19057,7 +19057,7 @@ var render = function() {
               _vm._v(" "),
               _c("v-card-text", [
                 _vm._v(
-                  "\n            Do you wanna change to this image??\n            "
+                  "\n            背景をこちらに変更しますか？\n            "
                 )
               ]),
               _vm._v(" "),
@@ -19076,7 +19076,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("\n                No\n            ")]
+                    [_vm._v("\n                いいえ\n            ")]
                   ),
                   _vm._v(" "),
                   _c(
@@ -19089,7 +19089,7 @@ var render = function() {
                         }
                       }
                     },
-                    [_vm._v("\n                Yes\n            ")]
+                    [_vm._v("\n                はい\n            ")]
                   )
                 ],
                 1

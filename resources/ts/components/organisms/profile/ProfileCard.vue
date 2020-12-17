@@ -38,7 +38,7 @@
         <v-dialog v-model="followerDialog" max-width="290">
             <v-card>
                 <v-list subheader>
-                <v-subheader></v-subheader>
+                <v-subheader>フォロワー</v-subheader>
                 <div style="max-height: 450px; overflow-y: scroll;">
                     <v-list-item v-for="(followingUser, index) in followingUsers" :key="index" :href="'/profile?id=' + followingUser.id">
                         <v-list-item-avatar>
@@ -57,15 +57,15 @@
             <v-card>
                 <v-img :src="changingBgData"></v-img>
                 <v-card-text>
-                Do you wanna change to this image??
+                背景をこちらに変更しますか？
                 </v-card-text>
                 <v-card-actions>
                 <v-spacer></v-spacer>
                 <v-btn color="green darken-1" text @click="changeBgDialog = false">
-                    No
+                    いいえ
                 </v-btn>
                 <v-btn color="green darken-1" text @click="changeBg()">
-                    Yes
+                    はい
                 </v-btn>
                 </v-card-actions>
             </v-card>
