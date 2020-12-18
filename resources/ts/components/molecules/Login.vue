@@ -29,7 +29,7 @@
                 <v-form ref="form" lazy-validation>
                 <!-- <h4 class="py-2">ログイン</h4> -->
                 <v-text-field class="py-2" v-model="email" placeholder="アドレス" label="Email" required clearable @keyup.enter.exact="login"></v-text-field>
-                <v-text-field ref="focusThis" v-model="password" placeholder="パスワード" :counter="10" label="Password" required @click:append="show1 = !show1" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" @keyup.enter.exact="login"></v-text-field>
+                <v-text-field autofocus v-model="password" placeholder="パスワード" :counter="10" label="Password" required @click:append="show1 = !show1" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" @keyup.enter.exact="login"></v-text-field>
                 <div v-if="Object.keys(errors).length !== 0">
                   <div class="mb-3 mt-1">
                     <div class="error px-4 py-2" style="font-size: smaller;font-weight: 500;">
@@ -266,7 +266,6 @@
             this.randomNumber =  Math.floor( Math.random () * 5)+1;
         },
         mounted(){
-            this.focusInput();
             if(this.gUser){
                 this.step = 2;
                 this.registration.name = this.gUser.name;
@@ -305,9 +304,6 @@
             xhr.open('GET', url);
             xhr.responseType = 'blob';
             xhr.send();
-            },
-            focusInput() {
-                this.$refs.focusThis.focus();
             },
             blurInput() {
               var registrationArray = Object.values(this.registration).map(registration => {

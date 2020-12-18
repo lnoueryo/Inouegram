@@ -2895,8 +2895,6 @@ __webpack_require__.r(__webpack_exports__);
     this.randomNumber = Math.floor(Math.random() * 5) + 1;
   },
   mounted: function mounted() {
-    this.focusInput();
-
     if (this.gUser) {
       this.step = 2;
       this.registration.name = this.gUser.name;
@@ -2940,9 +2938,6 @@ __webpack_require__.r(__webpack_exports__);
       xhr.open('GET', url);
       xhr.responseType = 'blob';
       xhr.send();
-    },
-    focusInput: function focusInput() {
-      this.$refs.focusThis.focus();
     },
     blurInput: function blurInput() {
       var registrationArray = Object.values(this.registration).map(function (registration) {
@@ -4929,6 +4924,19 @@ __webpack_require__.r(__webpack_exports__);
         });
       }
     },
+    toggleDeleteBtn: function toggleDeleteBtn(id, index) {
+      if (this.commentUser(id).id == this.visitor.id) {
+        // if(this.isDeleteBtn[index] === true){
+        //     this.isDeleteBtn[index] = false;
+        // } else {
+        //     this.isDeleteBtn[index] = true;
+        // }
+        this.isDeleteBtn[index] = !this.isDeleteBtn[index];
+        this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
+          return el;
+        });
+      }
+    },
     iconType: function iconType(userId) {
       var _this5 = this;
 
@@ -5786,7 +5794,7 @@ __webpack_require__.r(__webpack_exports__);
       commentDialog: false,
       dialogPostId: '',
       comment: [],
-      isDeleteBtn: ''
+      isDeleteBtn: []
     };
   },
   computed: {
@@ -5822,6 +5830,14 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   methods: {
+    toggleDeleteComment: function toggleDeleteComment(id, index) {
+      if (this.commentUser(id).id == this.visitor.id) {
+        this.isDeleteBtn[index] = !this.isDeleteBtn[index];
+        this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
+          return el;
+        });
+      }
+    },
     showDeleteBtn: function showDeleteBtn(id, index) {
       if (this.commentUser(id).id == this.visitor.id) {
         this.isDeleteBtn[index] = true;
@@ -16353,8 +16369,8 @@ var render = function() {
                               }),
                               _vm._v(" "),
                               _c("v-text-field", {
-                                ref: "focusThis",
                                 attrs: {
+                                  autofocus: "",
                                   placeholder: "パスワード",
                                   counter: 10,
                                   label: "Password",
@@ -20255,6 +20271,12 @@ var render = function() {
                                         {
                                           key: index,
                                           on: {
+                                            touchstart: function($event) {
+                                              return _vm.toggleDeleteBtn(
+                                                postComment.user_id,
+                                                index
+                                              )
+                                            },
                                             mouseover: function($event) {
                                               return _vm.showDeleteBtn(
                                                 postComment.user_id,
@@ -21815,6 +21837,12 @@ var render = function() {
                         {
                           key: index,
                           on: {
+                            touchstart: function($event) {
+                              return _vm.toggleDeleteComment(
+                                postComment.user_id,
+                                index
+                              )
+                            },
                             mouseover: function($event) {
                               return _vm.showDeleteBtn(
                                 postComment.user_id,

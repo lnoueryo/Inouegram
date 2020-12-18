@@ -124,7 +124,7 @@
                 <v-list subheader>
                 <v-subheader>コメント</v-subheader>
                 <div style="max-height: 450px; overflow-y: scroll;">
-                    <v-list-item v-for="(postComment, index) in postComments" :key="index" @mouseover="showDeleteBtn(postComment.user_id, index)" @mouseleave="hideDeleteBtn(postComment.user_id, index)">
+                    <v-list-item v-for="(postComment, index) in postComments" :key="index" @touchstart="toggleDeleteComment(postComment.user_id, index)" @mouseover="showDeleteBtn(postComment.user_id, index)" @mouseleave="hideDeleteBtn(postComment.user_id, index)">
                         <a :href="'/profile?id=' + postComment.user_id">
                         <v-list-item-avatar>
                         <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
@@ -191,7 +191,7 @@ export default {
             commentDialog: false,
             dialogPostId: '',
             comment: [],
-            isDeleteBtn: '',
+            isDeleteBtn: [],
         }
     },
     computed: {
@@ -223,6 +223,14 @@ export default {
         }
     },
     methods:{
+        toggleDeleteComment(id, index){
+            if(this.commentUser(id).id==this.visitor.id){
+                this.isDeleteBtn[index] = !this.isDeleteBtn[index];
+                this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
+                    return el;
+                })
+            }
+        },
         showDeleteBtn(id, index){
             if(this.commentUser(id).id==this.visitor.id){
                 this.isDeleteBtn[index] = true;

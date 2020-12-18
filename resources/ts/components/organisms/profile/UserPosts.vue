@@ -104,7 +104,7 @@
                             <v-window-item :value="2">
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>コメント</v-subheader>
-                                    <div v-for="(postComment, index) in postComments" :key="index" @mouseover="showDeleteBtn(postComment.user_id, index)" @mouseleave="hideDeleteBtn(postComment.user_id, index)">
+                                    <div v-for="(postComment, index) in postComments" :key="index" @touchstart="toggleDeleteBtn(postComment.user_id, index)" @mouseover="showDeleteBtn(postComment.user_id, index)" @mouseleave="hideDeleteBtn(postComment.user_id, index)">
                                         <v-list-item v-if="commentUser(postComment.user_id)">
                                             <a :href="'/profile?id=' + postComment.user_id">
                                             <v-list-item-avatar>
@@ -311,6 +311,19 @@
         hideDeleteBtn(id, index){
             if(this.commentUser(id).id==this.visitor.id){
                 this.isDeleteBtn[index] = false;
+                this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
+                    return el;
+                })
+            }
+        },
+        toggleDeleteBtn(id, index){
+            if(this.commentUser(id).id==this.visitor.id){
+                // if(this.isDeleteBtn[index] === true){
+                //     this.isDeleteBtn[index] = false;
+                // } else {
+                //     this.isDeleteBtn[index] = true;
+                // }
+                this.isDeleteBtn[index] = !this.isDeleteBtn[index];
                 this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
                     return el;
                 })
