@@ -34,9 +34,13 @@
             <header-bar2 :user="null"></header-bar2>
             @endguest
             <keep-alive>
-                <main style="padding-top: 65px;padding-bottom: 55px">
-                    @yield('content')
-                </main>
+                {{--  <main style="padding-top: 65px;padding-bottom: 55px">  --}}
+                    <v-main>
+                        <v-container>
+                            @yield('content')
+                        </v-container>
+                    </v-main>
+                {{--  </main>  --}}
             </keep-alive>
         </v-app>
     </div>

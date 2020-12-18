@@ -6501,8 +6501,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return this.concatImg;
       }
     },
-    toolStepper: function toolStepper() {
-      return Number(this.value) + 1;
+    toolStepper: {
+      get: function get() {
+        return Number(this.value) + 1;
+      },
+      set: function set(newValue) {
+        this.value = newValue;
+      }
     },
     opacity: {
       get: function get() {
@@ -6954,9 +6959,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
     },
     selectText: function selectText(event) {
+      var clientRect = this.textCanvas.getBoundingClientRect();
       var clickX = event.pageX;
       var clickY = event.pageY;
-      var clientRect = this.textCanvas.getBoundingClientRect();
       var positionX = clientRect.left + window.pageXOffset;
       var positionY = clientRect.top + window.pageYOffset;
       this.startX = clickX - positionX;
@@ -7109,6 +7114,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         this.imgSrc = '';
         this.stepBtn1 = true;
         this.concatImageBtn = true;
+        this.toolStepper = 0;
         var preview = document.getElementsByClassName('preview');
         var img = preview[0].getElementsByTagName('img');
         img[0].src = '';
@@ -22019,7 +22025,7 @@ var render = function() {
       _c(
         "v-stepper",
         {
-          staticClass: "elevation-0",
+          staticClass: "elevation-0 mb-4",
           model: {
             value: _vm.e1,
             callback: function($$v) {
@@ -22031,6 +22037,7 @@ var render = function() {
         [
           _c(
             "v-stepper-header",
+            { staticClass: "elevation-0" },
             [
               _c(
                 "v-stepper-step",
@@ -22081,6 +22088,7 @@ var render = function() {
                                 [
                                   _c("vue-cropper", {
                                     ref: "cropper",
+                                    staticClass: "mb-2",
                                     attrs: {
                                       guides: true,
                                       "view-mode": 2,
@@ -22091,14 +22099,26 @@ var render = function() {
                                       rotatable: false,
                                       src: _vm.imgSrc,
                                       "img-style": {
-                                        width: _vm.basicSize + "px",
-                                        height: _vm.basicSize + "px"
+                                        width: 500 + "px",
+                                        height: 500 + "px"
                                       },
                                       "aspect-ratio": 1 / 1,
                                       "drag-mode": "crop",
                                       preview: ".preview"
                                     }
-                                  })
+                                  }),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      attrs: {
+                                        color: "primary",
+                                        disabled: _vm.stepBtn1
+                                      },
+                                      on: { click: _vm.cropImage }
+                                    },
+                                    [_vm._v("トリミング")]
+                                  )
                                 ],
                                 1
                               )
@@ -22140,15 +22160,6 @@ var render = function() {
                       )
                     ],
                     1
-                  ),
-                  _vm._v(" "),
-                  _c(
-                    "v-btn",
-                    {
-                      attrs: { color: "primary", disabled: _vm.stepBtn1 },
-                      on: { click: _vm.cropImage }
-                    },
-                    [_vm._v("トリミング")]
                   )
                 ],
                 1
@@ -22422,6 +22433,7 @@ var render = function() {
                           _c(
                             "v-stepper",
                             {
+                              staticClass: "elevation-0",
                               staticStyle: { width: "500px" },
                               model: {
                                 value: _vm.toolStepper,
@@ -22434,6 +22446,7 @@ var render = function() {
                             [
                               _c(
                                 "v-stepper-items",
+                                { staticClass: "px-4" },
                                 [
                                   _c(
                                     "v-stepper-content",
@@ -23080,7 +23093,7 @@ var render = function() {
                   _c(
                     "v-stepper",
                     {
-                      staticClass: "elevation-0",
+                      staticClass: "elevation-0 mb-4",
                       staticStyle: { width: "1000px" },
                       model: {
                         value: _vm.toolStepper,
@@ -23138,28 +23151,30 @@ var render = function() {
                                       _c(
                                         "v-btn",
                                         {
+                                          staticClass: "mr-2",
                                           attrs: { color: "pink" },
                                           on: { click: _vm.reset }
                                         },
-                                        [_vm._v("reset")]
+                                        [_vm._v("リセット")]
                                       ),
                                       _vm._v(" "),
                                       _c(
                                         "v-btn",
                                         {
+                                          staticClass: "mr-2",
                                           attrs: { color: "purple" },
                                           on: { click: _vm.rotate }
                                         },
-                                        [_vm._v("rotate")]
+                                        [_vm._v("回転")]
                                       ),
                                       _vm._v(" "),
                                       _c(
                                         "v-btn",
                                         {
-                                          attrs: { color: "black" },
+                                          staticClass: "mr-2",
                                           on: { click: _vm.back }
                                         },
-                                        [_vm._v("back")]
+                                        [_vm._v("戻す")]
                                       ),
                                       _vm._v(" "),
                                       _c(
@@ -23441,7 +23456,7 @@ var render = function() {
               _c("v-stepper-content", { attrs: { step: "3" } }, [
                 _c(
                   "div",
-                  { staticClass: "d-flex pt-4 justify-content-around" },
+                  { staticClass: "d-flex pt-4 justify-content-around mb-4" },
                   [
                     _c("canvas", {
                       directives: [
@@ -23458,6 +23473,7 @@ var render = function() {
                     _vm.showConcatImg
                       ? _c(
                           "div",
+                          { staticClass: "mb-4" },
                           [
                             _c(
                               "v-carousel",
@@ -23491,7 +23507,7 @@ var render = function() {
                     _c(
                       "div",
                       {
-                        staticClass: "pt-2 mx-auto",
+                        staticClass: "pt-2 px-3 mx-auto",
                         staticStyle: { width: "100%", "max-width": "600px" }
                       },
                       [
@@ -23523,7 +23539,7 @@ var render = function() {
                                 return [
                                   _c("div", [
                                     _vm._v(
-                                      "\n                                内容 "
+                                      "\n                                    内容 "
                                     ),
                                     _c("small", [_vm._v("(content)")])
                                   ])
@@ -23723,7 +23739,10 @@ var render = function() {
             [
               _c(
                 "div",
-                { staticClass: "d-flex justify-content-start" },
+                {
+                  staticClass: "d-flex mb-4",
+                  staticStyle: { "justify-content": "space-between" }
+                },
                 _vm._l(_vm.concatImg, function(image, index) {
                   return _c("div", { key: index }, [
                     _c("img", { attrs: { width: "250", src: image } }),
@@ -23734,6 +23753,7 @@ var render = function() {
                         _c(
                           "v-btn",
                           {
+                            attrs: { color: "red", block: "" },
                             on: {
                               click: function($event) {
                                 return _vm.deleteImage(index)

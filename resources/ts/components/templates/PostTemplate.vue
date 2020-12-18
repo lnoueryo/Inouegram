@@ -1,7 +1,7 @@
 <template>
     <div>
-        <v-stepper v-model="e1" class="elevation-0">
-            <v-stepper-header>
+        <v-stepper v-model="e1" class="elevation-0 mb-4">
+            <v-stepper-header class="elevation-0">
                 <v-stepper-step :complete="e1 > 1" step="1">
                     画像のトリミング
                 </v-stepper-step>
@@ -25,6 +25,7 @@
                         <v-layout justify-space-around wrap>
                             <div v-if="imgSrc !== ''">
                                 <vue-cropper
+                                class="mb-2"
                                     ref="cropper"
                                     :guides="true"
                                     :view-mode="2"
@@ -34,11 +35,12 @@
                                     :background="true"
                                     :rotatable="false"
                                     :src="imgSrc"
-                                    :img-style="{ 'width': basicSize + 'px', 'height': basicSize + 'px' }"
+                                    :img-style="{ 'width': 500 + 'px', 'height': 500 + 'px' }"
                                     :aspect-ratio="1 / 1"
                                     drag-mode="crop"
                                     preview=".preview"
                                 />
+                    <v-btn @click="cropImage" color="primary" :disabled="stepBtn1">トリミング</v-btn>
                             </div>
                             <div v-else>
                                 <input-file-image :size="size" @selectedImage="loadImage($event)"></input-file-image>
@@ -49,7 +51,6 @@
                             </div>
                         </v-layout>
                     </v-container>
-                    <v-btn @click="cropImage" color="primary" :disabled="stepBtn1">トリミング</v-btn>
                 </v-stepper-content>
 
                 <v-stepper-content step="2">
@@ -87,8 +88,8 @@
                         </v-bottom-navigation>
                     </v-card>
                     <v-card class="overflow-hidden" height="550" width="500" flat>
-                    <v-stepper v-model="toolStepper" style="width: 500px;">
-                        <v-stepper-items>
+                    <v-stepper v-model="toolStepper" style="width: 500px;" class="elevation-0">
+                        <v-stepper-items class="px-4">
                             <v-stepper-content step="1">
                             <v-card-title>Pen</v-card-title>
                                     <v-color-picker class="mb-5 ml-3" v-model="penColor" @input="searchTimeOut"></v-color-picker>
@@ -159,7 +160,7 @@
                     </v-stepper>
                     </v-card>
                     </v-layout>
-                    <v-stepper v-model="toolStepper" style="width: 1000px;" class="elevation-0">
+                    <v-stepper v-model="toolStepper" style="width: 1000px;" class="elevation-0 mb-4">
                         <v-stepper-items>
                             <v-stepper-content step="1">
                                 <v-btn id="eraser-button" class="align-self-start mr-2" @click="eraser" >消しゴム</v-btn>
@@ -169,9 +170,9 @@
                             <v-stepper-content step="2">
                                 <v-col cols="12" sm="12" class="d-flex">
                                     <v-row>
-                                        <v-btn color="pink" @click="reset">reset</v-btn>
-                                        <v-btn color="purple" @click="rotate">rotate</v-btn>
-                                        <v-btn color="black" @click="back">back</v-btn>
+                                        <v-btn class="mr-2" color="pink" @click="reset">リセット</v-btn>
+                                        <v-btn class="mr-2" color="purple" @click="rotate">回転</v-btn>
+                                        <v-btn class="mr-2" @click="back">戻す</v-btn>
                                         <v-sheet elevation="1" max-width="520">
                                             <v-slide-group v-model="model" class="pa-3" center-active show-arrows>
                                                 <v-slide-item v-for="n in 13" :key="n" v-slot:default="{ active, toggle }">
@@ -209,23 +210,22 @@
                 </v-stepper-content>
 
                 <v-stepper-content step="3">
-                        <div class="d-flex pt-4 justify-content-around">
+                        <div class="d-flex pt-4 justify-content-around mb-4">
                             <canvas id="concat" width="500" height="500" v-show="false"></canvas>
-                            <div v-if="showConcatImg">
+                            <div class="mb-4" v-if="showConcatImg">
                                 <v-carousel height="500" v-model="carousel">
-                                <!-- <v-carousel :height="dialogSize" v-model="carousel[postDialogIndex]"> -->
                                     <v-carousel-item v-for="(image,index) in showConcatImg" :key="index" :src="image" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                                 </v-carousel>
                             </div>
-                            <div class="pt-2 mx-auto"  style="width: 100%;max-width: 600px;">
-                             <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
-                            <v-textarea v-model="message" color="teal" counter maxlength="500">
-                                <template v-slot:label>
-                                    <div>
-                                    内容 <small>(content)</small>
-                                    </div>
-                                </template>
-                            </v-textarea>
+                            <div class="pt-2 px-3 mx-auto"  style="width: 100%;max-width: 600px;">
+                                <v-text-field label="タイトル" value="Grocery delivery" hint="For example, flowers or used cars" v-model="title"></v-text-field>
+                                <v-textarea v-model="message" color="teal" counter maxlength="500">
+                                    <template v-slot:label>
+                                        <div>
+                                        内容 <small>(content)</small>
+                                        </div>
+                                    </template>
+                                </v-textarea>
                             </div>
                         </div>
                         <div>
@@ -280,11 +280,11 @@
             </v-stepper-items>
         </v-stepper>
         <div v-if="showConcatImg">
-            <div class="d-flex justify-content-start">
+            <div class="d-flex mb-4" style="justify-content: space-between;">
                 <div v-for="(image, index) in concatImg" :key="index">
                     <img width="250" :src="image">
                     <div>
-                        <v-btn @click="deleteImage(index)">削除</v-btn>
+                        <v-btn color="red" block @click="deleteImage(index)">削除</v-btn>
                     </div>
                 </div>
             </div>
@@ -412,8 +412,13 @@ export default {
                 return this.concatImg;
             }
         },
-        toolStepper(){
-            return Number(this.value) + 1;
+        toolStepper: {
+            get() {
+                return Number(this.value) + 1;
+            },
+            set(newValue) {
+                this.value = newValue;
+            }
         },
         opacity: {
             get() {
@@ -810,9 +815,9 @@ export default {
             };
         },
         selectText(event){
+            var clientRect = this.textCanvas.getBoundingClientRect()
             var clickX = event.pageX ;
             var clickY = event.pageY ;
-            var clientRect = this.textCanvas.getBoundingClientRect()
             var positionX = clientRect.left + window.pageXOffset ;
             var positionY = clientRect.top + window.pageYOffset ;
             this.startX = clickX - positionX ;
@@ -958,6 +963,7 @@ export default {
                 this.imgSrc = '';
                 this.stepBtn1 = true;
                 this.concatImageBtn = true;
+                this.toolStepper = 0;
                 var preview = document.getElementsByClassName('preview');
                 var img = preview[0].getElementsByTagName('img');
                 img[0].src = '';
