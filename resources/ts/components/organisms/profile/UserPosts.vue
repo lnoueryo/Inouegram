@@ -458,7 +458,6 @@
                 reaction: index,
             })
             .then(response => {
-                this.snackbar = true;
                 this.lastPostId = this.postDialog.id;
                 this.lastIndex = index;
                 this.checkLikeObj(response.data);
@@ -510,23 +509,25 @@
             this.userPostLikes = newUserPostLikes;
         },
         sendComment(postId, index){
-            axios.post('/api/comment', {
-                postId: postId,
-                userId: this.visitor.id,
-                text: this.comment,
-            })
-            .then(response => {
-                this.findCommentUsers(postId)
-                this.comment = '',
-                this.commentSnackbar = true;
-                this.lastPostId = postId;
-                this.lastIndex = index;
-                this.window = 2;
-                this.userComments.push(response.data);
-            })
-            .catch(error => {
-                console.log('fail')
-            })
+            if (this.comment) {
+                axios.post('/api/comment', {
+                    postId: postId,
+                    userId: this.visitor.id,
+                    text: this.comment,
+                })
+                .then(response => {
+                    this.findCommentUsers(postId)
+                    this.comment = '',
+                    this.commentSnackbar = true;
+                    this.lastPostId = postId;
+                    this.lastIndex = index;
+                    this.window = 2;
+                    this.userComments.push(response.data);
+                })
+                .catch(error => {
+                    console.log('fail')
+                })
+            }
         },
         deleteComment(postComment){
             axios.post('/api/delete_comment', {

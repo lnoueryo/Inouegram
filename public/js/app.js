@@ -2857,19 +2857,19 @@ __webpack_require__.r(__webpack_exports__);
       emailRules: [function (v) {
         return !!v || '入力が必要です';
       }, function (v) {
-        return /.+@.+\..+/.test(v) || 'E-mail must be valid';
+        return /.+@.+\..+/.test(v) || '有効なメールアドレスを入力してください';
       }],
       passwordRules: {
         required: function required(value) {
-          return !!value || 'Required.';
+          return !!value || '入力が必要です';
         },
         min: function min(v) {
-          return v.length >= 8 || 'Min 8 characters';
+          return v.length >= 8 || '8文字以上です';
         }
       },
       confirmationPasswordRules: {
         match: function match(v) {
-          return v == _this.registration.password || 'no match';
+          return v == _this.registration.password || 'パスワードと一致してません';
         }
       },
       valid: false,
@@ -3117,18 +3117,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['email', 'token'],
   data: function data() {
@@ -3152,15 +3140,15 @@ __webpack_require__.r(__webpack_exports__);
       show4: false,
       passwordRules: {
         required: function required(value) {
-          return !!value || 'Required.';
+          return !!value || '記入してください';
         },
         min: function min(v) {
-          return v.length >= 8 || 'Min 8 characters';
+          return v.length >= 8 || '8文字以上です';
         }
       },
       confirmationPasswordRules: {
         match: function match(v) {
-          return v == _this.registration.password || 'no match';
+          return v == _this.registration.password || 'パスワードと一致してません';
         }
       },
       valid: false,
@@ -5071,7 +5059,6 @@ __webpack_require__.r(__webpack_exports__);
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this11.snackbar = true;
         _this11.lastPostId = _this11.postDialog.id;
         _this11.lastIndex = index;
 
@@ -5127,22 +5114,24 @@ __webpack_require__.r(__webpack_exports__);
     sendComment: function sendComment(postId, index) {
       var _this13 = this;
 
-      axios.post('/api/comment', {
-        postId: postId,
-        userId: this.visitor.id,
-        text: this.comment
-      }).then(function (response) {
-        _this13.findCommentUsers(postId);
+      if (this.comment) {
+        axios.post('/api/comment', {
+          postId: postId,
+          userId: this.visitor.id,
+          text: this.comment
+        }).then(function (response) {
+          _this13.findCommentUsers(postId);
 
-        _this13.comment = '', _this13.commentSnackbar = true;
-        _this13.lastPostId = postId;
-        _this13.lastIndex = index;
-        _this13.window = 2;
+          _this13.comment = '', _this13.commentSnackbar = true;
+          _this13.lastPostId = postId;
+          _this13.lastIndex = index;
+          _this13.window = 2;
 
-        _this13.userComments.push(response.data);
-      })["catch"](function (error) {
-        console.log('fail');
-      });
+          _this13.userComments.push(response.data);
+        })["catch"](function (error) {
+          console.log('fail');
+        });
+      }
     },
     deleteComment: function deleteComment(postComment) {
       var _this14 = this;
@@ -5751,6 +5740,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['mainUser', 'posts', 'mainUserLikes', 'comments', 'likes', 'followingUsersInfo', 'likedUsers'],
   data: function data() {
@@ -5784,7 +5774,7 @@ __webpack_require__.r(__webpack_exports__);
       },
       likeSnackbar: false,
       commentSnackbar: false,
-      text: "Hello, I'm a snackbar",
+      text: "\u3044\u3044\u306D\u304C\u3055\u308C\u307E\u3057\u305F",
       menu: [],
       likeUsers: '',
       commentUsers: '',
@@ -6022,23 +6012,25 @@ __webpack_require__.r(__webpack_exports__);
     sendComment: function sendComment(postId, index) {
       var _this8 = this;
 
-      axios.post('/api/comment', {
-        postId: postId,
-        userId: this.visitor.id,
-        text: this.comment[index]
-      }).then(function (response) {
-        _this8.commentSnackbar = true;
-        _this8.lastPostId = postId;
-        _this8.lastIndex = index;
+      if (this.comment[index]) {
+        axios.post('/api/comment', {
+          postId: postId,
+          userId: this.visitor.id,
+          text: this.comment[index]
+        }).then(function (response) {
+          _this8.commentSnackbar = true;
+          _this8.lastPostId = postId;
+          _this8.lastIndex = index;
 
-        _this8.usersComments.push(response.data);
+          _this8.usersComments.push(response.data);
 
-        _this8.commentDialogOpen(postId);
+          _this8.commentDialogOpen(postId);
 
-        _this8.comment = [];
-      })["catch"](function (error) {
-        console.log('fail');
-      });
+          _this8.comment = [];
+        })["catch"](function (error) {
+          console.log('fail');
+        });
+      }
     },
     deleteComment: function deleteComment(postComment) {
       var _this9 = this;
@@ -6084,6 +6076,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _organisms_ImageEditer_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../organisms/ImageEditer.vue */ "./resources/ts/components/organisms/ImageEditer.vue");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -6475,19 +6478,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       color: 'black',
       fontWeght: '500',
       fontStyle: 'normal',
-      top: '100px',
-      left: '100px',
+      top: '',
+      left: '',
       position: 'absolute',
-      zIndex: 1
+      zIndex: 1,
+      height: '15px'
     }), _defineProperty(_ref, "selectedInputPosition", {
       fontSize: '15px',
       color: 'black',
       fontWeght: '500',
       fontStyle: 'normal',
-      top: '100px',
-      left: '100px',
+      top: '',
+      left: '',
       position: 'absolute',
-      zIndex: 1
+      zIndex: 1,
+      height: '15px'
     }), _ref;
   },
   computed: {
@@ -6519,18 +6524,20 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     fontSize: {
       get: function get() {
-        return this.inputPosition.fontSize.replace(/px/g, "");
+        return this.inputPosition.fontSize.replace(/px/g, "") && this.inputPosition.height.replace(/px/g, "");
       },
       set: function set(newValue) {
         this.inputPosition.fontSize = newValue + 'px';
+        this.inputPosition.height = newValue + 'px';
       }
     },
     selectedFontSize: {
       get: function get() {
-        return this.selectedInputPosition.fontSize.replace(/px/g, "");
+        return this.selectedInputPosition.fontSize.replace(/px/g, "") && this.selectedInputPosition.height.replace(/px/g, "");
       },
       set: function set(newValue) {
         this.selectedInputPosition.fontSize = newValue + 'px';
+        this.selectedInputPosition.height = newValue + 'px';
       }
     }
   },
@@ -6959,15 +6966,15 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       };
     },
     selectText: function selectText(event) {
-      var clientRect = this.textCanvas.getBoundingClientRect();
+      // var clientRect = this.textCanvas.getBoundingClientRect()
       var clickX = event.pageX;
-      var clickY = event.pageY;
-      var positionX = clientRect.left + window.pageXOffset;
-      var positionY = clientRect.top + window.pageYOffset;
-      this.startX = clickX - positionX;
-      this.startY = clickY - positionY;
-      this.inputPosition.width = 500 - this.startX + 'px';
-      this.selectedInputPosition.width = 500 - this.startX + 'px';
+      var clickY = event.pageY; // var positionX = clientRect.left + window.pageXOffset ;
+      // var positionY = clientRect.top + window.pageYOffset ;
+
+      this.startX = event.offsetX;
+      this.startY = event.offsetY;
+      this.inputPosition.width = 500 - event.offsetX + 'px';
+      this.selectedInputPosition.width = 500 - event.offsetX + 'px';
 
       for (var i = 0; i < this.texts.length; i++) {
         if (this.textHittest(this.startX, this.startY, i)) {
@@ -6979,8 +6986,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }, 100); // var selectedInput = document.getElementById('selectedText');
           // selectedInput.focus();
 
-          this.selectedInputPosition.top = this.texts[i].y - 45 + 'px';
-          this.selectedInputPosition.left = this.texts[i].x + 15 + 'px';
+          this.selectedInputPosition.top = this.texts[i].y - this.texts[i].fontSize.replace(/px/g, "") + 'px';
+          this.selectedInputPosition.left = this.texts[i].x + 'px';
           this.selectedInputPosition.color = this.texts[i].fillStyle;
           this.texts[i].fillStyle = 'transparent';
           var fontArray = this.texts[i].font.split(/\s+/);
@@ -6999,7 +7006,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     textHittest: function textHittest(x, y, textIndex) {
       var text = this.texts[textIndex];
-      return x >= text.x - 20 && x <= text.x + text.width + 20 && y >= text.y - text.height - 10 && y <= text.y + 10;
+      return x >= text.x - 20 && x <= text.x + text.width + 20 && y <= text.y + 20 && y >= text.y - text.fontSize + 5;
     },
     blur: function blur(e) {
       e.target.blur();
@@ -7008,8 +7015,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.isActive = true;
       var that = this;
       setTimeout(function () {
-        that.inputPosition.top = e.pageY - 210 + 'px';
-        that.inputPosition.left = e.pageX - 10 + 'px';
+        that.inputPosition.top = e.offsetY + 'px';
+        that.inputPosition.left = e.offsetX + 'px';
         document.getElementById('newText').focus();
       }, 100);
     },
@@ -7018,8 +7025,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var text = {
         text: document.getElementById('newText').value,
         x: this.startX,
-        y: this.startY + this.inputPosition.fontSize.replace(/px/g, "") / 2 - 5,
+        y: this.startY + Number(this.inputPosition.fontSize.replace(/px/g, "")),
         font: "bold ".concat(this.inputPosition.fontSize, " normal"),
+        fontSize: this.inputPosition.fontSize.replace(/px/g, ""),
         fillStyle: this.inputPosition.color
       };
       this.textCanvasctx.font = "bold ".concat(this.inputPosition.fontSize, " normal");
@@ -7031,9 +7039,16 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     },
     edit: function edit() {
       this.isActiveEditText = false;
-      var editText = this.texts[this.selectedEditText];
+      var editText = this.texts[this.selectedEditText]; // editText.x = this.startX
+      // editText.y = this.startY
+
       editText.text = this.selectedEditTextMessage;
       editText.font = "".concat(this.selectedInputPosition.fontWeight, " ").concat(this.selectedInputPosition.fontSize, " ").concat(this.selectedInputPosition.fontStyle);
+
+      if (editText.fontSize !== this.selectedInputPosition.fontSize.replace(/px/g, "")) {
+        editText.fontSize = this.selectedInputPosition.fontSize.replace(/px/g, "");
+      }
+
       editText.fillStyle = this.selectedInputPosition.color;
       var that = this;
       setTimeout(function () {
@@ -7070,8 +7085,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       // }
 
       this.pageY = event.pageY;
-      this.startX = parseInt(event.clientX - this.offsetX);
-      this.startY = event.pageY - 188;
+      this.startX = event.offsetX;
+      this.startY = event.offsetY;
 
       for (var i = 0; i < this.texts.length; i++) {
         if (this.textHittest(this.startX, this.startY, i)) {
@@ -7090,8 +7105,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         return;
       }
 
-      var mouseX = parseInt(e.clientX - this.offsetX);
-      var mouseY = event.pageY - 188;
+      var mouseX = e.offsetX;
+      var mouseY = e.offsetY;
       var dx = mouseX - this.startX;
       var dy = mouseY - this.startY;
       this.startX = mouseX;
@@ -14855,6 +14870,7 @@ var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _argume
                     reader.onload = function (e) {
                         that.changingBgData = e.target.result;
                         that.changeBgDialog = true;
+                        that.progress = false;
                     };
                     reader.readAsDataURL(file);
                 }
@@ -16715,7 +16731,7 @@ var render = function() {
                                       type: _vm.show2 ? "text" : "password",
                                       name: "input-10-2",
                                       label: "パスワード",
-                                      hint: "At least 8 characters",
+                                      hint: "8文字以上です",
                                       autocomplete: "new-password"
                                     },
                                     on: {
@@ -16750,7 +16766,7 @@ var render = function() {
                                       type: _vm.show3 ? "text" : "password",
                                       name: "input-10-2",
                                       label: "パスワード確認",
-                                      hint: "At least 8 characters",
+                                      hint: "8文字以上です",
                                       autocomplete: "new-password"
                                     },
                                     on: {
@@ -17120,7 +17136,7 @@ var render = function() {
                                     type: _vm.show2 ? "text" : "password",
                                     name: "input-10-2",
                                     label: "パスワード",
-                                    hint: "At least 8 characters",
+                                    hint: "8文字以上です",
                                     autocomplete: "new-password"
                                   },
                                   on: {
@@ -17155,7 +17171,7 @@ var render = function() {
                                     type: _vm.show3 ? "text" : "password",
                                     name: "input-10-2",
                                     label: "パスワード確認",
-                                    hint: "At least 8 characters",
+                                    hint: "8文字以上です",
                                     autocomplete: "new-password"
                                   },
                                   on: {
@@ -17287,38 +17303,7 @@ var render = function() {
                       1
                     ),
                     _vm._v(" "),
-                    _c("v-window-item", { attrs: { value: 3 } }, [
-                      _c(
-                        "div",
-                        { staticClass: "pa-4 text-center" },
-                        [
-                          _c("v-img", {
-                            staticClass: "mb-4",
-                            attrs: {
-                              contain: "",
-                              height: "128",
-                              src:
-                                "https://cdn.vuetifyjs.com/images/logos/v.svg"
-                            }
-                          }),
-                          _vm._v(" "),
-                          _c(
-                            "h3",
-                            { staticClass: "title font-weight-light mb-2" },
-                            [
-                              _vm._v(
-                                "\n                    Welcome to Vuetify\n                "
-                              )
-                            ]
-                          ),
-                          _vm._v(" "),
-                          _c("span", { staticClass: "caption grey--text" }, [
-                            _vm._v("Thanks for signing up!")
-                          ])
-                        ],
-                        1
-                      )
-                    ])
+                    _c("v-window-item", { attrs: { value: 3 } })
                   ],
                   1
                 )
@@ -18382,7 +18367,7 @@ var render = function() {
                                     attrs: { subheader: "" }
                                   },
                                   [
-                                    _c("v-subheader", [_vm._v("Recent chat")]),
+                                    _c("v-subheader", [_vm._v("いいね")]),
                                     _vm._v(" "),
                                     _c(
                                       "div",
@@ -18555,7 +18540,7 @@ var render = function() {
                                     attrs: { subheader: "" }
                                   },
                                   [
-                                    _c("v-subheader", [_vm._v("Recent chat")]),
+                                    _c("v-subheader", [_vm._v("コメント")]),
                                     _vm._v(" "),
                                     _vm._l(_vm.postComments, function(
                                       postComment,
@@ -21564,7 +21549,19 @@ var render = function() {
               1
             )
           })
-        : [_c("div", [_vm._v("\n            友達を探しましょう\n        ")])],
+        : [
+            _c(
+              "div",
+              { staticClass: "text-center", staticStyle: { margin: "auto" } },
+              [
+                _vm._v("\n            まだ投稿はありません"),
+                _c("br"),
+                _vm._v(" "),
+                _c("v-btn", { attrs: { href: "/post" } }, [_vm._v("投稿する")])
+              ],
+              1
+            )
+          ],
       _vm._v(" "),
       _c(
         "v-snackbar",
@@ -21671,7 +21668,7 @@ var render = function() {
                 "v-list",
                 { attrs: { subheader: "" } },
                 [
-                  _c("v-subheader", [_vm._v("Recent chat")]),
+                  _c("v-subheader", [_vm._v("いいね")]),
                   _vm._v(" "),
                   _c(
                     "div",
@@ -22187,29 +22184,41 @@ var render = function() {
                             },
                             [
                               _vm.isActive
-                                ? _c("div", [
-                                    _c("input", {
-                                      style: _vm.inputPosition,
-                                      attrs: { id: "newText", type: "text" },
-                                      on: {
-                                        keyup: function($event) {
-                                          if (
-                                            !$event.type.indexOf("key") &&
-                                            _vm._k(
-                                              $event.keyCode,
-                                              "enter",
-                                              13,
-                                              $event.key,
-                                              "Enter"
-                                            )
-                                          ) {
-                                            return null
-                                          }
-                                          return _vm.discribeNew($event)
-                                        }
+                                ? _c(
+                                    "div",
+                                    {
+                                      staticStyle: {
+                                        position: "absolute",
+                                        top: "0",
+                                        left: "0",
+                                        height: "100%",
+                                        width: "100%"
                                       }
-                                    })
-                                  ])
+                                    },
+                                    [
+                                      _c("input", {
+                                        style: _vm.inputPosition,
+                                        attrs: { id: "newText", type: "text" },
+                                        on: {
+                                          keyup: function($event) {
+                                            if (
+                                              !$event.type.indexOf("key") &&
+                                              _vm._k(
+                                                $event.keyCode,
+                                                "enter",
+                                                13,
+                                                $event.key,
+                                                "Enter"
+                                              )
+                                            ) {
+                                              return null
+                                            }
+                                            return _vm.discribeNew($event)
+                                          }
+                                        }
+                                      })
+                                    ]
+                                  )
                                 : _vm._e(),
                               _vm._v(" "),
                               _vm.isActiveEditText
@@ -22394,24 +22403,6 @@ var render = function() {
                                   _vm._v(" "),
                                   _c("v-icon", [
                                     _vm._v("mdi-format-color-text")
-                                  ])
-                                ],
-                                1
-                              ),
-                              _vm._v(" "),
-                              _c(
-                                "v-btn",
-                                {
-                                  attrs: {
-                                    color: "deep-purple accent-4",
-                                    text: ""
-                                  }
-                                },
-                                [
-                                  _c("span", [_vm._v("ダウンロード")]),
-                                  _vm._v(" "),
-                                  _c("v-icon", [
-                                    _vm._v("mdi-briefcase-download")
                                   ])
                                 ],
                                 1
@@ -23066,14 +23057,90 @@ var render = function() {
                                     "v-stepper-content",
                                     { attrs: { step: "3" } },
                                     [
-                                      _c("v-card", {
-                                        staticClass: "mb-12",
-                                        attrs: {
-                                          color: "grey lighten-1",
-                                          height: "200px",
-                                          flat: ""
-                                        }
-                                      })
+                                      _c("v-card-title", {
+                                        staticClass: "headline"
+                                      }),
+                                      _vm._v(" "),
+                                      _vm.isActive
+                                        ? _c(
+                                            "div",
+                                            [
+                                              _c("v-slider", {
+                                                attrs: {
+                                                  min: "10",
+                                                  max: "64",
+                                                  "thumb-label": "always",
+                                                  "thumb-size": 30
+                                                },
+                                                model: {
+                                                  value: _vm.fontSize,
+                                                  callback: function($$v) {
+                                                    _vm.fontSize = $$v
+                                                  },
+                                                  expression: "fontSize"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-color-picker", {
+                                                model: {
+                                                  value:
+                                                    _vm.inputPosition.color,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.inputPosition,
+                                                      "color",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "inputPosition.color"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
+                                        : _c(
+                                            "div",
+                                            [
+                                              _c("v-slider", {
+                                                attrs: {
+                                                  min: "10",
+                                                  max: "64",
+                                                  "thumb-label": "always",
+                                                  "thumb-size": 30,
+                                                  disabled: !_vm.isActiveEditText
+                                                },
+                                                model: {
+                                                  value: _vm.selectedFontSize,
+                                                  callback: function($$v) {
+                                                    _vm.selectedFontSize = $$v
+                                                  },
+                                                  expression: "selectedFontSize"
+                                                }
+                                              }),
+                                              _vm._v(" "),
+                                              _c("v-color-picker", {
+                                                attrs: {
+                                                  disabled: !_vm.isActiveEditText
+                                                },
+                                                model: {
+                                                  value:
+                                                    _vm.selectedInputPosition
+                                                      .color,
+                                                  callback: function($$v) {
+                                                    _vm.$set(
+                                                      _vm.selectedInputPosition,
+                                                      "color",
+                                                      $$v
+                                                    )
+                                                  },
+                                                  expression:
+                                                    "selectedInputPosition.color"
+                                                }
+                                              })
+                                            ],
+                                            1
+                                          )
                                     ],
                                     1
                                   )
@@ -23321,106 +23388,7 @@ var render = function() {
                             1
                           ),
                           _vm._v(" "),
-                          _c("v-stepper-content", { attrs: { step: "3" } }, [
-                            _vm.isActive
-                              ? _c(
-                                  "div",
-                                  [
-                                    _c("v-slider", {
-                                      attrs: {
-                                        min: "10",
-                                        max: "64",
-                                        "thumb-label": "always",
-                                        "thumb-size": 30
-                                      },
-                                      model: {
-                                        value: _vm.fontSize,
-                                        callback: function($$v) {
-                                          _vm.fontSize = $$v
-                                        },
-                                        expression: "fontSize"
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("v-color-picker", {
-                                      model: {
-                                        value: _vm.inputPosition.color,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.inputPosition,
-                                            "color",
-                                            $$v
-                                          )
-                                        },
-                                        expression: "inputPosition.color"
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c(
-                                      "v-btn-toggle",
-                                      {
-                                        attrs: {
-                                          dense: "",
-                                          "background-color": "primary",
-                                          dark: "",
-                                          multiple: ""
-                                        },
-                                        model: {
-                                          value: _vm.toggle_multiple,
-                                          callback: function($$v) {
-                                            _vm.toggle_multiple = $$v
-                                          },
-                                          expression: "toggle_multiple"
-                                        }
-                                      },
-                                      [_c("v-btn", [_vm._v("Bold")])],
-                                      1
-                                    )
-                                  ],
-                                  1
-                                )
-                              : _vm._e(),
-                            _vm._v(" "),
-                            _vm.isActiveEditText
-                              ? _c(
-                                  "div",
-                                  [
-                                    _c("v-slider", {
-                                      attrs: {
-                                        min: "10",
-                                        max: "64",
-                                        "thumb-label": "always",
-                                        "thumb-size": 30
-                                      },
-                                      model: {
-                                        value: _vm.selectedFontSize,
-                                        callback: function($$v) {
-                                          _vm.selectedFontSize = $$v
-                                        },
-                                        expression: "selectedFontSize"
-                                      }
-                                    }),
-                                    _vm._v(" "),
-                                    _c("v-color-picker", {
-                                      model: {
-                                        value: _vm.selectedInputPosition.color,
-                                        callback: function($$v) {
-                                          _vm.$set(
-                                            _vm.selectedInputPosition,
-                                            "color",
-                                            $$v
-                                          )
-                                        },
-                                        expression:
-                                          "selectedInputPosition.color"
-                                      }
-                                    }),
-                                    _vm._v("aaa\n                            ")
-                                  ],
-                                  1
-                                )
-                              : _vm._e()
-                          ])
+                          _c("v-stepper-content", { attrs: { step: "3" } })
                         ],
                         1
                       )

@@ -361,6 +361,7 @@ interface windowSize {
                         reader.onload = function(e: any) {
                             that.changingBgData = e.target.result as string | null;
                             that.changeBgDialog = true;
+                            that.progress = false;
                         }
                     reader.readAsDataURL(file);
                 }

@@ -105,7 +105,7 @@
                       :type="show2 ? 'text' : 'password'"
                       name="input-10-2"
                       label="パスワード"
-                      hint="At least 8 characters"
+                      hint="8文字以上です"
                       autocomplete="new-password"
                       class="input-group--focused py-2"
                       @click:append="show2 = !show2"
@@ -118,7 +118,7 @@
                       :type="show3 ? 'text' : 'password'"
                       name="input-10-2"
                       label="パスワード確認"
-                      hint="At least 8 characters"
+                      hint="8文字以上です"
                       autocomplete="new-password"
                       class="input-group--focused py-2"
                       @click:append="show3 = !show"
@@ -239,14 +239,14 @@
                 ],
                 emailRules: [
                   v => !!v || '入力が必要です',
-                  v => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+                  v => /.+@.+\..+/.test(v) || '有効なメールアドレスを入力してください',
                 ],
                 passwordRules: {
-                required: value => !!value || 'Required.',
-                min: v => v.length >= 8 || 'Min 8 characters',
+                required: value => !!value || '入力が必要です',
+                min: v => v.length >= 8 || '8文字以上です',
                 },
                 confirmationPasswordRules: {
-                match: v => v == this.registration.password || 'no match',
+                match: v => v == this.registration.password || 'パスワードと一致してません',
                 },
                 valid: false,
                 registrationErrors: {},

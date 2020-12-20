@@ -79,7 +79,7 @@
 
                             <v-window-item :value="1">
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
-                                <v-subheader>Recent chat</v-subheader>
+                                <v-subheader>いいね</v-subheader>
                                     <div>
                                         <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.id">
                                             <v-list-item-avatar>
@@ -103,7 +103,7 @@
                             </v-window-item>
                             <v-window-item :value="2">
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
-                                <v-subheader>Recent chat</v-subheader>
+                                <v-subheader>コメント</v-subheader>
                                 <div v-for="(postComment, index) in postComments" :key="index">
                                     <v-list-item v-if="commentUser(postComment.user_id)">
                                         <v-list-item-avatar :href="'/profile?id=' + postComment.user_id">

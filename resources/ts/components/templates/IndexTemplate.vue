@@ -68,8 +68,9 @@
         </v-card>
         </template>
         <template v-else>
-            <div>
-                友達を探しましょう
+            <div class="text-center" style="margin: auto;">
+                まだ投稿はありません<br>
+                <v-btn href="/post">投稿する</v-btn>
             </div>
         </template>
         <v-snackbar v-model="likeSnackbar">
@@ -91,7 +92,7 @@
         <v-dialog v-model="likeDialog" max-width="400">
             <v-card>
                 <v-list subheader>
-                <v-subheader>Recent chat</v-subheader>
+                <v-subheader>いいね</v-subheader>
                 <div style="max-height: 450px; overflow-y: scroll;">
                     <v-list-item v-for="(likeUser, index) in likeUsers" :key="index" :href="'/profile?id=' + likeUser.id">
                         <v-list-item-avatar>
@@ -181,7 +182,7 @@ export default {
             },
             likeSnackbar: false,
             commentSnackbar: false,
-            text: `Hello, I'm a snackbar`,
+            text: `いいねがされました`,
             menu: [],
             likeUsers: '',
             commentUsers: '',
@@ -402,22 +403,24 @@ export default {
             this.usersLikes = newUsersLikes;
         },
         sendComment(postId, index){
-            axios.post('/api/comment', {
-                postId: postId,
-                userId: this.visitor.id,
-                text: this.comment[index],
-            })
-            .then(response => {
-                this.commentSnackbar = true;
-                this.lastPostId = postId;
-                this.lastIndex = index;
-                this.usersComments.push(response.data);
-                this.commentDialogOpen(postId);
-                this.comment = [];
-            })
-            .catch(error => {
-                console.log('fail')
-            })
+            if(this.comment[index]){
+                axios.post('/api/comment', {
+                    postId: postId,
+                    userId: this.visitor.id,
+                    text: this.comment[index],
+                })
+                .then(response => {
+                    this.commentSnackbar = true;
+                    this.lastPostId = postId;
+                    this.lastIndex = index;
+                    this.usersComments.push(response.data);
+                    this.commentDialogOpen(postId);
+                    this.comment = [];
+                })
+                .catch(error => {
+                    console.log('fail')
+                })
+            }
         },
         deleteComment(postComment){
             axios.post('/api/delete_comment', {

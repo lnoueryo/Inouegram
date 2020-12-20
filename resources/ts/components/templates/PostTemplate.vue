@@ -57,12 +57,12 @@
                     <v-layout>
                     <v-card class="overflow-hidden" height="500" width="500">
                         <div id="canvas-area" style="position: relative">
-                            <div v-if="isActive">
-                                <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
-                            </div>
-                            <div v-if="isActiveEditText">
-                                <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
-                            </div>
+                        <div v-if="isActive" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+                            <input id="newText" :style="inputPosition" type="text" @keyup.enter="discribeNew">
+                        </div>
+                        <div v-if="isActiveEditText">
+                            <input id="selectedText" :style="selectedInputPosition" type="text" v-model="selectedEditTextMessage" @blur="edit" @keyup.enter="blur">
+                        </div>
                             <canvas id="drawCanvas" style="position: absolute; z-index: 1;top: 0; left: 0;" v-bind:class="{eraser: canvasMode === 'eraser'}" width="500" height="500" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
                             <canvas id="cover" class="preview" style="position: absolute; top: 0; left: 0;" width="500" height="500"></canvas>
                             <!-- <canvas id="text" style="z-index: 0; position: absolute;" width=500 height=500 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas> -->
@@ -81,10 +81,10 @@
                             <span>テキスト</span>
                             <v-icon>mdi-format-color-text</v-icon>
                         </v-btn>
-                        <v-btn color="deep-purple accent-4" text>
+                        <!-- <v-btn color="deep-purple accent-4" text>
                             <span>ダウンロード</span>
                             <v-icon>mdi-briefcase-download</v-icon>
-                        </v-btn>
+                        </v-btn> -->
                         </v-bottom-navigation>
                     </v-card>
                     <v-card class="overflow-hidden" height="550" width="500" flat>
@@ -154,7 +154,18 @@
                             </v-stepper-content>
 
                             <v-stepper-content step="3">
-                                <v-card class="mb-12" color="grey lighten-1" height="200px" flat></v-card>
+                                <v-card-title class="headline">
+                                </v-card-title>
+                                <div v-if="isActive">
+                                    <v-slider min="10" max="64" v-model="fontSize" thumb-label="always" :thumb-size="30"></v-slider>
+                                    <v-color-picker v-model="inputPosition.color"></v-color-picker>
+                                    <!-- <v-btn-toggle v-model="toggle_multiple" dense background-color="primary" dark multiple>
+                                    <v-btn>Bold</v-btn></v-btn-toggle> -->
+                                </div>
+                                <div v-else>
+                                    <v-slider min="10" max="64" v-model="selectedFontSize" thumb-label="always" :thumb-size="30" :disabled="!isActiveEditText"></v-slider>
+                                    <v-color-picker v-model="selectedInputPosition.color" :disabled="!isActiveEditText"></v-color-picker>
+                                </div>
                             </v-stepper-content>
                         </v-stepper-items>
                     </v-stepper>
@@ -193,7 +204,7 @@
                             </v-stepper-content>
 
                             <v-stepper-content step="3">
-                                <div v-if="isActive">
+                                <!-- <div v-if="isActive">
                                     <v-slider min="10" max="64" v-model="fontSize" thumb-label="always" :thumb-size="30"></v-slider>
                                     <v-color-picker v-model="inputPosition.color"></v-color-picker>
                                     <v-btn-toggle v-model="toggle_multiple" dense background-color="primary" dark multiple>
@@ -201,7 +212,7 @@
                                 <div v-if="isActiveEditText">
                                     <v-slider min="10" max="64" v-model="selectedFontSize" thumb-label="always" :thumb-size="30"></v-slider>
                                     <v-color-picker v-model="selectedInputPosition.color"></v-color-picker>aaa
-                                </div>
+                                </div> -->
                             </v-stepper-content>
                         </v-stepper-items>
                     </v-stepper>
@@ -397,8 +408,8 @@ export default {
         isActiveEditText: false,
         dialog: false,
         selectedEditTextMessage: '',
-        inputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
-        selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '100px', left: '100px', position: 'absolute', zIndex: 1},
+        inputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '', left: '', position: 'absolute', zIndex: 1, height: '15px'},
+        selectedInputPosition: {fontSize: '15px', color: 'black', fontWeght: '500', fontStyle: 'normal', top: '', left: '', position: 'absolute', zIndex: 1, height: '15px'},
       };
     },
     computed: {
@@ -430,18 +441,20 @@ export default {
         },
         fontSize: {
             get() {
-                return this.inputPosition.fontSize.replace( /px/g , "" );
+                return this.inputPosition.fontSize.replace( /px/g , "" ) && this.inputPosition.height.replace( /px/g , "" );
             },
             set(newValue) {
                 this.inputPosition.fontSize = newValue + 'px';
+                this.inputPosition.height = newValue + 'px';
             }
         },
         selectedFontSize: {
             get() {
-                return this.selectedInputPosition.fontSize.replace( /px/g , "" );
+                return this.selectedInputPosition.fontSize.replace( /px/g , "" ) && this.selectedInputPosition.height.replace( /px/g , "" );
             },
             set(newValue) {
                 this.selectedInputPosition.fontSize = newValue + 'px';
+                this.selectedInputPosition.height = newValue + 'px';
             }
         },
     },
@@ -815,15 +828,15 @@ export default {
             };
         },
         selectText(event){
-            var clientRect = this.textCanvas.getBoundingClientRect()
-            var clickX = event.pageX ;
-            var clickY = event.pageY ;
-            var positionX = clientRect.left + window.pageXOffset ;
-            var positionY = clientRect.top + window.pageYOffset ;
-            this.startX = clickX - positionX ;
-            this.startY = clickY - positionY ;
-            this.inputPosition.width = 500 - this.startX + 'px';
-            this.selectedInputPosition.width = 500 - this.startX + 'px';
+            // var clientRect = this.textCanvas.getBoundingClientRect()
+            var clickX = event.pageX;
+            var clickY = event.pageY;
+            // var positionX = clientRect.left + window.pageXOffset ;
+            // var positionY = clientRect.top + window.pageYOffset ;
+            this.startX = event.offsetX;
+            this.startY = event.offsetY;
+            this.inputPosition.width = 500 - event.offsetX + 'px';
+            this.selectedInputPosition.width = 500 - event.offsetX + 'px';
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
                   this.isActiveEditText = true;
@@ -834,8 +847,8 @@ export default {
                   },100)
                   // var selectedInput = document.getElementById('selectedText');
                   // selectedInput.focus();
-                  this.selectedInputPosition.top = this.texts[i].y - 45 + 'px';
-                  this.selectedInputPosition.left = this.texts[i].x + 15 + 'px';
+                  this.selectedInputPosition.top = (this.texts[i].y - this.texts[i].fontSize.replace( /px/g , "" )) + 'px';
+                  this.selectedInputPosition.left = this.texts[i].x + 'px';
                   this.selectedInputPosition.color = this.texts[i].fillStyle;
                   this.texts[i].fillStyle = 'transparent';
                   var fontArray = this.texts[i].font.split(/\s+/);
@@ -853,7 +866,7 @@ export default {
         },
         textHittest(x, y, textIndex) {
             var text = this.texts[textIndex];
-            return (x >= text.x-20 && x <= text.x + text.width+20 && y >= text.y - text.height-10 && y <= text.y+10);
+            return (x >= text.x-20 && x <= text.x + text.width+20 && y <= text.y + 20 && y >= text.y - text.fontSize+5);
         },
         blur(e){
           e.target.blur();
@@ -862,8 +875,8 @@ export default {
               this.isActive = true;
               var that = this;
               setTimeout(function(){
-              that.inputPosition.top = e.pageY - 210 + 'px';
-              that.inputPosition.left = e.pageX - 10 + 'px';
+              that.inputPosition.top = e.offsetY + 'px';
+              that.inputPosition.left = e.offsetX + 'px';
               document.getElementById('newText').focus();
             },100)
         },
@@ -872,8 +885,9 @@ export default {
             var text = {
                 text: document.getElementById('newText').value,
                 x: this.startX,
-                y: this.startY + (this.inputPosition.fontSize.replace( /px/g , "" )/2)-5,
+                y: this.startY + Number(this.inputPosition.fontSize.replace( /px/g , "" )),
                 font: `bold ${this.inputPosition.fontSize} normal`,
+                fontSize: this.inputPosition.fontSize.replace( /px/g , "" ),
                 fillStyle: this.inputPosition.color,
             };
             this.textCanvasctx.font = `bold ${this.inputPosition.fontSize} normal`;
@@ -886,8 +900,13 @@ export default {
         edit(){
             this.isActiveEditText = false;
             var editText = this.texts[this.selectedEditText];
+            // editText.x = this.startX
+            // editText.y = this.startY
             editText.text = this.selectedEditTextMessage;
             editText.font = `${this.selectedInputPosition.fontWeight} ${this.selectedInputPosition.fontSize} ${this.selectedInputPosition.fontStyle}`;
+            if(editText.fontSize !== this.selectedInputPosition.fontSize.replace( /px/g , "" )){
+                editText.fontSize = this.selectedInputPosition.fontSize.replace( /px/g , "" );
+            }
             editText.fillStyle = this.selectedInputPosition.color;
             var that = this;
             setTimeout(function(){
@@ -897,19 +916,19 @@ export default {
             this.selectedEditText = -1;
         },
         drawText() {
-          this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
+            this.textCanvasctx.clearRect(0, 0, this.textCanvas.width, this.textCanvas.height);
             for (var i = 0; i < this.texts.length; i++) {
-              var text = this.texts[i];
-              if(text.text == ''){
-                this.texts.splice(i, 1);
-              }
-          }
-          for (var i = 0; i < this.texts.length; i++) {
-              var text = this.texts[i];
-              this.textCanvasctx.font = text.font;
-              this.textCanvasctx.fillStyle = text.fillStyle;
-              this.textCanvasctx.fillText(text.text, text.x, text.y);
-          }
+                var text = this.texts[i];
+                if(text.text == ''){
+                    this.texts.splice(i, 1);
+                }
+            }
+            for (var i = 0; i < this.texts.length; i++) {
+                var text = this.texts[i];
+                this.textCanvasctx.font = text.font;
+                this.textCanvasctx.fillStyle = text.fillStyle;
+                this.textCanvasctx.fillText(text.text, text.x, text.y);
+            }
         },
         handleMouseDown(event) {
           var newText = document.getElementById('newText');
@@ -921,8 +940,8 @@ export default {
           //   selectedText.blur();
           // }
           this.pageY = event.pageY;
-            this.startX = parseInt(event.clientX - this.offsetX);
-            this.startY = event.pageY - 188;
+            this.startX = event.offsetX;
+            this.startY = event.offsetY;
             for (var i = 0; i < this.texts.length; i++) {
                 if (this.textHittest(this.startX, this.startY, i)) {
                     this.selectedText = i;
@@ -939,8 +958,8 @@ export default {
             if (this.selectedText < 0) {
                 return;
             }
-            var mouseX = parseInt(e.clientX - this.offsetX);
-            var mouseY = event.pageY - 188;
+            var mouseX = e.offsetX;
+            var mouseY = e.offsetY;
             var dx = mouseX - this.startX;
             var dy = mouseY - this.startY;
             this.startX = mouseX;
