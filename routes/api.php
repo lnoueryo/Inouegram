@@ -57,5 +57,5 @@ Route::post('/jsonjson', function(Request $request){
     return 'hello';
 });
 
-Route::resource('users', 'UserApiController', ['except' => ['index']]);
-Route::resource('posts', 'PostApiController', ['except' => ['index']]);
+Route::resource('users', 'UserApiController', ['except' => ['index', 'create']]);
+Route::resource('posts', 'PostApiController', ['except' => ['index', 'create']]);
