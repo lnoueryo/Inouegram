@@ -138,9 +138,6 @@
                                     mdi-plus
                                 </v-icon>
                                 </v-row>
-                                <!-- <div v-for="(image) in createPost" :key="image">
-                                <img :src="image">
-                                </div> -->
                                 <v-carousel style="width: 300px;height: 300px;" v-model="createPostIndex" hide-delimiters :show-arrows="false">
                                     <v-carousel-item v-for="image in createPost" :key="image" :src="image"></v-carousel-item>
                                 </v-carousel>
@@ -149,7 +146,7 @@
                                 </v-row>
                             </div>
 
-                            <v-btn>create</v-btn>
+                            <v-btn @click="postCreate">create</v-btn>
                             <v-btn @click="clickInput">select</v-btn>
                             <v-list-item v-for="(post, index) in posts" :key="index">
                                 <v-list-item-content>
@@ -291,9 +288,24 @@
             })
         },
         userCreate(){
-            axios.get('/api/users/create')
+            axios.post('/api/users')
             .then((response) => {
                 this.items.push(response.data)
+            })
+            .catch((error) => {
+                console.log('error')
+            })
+        },
+        postCreate(){
+            var param = {
+                user_id: this.user.id,
+                image: this.createPost,
+            }
+            axios.post('/api/posts', param)
+            .then((response) => {
+                var index = this.items.findIndex(({id}) => id === this.user.id);
+                this.$set(this.user.posts, (this.user.posts.length-1), response.data);
+                this.items[index].posts_count += 1;
             })
             .catch((error) => {
                 console.log('error')

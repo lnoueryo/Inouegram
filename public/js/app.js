@@ -2521,9 +2521,6 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
-//
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['users'],
   data: function data() {
@@ -2597,8 +2594,28 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     userCreate: function userCreate() {
       var _this2 = this;
 
-      axios.get('/api/users/create').then(function (response) {
+      axios.post('/api/users').then(function (response) {
         _this2.items.push(response.data);
+      })["catch"](function (error) {
+        console.log('error');
+      });
+    },
+    postCreate: function postCreate() {
+      var _this3 = this;
+
+      var param = {
+        user_id: this.user.id,
+        image: this.createPost
+      };
+      axios.post('/api/posts', param).then(function (response) {
+        var index = _this3.items.findIndex(function (_ref) {
+          var id = _ref.id;
+          return id === _this3.user.id;
+        });
+
+        _this3.$set(_this3.user.posts, _this3.user.posts.length - 1, response.data);
+
+        _this3.items[index].posts_count += 1;
       })["catch"](function (error) {
         console.log('error');
       });
@@ -2607,7 +2624,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$refs.input.click();
     },
     selectedFile: function selectedFile() {
-      var _this3 = this;
+      var _this4 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var files, postArray, i, reader, that;
@@ -2615,12 +2632,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                files = _this3.$refs.input.files;
+                files = _this4.$refs.input.files;
                 postArray = [];
 
                 for (i = 0; i < files.length; i++) {
                   reader = new FileReader();
-                  that = _this3;
+                  that = _this4;
 
                   reader.onload = function (event) {
                     postArray.push(event.target.result);
@@ -2629,7 +2646,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   reader.readAsDataURL(files[i]);
                 }
 
-                _this3.createPost = postArray;
+                _this4.createPost = postArray;
 
               case 4:
               case "end":
@@ -17095,7 +17112,9 @@ var render = function() {
                                 )
                               : _vm._e(),
                             _vm._v(" "),
-                            _c("v-btn", [_vm._v("create")]),
+                            _c("v-btn", { on: { click: _vm.postCreate } }, [
+                              _vm._v("create")
+                            ]),
                             _vm._v(" "),
                             _c("v-btn", { on: { click: _vm.clickInput } }, [
                               _vm._v("select")
