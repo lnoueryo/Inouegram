@@ -2299,6 +2299,37 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2509,7 +2540,9 @@ __webpack_require__.r(__webpack_exports__);
       keys: ['Screen_name', 'Name', 'Email'],
       items: this.users,
       user: '',
-      carousel: []
+      carousel: [],
+      createPostIndex: '',
+      createPost: []
     };
   },
   computed: {
@@ -2569,6 +2602,42 @@ __webpack_require__.r(__webpack_exports__);
       })["catch"](function (error) {
         console.log('error');
       });
+    },
+    clickInput: function clickInput() {
+      this.$refs.input.click();
+    },
+    selectedFile: function selectedFile() {
+      var _this3 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var files, postArray, i, reader, that;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                files = _this3.$refs.input.files;
+                postArray = [];
+
+                for (i = 0; i < files.length; i++) {
+                  reader = new FileReader();
+                  that = _this3;
+
+                  reader.onload = function (event) {
+                    postArray.push(event.target.result);
+                  };
+
+                  reader.readAsDataURL(files[i]);
+                }
+
+                _this3.createPost = postArray;
+
+              case 4:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
     }
   }
 });
@@ -16864,7 +16933,7 @@ var render = function() {
                             },
                             [
                               _vm._v(
-                                "\n                    delete\n                    "
+                                "\n                        delete\n                        "
                               )
                             ]
                           ),
@@ -16881,7 +16950,7 @@ var render = function() {
                             },
                             [
                               _vm._v(
-                                "\n                    Save\n                    "
+                                "\n                        Save\n                        "
                               )
                             ]
                           )
@@ -16901,6 +16970,136 @@ var render = function() {
                           { attrs: { "three-line": "", subheader: "" } },
                           [
                             _c("v-subheader", [_vm._v("posts")]),
+                            _vm._v(" "),
+                            _c("input", {
+                              directives: [
+                                {
+                                  name: "show",
+                                  rawName: "v-show",
+                                  value: false,
+                                  expression: "false"
+                                }
+                              ],
+                              ref: "input",
+                              attrs: {
+                                type: "file",
+                                accept: "image/jpeg, image/png",
+                                multiple: ""
+                              },
+                              on: {
+                                input: function($event) {
+                                  return _vm.selectedFile()
+                                }
+                              }
+                            }),
+                            _vm._v(" "),
+                            _vm.createPost.length !== 0
+                              ? _c(
+                                  "div",
+                                  {
+                                    staticStyle: {
+                                      margin: "auto",
+                                      "max-width": "300px",
+                                      width: "100%"
+                                    }
+                                  },
+                                  [
+                                    _c(
+                                      "v-row",
+                                      { attrs: { justify: "space-around" } },
+                                      [
+                                        _c(
+                                          "v-icon",
+                                          {
+                                            on: {
+                                              click: function($event) {
+                                                _vm.createPostIndex--
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                mdi-minus\n                            "
+                                            )
+                                          ]
+                                        ),
+                                        _vm._v(
+                                          "\n                            " +
+                                            _vm._s(_vm.createPostIndex) +
+                                            "\n                            "
+                                        ),
+                                        _c(
+                                          "v-icon",
+                                          {
+                                            on: {
+                                              click: function($event) {
+                                                _vm.createPostIndex++
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              "\n                                mdi-plus\n                            "
+                                            )
+                                          ]
+                                        )
+                                      ],
+                                      1
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-carousel",
+                                      {
+                                        staticStyle: {
+                                          width: "300px",
+                                          height: "300px"
+                                        },
+                                        attrs: {
+                                          "hide-delimiters": "",
+                                          "show-arrows": false
+                                        },
+                                        model: {
+                                          value: _vm.createPostIndex,
+                                          callback: function($$v) {
+                                            _vm.createPostIndex = $$v
+                                          },
+                                          expression: "createPostIndex"
+                                        }
+                                      },
+                                      _vm._l(_vm.createPost, function(image) {
+                                        return _c("v-carousel-item", {
+                                          key: image,
+                                          attrs: { src: image }
+                                        })
+                                      }),
+                                      1
+                                    ),
+                                    _vm._v(" "),
+                                    _c(
+                                      "v-row",
+                                      { attrs: { justify: "space-around" } },
+                                      [
+                                        _c(
+                                          "div",
+                                          { staticStyle: { margin: "auto" } },
+                                          [
+                                            _vm._v(
+                                              _vm._s(_vm.createPost.length)
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ],
+                                  1
+                                )
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c("v-btn", [_vm._v("create")]),
+                            _vm._v(" "),
+                            _c("v-btn", { on: { click: _vm.clickInput } }, [
+                              _vm._v("select")
+                            ]),
                             _vm._v(" "),
                             _vm._l(_vm.posts, function(post, index) {
                               return _c(
