@@ -25,12 +25,7 @@ class UserApiController extends Controller
      */
     public function create()
     {
-        return User::create([
-            'name' => Str::random(7),
-            'screen_name' => Str::random(7),
-            'email' => Str::random(7).'@gmail.com',
-            'password' => Hash::make('123456789'),
-        ]);
+
     }
 
     /**
@@ -41,7 +36,12 @@ class UserApiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return User::create([
+            'name' => Str::random(7),
+            'screen_name' => Str::random(7),
+            'email' => Str::random(7).'@gmail.com',
+            'password' => Hash::make('123456789'),
+        ]);
     }
 
     /**
