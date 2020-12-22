@@ -33,6 +33,7 @@ Vue.component('header-bar', require('./components/globals/Header.vue').default);
 Vue.component('header-bar2', require('./components/globals/Header2.vue').default);
 Vue.component('login', require('./components/molecules/Login.vue').default);
 Vue.component('reset-password', require('./components/molecules/ResetPassword.vue').default);
+Vue.component('dashboard', require('./components/molecules/Dashboard.vue').default);
 
 
 
