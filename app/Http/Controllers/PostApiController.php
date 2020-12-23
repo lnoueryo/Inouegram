@@ -99,6 +99,12 @@ class PostApiController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $post = Post::find($id);
+        $image = json_decode($post->image);
+        for($i=0; $i<count($image); $i++){
+            Storage::delete($image[$i]);
+        };
+        $post->delete();
+        return 'hello';
     }
 }
