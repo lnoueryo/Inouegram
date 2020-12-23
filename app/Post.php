@@ -13,17 +13,11 @@ class Post extends Model
     protected static function boot()
     {
         parent::boot();
-        static::deleting(function($post) {
-            // $likes = $post->likes;
-            // $comments = $post->comments;
-            // foreach($likes as $like) {
-            //     $like->delete();
-            // }
-            // foreach($comments as $comment) {
-            //     $comment->delete();
-            // }
+        static::deleted(function($post) {
             foreach(['likes', 'comments'] as $relation) {
-                $comment->delete();
+                foreach($post->$relation()->get() as $child){
+                    $child->delete();
+                }
             }
         });
     }

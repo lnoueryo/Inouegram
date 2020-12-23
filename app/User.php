@@ -41,28 +41,10 @@ class User extends Authenticatable
     {
         parent::boot();
         static::deleting(function($user) {
-            // $posts = $user->posts;
-            // $likes = $user->likes;
-            // $comments = $user->comments;
-            // $followees = $user->followees;
-            // $followers = $user->followers;
-            // foreach($posts as $post) {
-            //     $post->delete();
-            // }
-            // foreach($likes as $like) {
-            //     $like->delete();
-            // }
-            // foreach($comments as $comment) {
-            //     $comment->delete();
-            // }
-            // foreach($followees as $followee) {
-            //     $followee->delete();
-            // }
-            // foreach($followers as $follower) {
-            //     $follower->delete();
-            // }
             foreach(['posts', 'likes', 'comments', 'followees', 'followers'] as $relation) {
-                $relation->delete();
+                foreach($user->$relation()->get() as $child){
+                    $child->delete();
+                }
             }
         });
     }
