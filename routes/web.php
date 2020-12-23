@@ -31,7 +31,7 @@ Route::get('/user', function(){
         // $users = User::with(['comments', 'posts' => function($query){
         //     $query->with(['likes', 'comments']);
         // }])->get();
-        return view('dashboard', compact('users'));
+        return view('dashboard');
     } else {
         return redirect('/');
     }
