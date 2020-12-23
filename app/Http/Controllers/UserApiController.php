@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 class UserApiController extends Controller
 {
     /**
@@ -15,7 +16,8 @@ class UserApiController extends Controller
      */
     public function index()
     {
-        //
+        $users  = User::withCount('posts')->get();
+        return $users;
     }
 
     /**
@@ -66,7 +68,8 @@ class UserApiController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user = User::find($id);
+        return $user;
     }
 
     /**
@@ -78,7 +81,7 @@ class UserApiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        dd($request->all());
     }
 
     /**
@@ -89,7 +92,14 @@ class UserApiController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id)->first();
-        dd($user);
+        $user = User::find($id);
+        if(isset($user->profile_image)){
+            Storage::disk('avatar')->delete($user->profile_image);
+        }
+        if(isset($user->bg_image)){
+            Storage::disk('background')->delete($user->bg_image);
+        }
+        // $user->delete();
+        return response("OK", 200);
     }
 }

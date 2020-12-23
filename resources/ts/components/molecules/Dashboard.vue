@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-resize="onResize">
         <v-container fluid>
             <v-data-iterator :items="items" :items-per-page.sync="itemsPerPage" :page="page" :search="search" :sort-by="sortBy.toLowerCase()" :sort-desc="sortDesc" hide-default-footer>
             <template v-slot:header>
@@ -107,12 +107,12 @@
             <v-dialog v-model="userDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
                 <v-card>
                     <v-toolbar dark color="primary">
-                        <v-btn icon dark @click="userDialog = false">
+                        <v-btn icon dark @click="userDialog = false;createPost = [];">
                             <v-icon>mdi-close</v-icon>
                         </v-btn>
-                        <v-toolbar-title class="mr-4">{{ user.name }}</v-toolbar-title>
+                        <!-- <v-toolbar-title class="mr-4">{{ user.name }}</v-toolbar-title>
                         <v-toolbar-title class="mr-4">{{ user.screen_name }}</v-toolbar-title>
-                        <v-toolbar-title class="mr-4">{{ user.email }}</v-toolbar-title>
+                        <v-toolbar-title class="mr-4">{{ user.email }}</v-toolbar-title> -->
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn dark text  @click="userDeleteDialog = true">
@@ -123,75 +123,84 @@
                             </v-btn>
                         </v-toolbar-items>
                     </v-toolbar>
-                    <v-layout>
-                    <div>
-                        <v-list three-line subheader>
-                            <v-subheader>posts</v-subheader>
-                            <input ref="input" type="file" accept="image/jpeg, image/png" v-show="false" multiple @input="selectedFile()">
-                            <div v-if="createPost.length !==0" style="margin: auto; max-width: 300px;width: 100%;">
-                                <v-row justify="space-around">
-                                <v-icon @click="createPostIndex--">
-                                    mdi-minus
-                                </v-icon>
-                                {{ createPostIndex }}
-                                <v-icon @click="createPostIndex++">
-                                    mdi-plus
-                                </v-icon>
-                                </v-row>
-                                <v-carousel style="width: 300px;height: 300px;" v-model="createPostIndex" hide-delimiters :show-arrows="false">
-                                    <v-carousel-item v-for="image in createPost" :key="image" :src="image"></v-carousel-item>
-                                </v-carousel>
-                                <v-row justify="space-around">
-                                <div style="margin: auto;">{{ createPost.length }}</div>
-                                </v-row>
+                    <v-layout :wrap="size">
+                        <div>
+                            <div class="py-5 px-5 d-flex align-center">
+                                <v-avatar><v-img :src="'/storage/image/avatar/' + user.profile_image"></v-img></v-avatar>
+                                <div class="pb-5 px-5">
+                                    <h2>{{ user.name }}</h2>
+                                    <h4>{{ user.screen_name }}</h4>
+                                    <h4>{{ user.email }}</h4>
+                                </div>
                             </div>
+                            <v-list three-line subheader>
+                                <v-subheader>posts</v-subheader>
+                                <input ref="input" type="file" accept="image/jpeg, image/png" v-show="false" multiple @input="selectedFile()">
+                                <div v-if="createPost.length !==0" style="margin: auto; max-width: 300px;width: 100%;">
+                                    <v-row justify="space-around">
+                                    <v-icon @click="createPostIndex--">
+                                        mdi-minus
+                                    </v-icon>
+                                    {{ createPostIndex }}
+                                    <v-icon @click="createPostIndex++">
+                                        mdi-plus
+                                    </v-icon>
+                                    </v-row>
+                                    <v-carousel style="width: 300px;height: 300px;" v-model="createPostIndex" hide-delimiters :show-arrows="false">
+                                        <v-carousel-item v-for="image in createPost" :key="image" :src="image"></v-carousel-item>
+                                    </v-carousel>
+                                    <v-row justify="space-around">
+                                    <div style="margin: auto;">{{ createPost.length }}</div>
+                                    </v-row>
+                                </div>
 
-                            <v-btn @click="postCreate">create</v-btn>
-                            <v-btn @click="clickInput">select</v-btn>
-                            <v-list-item v-for="(post, index) in posts" :key="index">
-                                <v-list-item-content>
-                                <v-list-item-title>{{ post.title }}</v-list-item-title>
-                                <v-list-item-subtitle>{{ post.text }}</v-list-item-subtitle>
-                                </v-list-item-content>
-                                <v-list-item-action>
-                                <v-row justify="space-around">
-                                <v-icon @click="carouselPrev(index)">
-                                    mdi-minus
-                                </v-icon>
-                                {{ carousel[index] }}
-                                <v-icon @click="carouselNext(index)">
-                                    mdi-plus
-                                </v-icon>
-                                </v-row>
-                                <v-carousel v-model="carousel[index]" width="50" height="50" hide-delimiters :show-arrows="false">
-                                    <v-carousel-item width="50" v-for="(postImage, i) in JSON.parse(post.image)" :key="i" :src="'storage/image/' + postImage"></v-carousel-item>
-                                </v-carousel>
-                                <div style="margin: auto;">{{ JSON.parse(post.image).length }}</div>
-                                </v-list-item-action>
-                                <v-btn @click="deletePost(post)">delete</v-btn>
-                            </v-list-item>
-                        </v-list>
-                    </div>
-                    <div>
-                        <v-list three-line subheader>
-                            <v-subheader>comments</v-subheader>
-                            <v-list-item v-for="(comment, index) in comments" :key="index">
-                                <v-list-item-content>
-                                <v-list-item-title>{{ comment.title }}</v-list-item-title>
-                                <v-list-item-subtitle>{{ comment.text }}</v-list-item-subtitle>
-                                </v-list-item-content>
-                                <v-list-item-action>
-                                <v-btn>delete</v-btn>
-                                </v-list-item-action>
-                            </v-list-item>
-                        </v-list>
-                    </div>
+                                <v-btn @click="postCreate" v-if="createPost.length !==0">create</v-btn>
+                                <v-btn @click="clickInput">select</v-btn>
+                                <v-btn @click="userEdit">edit</v-btn>
+                                <v-list-item v-for="(post, index) in posts" :key="index">
+                                    <v-list-item-content>
+                                    <v-list-item-title>{{ post.title }}</v-list-item-title>
+                                    <v-list-item-subtitle>{{ post.text }}</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                    <v-list-item-action>
+                                    <v-row justify="space-around">
+                                    <v-icon @click="carouselPrev(index)">
+                                        mdi-minus
+                                    </v-icon>
+                                    {{ carousel[index] }}
+                                    <v-icon @click="carouselNext(index)">
+                                        mdi-plus
+                                    </v-icon>
+                                    </v-row>
+                                    <v-carousel v-model="carousel[index]" width="50" height="50" hide-delimiters :show-arrows="false">
+                                        <v-carousel-item width="50" v-for="(postImage, i) in JSON.parse(post.image)" :key="i" :src="'storage/image/' + postImage"></v-carousel-item>
+                                    </v-carousel>
+                                    <div style="margin: auto;">{{ JSON.parse(post.image).length }}</div>
+                                    </v-list-item-action>
+                                    <v-btn @click="deletePost(post)">delete</v-btn>
+                                </v-list-item>
+                            </v-list>
+                        </div>
+                        <div>
+                            <v-list three-line subheader>
+                                <v-subheader>comments</v-subheader>
+                                <v-list-item v-for="(comment, index) in comments" :key="index">
+                                    <v-list-item-content>
+                                    <v-list-item-title>{{ comment.title }}</v-list-item-title>
+                                    <v-list-item-subtitle>{{ comment.text }}</v-list-item-subtitle>
+                                    </v-list-item-content>
+                                    <v-list-item-action>
+                                    <v-btn>delete</v-btn>
+                                    </v-list-item-action>
+                                </v-list-item>
+                            </v-list>
+                        </div>
                     </v-layout>
                 </v-card>
             </v-dialog>
         </v-row>
         <v-row justify="center">
-            <v-dialog v-model="userDeleteDialog" persistent max-width="400">
+            <v-dialog v-model="userDeleteDialog" max-width="400">
             <v-card>
                 <v-card-title class="headline">
                 You are trying to delete this.
@@ -209,12 +218,52 @@
             </v-card>
             </v-dialog>
         </v-row>
+        <v-row justify="center">
+            <v-dialog v-model="profileDialog" max-width="600px">
+            <v-card>
+                <v-card-title>
+                <span class="headline">プロフィール</span>
+                </v-card-title>
+                <v-card-text>
+                <v-container>
+                    <v-form ref="form" v-model="valid" lazy-validation>
+                        <v-row>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field v-model="editUser.name" label="名前" required :rules="nameRules"></v-text-field>
+                            </v-col>
+                            <v-col cols="12" sm="6" md="6">
+                                <v-text-field v-model="editUser.screen_name" label="ニックネーム" :rules="nicknameRules"></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <v-text-field v-model="editUser.email" label="メールアドレス" required :rules="emailRules"></v-text-field>
+                            </v-col>
+                            <v-col cols="12">
+                                <input type="file" @input="avatar">
+                            </v-col>
+                            <v-col cols="12">
+                                <input type="file" @input="bg">
+                            </v-col>
+                        </v-row>
+                    </v-form>
+                </v-container>
+                </v-card-text>
+                <v-card-actions>
+                <v-spacer></v-spacer>
+                <v-btn color="blue darken-1" text @click="profileDialog = false">
+                    Close
+                </v-btn>
+                    <v-btn color="blue darken-1" text @click="userUpdate">
+                        Save
+                    </v-btn>
+                </v-card-actions>
+            </v-card>
+            </v-dialog>
+        </v-row>
     </div>
 </template>
 
 <script>
   export default {
-      props: ['users'],
     data () {
         return {
             userDialog: false,
@@ -231,11 +280,28 @@
                 'Name',
                 'Email',
             ],
-            items: this.users,
+            items: [],
             user: '',
             carousel: [],
             createPostIndex: '',
             createPost: [],
+            windowSize: {
+                x: 0,
+                y: 0,
+            },
+            profileDialog: false,
+            editUser: '',
+            nameRules: [
+                (v) => !!v || '入力が必要です',
+            ],
+            nicknameRules: [
+                (v) => !!v || '入力が必要です',
+            ],
+            emailRules: [
+                (v) => !!v || '入力が必要です',
+                (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+            ],
+            valid: false,
         }
     },
     computed: {
@@ -250,9 +316,24 @@
         },
         comments (){
             return this.user.comments;
+        },
+        size (){
+            return this.windowSize.x < 480 ? true : false;
         }
     },
+    created(){
+        axios.get('/api/users')
+        .then((response) => {
+            this.items = response.data;
+        })
+        .catch((errors) => {
+            console.log(errors);
+        })
+    },
     methods: {
+        onResize () {
+            this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+        },
         carouselNext(key){
             this.$set(this.carousel, key, this.carousel[key]+1)
         },
@@ -278,19 +359,50 @@
                 console.log('error')
             })
         },
-        userDelete(id){
-            axios.delete(`/api/users/${id}`)
+        userCreate(){
+            axios.post('/api/users')
             .then((response) => {
-                console.log('abc')
+                this.items.push(response.data)
             })
             .catch((error) => {
                 console.log('error')
             })
         },
-        userCreate(){
-            axios.post('/api/users')
+        userEdit(){
+            axios.get(`/api/users/${this.user.id}/edit`)
             .then((response) => {
-                this.items.push(response.data)
+                this.profileDialog = true
+                this.editUser = response.data;
+            })
+            .catch((error) => {
+                console.log('error')
+            })
+        },
+        userUpdate(){
+            axios.put(`/api/users/${this.editUser.id}`, {
+                'id': this.user.id,'name': this.editUser.name,
+                'screen_name': this.editUser.screen_name,
+                'email': this.editUser.email,
+                'profile_image': this.editUser.profile_image,
+                'bg_image': this.editUser.bg_image,
+            })
+            .then(
+                response => {
+                    this.user = response.data;
+                    this.profileDialog = false;
+                }
+            )
+            .catch((error) => {
+                console.log(error)
+            });
+        },
+        userDelete(userId){
+            axios.delete(`/api/users/${userId}`, {data: {id: userId}})
+            .then((response) => {
+                var index = this.items.findIndex(({id}) => id === userId);
+                this.userDialog = false;
+                this.userDeleteDialog = false;
+                this.items.splice(index, 1);
             })
             .catch((error) => {
                 console.log('error')
@@ -304,8 +416,9 @@
             axios.post('/api/posts', param)
             .then((response) => {
                 var index = this.items.findIndex(({id}) => id === this.user.id);
-                this.$set(this.user.posts, (this.user.posts.length-1), response.data);
+                this.$set(this.user.posts, (this.user.posts.length), response.data);
                 this.items[index].posts_count += 1;
+                this.createPost = [];
             })
             .catch((error) => {
                 console.log('error')
@@ -326,6 +439,23 @@
                 reader.readAsDataURL(files[i]);
             }
             this.createPost = postArray;
+        },
+        deletePost(post){
+            axios.delete(`/api/posts/${post.id}`, {data: {id: post.id}})
+            .then((response) => {
+                var index = this.user.posts.findIndex(({id}) => id === post.id);
+                this.user.posts.splice(index, 1);
+                this.items[index].posts_count -= 1;
+            })
+            .catch((error) => {
+                console.log('error')
+            })
+        },
+        avatar(e){
+            this.editUser.profile_image = e.target.files[0];
+        },
+        bg(e){
+            this.editUser.bg_image = e.target.files[0];
         }
     },
 }

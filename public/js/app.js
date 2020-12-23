@@ -2521,8 +2521,57 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['users'],
   data: function data() {
     return {
       userDialog: false,
@@ -2535,11 +2584,29 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       itemsPerPage: 12,
       sortBy: 'id',
       keys: ['Screen_name', 'Name', 'Email'],
-      items: this.users,
+      items: [],
       user: '',
       carousel: [],
       createPostIndex: '',
-      createPost: []
+      createPost: [],
+      windowSize: {
+        x: 0,
+        y: 0
+      },
+      profileDialog: false,
+      editUser: '',
+      nameRules: [function (v) {
+        return !!v || '入力が必要です';
+      }],
+      nicknameRules: [function (v) {
+        return !!v || '入力が必要です';
+      }],
+      emailRules: [function (v) {
+        return !!v || '入力が必要です';
+      }, function (v) {
+        return /.+@.+\..+/.test(v) || 'E-mail must be valid';
+      }],
+      valid: false
     };
   },
   computed: {
@@ -2556,9 +2623,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     },
     comments: function comments() {
       return this.user.comments;
+    },
+    size: function size() {
+      return this.windowSize.x < 480 ? true : false;
     }
   },
+  created: function created() {
+    var _this = this;
+
+    axios.get('/api/users').then(function (response) {
+      _this.items = response.data;
+    })["catch"](function (errors) {
+      console.log(errors);
+    });
+  },
   methods: {
+    onResize: function onResize() {
+      this.windowSize = {
+        x: window.innerWidth,
+        y: window.innerHeight
+      };
+    },
     carouselNext: function carouselNext(key) {
       this.$set(this.carousel, key, this.carousel[key] + 1);
     },
@@ -2575,47 +2660,89 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.itemsPerPage = number;
     },
     openDialog: function openDialog(id) {
-      var _this = this;
+      var _this2 = this;
 
       axios.get("/api/users/".concat(id)).then(function (response) {
-        _this.userDialog = true;
-        _this.user = response.data;
-      })["catch"](function (error) {
-        console.log('error');
-      });
-    },
-    userDelete: function userDelete(id) {
-      axios["delete"]("/api/users/".concat(id)).then(function (response) {
-        console.log('abc');
+        _this2.userDialog = true;
+        _this2.user = response.data;
       })["catch"](function (error) {
         console.log('error');
       });
     },
     userCreate: function userCreate() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.post('/api/users').then(function (response) {
-        _this2.items.push(response.data);
+        _this3.items.push(response.data);
+      })["catch"](function (error) {
+        console.log('error');
+      });
+    },
+    userEdit: function userEdit() {
+      var _this4 = this;
+
+      axios.get("/api/users/".concat(this.user.id, "/edit")).then(function (response) {
+        _this4.profileDialog = true;
+        _this4.editUser = response.data;
+      })["catch"](function (error) {
+        console.log('error');
+      });
+    },
+    userUpdate: function userUpdate() {
+      var _this5 = this;
+
+      axios.put("/api/users/".concat(this.editUser.id), {
+        'id': this.user.id,
+        'name': this.editUser.name,
+        'screen_name': this.editUser.screen_name,
+        'email': this.editUser.email,
+        'profile_image': this.editUser.profile_image,
+        'bg_image': this.editUser.bg_image
+      }).then(function (response) {
+        _this5.user = response.data;
+        _this5.profileDialog = false;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    userDelete: function userDelete(userId) {
+      var _this6 = this;
+
+      axios["delete"]("/api/users/".concat(userId), {
+        data: {
+          id: userId
+        }
+      }).then(function (response) {
+        var index = _this6.items.findIndex(function (_ref) {
+          var id = _ref.id;
+          return id === userId;
+        });
+
+        _this6.userDialog = false;
+        _this6.userDeleteDialog = false;
+
+        _this6.items.splice(index, 1);
       })["catch"](function (error) {
         console.log('error');
       });
     },
     postCreate: function postCreate() {
-      var _this3 = this;
+      var _this7 = this;
 
       var param = {
         user_id: this.user.id,
         image: this.createPost
       };
       axios.post('/api/posts', param).then(function (response) {
-        var index = _this3.items.findIndex(function (_ref) {
-          var id = _ref.id;
-          return id === _this3.user.id;
+        var index = _this7.items.findIndex(function (_ref2) {
+          var id = _ref2.id;
+          return id === _this7.user.id;
         });
 
-        _this3.$set(_this3.user.posts, _this3.user.posts.length - 1, response.data);
+        _this7.$set(_this7.user.posts, _this7.user.posts.length, response.data);
 
-        _this3.items[index].posts_count += 1;
+        _this7.items[index].posts_count += 1;
+        _this7.createPost = [];
       })["catch"](function (error) {
         console.log('error');
       });
@@ -2624,7 +2751,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       this.$refs.input.click();
     },
     selectedFile: function selectedFile() {
-      var _this4 = this;
+      var _this8 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
         var files, postArray, i, reader, that;
@@ -2632,12 +2759,12 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                files = _this4.$refs.input.files;
+                files = _this8.$refs.input.files;
                 postArray = [];
 
                 for (i = 0; i < files.length; i++) {
                   reader = new FileReader();
-                  that = _this4;
+                  that = _this8;
 
                   reader.onload = function (event) {
                     postArray.push(event.target.result);
@@ -2646,7 +2773,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   reader.readAsDataURL(files[i]);
                 }
 
-                _this4.createPost = postArray;
+                _this8.createPost = postArray;
 
               case 4:
               case "end":
@@ -2655,6 +2782,32 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           }
         }, _callee);
       }))();
+    },
+    deletePost: function deletePost(post) {
+      var _this9 = this;
+
+      axios["delete"]("/api/posts/".concat(post.id), {
+        data: {
+          id: post.id
+        }
+      }).then(function (response) {
+        var index = _this9.user.posts.findIndex(function (_ref3) {
+          var id = _ref3.id;
+          return id === post.id;
+        });
+
+        _this9.user.posts.splice(index, 1);
+
+        _this9.items[index].posts_count -= 1;
+      })["catch"](function (error) {
+        console.log('error');
+      });
+    },
+    avatar: function avatar(e) {
+      this.editUser.profile_image = e.target.files[0];
+    },
+    bg: function bg(e) {
+      this.editUser.bg_image = e.target.files[0];
     }
   }
 });
@@ -16396,6 +16549,16 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
+    {
+      directives: [
+        {
+          name: "resize",
+          rawName: "v-resize",
+          value: _vm.onResize,
+          expression: "onResize"
+        }
+      ]
+    },
     [
       _c(
         "v-container",
@@ -16914,24 +17077,13 @@ var render = function() {
                           on: {
                             click: function($event) {
                               _vm.userDialog = false
+                              _vm.createPost = []
                             }
                           }
                         },
                         [_c("v-icon", [_vm._v("mdi-close")])],
                         1
                       ),
-                      _vm._v(" "),
-                      _c("v-toolbar-title", { staticClass: "mr-4" }, [
-                        _vm._v(_vm._s(_vm.user.name))
-                      ]),
-                      _vm._v(" "),
-                      _c("v-toolbar-title", { staticClass: "mr-4" }, [
-                        _vm._v(_vm._s(_vm.user.screen_name))
-                      ]),
-                      _vm._v(" "),
-                      _c("v-toolbar-title", { staticClass: "mr-4" }, [
-                        _vm._v(_vm._s(_vm.user.email))
-                      ]),
                       _vm._v(" "),
                       _c("v-spacer"),
                       _vm._v(" "),
@@ -16978,10 +17130,39 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("v-layout", [
+                  _c("v-layout", { attrs: { wrap: _vm.size } }, [
                     _c(
                       "div",
                       [
+                        _c(
+                          "div",
+                          { staticClass: "py-5 px-5 d-flex align-center" },
+                          [
+                            _c(
+                              "v-avatar",
+                              [
+                                _c("v-img", {
+                                  attrs: {
+                                    src:
+                                      "/storage/image/avatar/" +
+                                      _vm.user.profile_image
+                                  }
+                                })
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c("div", { staticClass: "pb-5 px-5" }, [
+                              _c("h2", [_vm._v(_vm._s(_vm.user.name))]),
+                              _vm._v(" "),
+                              _c("h4", [_vm._v(_vm._s(_vm.user.screen_name))]),
+                              _vm._v(" "),
+                              _c("h4", [_vm._v(_vm._s(_vm.user.email))])
+                            ])
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
                         _c(
                           "v-list",
                           { attrs: { "three-line": "", subheader: "" } },
@@ -17036,14 +17217,14 @@ var render = function() {
                                           },
                                           [
                                             _vm._v(
-                                              "\n                                mdi-minus\n                            "
+                                              "\n                                    mdi-minus\n                                "
                                             )
                                           ]
                                         ),
                                         _vm._v(
-                                          "\n                            " +
+                                          "\n                                " +
                                             _vm._s(_vm.createPostIndex) +
-                                            "\n                            "
+                                            "\n                                "
                                         ),
                                         _c(
                                           "v-icon",
@@ -17056,7 +17237,7 @@ var render = function() {
                                           },
                                           [
                                             _vm._v(
-                                              "\n                                mdi-plus\n                            "
+                                              "\n                                    mdi-plus\n                                "
                                             )
                                           ]
                                         )
@@ -17112,12 +17293,18 @@ var render = function() {
                                 )
                               : _vm._e(),
                             _vm._v(" "),
-                            _c("v-btn", { on: { click: _vm.postCreate } }, [
-                              _vm._v("create")
-                            ]),
+                            _vm.createPost.length !== 0
+                              ? _c("v-btn", { on: { click: _vm.postCreate } }, [
+                                  _vm._v("create")
+                                ])
+                              : _vm._e(),
                             _vm._v(" "),
                             _c("v-btn", { on: { click: _vm.clickInput } }, [
                               _vm._v("select")
+                            ]),
+                            _vm._v(" "),
+                            _c("v-btn", { on: { click: _vm.userEdit } }, [
+                              _vm._v("edit")
                             ]),
                             _vm._v(" "),
                             _vm._l(_vm.posts, function(post, index) {
@@ -17157,14 +17344,14 @@ var render = function() {
                                             },
                                             [
                                               _vm._v(
-                                                "\n                                mdi-minus\n                            "
+                                                "\n                                    mdi-minus\n                                "
                                               )
                                             ]
                                           ),
                                           _vm._v(
-                                            "\n                            " +
+                                            "\n                                " +
                                               _vm._s(_vm.carousel[index]) +
-                                              "\n                            "
+                                              "\n                                "
                                           ),
                                           _c(
                                             "v-icon",
@@ -17177,7 +17364,7 @@ var render = function() {
                                             },
                                             [
                                               _vm._v(
-                                                "\n                                mdi-plus\n                            "
+                                                "\n                                    mdi-plus\n                                "
                                               )
                                             ]
                                           )
@@ -17315,7 +17502,7 @@ var render = function() {
           _c(
             "v-dialog",
             {
-              attrs: { persistent: "", "max-width": "400" },
+              attrs: { "max-width": "400" },
               model: {
                 value: _vm.userDeleteDialog,
                 callback: function($$v) {
@@ -17367,6 +17554,189 @@ var render = function() {
                           }
                         },
                         [_vm._v("\n                Yes\n            ")]
+                      )
+                    ],
+                    1
+                  )
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-row",
+        { attrs: { justify: "center" } },
+        [
+          _c(
+            "v-dialog",
+            {
+              attrs: { "max-width": "600px" },
+              model: {
+                value: _vm.profileDialog,
+                callback: function($$v) {
+                  _vm.profileDialog = $$v
+                },
+                expression: "profileDialog"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", [
+                    _c("span", { staticClass: "headline" }, [
+                      _vm._v("プロフィール")
+                    ])
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-text",
+                    [
+                      _c(
+                        "v-container",
+                        [
+                          _c(
+                            "v-form",
+                            {
+                              ref: "form",
+                              attrs: { "lazy-validation": "" },
+                              model: {
+                                value: _vm.valid,
+                                callback: function($$v) {
+                                  _vm.valid = $$v
+                                },
+                                expression: "valid"
+                              }
+                            },
+                            [
+                              _c(
+                                "v-row",
+                                [
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12", sm: "6", md: "6" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "名前",
+                                          required: "",
+                                          rules: _vm.nameRules
+                                        },
+                                        model: {
+                                          value: _vm.editUser.name,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.editUser, "name", $$v)
+                                          },
+                                          expression: "editUser.name"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12", sm: "6", md: "6" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "ニックネーム",
+                                          rules: _vm.nicknameRules
+                                        },
+                                        model: {
+                                          value: _vm.editUser.screen_name,
+                                          callback: function($$v) {
+                                            _vm.$set(
+                                              _vm.editUser,
+                                              "screen_name",
+                                              $$v
+                                            )
+                                          },
+                                          expression: "editUser.screen_name"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-col",
+                                    { attrs: { cols: "12" } },
+                                    [
+                                      _c("v-text-field", {
+                                        attrs: {
+                                          label: "メールアドレス",
+                                          required: "",
+                                          rules: _vm.emailRules
+                                        },
+                                        model: {
+                                          value: _vm.editUser.email,
+                                          callback: function($$v) {
+                                            _vm.$set(_vm.editUser, "email", $$v)
+                                          },
+                                          expression: "editUser.email"
+                                        }
+                                      })
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-col", { attrs: { cols: "12" } }, [
+                                    _c("input", {
+                                      attrs: { type: "file" },
+                                      on: { input: _vm.avatar }
+                                    })
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("v-col", { attrs: { cols: "12" } }, [
+                                    _c("input", {
+                                      attrs: { type: "file" },
+                                      on: { input: _vm.bg }
+                                    })
+                                  ])
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "blue darken-1", text: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.profileDialog = false
+                            }
+                          }
+                        },
+                        [_vm._v("\n                Close\n            ")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "blue darken-1", text: "" },
+                          on: { click: _vm.userUpdate }
+                        },
+                        [_vm._v("\n                    Save\n                ")]
                       )
                     ],
                     1
