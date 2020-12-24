@@ -2571,9 +2571,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
+      progress: '',
       userDialog: false,
       userDeleteDialog: false,
       itemsPerPageArray: [4, 8, 12],
@@ -2664,35 +2668,46 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     openDialog: function openDialog(id) {
       var _this2 = this;
 
+      this.progress = true;
       axios.get("/api/users/".concat(id)).then(function (response) {
+        _this2.progress = false;
         _this2.userDialog = true;
         _this2.user = response.data;
       })["catch"](function (error) {
+        _this2.progress = false;
         console.log('error');
       });
     },
     userCreate: function userCreate() {
       var _this3 = this;
 
+      this.progress = true;
       axios.post('/api/users').then(function (response) {
+        _this3.progress = false;
+
         _this3.items.push(response.data);
       })["catch"](function (error) {
+        _this3.progress = false;
         console.log('error');
       });
     },
     userEdit: function userEdit() {
       var _this4 = this;
 
+      this.progress = true;
       axios.get("/api/users/".concat(this.user.id, "/edit")).then(function (response) {
+        _this4.progress = false;
         _this4.profileDialog = true;
         _this4.editUser = response.data;
       })["catch"](function (error) {
+        _this4.progress = false;
         console.log('error');
       });
     },
     userUpdate: function userUpdate() {
       var _this5 = this;
 
+      this.progress = true;
       var params = {
         'id': this.user.id,
         'name': this.editUser.name,
@@ -2702,6 +2717,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         'bg_image': this.bg_image
       };
       axios.put("/api/users/".concat(this.editUser.id), params).then(function (response) {
+        _this5.progress = false;
         _this5.user.name = _this5.editUser.name;
         _this5.user.screen_name = _this5.editUser.screen_name;
         _this5.user.email = _this5.editUser.email;
@@ -2718,17 +2734,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         _this5.$refs.avatar.value = '';
         _this5.$refs.bg.value = '';
       })["catch"](function (error) {
+        _this5.progress = false;
         console.log(error);
       });
     },
     userDelete: function userDelete(userId) {
       var _this6 = this;
 
+      this.progress = true;
       axios["delete"]("/api/users/".concat(userId), {
         data: {
           id: userId
         }
       }).then(function (response) {
+        _this6.progress = false;
+
         var index = _this6.items.findIndex(function (_ref) {
           var id = _ref.id;
           return id === userId;
@@ -2739,17 +2759,21 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
         _this6.items.splice(index, 1);
       })["catch"](function (error) {
+        _this6.progress = false;
         console.log('error');
       });
     },
     postCreate: function postCreate() {
       var _this7 = this;
 
+      this.progress = true;
       var param = {
         user_id: this.user.id,
         image: this.createPost
       };
       axios.post('/api/posts', param).then(function (response) {
+        _this7.progress = false;
+
         var index = _this7.items.findIndex(function (_ref2) {
           var id = _ref2.id;
           return id === _this7.user.id;
@@ -2760,6 +2784,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         _this7.items[index].posts_count += 1;
         _this7.createPost = [];
       })["catch"](function (error) {
+        _this7.progress = false;
         console.log('error');
       });
     },
@@ -2770,28 +2795,35 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       var _this8 = this;
 
       return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
-        var files, postArray, i, reader, that;
+        var files, postArray, _loop, i;
+
         return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
+                _this8.progress = true;
                 files = _this8.$refs.input.files;
                 postArray = [];
 
-                for (i = 0; i < files.length; i++) {
-                  reader = new FileReader();
-                  that = _this8;
+                _loop = function _loop() {
+                  var reader = new FileReader();
+                  var that = _this8;
 
                   reader.onload = function (event) {
                     postArray.push(event.target.result);
+                    that.progress = false;
                   };
 
                   reader.readAsDataURL(files[i]);
+                };
+
+                for (i = 0; i < files.length; i++) {
+                  _loop();
                 }
 
                 _this8.createPost = postArray;
 
-              case 4:
+              case 6:
               case "end":
                 return _context.stop();
             }
@@ -2802,11 +2834,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     deletePost: function deletePost(post) {
       var _this9 = this;
 
+      this.progress = true;
       axios["delete"]("/api/posts/".concat(post.id), {
         data: {
           id: post.id
         }
       }).then(function (response) {
+        _this9.progress = false;
+
         var index = _this9.user.posts.findIndex(function (_ref3) {
           var id = _ref3.id;
           return id === post.id;
@@ -2816,13 +2851,13 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
         _this9.items[index].posts_count -= 1;
       })["catch"](function (error) {
+        _this9.progress = false;
         console.log('error');
       });
     },
     avatar: function avatar(ev) {
       var _this10 = this;
 
-      // this.profile_image = e.target.files[0];
       var file = ev.target.files[0];
       var reader = new FileReader();
 
@@ -17786,6 +17821,17 @@ var render = function() {
             ],
             1
           )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-overlay",
+        { attrs: { value: _vm.progress } },
+        [
+          _c("v-progress-circular", {
+            attrs: { indeterminate: "", size: "64" }
+          })
         ],
         1
       )

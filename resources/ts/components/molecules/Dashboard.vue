@@ -259,6 +259,9 @@
             </v-card>
             </v-dialog>
         </v-row>
+        <v-overlay :value="progress">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </div>
 </template>
 
@@ -266,6 +269,7 @@
   export default {
     data () {
         return {
+            progress: '',
             userDialog: false,
             userDeleteDialog: false,
             itemsPerPageArray: [4, 8, 12],
@@ -352,35 +356,45 @@
             this.itemsPerPage = number
         },
         openDialog(id){
+            this.progress = true;
             axios.get(`/api/users/${id}`)
             .then((response) => {
+                this.progress = false;
                 this.userDialog = true;
                 this.user = response.data;
             })
             .catch((error) => {
+                this.progress = false;
                 console.log('error')
             })
         },
         userCreate(){
+            this.progress = true;
             axios.post('/api/users')
             .then((response) => {
+                this.progress = false;
                 this.items.push(response.data)
             })
             .catch((error) => {
+                this.progress = false;
                 console.log('error')
             })
         },
         userEdit(){
+            this.progress = true;
             axios.get(`/api/users/${this.user.id}/edit`)
             .then((response) => {
+                this.progress = false;
                 this.profileDialog = true
                 this.editUser = response.data;
             })
             .catch((error) => {
+                this.progress = false;
                 console.log('error')
             })
         },
         userUpdate(){
+            this.progress = true;
             var params = {
                 'id': this.user.id,'name': this.editUser.name,
                 'screen_name': this.editUser.screen_name,
@@ -391,6 +405,7 @@
             axios.put(`/api/users/${this.editUser.id}`, params)
             .then(
                 response => {
+                    this.progress = false;
                     this.user.name = this.editUser.name;
                     this.user.screen_name = this.editUser.screen_name;
                     this.user.email = this.editUser.email;
@@ -407,34 +422,41 @@
                 }
             )
             .catch((error) => {
+                this.progress = false;
                 console.log(error)
             });
         },
         userDelete(userId){
+            this.progress = true;
             axios.delete(`/api/users/${userId}`, {data: {id: userId}})
             .then((response) => {
+                this.progress = false;
                 var index = this.items.findIndex(({id}) => id === userId);
                 this.userDialog = false;
                 this.userDeleteDialog = false;
                 this.items.splice(index, 1);
             })
             .catch((error) => {
+                this.progress = false;
                 console.log('error')
             })
         },
         postCreate(){
+            this.progress = true;
             var param = {
                 user_id: this.user.id,
                 image: this.createPost,
             }
             axios.post('/api/posts', param)
             .then((response) => {
+                this.progress = false;
                 var index = this.items.findIndex(({id}) => id === this.user.id);
                 this.$set(this.user.posts, (this.user.posts.length), response.data);
                 this.items[index].posts_count += 1;
                 this.createPost = [];
             })
             .catch((error) => {
+                this.progress = false;
                 console.log('error')
             })
         },
@@ -442,6 +464,7 @@
             this.$refs.input.click();
         },
         async selectedFile(){
+            this.progress = true;
             const files = this.$refs.input.files;
             var postArray = [];
             for (var i = 0; i < files.length; i++) {
@@ -449,24 +472,27 @@
                 let that = this;
                 reader.onload = (function (event) {
                     postArray.push(event.target.result);
+                    that.progress = false;
                 });
                 reader.readAsDataURL(files[i]);
             }
             this.createPost = postArray;
         },
         deletePost(post){
+            this.progress = true;
             axios.delete(`/api/posts/${post.id}`, {data: {id: post.id}})
             .then((response) => {
+                this.progress = false;
                 var index = this.user.posts.findIndex(({id}) => id === post.id);
                 this.user.posts.splice(index, 1);
                 this.items[index].posts_count -= 1;
             })
             .catch((error) => {
+                this.progress = false;
                 console.log('error')
             })
         },
         avatar(ev){
-            // this.profile_image = e.target.files[0];
             const file = ev.target.files[0];
             let reader = new FileReader();
             reader.onload = (e) => {
