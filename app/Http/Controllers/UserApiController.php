@@ -81,7 +81,31 @@ class UserApiController extends Controller
      */
     public function update(Request $request, $id)
     {
-        dd($request->all());
+        $user = User::find($id);
+        $user->update(['name' => $request->name, 'screen_name' => $request->screen_name, 'email' => $request->email]);
+        $user->name = $request->name;
+        $user->screen_name = $request->screen_name;
+        $user->email = $request->email;
+        if(isset($request->profile_image)){
+            Storage::disk('avatar')->delete($user->profile_image);
+            $base64_image = $request->profile_image;
+            @list($type, $file_data) = explode(';', $base64_image);
+            @list(, $file_data) = explode(',', $file_data);
+            $image_name4avatar = str_random(10).'.'.'png';
+            Storage::disk('avatar')->put($image_name4avatar, base64_decode($file_data));
+            $user->update(['profile_image' => $image_name4avatar]);
+        }
+        if(isset($request->bg_image)){
+            Storage::disk('background')->delete($user->bg_image);
+            $base64_image = $request->bg_image;
+            @list($type, $file_data) = explode(';', $base64_image);
+            @list(, $file_data) = explode(',', $file_data);
+            $image_name4bg = str_random(10).'.'.'png';
+            Storage::disk('background')->put($image_name4bg, base64_decode($file_data));
+            $user->update(['bg_image' => $image_name4bg]);
+            // $user->bg_image= $image_name4bg;
+        }
+        return $user;
     }
 
     /**
@@ -99,7 +123,7 @@ class UserApiController extends Controller
         if(isset($user->bg_image)){
             Storage::disk('background')->delete($user->bg_image);
         }
-        // $user->delete();
+        $user->delete();
         return response("OK", 200);
     }
 }

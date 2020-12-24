@@ -2595,6 +2595,8 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
       },
       profileDialog: false,
       editUser: '',
+      profile_image: '',
+      bg_image: '',
       nameRules: [function (v) {
         return !!v || '入力が必要です';
       }],
@@ -2691,16 +2693,27 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
     userUpdate: function userUpdate() {
       var _this5 = this;
 
-      axios.put("/api/users/".concat(this.editUser.id), {
+      var params = {
         'id': this.user.id,
         'name': this.editUser.name,
         'screen_name': this.editUser.screen_name,
         'email': this.editUser.email,
-        'profile_image': this.editUser.profile_image,
-        'bg_image': this.editUser.bg_image
-      }).then(function (response) {
-        _this5.user = response.data;
+        'profile_image': this.profile_image,
+        'bg_image': this.bg_image
+      };
+      axios.put("/api/users/".concat(this.editUser.id), params).then(function (response) {
+        _this5.user.profile_image = response.data.profile_image;
+        _this5.user.bg_image = response.data.bg_image;
+
+        var item = _this5.items.find(function (item) {
+          return item.id === _this5.user.id;
+        });
+
+        item.profile_image = response.data.profile_image;
+        item.bg_image = response.data.bg_image;
         _this5.profileDialog = false;
+        _this5.$refs.avatar.value = '';
+        _this5.$refs.bg.value = '';
       })["catch"](function (error) {
         console.log(error);
       });
@@ -2803,11 +2816,30 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         console.log('error');
       });
     },
-    avatar: function avatar(e) {
-      this.editUser.profile_image = e.target.files[0];
+    avatar: function avatar(ev) {
+      var _this10 = this;
+
+      // this.profile_image = e.target.files[0];
+      var file = ev.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        _this10.profile_image = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
     },
-    bg: function bg(e) {
-      this.editUser.bg_image = e.target.files[0];
+    bg: function bg(ev) {
+      var _this11 = this;
+
+      var file = ev.target.files[0];
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        _this11.bg_image = e.target.result;
+      };
+
+      reader.readAsDataURL(file);
     }
   }
 });
@@ -17688,6 +17720,7 @@ var render = function() {
                                   _vm._v(" "),
                                   _c("v-col", { attrs: { cols: "12" } }, [
                                     _c("input", {
+                                      ref: "avatar",
                                       attrs: { type: "file" },
                                       on: { input: _vm.avatar }
                                     })
@@ -17695,6 +17728,7 @@ var render = function() {
                                   _vm._v(" "),
                                   _c("v-col", { attrs: { cols: "12" } }, [
                                     _c("input", {
+                                      ref: "bg",
                                       attrs: { type: "file" },
                                       on: { input: _vm.bg }
                                     })
@@ -17724,6 +17758,8 @@ var render = function() {
                           on: {
                             click: function($event) {
                               _vm.profileDialog = false
+                              _vm.$refs.avatar.value = ""
+                              _vm.$refs.bg.value = ""
                             }
                           }
                         },

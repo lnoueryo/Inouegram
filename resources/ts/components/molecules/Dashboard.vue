@@ -238,10 +238,10 @@
                                 <v-text-field v-model="editUser.email" label="メールアドレス" required :rules="emailRules"></v-text-field>
                             </v-col>
                             <v-col cols="12">
-                                <input type="file" @input="avatar">
+                                <input ref="avatar" type="file" @input="avatar">
                             </v-col>
                             <v-col cols="12">
-                                <input type="file" @input="bg">
+                                <input ref="bg" type="file" @input="bg">
                             </v-col>
                         </v-row>
                     </v-form>
@@ -249,7 +249,7 @@
                 </v-card-text>
                 <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="profileDialog = false">
+                <v-btn color="blue darken-1" text @click="profileDialog = false;$refs.avatar.value = '';$refs.bg.value = ''">
                     Close
                 </v-btn>
                     <v-btn color="blue darken-1" text @click="userUpdate">
@@ -291,6 +291,8 @@
             },
             profileDialog: false,
             editUser: '',
+            profile_image: '',
+            bg_image: '',
             nameRules: [
                 (v) => !!v || '入力が必要です',
             ],
@@ -379,17 +381,26 @@
             })
         },
         userUpdate(){
-            axios.put(`/api/users/${this.editUser.id}`, {
+            var params = {
                 'id': this.user.id,'name': this.editUser.name,
                 'screen_name': this.editUser.screen_name,
                 'email': this.editUser.email,
-                'profile_image': this.editUser.profile_image,
-                'bg_image': this.editUser.bg_image,
-            })
+                'profile_image': this.profile_image,
+                'bg_image': this.bg_image,
+            }
+            axios.put(`/api/users/${this.editUser.id}`, params)
             .then(
                 response => {
-                    this.user = response.data;
+                    this.user.profile_image = response.data.profile_image;
+                    this.user.bg_image = response.data.bg_image;
+                    var item = this.items.find((item) => {
+                        return item.id === this.user.id;
+                    })
+                    item.profile_image = response.data.profile_image;
+                    item.bg_image = response.data.bg_image;
                     this.profileDialog = false;
+                    this.$refs.avatar.value = '';
+                    this.$refs.bg.value = '';
                 }
             )
             .catch((error) => {
@@ -451,12 +462,23 @@
                 console.log('error')
             })
         },
-        avatar(e){
-            this.editUser.profile_image = e.target.files[0];
+        avatar(ev){
+            // this.profile_image = e.target.files[0];
+            const file = ev.target.files[0];
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.profile_image = e.target.result;
+            };
+            reader.readAsDataURL(file);
         },
-        bg(e){
-            this.editUser.bg_image = e.target.files[0];
-        }
+        bg(ev){
+            const file = ev.target.files[0];
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                this.bg_image = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
     },
 }
 </script>
