@@ -391,6 +391,9 @@
             axios.put(`/api/users/${this.editUser.id}`, params)
             .then(
                 response => {
+                    this.user.name = this.editUser.name;
+                    this.user.screen_name = this.editUser.screen_name;
+                    this.user.email = this.editUser.email;
                     this.user.profile_image = response.data.profile_image;
                     this.user.bg_image = response.data.bg_image;
                     var item = this.items.find((item) => {

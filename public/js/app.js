@@ -2702,6 +2702,9 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         'bg_image': this.bg_image
       };
       axios.put("/api/users/".concat(this.editUser.id), params).then(function (response) {
+        _this5.user.name = _this5.editUser.name;
+        _this5.user.screen_name = _this5.editUser.screen_name;
+        _this5.user.email = _this5.editUser.email;
         _this5.user.profile_image = response.data.profile_image;
         _this5.user.bg_image = response.data.bg_image;
 
