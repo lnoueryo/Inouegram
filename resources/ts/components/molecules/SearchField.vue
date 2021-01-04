@@ -14,7 +14,6 @@
             @focus="searchUser()"
         ></v-text-field>
       </template>
-      <!-- <two-line-list :users="sendUserInfo"></two-line-list> -->
         <v-list two-line v-if="sendUserInfo.length > 0">
             <template v-for="(user, index) in sendUserInfo">
             <v-list-item :key="index" :href="'/profile?id=' + user.id">

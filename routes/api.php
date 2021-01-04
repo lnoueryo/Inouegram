@@ -38,24 +38,7 @@ Route::post('/comment', 'ApiController@comment');
 Route::post('/delete_comment', 'ApiController@deleteComment');
 Route::get('/likedPostUsers', 'ApiController@likedPostUsers');
 Route::post('/changeProfile', 'ApiController@changeProfile');
-Route::post('/jsonjson', function(Request $request){
 
-    for ($i=0; $i < count($request->json); $i++) {
-        $post = Post::find($request->id[$i]);
-        $post->image = $request->json[$i];
-        $post->save();
-    }
-    // for($i=0; $i<count($request->image); $i++){
-    //     $photo = new Photo;
-    //     $photo->post_id = $post->id;
-    //     $photo->src = $request->image[$i];
-    //     $files = $request->file('image');
-    //     $path = $files[$i]->store('public/image');
-    //     $photo->src = basename($path);
-    //     $photo->save();
-    // }
-    return 'hello';
-});
 
 Route::resource('users', 'UserApiController', ['except' => ['create']]);
 Route::resource('posts', 'PostApiController', ['except' => ['index', 'create']]);

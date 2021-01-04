@@ -16,8 +16,6 @@ import 'vuetify/dist/vuetify.min.css';
 
 // Vuetify Icon
 import '@mdi/font/css/materialdesignicons.css'
-// import '@fortawesome/fontawesome-free/css/all.css'
-// import VueSocialauth from 'vue-social-auth'
 
 Vue.use(VueRouter);
 Vue.use(Vuex);
@@ -40,21 +38,9 @@ Vue.component('dashboard', require('./components/molecules/Dashboard.vue').defau
 
 const app: any = new Vue({
     el: '#app',
-    router: router,
-    store: store,
     vuetify: new Vuetify({
         icons: {
             iconfont: 'mdi',
-            // iconfont: 'fa'
         }
     }),
 });
-
-// Vue.use(VueSocialauth, {
-//     providers: {
-//       google: {
-//         clientId: '',
-//         redirectUri: '/auth/github/callback' // Your client app URL
-//       }
-//     }
-//   })

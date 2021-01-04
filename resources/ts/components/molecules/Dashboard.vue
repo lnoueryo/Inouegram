@@ -47,9 +47,6 @@
                                         <v-list-item-content :class="{ 'blue--text': sortBy === key }">
                                             {{ key }}:　{{ item[key.toLowerCase()] }}
                                         </v-list-item-content>
-                                        <!-- <v-list-item-content class="align-end" :class="{ 'blue--text': sortBy === key }">
-                                            {{ item[key.toLowerCase()] }}
-                                        </v-list-item-content> -->
                                         </v-list-item>
                                     </v-img>
                                 </template>
@@ -59,9 +56,6 @@
                                         <v-list-item-content :class="{ 'blue--text': sortBy === key }">
                                             {{ key }}:　{{ item[key.toLowerCase()] }}
                                         </v-list-item-content>
-                                        <!-- <v-list-item-content class="align-end" :class="{ 'blue--text': sortBy === key }">
-                                            {{ item[key.toLowerCase()] }}
-                                        </v-list-item-content> -->
                                         </v-list-item>
                                     </v-img>
                                 </template>
@@ -110,9 +104,6 @@
                         <v-btn icon dark @click="userDialog = false;createPost = [];">
                             <v-icon>mdi-close</v-icon>
                         </v-btn>
-                        <!-- <v-toolbar-title class="mr-4">{{ user.name }}</v-toolbar-title>
-                        <v-toolbar-title class="mr-4">{{ user.screen_name }}</v-toolbar-title>
-                        <v-toolbar-title class="mr-4">{{ user.email }}</v-toolbar-title> -->
                         <v-spacer></v-spacer>
                         <v-toolbar-items>
                             <v-btn dark text  @click="userDeleteDialog = true">

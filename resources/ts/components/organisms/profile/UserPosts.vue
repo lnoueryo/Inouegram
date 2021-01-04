@@ -175,9 +175,6 @@
                 </v-snackbar>
             </v-layout>
         </div>
-        <!-- <div v-else-if="!parsedUserPosts && visitor.id !== user.id" class="text-center" style="margin: auto;">
-            まだ投稿はありません
-        </div> -->
         <div v-else class="text-center" style="margin: auto;">
             まだ投稿はありません<br>
             <v-btn href="/post" v-if="visitor.id == user.id">投稿する</v-btn>
@@ -318,11 +315,6 @@
         },
         toggleDeleteBtn(id, index){
             if(this.commentUser(id).id==this.visitor.id){
-                // if(this.isDeleteBtn[index] === true){
-                //     this.isDeleteBtn[index] = false;
-                // } else {
-                //     this.isDeleteBtn[index] = true;
-                // }
                 this.isDeleteBtn[index] = !this.isDeleteBtn[index];
                 this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
                     return el;

@@ -28,9 +28,6 @@ Route::get('/profile', 'ProfileController@index')->middleware('auth');
 Route::get('/user', function(){
     if(Auth::id()==1){
         $users = User::withCount('posts')->get();
-        // $users = User::with(['comments', 'posts' => function($query){
-        //     $query->with(['likes', 'comments']);
-        // }])->get();
         return view('dashboard');
     } else {
         return redirect('/');

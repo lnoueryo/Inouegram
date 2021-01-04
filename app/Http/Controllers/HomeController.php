@@ -41,14 +41,4 @@ class HomeController extends Controller
         return view('index', ['main_user' => $main_user, 'posts' => $posts->orderBy('updated_at', 'desc')->take(20)->get(), 'main_user_likes' => $main_user_likes, 'following_users_info' => $following_users_info, 'likes' => $likes->get(), 'liked_users' => $liked_users, 'comments' => $comments]);
     }
 
-    // public function search(Request $request){
-    //     $followers = Follower::where('following_id', $request->id);
-    //     $my_users = User::where('id',$request->id)->orWhereIn('id', $followers->get('followed_id'))->get();
-    //     return $my_users;
-    // }
-    // public function json(){
-    //     $posts = Post::whereBetween('user_id', [51, 101])->get();
-    //     return view('json', compact('posts'));
-    // }
-
 }

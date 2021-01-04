@@ -341,7 +341,6 @@
 import VueCropper from 'vue-cropperjs'
 import InputFile from '../molecules/InputFile.vue'
 import InputFileImage from '../molecules/InputFileImage.vue'
-import ImageEditer from '../organisms/ImageEditer.vue'
 export default {
     name: "DrawTool",
     props: ['user'],
@@ -349,7 +348,6 @@ export default {
         VueCropper,
         InputFile,
         InputFileImage,
-        ImageEditer,
     },
     data() {
       return {

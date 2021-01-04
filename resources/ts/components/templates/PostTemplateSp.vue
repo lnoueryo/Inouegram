@@ -420,8 +420,6 @@
 <script>
 import VueCropper from 'vue-cropperjs'
 import InputFile from '../molecules/InputFile.vue'
-import InputFileImage from '../molecules/InputFileImage.vue'
-import ImageEditer from '../organisms/ImageEditer.vue'
 export default {
     name: "DrawTool",
     props: ['user'],
@@ -429,7 +427,6 @@ export default {
         VueCropper,
         InputFile,
         InputFileImage,
-        ImageEditer,
     },
     data() {
         return {
@@ -1142,7 +1139,7 @@ export default {
             var coverSrc = document.getElementById("editCover").toDataURL('image/png');
             var drawCanvasSrc = document.getElementById("editDrawCanvas").toDataURL('image/png');
             var editcroppedOriginalImageSrc = document.getElementById("editcroppedOriginalImage").toDataURL('image/png');
-            
+
             this.imgBeforeConcat[index] = [coverSrc,drawCanvasSrc,editcroppedOriginalImageSrc];
 
             editcroppedOriginalImage.onload = function(){

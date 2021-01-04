@@ -28,19 +28,17 @@
     <div id="app" v-cloak>
         <v-app>
             @auth
-            <header-bar2 :user='@json(Auth::user())'></header-bar2>
+            <header-bar :user='@json(Auth::user())'></header-bar>
             @endauth
             @guest
-            <header-bar2 :user="null"></header-bar2>
+            <header-bar :user="null"></header-bar>
             @endguest
             <keep-alive>
-                {{--  <main style="padding-top: 65px;padding-bottom: 55px">  --}}
-                    <v-main>
-                        <v-container>
-                            @yield('content')
-                        </v-container>
-                    </v-main>
-                {{--  </main>  --}}
+                <v-main>
+                    <v-container>
+                        @yield('content')
+                    </v-container>
+                </v-main>
             </keep-alive>
         </v-app>
     </div>

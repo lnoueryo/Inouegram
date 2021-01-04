@@ -63,7 +63,6 @@
                             <img v-if="showq" style="position: absolute;right: 0;" src="/image/github.png">
                         </transition>
                     </v-btn>
-                        <!-- <div v-if="showq"><img src="/image/github.png"></div> -->
                 </div>
             </v-form>
                 </v-window-item>
@@ -167,27 +166,6 @@
                     </div>
                 </v-window-item>
                 </v-window>
-<!--
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                <v-btn
-                    :disabled="step === 1"
-                    text
-                    @click="step--"
-                >
-                    Back
-                </v-btn>
-                <v-spacer></v-spacer>
-                <v-btn
-                    :disabled="step === 3"
-                    color="primary"
-                    depressed
-                    @click="step++"
-                >
-                    Next
-                </v-btn>
-                </v-card-actions> -->
             </v-card>
         </div>
         <v-overlay :value="progress">
@@ -250,7 +228,6 @@
                 },
                 valid: false,
                 registrationErrors: {},
-                // registrationErrors: '',
             }
         },
         computed: {

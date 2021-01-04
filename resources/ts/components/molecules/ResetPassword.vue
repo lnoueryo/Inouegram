@@ -103,8 +103,7 @@
                 match: v => v == this.registration.password || 'パスワードと一致してません',
                 },
                 valid: false,
-                registrationErrors: {},
-                // registrationErrors: '',
+                registrationErrors: {},',
             }
         },
         created() {

@@ -3,7 +3,7 @@
         <input style="display: none" ref="input" type="file" accept="image/jpeg, image/jpg, image/png" @input="listeners.input">
         <v-layout text-xs-center wrap>
             <v-flex xs12>
-                <v-btn color="deep-purple text--white" @click="listeners.click" fab><v-icon color="white">mdi-camera</v-icon></v-btn>{{ abc }}
+                <v-btn color="deep-purple text--white" @click="listeners.click" fab><v-icon color="white">mdi-camera</v-icon></v-btn>
             </v-flex>
         </v-layout>
     </v-container>

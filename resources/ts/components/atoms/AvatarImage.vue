@@ -15,6 +15,3 @@ export default Vue.extend({
     },
 })
 </script>
-
-<!-- 親コンポーネント -->
-<!-- project://resources/ts/components/molecules/UserList.vue#4 --><!-- project://resources/js/components/organisms/PostCard.vue#3 --><!-- project://resources/js/components/templates/HeaderTemplate.vue#4 -->
