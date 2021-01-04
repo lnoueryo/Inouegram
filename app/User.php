@@ -37,6 +37,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+
     protected static function boot()
     {
         parent::boot();

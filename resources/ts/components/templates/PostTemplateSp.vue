@@ -426,7 +426,6 @@ export default {
     components: {
         VueCropper,
         InputFile,
-        InputFileImage,
     },
     data() {
         return {
