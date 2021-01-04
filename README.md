@@ -12,21 +12,23 @@
 ・プロフィール編集機能
 ・写真投稿削除機能
 ・管理者側のページネーション機能
+・レスポンシブ対応
 ## アプリケーション内で使用した技術
 HTML/CSS/JavaScript(Vue.js)/Vuetify/TypeScript/PHP(Laravel)/Apache/MariaDB/AWS(EC2/VPC/Route53)
 
 ## 工夫したところ
-・AJAXを使ったREST APIの構築
-・Oauthの認証
+バックエンド
+・ユーザーテーブルを親とし、子テーブル、孫テーブルと関連付けしたDB設計。これによりN+1問題を回避し、親テーブルのレコードを削除した場合、関連づいた孫テーブルの削除も可能。
+・Ajaxを使ったREST APIの構築。非同期通信にすることで、サーバーが処理を行っている間に操作が可能。
+・Ajaxのレスポンスデータを極力変更された部分のみに絞り、フロント側のJsonデータを全て書きかえず、レスポンスデータを追加および削除することにより、サーバーへの負荷と、パフォーマンスを意識した。
+・メールのような重たい処理はキュージョブで非同期にし、ユーザーの待ち時間を少なくした。
 
+フロントエンド
+・ユーザー検索をAjaxによりリアルタイムにしているが、サーバーへの負荷を考慮し、断続的な通信を避けるためにsearchTimeoutとclearTimeoutを使ってAjaxの関数をコールバックにした。
+・ソーシャルログインのアバターを利用するために、レスポンスで返ってきたアバターのURLを読み込み、base64に変えストレージに保存する。
+・投稿する画像をペンやフィルターで加工できるように、canvasを重ね、最後一つのcanvasに描画し、保存する。
+・複数保存できるように、配列でデータを保持した。
 ## 苦労したところ
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+・画像を複数保存する方法。
+・canvas、画像データ、APIメソッドなど多岐に渡る知識の理解。
+・インフラの基本的な知識の勉強から始まり、AWSのEC2やApacheの設定、プロセス管理システムSupervisorのデーモン化。

@@ -10,8 +10,8 @@
             hide-details
             v-on="on"
             autocomplete="off"
-            @keyup="searchUser()"
-            @focus="searchUser()"
+            @keyup="searchTimeOut"
+            @focus="searchUser"
         ></v-text-field>
       </template>
         <v-list two-line v-if="sendUserInfo.length > 0">
@@ -63,9 +63,16 @@ export default {
             .catch(function (error) {
                 console.log(error);
             });
-        }
+        },
+        searchTimeOut() {
+        let timeout = null;
+        clearTimeout(timeout);
+            let that = this;
+            timeout = setTimeout(() => {
+                that.searchUser();
+            }, 800);
+        },
     },
-
 }
 </script>
 
