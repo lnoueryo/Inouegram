@@ -462,7 +462,7 @@
                 const reader = new FileReader();
                 let that = this;
                 reader.onload = (function (event) {
-                    postArray.push(event.target.result);
+                    postArray.unshift(event.target.result);
                     that.progress = false;
                 });
                 reader.readAsDataURL(files[i]);

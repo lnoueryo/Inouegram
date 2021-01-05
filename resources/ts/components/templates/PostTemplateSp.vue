@@ -420,12 +420,14 @@
 <script>
 import VueCropper from 'vue-cropperjs'
 import InputFile from '../molecules/InputFile.vue'
+import InputFileImage from "../molecules/InputFileImage";
 export default {
     name: "DrawTool",
     props: ['user'],
     components: {
         VueCropper,
         InputFile,
+        InputFileImage,
     },
     data() {
         return {

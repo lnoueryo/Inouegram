@@ -2679,7 +2679,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   var that = _this8;
 
                   reader.onload = function (event) {
-                    postArray.push(event.target.result);
+                    postArray.unshift(event.target.result);
                     that.progress = false;
                   };
 
@@ -6754,6 +6754,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-cropperjs */ "./node_modules/vue-cropperjs/dist/VueCropper.js");
 /* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../molecules/InputFile.vue */ "./resources/ts/components/molecules/InputFile.vue");
+/* harmony import */ var _molecules_InputFileImage__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../molecules/InputFileImage */ "./resources/ts/components/molecules/InputFileImage.vue");
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 //
@@ -7177,12 +7178,14 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 
 
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   name: "DrawTool",
   props: ['user'],
   components: {
     VueCropper: vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default.a,
-    InputFile: _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
+    InputFile: _molecules_InputFile_vue__WEBPACK_IMPORTED_MODULE_1__["default"],
+    InputFileImage: _molecules_InputFileImage__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   data: function data() {
     var _ref;
