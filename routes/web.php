@@ -26,7 +26,7 @@ Route::get('/home', 'HomeController@index')->middleware('auth');
 Route::get('/post', 'PostController@index')->middleware('auth');
 Route::get('/profile', 'ProfileController@index')->middleware('auth');
 Route::get('/user', function(){
-    if(Auth::id()==1){
+    if(Auth::id()==1 || Auth::id()==2){
         $users = User::withCount('posts')->get();
         return view('dashboard');
     } else {

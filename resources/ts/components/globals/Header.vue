@@ -3,7 +3,7 @@
       <div v-resize="onResize">
         <v-navigation-drawer v-model="drawer" fixed app>
         <v-list>
-            <v-list-item href="/user" v-if="user.id == 1">
+            <v-list-item href="/user" v-if="user.id == 1 || user.id == 2">
             <v-list-item-action>
                 <v-icon>mdi-google-downasaur</v-icon>
             </v-list-item-action>

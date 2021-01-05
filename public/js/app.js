@@ -15002,7 +15002,7 @@ var render = function() {
               _c(
                 "v-list",
                 [
-                  _vm.user.id == 1
+                  _vm.user.id == 1 || _vm.user.id == 2
                     ? _c(
                         "v-list-item",
                         { attrs: { href: "/user" } },
