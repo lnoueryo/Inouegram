@@ -1,6 +1,7 @@
 <p align="center">
-  <img src="http://lnoueryo98.sakura.ne.jp/lp/img/carousel/05.png" width=80%>  
-</p>　
+  <img src="http://lnoueryo98.sakura.ne.jp/lp/img/carousel/11.png" width=100%>  
+</p>
+
 ## アプリケーションの概要
 インスタグラムのような写真共有ウェブアプリ
 ## アプリケーションの機能一覧
