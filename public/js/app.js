@@ -2056,6 +2056,53 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['user'],
@@ -2064,6 +2111,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
+      dialog: false,
       size: true,
       windowSize: {
         x: 0,
@@ -2092,6 +2140,28 @@ __webpack_require__.r(__webpack_exports__);
         x: window.innerWidth,
         y: window.innerHeight
       };
+    },
+    logout: function logout() {
+      axios.post('/logout').then(function () {
+        return location.href = '/';
+      })["catch"](function (error) {
+        location.href = '/';
+      });
+    },
+    resign: function resign() {
+      var _this = this;
+
+      this.dialog = false;
+      axios["delete"]('/api/users/' + this.user.id, {
+        data: {
+          id: this.user.id
+        }
+      }).then(function () {
+        return location.href = '/login';
+      })["catch"](function (error) {
+        _this.progress = false;
+        console.log('error');
+      });
     }
   }
 });
@@ -3297,7 +3367,6 @@ __webpack_require__.r(__webpack_exports__);
       axios.post(url, params).then(function () {
         return location.href = '/home';
       })["catch"](function (error) {
-        // this.registrationErrors = error.response.data.errors;
         var that = _this2;
         var responseErrors = error.response.data.errors;
         var errors = {};
@@ -14857,96 +14926,252 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "div",
-      {
-        directives: [
-          {
-            name: "resize",
-            rawName: "v-resize",
-            value: _vm.onResize,
-            expression: "onResize"
-          }
-        ]
-      },
-      [
-        _c(
-          "v-navigation-drawer",
-          {
-            attrs: { fixed: "", app: "" },
-            model: {
-              value: _vm.drawer,
-              callback: function($$v) {
-                _vm.drawer = $$v
-              },
-              expression: "drawer"
+  return _c(
+    "div",
+    [
+      _c(
+        "div",
+        {
+          directives: [
+            {
+              name: "resize",
+              rawName: "v-resize",
+              value: _vm.onResize,
+              expression: "onResize"
             }
-          },
-          [
-            _c(
-              "v-list",
-              [
-                _vm._l(_vm.items, function(item, i) {
-                  return _c(
+          ]
+        },
+        [
+          _c(
+            "v-navigation-drawer",
+            {
+              attrs: { fixed: "", app: "" },
+              scopedSlots: _vm._u([
+                {
+                  key: "append",
+                  fn: function() {
+                    return [
+                      _c(
+                        "v-list",
+                        [
+                          _vm.user.email !== "guest@guest.com"
+                            ? _c(
+                                "v-list-item",
+                                {
+                                  on: {
+                                    click: function($event) {
+                                      _vm.dialog = true
+                                    }
+                                  }
+                                },
+                                [
+                                  _c(
+                                    "v-list-item-action",
+                                    [
+                                      _c("v-icon", [
+                                        _vm._v("mdi-account-cancel")
+                                      ])
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c("v-list-item-content", [
+                                    _vm._v("\n              退会\n          ")
+                                  ])
+                                ],
+                                1
+                              )
+                            : _vm._e()
+                        ],
+                        1
+                      )
+                    ]
+                  },
+                  proxy: true
+                }
+              ]),
+              model: {
+                value: _vm.drawer,
+                callback: function($$v) {
+                  _vm.drawer = $$v
+                },
+                expression: "drawer"
+              }
+            },
+            [
+              _c(
+                "v-list",
+                [
+                  _vm.user.id == 1
+                    ? _c(
+                        "v-list-item",
+                        { attrs: { href: "/user" } },
+                        [
+                          _c(
+                            "v-list-item-action",
+                            [_c("v-icon", [_vm._v("mdi-google-downasaur")])],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c("v-list-item-content", [
+                            _vm._v("\n              ダッシュボード\n          ")
+                          ])
+                        ],
+                        1
+                      )
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm._l(_vm.items, function(item, i) {
+                    return _c(
+                      "v-list-item",
+                      {
+                        key: i,
+                        attrs: { href: item.to, router: "", exact: "" }
+                      },
+                      [
+                        _c(
+                          "v-list-item-action",
+                          [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "v-list-item-content",
+                          [
+                            _c("v-list-item-title", {
+                              domProps: { textContent: _vm._s(item.title) }
+                            })
+                          ],
+                          1
+                        )
+                      ],
+                      1
+                    )
+                  }),
+                  _vm._v(" "),
+                  _c(
                     "v-list-item",
-                    { key: i, attrs: { href: item.to, router: "", exact: "" } },
+                    { on: { click: _vm.logout } },
                     [
                       _c(
                         "v-list-item-action",
-                        [_c("v-icon", [_vm._v(_vm._s(item.icon))])],
+                        [_c("v-icon", [_vm._v("mdi-logout")])],
                         1
                       ),
                       _vm._v(" "),
+                      _c("v-list-item-content", [
+                        _vm._v("\n              ログアウト\n          ")
+                      ])
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-list-item",
+                    [_c("v-list-item-content", [_c("search-field")], 1)],
+                    1
+                  )
+                ],
+                2
+              )
+            ],
+            1
+          ),
+          _vm._v(" "),
+          _c(
+            "v-app-bar",
+            { attrs: { fixed: "", app: "" } },
+            [
+              _c("v-app-bar-nav-icon", {
+                on: {
+                  click: function($event) {
+                    $event.stopPropagation()
+                    _vm.drawer = !_vm.drawer
+                  }
+                }
+              }),
+              _vm._v(" "),
+              _c("v-toolbar-title", {
+                domProps: { textContent: _vm._s(_vm.title) }
+              })
+            ],
+            1
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "v-row",
+        { attrs: { justify: "center" } },
+        [
+          _c(
+            "v-dialog",
+            {
+              attrs: { persistent: "", "max-width": "290" },
+              model: {
+                value: _vm.dialog,
+                callback: function($$v) {
+                  _vm.dialog = $$v
+                },
+                expression: "dialog"
+              }
+            },
+            [
+              _c(
+                "v-card",
+                [
+                  _c("v-card-title", { staticClass: "headline" }, [
+                    _vm._v("\n        本当に退会されますか？\n      ")
+                  ]),
+                  _vm._v(" "),
+                  _c("v-card-text", [
+                    _vm._v(
+                      "いいねやコメントだけでなく、投稿した写真やユーザー情報すべて消えてしまいます。"
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _c(
+                    "v-card-actions",
+                    [
+                      _c("v-spacer"),
+                      _vm._v(" "),
                       _c(
-                        "v-list-item-content",
-                        [
-                          _c("v-list-item-title", {
-                            domProps: { textContent: _vm._s(item.title) }
-                          })
-                        ],
-                        1
+                        "v-btn",
+                        {
+                          attrs: { color: "green darken-1", text: "" },
+                          on: {
+                            click: function($event) {
+                              _vm.dialog = false
+                            }
+                          }
+                        },
+                        [_vm._v("\n          キャンセル\n        ")]
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-btn",
+                        {
+                          attrs: { color: "green darken-1", text: "" },
+                          on: { click: _vm.resign }
+                        },
+                        [_vm._v("\n          退会\n        ")]
                       )
                     ],
                     1
                   )
-                }),
-                _vm._v(" "),
-                _c(
-                  "v-list-item",
-                  [_c("v-list-item-content", [_c("search-field")], 1)],
-                  1
-                )
-              ],
-              2
-            )
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c(
-          "v-app-bar",
-          { attrs: { fixed: "", app: "" } },
-          [
-            _c("v-app-bar-nav-icon", {
-              on: {
-                click: function($event) {
-                  $event.stopPropagation()
-                  _vm.drawer = !_vm.drawer
-                }
-              }
-            }),
-            _vm._v(" "),
-            _c("v-toolbar-title", {
-              domProps: { textContent: _vm._s(_vm.title) }
-            })
-          ],
-          1
-        )
-      ],
-      1
-    )
-  ])
+                ],
+                1
+              )
+            ],
+            1
+          )
+        ],
+        1
+      )
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

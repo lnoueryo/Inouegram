@@ -344,7 +344,6 @@
                 axios.post(url, params)
                 .then(() => location.href = '/home')
                 .catch((error) => {
-                    // this.registrationErrors = error.response.data.errors;
                     let that = this;
                     var responseErrors = error.response.data.errors;
                     var errors = {};
