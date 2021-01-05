@@ -42,8 +42,11 @@
                 <v-btn color="success" class="mr-4" @click="login">
                 ログイン
                 </v-btn>
-                <v-btn color="indigo white--text" @click="step++">
+                <v-btn color="indigo white--text" class="mr-4" @click="step++">
                 会員登録
+                </v-btn>
+                <v-btn color="warning" class="mr-4" @click="guestLogin">
+                ゲスト
                 </v-btn>
                 </div>
                 <a class="btn btn-link mb-3" style="display: block;" @click="step--">パスワードをお忘れの場合</a>
@@ -311,6 +314,21 @@
                         errors[key] = responseErrors[key][0];
                     }
                     self.errors = errors;
+                });
+            },
+            guestLogin(){
+            var url = '/login';
+            var params = {
+                email: 'guest@guest.com',
+                password: '123456789',
+            };
+            axios.post(url, params)
+                .then(function(response){
+                    location.href = '/home';
+                })
+                .catch(function(error){
+                    var responseErrors = error.response.data.errors;
+                    console.log(responseErrors)
                 });
             },
             register() {

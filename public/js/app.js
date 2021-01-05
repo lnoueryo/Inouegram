@@ -3111,6 +3111,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['google-user', 'github-user'],
   data: function data() {
@@ -3264,6 +3267,19 @@ __webpack_require__.r(__webpack_exports__);
         }
 
         self.errors = errors;
+      });
+    },
+    guestLogin: function guestLogin() {
+      var url = '/login';
+      var params = {
+        email: 'guest@guest.com',
+        password: '123456789'
+      };
+      axios.post(url, params).then(function (response) {
+        location.href = '/home';
+      })["catch"](function (error) {
+        var responseErrors = error.response.data.errors;
+        console.log(responseErrors);
       });
     },
     register: function register() {
@@ -16655,6 +16671,7 @@ var render = function() {
                                   _c(
                                     "v-btn",
                                     {
+                                      staticClass: "mr-4",
                                       attrs: { color: "indigo white--text" },
                                       on: {
                                         click: function($event) {
@@ -16665,6 +16682,20 @@ var render = function() {
                                     [
                                       _vm._v(
                                         "\n            会員登録\n            "
+                                      )
+                                    ]
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-btn",
+                                    {
+                                      staticClass: "mr-4",
+                                      attrs: { color: "warning" },
+                                      on: { click: _vm.guestLogin }
+                                    },
+                                    [
+                                      _vm._v(
+                                        "\n            ゲスト\n            "
                                       )
                                     ]
                                   )
@@ -86595,15 +86626,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************************************************!*\
   !*** ./resources/ts/components/molecules/ResetPassword.vue ***!
   \*************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ResetPassword_vue_vue_type_template_id_5411f2d2___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ResetPassword.vue?vue&type=template&id=5411f2d2& */ "./resources/ts/components/molecules/ResetPassword.vue?vue&type=template&id=5411f2d2&");
 /* harmony import */ var _ResetPassword_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ResetPassword.vue?vue&type=script&lang=js& */ "./resources/ts/components/molecules/ResetPassword.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _ResetPassword_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _ResetPassword_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -86633,7 +86663,7 @@ component.options.__file = "resources/ts/components/molecules/ResetPassword.vue"
 /*!**************************************************************************************!*\
   !*** ./resources/ts/components/molecules/ResetPassword.vue?vue&type=script&lang=js& ***!
   \**************************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
