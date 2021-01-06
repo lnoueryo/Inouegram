@@ -9,6 +9,7 @@
             :requestedUserFollowed="requestedUserFollowed"
             :requestedUserComments="requestedUserComments"
             :likedPosts="likedPosts"
+            :requestId="requestId"
         ></profile-templates>
     </div>
 </template>
@@ -16,7 +17,7 @@
 <script>
 import ProfileTemplates from '../templates/ProfileTemplate'
 export default {
-    props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments', 'liked-posts'],
+    props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments', 'liked-posts', 'request-id'],
     components: {
         ProfileTemplates,
     },

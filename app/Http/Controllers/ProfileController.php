@@ -21,9 +21,15 @@ class ProfileController extends Controller
     // }
 
     public function index(Request $request) {
-        $main_user = User::find(Auth::id());
-        $requested_user = User::find($request->id);
-        // $requested_user = User::find($request->id)->posts();
+        $request_id = $request->id;
+        $main_user = User::with(['likes', 'comments','followers'])->find(Auth::id());
+        $requested_user = User::with(['followees', 'posts' => function($post_query){
+            $post_query->with(['likes' => function($like_query){
+                $like_query->with(['user'])->orderBy('updated_at', 'desc');
+            }, 'comments' => function($comment_query){
+                $comment_query->with(['user'])->orderBy('updated_at', 'desc');
+            }])->orderBy('updated_at', 'desc');
+        }])->find($request->id);
         $requested_user_posts = Post::where('user_id', $request->id)->orderBy('updated_at', 'desc');
         $main_user_likes = Like::where('user_id', Auth::id())->get();
         $requested_user_likes = Like::whereIn('post_id', $requested_user_posts->get('id'))->get();
@@ -32,7 +38,7 @@ class ProfileController extends Controller
         $requested_user_followed = Follower::where('followed_id', $request->id)->get();
         $requested_user_comments = Comment::whereIn('post_id', $requested_user_posts->get('id'))->get();
         $posts = $requested_user_posts->get();
-        return view('profile', compact('main_user', 'requested_user', 'posts', 'main_user_likes', 'requested_user_likes', 'requested_user_followed', 'requested_user_comments'));
+        return view('profile', compact('main_user', 'requested_user', 'posts', 'main_user_likes', 'requested_user_likes', 'requested_user_followed', 'requested_user_comments', 'request_id'));
     }
 
     public function logout(){

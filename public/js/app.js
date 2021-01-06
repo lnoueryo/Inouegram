@@ -5168,9 +5168,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments', 'liked-posts'],
+  props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments', 'liked-posts', 'request-id'],
   components: {
     ProfileTemplates: _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
@@ -14437,6 +14438,7 @@ __webpack_require__.r(__webpack_exports__);
         requestedUserLikes: Array,
         requestedUserFollowed: Array,
         requestedUserComments: Array,
+        requestId: String,
     },
     data() {
         return {
@@ -14447,6 +14449,7 @@ __webpack_require__.r(__webpack_exports__);
             postCommentUsers: '',
             mainUserPostLikes: '',
             value: 0,
+            requestedId: this.requestId,
         };
     },
     computed: {
@@ -14457,6 +14460,21 @@ __webpack_require__.r(__webpack_exports__);
         }
     },
     created() {
+        // axios.get('/api/likedPostUsers', {
+        //     params: {id: visitor.id},
+        // })
+        // .then((response) => {
+        //     this.mainUserPostLikes = response.data.userLikes;
+        //     this.postLikes = response.data.likes;
+        //     this.postLikeUsers = response.data.likeUsers;
+        //     this.postComments = response.data.comments;
+        //     this.postCommentUsers = response.data.commentUsers;
+        //     // this.likedPosts = response.data.posts;
+        //     this.parsePosts(response.data.posts);
+        // })
+        // .catch(error => {
+        //     console.log('fail')
+        // })
         const visitor = this.mainUser;
         axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/likedPostUsers', {
             params: { id: visitor.id },
@@ -21217,7 +21235,8 @@ var render = function() {
           requestedUserLikes: _vm.requestedUserLikes,
           requestedUserFollowed: _vm.requestedUserFollowed,
           requestedUserComments: _vm.requestedUserComments,
-          likedPosts: _vm.likedPosts
+          likedPosts: _vm.likedPosts,
+          requestId: _vm.requestId
         }
       })
     ],

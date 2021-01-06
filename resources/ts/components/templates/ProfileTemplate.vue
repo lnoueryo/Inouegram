@@ -65,6 +65,7 @@ export type DataType = {
     postComments: PropUserObjType[] | string,
     postCommentUsers: PropUserObjType[] | string,
     mainUserPostLikes: PropUserObjType[] | string,
+    requestedId: string,
 }
 export default Vue.extend({
         components: {
@@ -80,6 +81,7 @@ export default Vue.extend({
         requestedUserLikes: Array,
         requestedUserFollowed: Array,
         requestedUserComments: Array,
+        requestId: String,
     },
     data (): DataType {
         return {
@@ -90,6 +92,7 @@ export default Vue.extend({
             postCommentUsers: '',
             mainUserPostLikes: '',
             value: 0,
+            requestedId: this.requestId,
         }
     },
     computed:{
@@ -100,6 +103,21 @@ export default Vue.extend({
         }
     },
     created(): void{
+        // axios.get('/api/likedPostUsers', {
+        //     params: {id: visitor.id},
+        // })
+        // .then((response) => {
+        //     this.mainUserPostLikes = response.data.userLikes;
+        //     this.postLikes = response.data.likes;
+        //     this.postLikeUsers = response.data.likeUsers;
+        //     this.postComments = response.data.comments;
+        //     this.postCommentUsers = response.data.commentUsers;
+        //     // this.likedPosts = response.data.posts;
+        //     this.parsePosts(response.data.posts);
+        // })
+        // .catch(error => {
+        //     console.log('fail')
+        // })
         const visitor = this.mainUser;
         axios.get('/api/likedPostUsers', {
             params: {id: visitor.id},
