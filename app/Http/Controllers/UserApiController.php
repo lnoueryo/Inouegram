@@ -54,10 +54,14 @@ class UserApiController extends Controller
      */
     public function show($id)
     {
-        $user = User::with(['comments', 'posts' => function($query){
-            $query->with(['likes', 'comments']);
+        $requested_user = User::with(['followees', 'posts' => function($post_query){
+            $post_query->with(['likes' => function($like_query){
+                $like_query->with(['user'])->orderBy('updated_at', 'desc');
+            }, 'comments' => function($comment_query){
+                $comment_query->with(['user'])->orderBy('updated_at', 'desc');
+            }])->orderBy('updated_at', 'desc');
         }])->find($id);
-        return $user;
+        return $requested_user;
     }
 
     /**
