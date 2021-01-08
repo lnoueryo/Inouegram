@@ -54,13 +54,13 @@ class ApiController extends Controller
         if($request->isFollowed == 'true') {
             $follower = Follower::where('following_id', $request->myId)->where('followed_id', $request->id);
             $follower->delete();
-            $requested_user_followed = Follower::where('followed_id', $request->id)->get();
+            $requested_user_followed = Follower::with(['followee'])->where('followed_id', $request->id)->get();
         } else {
             $follower = new Follower;
             $follower->following_id = $request->myId;
             $follower->followed_id = $request->id;
             $follower->save();
-            $requested_user_followed = Follower::where('followed_id', $request->id)->get();
+            $requested_user_followed = Follower::with(['followee'])->where('followed_id', $request->id)->get();
         }
         return  $requested_user_followed;
     }

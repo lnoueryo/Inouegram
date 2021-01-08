@@ -1,6 +1,6 @@
 <template>
     <div v-resize="onResize">
-        <v-card class="mx-auto" max-width="800" tile flat elevation="1">
+        <v-card class="mx-auto" max-width="800" tile flat elevation="1" v-if="requestedUserInfo">
             <div v-if="requestedUserInfo.bg_image">
                 <v-img style="border-radius: 5px" :aspect-ratio="16/9" :src="'storage/image/background/' + requestedUserInfo.bg_image" @click="btnclick"></v-img>
             </div>
@@ -16,9 +16,9 @@
                 <v-list-item-content>
                     <v-list-item-title class="title" style="margin-top:10px;">{{requestedUserInfo.screen_name}}</v-list-item-title>
                     <v-list-item-subtitle>{{requestedUserInfo.name}}</v-list-item-subtitle>
-                    <v-list-item-subtitle style="cursor: pointer;"><span @click="findFollowingUsers()">フォロワー{{ userFollowedNumer }}人</span></v-list-item-subtitle>
+                    <v-list-item-subtitle style="cursor: pointer;"><span @click="followerDialog = true">フォロワー{{ requestedUserInfo.followees.length }}人</span></v-list-item-subtitle>
                 </v-list-item-content>
-                <div class="font-weight-light grey--text title mb-2" v-if="visitor.id == user.id">
+                <div class="font-weight-light grey--text title mb-2" v-if="visitor.id == requestedUserInfo.id">
                     <div>
                         <v-btn @click="logout" small block elevation="2">ログアウト</v-btn>
                     </div>
@@ -40,13 +40,12 @@
                 <v-list subheader>
                 <v-subheader>フォロワー</v-subheader>
                 <div style="max-height: 450px; overflow-y: scroll;">
-                    <v-list-item v-for="(followingUser, index) in followingUsers" :key="index" :href="'/profile?id=' + followingUser.id">
+                    <v-list-item v-for="(followingUser, index) in followingUsers" :key="index" :href="'/profile?id=' + followingUser.followee.id">
                         <v-list-item-avatar>
-                        <v-img :src="'storage/image/avatar/' + followingUser.profile_image"></v-img>
+                        <v-img :src="'storage/image/avatar/' + followingUser.followee.profile_image"></v-img>
                         </v-list-item-avatar>
-
                         <v-list-item-content>
-                        <v-list-item-title v-text="followingUser.screen_name"></v-list-item-title>
+                        <v-list-item-title v-text="followingUser.followee.screen_name"></v-list-item-title>
                         </v-list-item-content>
                     </v-list-item>
                 </div>
@@ -163,60 +162,15 @@
     </div>
 </template>
 
-<script lang="ts">
-import Vue, { PropType } from "vue"
-import axios from 'axios'
-export type DataType = {
-    visitor: User,
-    user: User,
-    userFollowed: Follower[],
-    followerDialog: boolean,
-    followingUsers: User[] | string,
-    windowSize: windowSize,
-    changeBgDialog: boolean,
-    changingBgData: string | null,
-    sizeDialog: boolean,
-    progress: boolean,
-    profileDialog: boolean,
-    nameRules: any,
-    nicknameRules: any,
-    emailRules: any,
-    valid: boolean,
-    showPassword: boolean,
-    passwordRules: any,
-    profile: any,
-    changeProfileErrors: any,
-    saveSnackbar: boolean,
-    timeout: number,
-}
+<script>
+export default {
 
-interface User {
-    id: number;
-    name: string;
-    screen_name: string;
-    email: string;
-}
-interface Follower {
-    following_id: number;
-}
-interface windowSize {
-    x: number
-    y: number
-}
-    export default Vue.extend({
-    props: {
-        mainUser: Object as () => User,
-        requestedUser: Object as () => User,
-        requestedUserFollowed: Array as () => Follower[],
-    },
-    // props: ['mainUser', 'requestedUser', 'requestedUserFollowed'],
-    data (): DataType {
+    props: ['mainUser', 'requestedUser'],
+    data () {
         return {
             visitor: this.mainUser,
             user: this.requestedUser,
-            userFollowed: this.requestedUserFollowed,
             followerDialog: false,
-            followingUsers: '',
             windowSize: {
                 x: 0,
                 y: 0,
@@ -227,20 +181,20 @@ interface windowSize {
             progress: false,
             profileDialog: false,
             nameRules: [
-                (v: any) => !!v || '入力が必要です',
+                (v) => !!v || '入力が必要です',
             ],
             nicknameRules: [
-                (v: any) => !!v || '入力が必要です',
+                (v) => !!v || '入力が必要です',
             ],
             emailRules: [
-                (v: any) => !!v || '入力が必要です',
-                (v: any) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
+                (v) => !!v || '入力が必要です',
+                (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
             ],
             valid: false,
             showPassword: false,
             passwordRules: {
-                required: (value: any) => !!value || '入力が必要です.',
-                min: (v: any) => v.length >= 8 || '8文字以上です',
+                required: (valu) => !!value || '入力が必要です.',
+                min: (v) => v.length >= 8 || '8文字以上です',
             },
             profile: {name: this.mainUser.name, screen_name: this.mainUser.screen_name, email: this.mainUser.email, password: ''},
             changeProfileErrors: '',
@@ -248,28 +202,53 @@ interface windowSize {
             timeout: 2000,
         }
     },
+    watch:  {
+        requestedUser: {
+            immediate: true,
+            handler: function () {
+                this.user = this.requestedUser;
+            },
+        },
+        mainUser: {
+            immediate: true,
+            handler: function () {
+                this.visitor = this.mainUser;
+            }
+        },
+    },
     computed:{
-        requestedUserInfo(): User{
-            var user = this.user as User;
+        requestedUserInfo(){
+            var user = this.user;
             return user;
         },
-        isFollowed(): boolean{
-            var userFolloweds = this.userFollowed;
-            var visitor = this.visitor as User;
-            return userFolloweds.some((userFollowed: Follower) => {
-                return userFollowed.following_id === visitor.id;
-            })
+        followingUsers(){
+            if (this.requestedUser.followees) {
+                return this.requestedUser.followees
+            } else {
+                return false
+            }
+        },
+        isFollowed(){
+            var followees = this.user.followees;
+            var visitor = this.visitor;
+            if(followees){
+                return followees.some((followee) => {
+                    return followee.following_id === visitor.id;
+                })
+            } else {
+                return false
+            }
         },
         userFollowedNumer(){
-            var userFollowedNumer: number = this.userFollowed.length;
+            var userFollowedNumer = this.userFollowed.length;
             console.log(this.userFollowed)
             return userFollowedNumer;
         },
     },
     methods: {
         async changeBg(){
-            var bgData = this.changingBgData as string;
-            let userId: any = this.user.id;
+            var bgData = this.changingBgData;
+            let userId = this.user.id;
             let fd= new FormData();
             fd.append("bgData", bgData);
             fd.append("userId", userId);
@@ -277,14 +256,14 @@ interface windowSize {
             .then(
                 response => {
                     this.changeBgDialog = false;
-                    this.user = response.data;
+                    this.user.bg_image = response.data;
                 }
             )
-            .catch(function (error: string) {
+            .catch(function (error) {
                 console.log(error);
             });
         },
-        async changeAvatar(event: any){
+        async changeAvatar(event){
             var file = event.target.files[0];
             if (typeof FileReader === 'function') {
                 if(this.windowSize.x<480){
@@ -294,19 +273,19 @@ interface windowSize {
                         reader.readAsDataURL(file);
                         var avatarData;
                         var that = this;
-                        reader.onload = function(e: any) {
+                        reader.onload = function(e) {
                             avatarData = e.target.result;
                             let fd= new FormData();
                             fd.append("avatarData", avatarData);
-                            fd.append("userId", that.user.id as any);
+                            fd.append("userId", that.user.id);
                             axios.post('/api/upload2', fd)
                             .then(
                                 response => {
-                                    that.user = response.data;
+                                    that.user.profile_image = response.data;
                                     that.progress = false;
                                 }
                             )
-                            .catch(function (error: string) {
+                            .catch(function (error) {
                                 console.log(error);
                                 that.progress = false;
                             });
@@ -319,34 +298,34 @@ interface windowSize {
                     reader.readAsDataURL(file);
                     var avatarData;
                     var that = this;
-                    reader.onload = function(e: any) {
+                    reader.onload = function(e) {
                         avatarData = e.target.result;
                         let fd= new FormData();
                         fd.append("avatarData", avatarData);
-                        fd.append("userId", that.user.id as any);
+                        fd.append("userId", that.user.id);
                         axios.post('/api/upload2', fd)
                         .then(
                             response => {
-                                that.user = response.data;
+                                that.user.profile_image = response.data;
                             }
                         )
-                        .catch(function (error: string) {
+                        .catch(function (error) {
                             console.log(error);
                         });
                     }
                 }
             }
         },
-        upload(event: any): void{
-            if(event.target instanceof HTMLInputElement){
+        upload(event){
+            if(event.target){
             var file = event.target.files[0];
                 if(this.windowSize.x<480){
                     if(file.size<3100000){
                         this.progress = true;
                         var reader = new FileReader();
                         var that = this;
-                            reader.onload = function(e: any) {
-                                that.changingBgData = e.target.result as string | null;
+                            reader.onload = function() {
+                                that.changingBgData = e.target.result;
                                 that.changeBgDialog = true;
                                 that.progress = false;
                             }
@@ -358,8 +337,8 @@ interface windowSize {
                     this.progress = true;
                     var reader = new FileReader();
                     var that = this;
-                        reader.onload = function(e: any) {
-                            that.changingBgData = e.target.result as string | null;
+                        reader.onload = function(e) {
+                            that.changingBgData = e.target.result;
                             that.changeBgDialog = true;
                             that.progress = false;
                         }
@@ -370,48 +349,32 @@ interface windowSize {
             }
             
         },
-        btnclick(): void {
+        btnclick() {
             if(this.visitor.id == this.user.id){
-                let element: HTMLElement | any = this.$refs.bg;
+                let element  = this.$refs.bg;
                 element.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
             }
         },
-        btnclick2(): void {
+        btnclick2() {
             if(this.visitor.id == this.user.id){
-                let element: HTMLElement | any = this.$refs.avatar;
+                let element = this.$refs.avatar;
                 element.click()
             }
         },
-        findFollowingUsers(): void{
-            this.followerDialog = true;
-            console.log(this.followerDialog)
-            var followingIds = this.userFollowed.map((user) => {
-                return user.following_id
-            })
-            axios.post('/api/followingUsers', {
-                usersId: followingIds,
-            })
-            .then((response) => {
-                this.followingUsers = response.data;
-            })
-            .catch((error) => {
-                console.log('fail')
-            })
-        },
-        logout(): void {
+        logout() {
           axios.post('/logout')
           .then(() => location.href = '/')
           .catch(function (error) {
               location.href = '/';
           });
         },
-        follow(isFollowed: boolean): void{
+        follow(isFollowed){
                 axios.get('/api/follow', {
-                params: {'id': this.user.id, 'myId': this.visitor.id, 'isFollowed': isFollowed},
+                params: {'id': this.requestedUser.id, 'myId': this.mainUser.id, 'isFollowed': isFollowed},
             })
-            .then(
-                response => (this.userFollowed = response.data)
-            )
+            .then((response) =>{
+                this.user.followees = response.data;
+            })
             .catch(function (error) {
                 console.log(error);
             });
@@ -434,7 +397,7 @@ interface windowSize {
             )
             .catch((error) => {
                 var responseErrors = error.response.data.errors;
-                var errors: any = {};
+                var errors = {};
                 for(var key in responseErrors) {
                     errors[key] = responseErrors[key][0];
                 }
@@ -443,9 +406,9 @@ interface windowSize {
             });
         },
         resetValidation () {
-        let element: HTMLElement | any = this.$refs.form;
+        let element = this.$refs.form;
         element.resetValidation();
       },
     }
-})
+}
 </script>

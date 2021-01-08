@@ -23,7 +23,9 @@ class ProfileController extends Controller
     public function index(Request $request) {
         $request_id = $request->id;
         $main_user = User::with(['likes', 'comments','followers'])->find(Auth::id());
-        $requested_user = User::with(['followees', 'posts' => function($post_query){
+        $requested_user = User::with(['followees' => function($followee_query){
+            $followee_query->with(['followee']);
+        }, 'posts' => function($post_query){
             $post_query->with(['likes' => function($like_query){
                 $like_query->with(['user'])->orderBy('updated_at', 'desc');
             }, 'comments' => function($comment_query){
@@ -92,7 +94,7 @@ class ProfileController extends Controller
         Storage::disk('background')->put($imageName, base64_decode($image));
         $user->bg_image = $imageName;
         $user->save();
-        return $user;
+        return $user->bg_image;
     }
     public function uploadAvatar(Request $request) {
         $user = User::find($request->userId);
@@ -110,6 +112,6 @@ class ProfileController extends Controller
         Storage::disk('avatar')->put($imageName, base64_decode($image));
         $user->profile_image = $imageName;
         $user->save();
-        return $user;
+        return $user->profile_image;
     }
 }

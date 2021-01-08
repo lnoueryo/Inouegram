@@ -4214,6 +4214,485 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=js&":
+/*!****************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=js& ***!
+  \****************************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
+/* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
+
+
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['mainUser', 'requestedUser'],
+  data: function data() {
+    return {
+      visitor: this.mainUser,
+      user: this.requestedUser,
+      followerDialog: false,
+      windowSize: {
+        x: 0,
+        y: 0
+      },
+      changeBgDialog: false,
+      changingBgData: '',
+      sizeDialog: false,
+      progress: false,
+      profileDialog: false,
+      nameRules: [function (v) {
+        return !!v || '入力が必要です';
+      }],
+      nicknameRules: [function (v) {
+        return !!v || '入力が必要です';
+      }],
+      emailRules: [function (v) {
+        return !!v || '入力が必要です';
+      }, function (v) {
+        return /.+@.+\..+/.test(v) || 'E-mail must be valid';
+      }],
+      valid: false,
+      showPassword: false,
+      passwordRules: {
+        required: function required(valu) {
+          return !!value || '入力が必要です.';
+        },
+        min: function min(v) {
+          return v.length >= 8 || '8文字以上です';
+        }
+      },
+      profile: {
+        name: this.mainUser.name,
+        screen_name: this.mainUser.screen_name,
+        email: this.mainUser.email,
+        password: ''
+      },
+      changeProfileErrors: '',
+      saveSnackbar: false,
+      timeout: 2000
+    };
+  },
+  watch: {
+    requestedUser: {
+      immediate: true,
+      handler: function handler() {
+        this.user = this.requestedUser;
+      }
+    },
+    mainUser: {
+      immediate: true,
+      handler: function handler() {
+        this.visitor = this.mainUser;
+      }
+    }
+  },
+  computed: {
+    requestedUserInfo: function requestedUserInfo() {
+      var user = this.user;
+      return user;
+    },
+    followingUsers: function followingUsers() {
+      if (this.requestedUser.followees) {
+        return this.requestedUser.followees;
+      } else {
+        return false;
+      }
+    },
+    isFollowed: function isFollowed() {
+      var followees = this.user.followees;
+      var visitor = this.visitor;
+
+      if (followees) {
+        return followees.some(function (followee) {
+          return followee.following_id === visitor.id;
+        });
+      } else {
+        return false;
+      }
+    },
+    userFollowedNumer: function userFollowedNumer() {
+      var userFollowedNumer = this.userFollowed.length;
+      console.log(this.userFollowed);
+      return userFollowedNumer;
+    }
+  },
+  methods: {
+    changeBg: function changeBg() {
+      var _this = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee() {
+        var bgData, userId, fd;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                bgData = _this.changingBgData;
+                userId = _this.user.id;
+                fd = new FormData();
+                fd.append("bgData", bgData);
+                fd.append("userId", userId);
+                axios.post('/api/upload', fd).then(function (response) {
+                  _this.changeBgDialog = false;
+                  _this.user.bg_image = response.data;
+                })["catch"](function (error) {
+                  console.log(error);
+                });
+
+              case 6:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    changeAvatar: function changeAvatar(event) {
+      var _this2 = this;
+
+      return _asyncToGenerator( /*#__PURE__*/_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.mark(function _callee2() {
+        var file, reader, avatarData, that;
+        return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                file = event.target.files[0];
+
+                if (typeof FileReader === 'function') {
+                  if (_this2.windowSize.x < 480) {
+                    if (file.size < 3100000) {
+                      _this2.progress = true;
+                      reader = new FileReader();
+                      reader.readAsDataURL(file);
+                      that = _this2;
+
+                      reader.onload = function (e) {
+                        avatarData = e.target.result;
+                        var fd = new FormData();
+                        fd.append("avatarData", avatarData);
+                        fd.append("userId", that.user.id);
+                        axios.post('/api/upload2', fd).then(function (response) {
+                          that.user.profile_image = response.data;
+                          that.progress = false;
+                        })["catch"](function (error) {
+                          console.log(error);
+                          that.progress = false;
+                        });
+                      };
+                    } else {
+                      _this2.sizeDialog = true;
+                    }
+                  } else {
+                    reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    that = _this2;
+
+                    reader.onload = function (e) {
+                      avatarData = e.target.result;
+                      var fd = new FormData();
+                      fd.append("avatarData", avatarData);
+                      fd.append("userId", that.user.id);
+                      axios.post('/api/upload2', fd).then(function (response) {
+                        that.user.profile_image = response.data;
+                      })["catch"](function (error) {
+                        console.log(error);
+                      });
+                    };
+                  }
+                }
+
+              case 2:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2);
+      }))();
+    },
+    upload: function upload(event) {
+      if (event.target) {
+        var file = event.target.files[0];
+
+        if (this.windowSize.x < 480) {
+          if (file.size < 3100000) {
+            this.progress = true;
+            var reader = new FileReader();
+            var that = this;
+
+            reader.onload = function () {
+              that.changingBgData = e.target.result;
+              that.changeBgDialog = true;
+              that.progress = false;
+            };
+
+            reader.readAsDataURL(file);
+          } else {
+            this.sizeDialog = true;
+          }
+        } else {
+          this.progress = true;
+          var reader = new FileReader();
+          var that = this;
+
+          reader.onload = function (e) {
+            that.changingBgData = e.target.result;
+            that.changeBgDialog = true;
+            that.progress = false;
+          };
+
+          reader.readAsDataURL(file);
+        }
+      } else {
+        this.changeBgDialog = false;
+      }
+    },
+    btnclick: function btnclick() {
+      if (this.visitor.id == this.user.id) {
+        var element = this.$refs.bg;
+        element.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
+      }
+    },
+    btnclick2: function btnclick2() {
+      if (this.visitor.id == this.user.id) {
+        var element = this.$refs.avatar;
+        element.click();
+      }
+    },
+    logout: function logout() {
+      axios.post('/logout').then(function () {
+        return location.href = '/';
+      })["catch"](function (error) {
+        location.href = '/';
+      });
+    },
+    follow: function follow(isFollowed) {
+      var _this3 = this;
+
+      axios.get('/api/follow', {
+        params: {
+          'id': this.requestedUser.id,
+          'myId': this.mainUser.id,
+          'isFollowed': isFollowed
+        }
+      }).then(function (response) {
+        _this3.user.followees = response.data;
+      })["catch"](function (error) {
+        console.log(error);
+      });
+    },
+    onResize: function onResize() {
+      this.windowSize = {
+        x: window.innerWidth,
+        y: window.innerHeight
+      };
+    },
+    changeProfile: function changeProfile() {
+      var _this4 = this;
+
+      axios.post('/api/changeProfile', {
+        'id': this.mainUser.id,
+        'name': this.profile.name,
+        'screen_name': this.profile.screen_name,
+        'email': this.profile.email,
+        password: this.profile.password
+      }).then(function (response) {
+        _this4.saveSnackbar = true;
+        _this4.user = response.data;
+        _this4.profileDialog = false;
+        _this4.profile.password = '';
+
+        _this4.resetValidation();
+      })["catch"](function (error) {
+        var responseErrors = error.response.data.errors;
+        var errors = {};
+
+        for (var key in responseErrors) {
+          errors[key] = responseErrors[key][0];
+        }
+
+        console.log(errors);
+        _this4.changeProfileErrors = errors;
+      });
+    },
+    resetValidation: function resetValidation() {
+      var element = this.$refs.form;
+      element.resetValidation();
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=script&lang=js&":
 /*!**************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/UserPosts.vue?vue&type=script&lang=js& ***!
@@ -4457,6 +4936,14 @@ __webpack_require__.r(__webpack_exports__);
       likePosts: this.likedPosts,
       isDeleteBtn: ''
     };
+  },
+  watch: {
+    requestedUser: {
+      immediate: true,
+      handler: function handler() {
+        this.user = this.requestedUser;
+      }
+    }
   },
   computed: {
     parsedUserPosts: function parsedUserPosts() {
@@ -14134,276 +14621,6 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 
 /***/ }),
 
-/***/ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts&":
-/*!*******************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/ts-loader??ref--5!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts& ***!
-  \*******************************************************************************************************************************************************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
-var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-
-
-/* harmony default export */ __webpack_exports__["default"] = (vue__WEBPACK_IMPORTED_MODULE_0__["default"].extend({
-    props: {
-        mainUser: Object,
-        requestedUser: Object,
-        requestedUserFollowed: Array,
-    },
-    // props: ['mainUser', 'requestedUser', 'requestedUserFollowed'],
-    data() {
-        return {
-            visitor: this.mainUser,
-            user: this.requestedUser,
-            userFollowed: this.requestedUserFollowed,
-            followerDialog: false,
-            followingUsers: '',
-            windowSize: {
-                x: 0,
-                y: 0,
-            },
-            changeBgDialog: false,
-            changingBgData: '',
-            sizeDialog: false,
-            progress: false,
-            profileDialog: false,
-            nameRules: [
-                (v) => !!v || '入力が必要です',
-            ],
-            nicknameRules: [
-                (v) => !!v || '入力が必要です',
-            ],
-            emailRules: [
-                (v) => !!v || '入力が必要です',
-                (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid',
-            ],
-            valid: false,
-            showPassword: false,
-            passwordRules: {
-                required: (value) => !!value || '入力が必要です.',
-                min: (v) => v.length >= 8 || '8文字以上です',
-            },
-            profile: { name: this.mainUser.name, screen_name: this.mainUser.screen_name, email: this.mainUser.email, password: '' },
-            changeProfileErrors: '',
-            saveSnackbar: false,
-            timeout: 2000,
-        };
-    },
-    computed: {
-        requestedUserInfo() {
-            var user = this.user;
-            return user;
-        },
-        isFollowed() {
-            var userFolloweds = this.userFollowed;
-            var visitor = this.visitor;
-            return userFolloweds.some((userFollowed) => {
-                return userFollowed.following_id === visitor.id;
-            });
-        },
-        userFollowedNumer() {
-            var userFollowedNumer = this.userFollowed.length;
-            console.log(this.userFollowed);
-            return userFollowedNumer;
-        },
-    },
-    methods: {
-        changeBg() {
-            return __awaiter(this, void 0, void 0, function* () {
-                var bgData = this.changingBgData;
-                let userId = this.user.id;
-                let fd = new FormData();
-                fd.append("bgData", bgData);
-                fd.append("userId", userId);
-                axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/upload', fd)
-                    .then(response => {
-                    this.changeBgDialog = false;
-                    this.user = response.data;
-                })
-                    .catch(function (error) {
-                    console.log(error);
-                });
-            });
-        },
-        changeAvatar(event) {
-            return __awaiter(this, void 0, void 0, function* () {
-                var file = event.target.files[0];
-                if (typeof FileReader === 'function') {
-                    if (this.windowSize.x < 480) {
-                        if (file.size < 3100000) {
-                            this.progress = true;
-                            var reader = new FileReader();
-                            reader.readAsDataURL(file);
-                            var avatarData;
-                            var that = this;
-                            reader.onload = function (e) {
-                                avatarData = e.target.result;
-                                let fd = new FormData();
-                                fd.append("avatarData", avatarData);
-                                fd.append("userId", that.user.id);
-                                axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/upload2', fd)
-                                    .then(response => {
-                                    that.user = response.data;
-                                    that.progress = false;
-                                })
-                                    .catch(function (error) {
-                                    console.log(error);
-                                    that.progress = false;
-                                });
-                            };
-                        }
-                        else {
-                            this.sizeDialog = true;
-                        }
-                    }
-                    else {
-                        var reader = new FileReader();
-                        reader.readAsDataURL(file);
-                        var avatarData;
-                        var that = this;
-                        reader.onload = function (e) {
-                            avatarData = e.target.result;
-                            let fd = new FormData();
-                            fd.append("avatarData", avatarData);
-                            fd.append("userId", that.user.id);
-                            axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/upload2', fd)
-                                .then(response => {
-                                that.user = response.data;
-                            })
-                                .catch(function (error) {
-                                console.log(error);
-                            });
-                        };
-                    }
-                }
-            });
-        },
-        upload(event) {
-            if (event.target instanceof HTMLInputElement) {
-                var file = event.target.files[0];
-                if (this.windowSize.x < 480) {
-                    if (file.size < 3100000) {
-                        this.progress = true;
-                        var reader = new FileReader();
-                        var that = this;
-                        reader.onload = function (e) {
-                            that.changingBgData = e.target.result;
-                            that.changeBgDialog = true;
-                            that.progress = false;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                    else {
-                        this.sizeDialog = true;
-                    }
-                }
-                else {
-                    this.progress = true;
-                    var reader = new FileReader();
-                    var that = this;
-                    reader.onload = function (e) {
-                        that.changingBgData = e.target.result;
-                        that.changeBgDialog = true;
-                        that.progress = false;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            }
-            else {
-                this.changeBgDialog = false;
-            }
-        },
-        btnclick() {
-            if (this.visitor.id == this.user.id) {
-                let element = this.$refs.bg;
-                element.click(); // 実際のinputと別のボタンを用意しており、そのボタンを押すとinputが動く
-            }
-        },
-        btnclick2() {
-            if (this.visitor.id == this.user.id) {
-                let element = this.$refs.avatar;
-                element.click();
-            }
-        },
-        findFollowingUsers() {
-            this.followerDialog = true;
-            console.log(this.followerDialog);
-            var followingIds = this.userFollowed.map((user) => {
-                return user.following_id;
-            });
-            axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/followingUsers', {
-                usersId: followingIds,
-            })
-                .then((response) => {
-                this.followingUsers = response.data;
-            })
-                .catch((error) => {
-                console.log('fail');
-            });
-        },
-        logout() {
-            axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/logout')
-                .then(() => location.href = '/')
-                .catch(function (error) {
-                location.href = '/';
-            });
-        },
-        follow(isFollowed) {
-            axios__WEBPACK_IMPORTED_MODULE_1___default.a.get('/api/follow', {
-                params: { 'id': this.user.id, 'myId': this.visitor.id, 'isFollowed': isFollowed },
-            })
-                .then(response => (this.userFollowed = response.data))
-                .catch(function (error) {
-                console.log(error);
-            });
-        },
-        onResize() {
-            this.windowSize = { x: window.innerWidth, y: window.innerHeight };
-        },
-        changeProfile() {
-            axios__WEBPACK_IMPORTED_MODULE_1___default.a.post('/api/changeProfile', {
-                'id': this.mainUser.id, 'name': this.profile.name, 'screen_name': this.profile.screen_name, 'email': this.profile.email, password: this.profile.password
-            })
-                .then(response => {
-                this.saveSnackbar = true;
-                this.user = response.data;
-                this.profileDialog = false;
-                this.profile.password = '';
-                this.resetValidation();
-            })
-                .catch((error) => {
-                var responseErrors = error.response.data.errors;
-                var errors = {};
-                for (var key in responseErrors) {
-                    errors[key] = responseErrors[key][0];
-                }
-                console.log(errors);
-                this.changeProfileErrors = errors;
-            });
-        },
-        resetValidation() {
-            let element = this.$refs.form;
-            element.resetValidation();
-        },
-    }
-}));
-
-
-/***/ }),
-
 /***/ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/templates/ProfileTemplate.vue?vue&type=script&lang=ts&":
 /*!***************************************************************************************************************************************************************************!*\
   !*** ./node_modules/ts-loader??ref--5!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/templates/ProfileTemplate.vue?vue&type=script&lang=ts& ***!
@@ -14432,7 +14649,7 @@ __webpack_require__.r(__webpack_exports__);
     },
     props: {
         mainUser: Object,
-        requestedUser: Object,
+        // requestedUser: Object as PropType<PropUserObjType>,
         requestedUserPosts: Array,
         mainUserLikes: Array,
         requestedUserLikes: Array,
@@ -14449,7 +14666,7 @@ __webpack_require__.r(__webpack_exports__);
             postCommentUsers: '',
             mainUserPostLikes: '',
             value: 0,
-            requestedId: this.requestId,
+            requestedUser: '',
         };
     },
     computed: {
@@ -14460,21 +14677,16 @@ __webpack_require__.r(__webpack_exports__);
         }
     },
     created() {
-        // axios.get('/api/likedPostUsers', {
-        //     params: {id: visitor.id},
-        // })
-        // .then((response) => {
-        //     this.mainUserPostLikes = response.data.userLikes;
-        //     this.postLikes = response.data.likes;
-        //     this.postLikeUsers = response.data.likeUsers;
-        //     this.postComments = response.data.comments;
-        //     this.postCommentUsers = response.data.commentUsers;
-        //     // this.likedPosts = response.data.posts;
-        //     this.parsePosts(response.data.posts);
-        // })
-        // .catch(error => {
-        //     console.log('fail')
-        // })
+        const requestId = this.requestId;
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/users/' + requestId, {
+            params: { id: requestId },
+        })
+            .then((response) => {
+            this.requestedUser = response.data;
+        })
+            .catch(error => {
+            console.log('fail');
+        });
         const visitor = this.mainUser;
         axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/api/likedPostUsers', {
             params: { id: visitor.id },
@@ -18931,183 +19143,201 @@ var render = function() {
       ]
     },
     [
-      _c(
-        "v-card",
-        {
-          staticClass: "mx-auto",
-          attrs: { "max-width": "800", tile: "", flat: "", elevation: "1" }
-        },
-        [
-          _vm.requestedUserInfo.bg_image
-            ? _c(
-                "div",
-                [
-                  _c("v-img", {
-                    staticStyle: { "border-radius": "5px" },
-                    attrs: {
-                      "aspect-ratio": 16 / 9,
-                      src:
-                        "storage/image/background/" +
-                        _vm.requestedUserInfo.bg_image
-                    },
-                    on: { click: _vm.btnclick }
-                  })
-                ],
-                1
-              )
-            : _c(
-                "div",
-                [
-                  _c("v-img", {
-                    attrs: { src: "storage/image/background/bg-1.jpg" },
-                    on: { click: _vm.btnclick }
-                  })
-                ],
-                1
-              ),
-          _vm._v(" "),
-          _c(
-            "v-list-item",
-            { staticClass: "px-3", attrs: { "three-line": "" } },
+      _vm.requestedUserInfo
+        ? _c(
+            "v-card",
+            {
+              staticClass: "mx-auto",
+              attrs: { "max-width": "800", tile: "", flat: "", elevation: "1" }
+            },
             [
-              _c(
-                "v-list-item-avatar",
-                { attrs: { size: "80" }, on: { click: _vm.btnclick2 } },
-                [
-                  _c(
-                    "v-avatar",
-                    { attrs: { color: "indigo", size: "80" } },
+              _vm.requestedUserInfo.bg_image
+                ? _c(
+                    "div",
                     [
                       _c("v-img", {
+                        staticStyle: { "border-radius": "5px" },
                         attrs: {
+                          "aspect-ratio": 16 / 9,
                           src:
-                            "storage/image/avatar/" +
-                            _vm.requestedUserInfo.profile_image
-                        }
+                            "storage/image/background/" +
+                            _vm.requestedUserInfo.bg_image
+                        },
+                        on: { click: _vm.btnclick }
                       })
                     ],
                     1
                   )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "v-list-item-content",
-                [
-                  _c(
-                    "v-list-item-title",
-                    {
-                      staticClass: "title",
-                      staticStyle: { "margin-top": "10px" }
-                    },
-                    [_vm._v(_vm._s(_vm.requestedUserInfo.screen_name))]
-                  ),
-                  _vm._v(" "),
-                  _c("v-list-item-subtitle", [
-                    _vm._v(_vm._s(_vm.requestedUserInfo.name))
-                  ]),
-                  _vm._v(" "),
-                  _c(
-                    "v-list-item-subtitle",
-                    { staticStyle: { cursor: "pointer" } },
-                    [
-                      _c(
-                        "span",
-                        {
-                          on: {
-                            click: function($event) {
-                              return _vm.findFollowingUsers()
-                            }
-                          }
-                        },
-                        [
-                          _vm._v(
-                            "フォロワー" + _vm._s(_vm.userFollowedNumer) + "人"
-                          )
-                        ]
-                      )
-                    ]
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _vm.visitor.id == _vm.user.id
-                ? _c(
-                    "div",
-                    { staticClass: "font-weight-light grey--text title mb-2" },
-                    [
-                      _c(
-                        "div",
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { small: "", block: "", elevation: "2" },
-                              on: { click: _vm.logout }
-                            },
-                            [_vm._v("ログアウト")]
-                          )
-                        ],
-                        1
-                      ),
-                      _vm._v(" "),
-                      _c(
-                        "div",
-                        [
-                          _c(
-                            "v-btn",
-                            {
-                              attrs: { small: "", elevation: "2", dark: "" },
-                              on: {
-                                click: function($event) {
-                                  _vm.profileDialog = true
-                                }
-                              }
-                            },
-                            [_vm._v("プロフィール")]
-                          )
-                        ],
-                        1
-                      )
-                    ]
-                  )
                 : _c(
                     "div",
                     [
+                      _c("v-img", {
+                        attrs: { src: "storage/image/background/bg-1.jpg" },
+                        on: { click: _vm.btnclick }
+                      })
+                    ],
+                    1
+                  ),
+              _vm._v(" "),
+              _c(
+                "v-list-item",
+                { staticClass: "px-3", attrs: { "three-line": "" } },
+                [
+                  _c(
+                    "v-list-item-avatar",
+                    { attrs: { size: "80" }, on: { click: _vm.btnclick2 } },
+                    [
                       _c(
-                        "v-btn",
-                        {
-                          attrs: {
-                            elevation: "1",
-                            color: _vm.isFollowed ? "error" : "primary"
-                          },
-                          on: {
-                            click: function($event) {
-                              return _vm.follow(_vm.isFollowed)
-                            }
-                          }
-                        },
+                        "v-avatar",
+                        { attrs: { color: "indigo", size: "80" } },
                         [
-                          _c("span", [
-                            _vm._v(
-                              _vm._s(
-                                _vm.isFollowed ? "フォロー済み" : "フォローする"
+                          _c("v-img", {
+                            attrs: {
+                              src:
+                                "storage/image/avatar/" +
+                                _vm.requestedUserInfo.profile_image
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    ],
+                    1
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "v-list-item-content",
+                    [
+                      _c(
+                        "v-list-item-title",
+                        {
+                          staticClass: "title",
+                          staticStyle: { "margin-top": "10px" }
+                        },
+                        [_vm._v(_vm._s(_vm.requestedUserInfo.screen_name))]
+                      ),
+                      _vm._v(" "),
+                      _c("v-list-item-subtitle", [
+                        _vm._v(_vm._s(_vm.requestedUserInfo.name))
+                      ]),
+                      _vm._v(" "),
+                      _c(
+                        "v-list-item-subtitle",
+                        { staticStyle: { cursor: "pointer" } },
+                        [
+                          _c(
+                            "span",
+                            {
+                              on: {
+                                click: function($event) {
+                                  _vm.followerDialog = true
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "フォロワー" +
+                                  _vm._s(
+                                    _vm.requestedUserInfo.followees.length
+                                  ) +
+                                  "人"
                               )
-                            )
-                          ])
+                            ]
+                          )
                         ]
                       )
                     ],
                     1
-                  )
+                  ),
+                  _vm._v(" "),
+                  _vm.visitor.id == _vm.requestedUserInfo.id
+                    ? _c(
+                        "div",
+                        {
+                          staticClass: "font-weight-light grey--text title mb-2"
+                        },
+                        [
+                          _c(
+                            "div",
+                            [
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: {
+                                    small: "",
+                                    block: "",
+                                    elevation: "2"
+                                  },
+                                  on: { click: _vm.logout }
+                                },
+                                [_vm._v("ログアウト")]
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            [
+                              _c(
+                                "v-btn",
+                                {
+                                  attrs: {
+                                    small: "",
+                                    elevation: "2",
+                                    dark: ""
+                                  },
+                                  on: {
+                                    click: function($event) {
+                                      _vm.profileDialog = true
+                                    }
+                                  }
+                                },
+                                [_vm._v("プロフィール")]
+                              )
+                            ],
+                            1
+                          )
+                        ]
+                      )
+                    : _c(
+                        "div",
+                        [
+                          _c(
+                            "v-btn",
+                            {
+                              attrs: {
+                                elevation: "1",
+                                color: _vm.isFollowed ? "error" : "primary"
+                              },
+                              on: {
+                                click: function($event) {
+                                  return _vm.follow(_vm.isFollowed)
+                                }
+                              }
+                            },
+                            [
+                              _c("span", [
+                                _vm._v(
+                                  _vm._s(
+                                    _vm.isFollowed
+                                      ? "フォロー済み"
+                                      : "フォローする"
+                                  )
+                                )
+                              ])
+                            ]
+                          )
+                        ],
+                        1
+                      )
+                ],
+                1
+              )
             ],
             1
           )
-        ],
-        1
-      ),
+        : _vm._e(),
       _vm._v(" "),
       _c("input", {
         ref: "bg",
@@ -19158,7 +19388,9 @@ var render = function() {
                         "v-list-item",
                         {
                           key: index,
-                          attrs: { href: "/profile?id=" + followingUser.id }
+                          attrs: {
+                            href: "/profile?id=" + followingUser.followee.id
+                          }
                         },
                         [
                           _c(
@@ -19168,7 +19400,7 @@ var render = function() {
                                 attrs: {
                                   src:
                                     "storage/image/avatar/" +
-                                    followingUser.profile_image
+                                    followingUser.followee.profile_image
                                 }
                               })
                             ],
@@ -19180,7 +19412,9 @@ var render = function() {
                             [
                               _c("v-list-item-title", {
                                 domProps: {
-                                  textContent: _vm._s(followingUser.screen_name)
+                                  textContent: _vm._s(
+                                    followingUser.followee.screen_name
+                                  )
                                 }
                               })
                             ],
@@ -25600,11 +25834,7 @@ var render = function() {
     "div",
     [
       _c("profile-card", {
-        attrs: {
-          mainUser: _vm.mainUser,
-          requestedUser: _vm.requestedUser,
-          requestedUserFollowed: _vm.requestedUserFollowed
-        }
+        attrs: { mainUser: _vm.mainUser, requestedUser: _vm.requestedUser }
       }),
       _vm._v(" "),
       _c(
@@ -87191,7 +87421,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _ProfileCard_vue_vue_type_template_id_328b1574___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ProfileCard.vue?vue&type=template&id=328b1574& */ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=template&id=328b1574&");
-/* harmony import */ var _ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ProfileCard.vue?vue&type=script&lang=ts& */ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts&");
+/* harmony import */ var _ProfileCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ProfileCard.vue?vue&type=script&lang=js& */ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -87201,7 +87431,7 @@ __webpack_require__.r(__webpack_exports__);
 /* normalize component */
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
-  _ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ProfileCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
   _ProfileCard_vue_vue_type_template_id_328b1574___WEBPACK_IMPORTED_MODULE_0__["render"],
   _ProfileCard_vue_vue_type_template_id_328b1574___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
@@ -87218,17 +87448,17 @@ component.options.__file = "resources/ts/components/organisms/profile/ProfileCar
 
 /***/ }),
 
-/***/ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts&":
+/***/ "./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************!*\
-  !*** ./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts& ***!
+  !*** ./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=js& ***!
   \********************************************************************************************/
 /*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/ts-loader??ref--5!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ProfileCard.vue?vue&type=script&lang=ts& */ "./node_modules/ts-loader/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=ts&");
-/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_ts_loader_index_js_ref_5_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_script_lang_ts___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../../node_modules/babel-loader/lib??ref--4-0!../../../../../node_modules/vue-loader/lib??vue-loader-options!./ProfileCard.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/organisms/profile/ProfileCard.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ProfileCard_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
 
 /***/ }),
 
