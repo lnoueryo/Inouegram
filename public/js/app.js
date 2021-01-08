@@ -4943,13 +4943,19 @@ __webpack_require__.r(__webpack_exports__);
       handler: function handler() {
         this.user = this.requestedUser;
       }
+    },
+    mainUser: {
+      immediate: true,
+      handler: function handler() {
+        this.visitor = this.mainUser;
+      }
     }
   },
   computed: {
     parsedUserPosts: function parsedUserPosts() {
-      var userPosts = this.userPosts;
+      var userPosts = this.user.posts;
 
-      if (userPosts.length == 0) {
+      if (!userPosts) {
         return false;
       } else {
         for (var i = 0; i < userPosts.length; i++) {
@@ -4979,7 +4985,7 @@ __webpack_require__.r(__webpack_exports__);
       }) : '';
     },
     likedUsers: function likedUsers() {
-      var likeUsers = this.likeUsers;
+      var likeUsers = this.postDialog.likes;
       return likeUsers;
     },
     card: function card() {
@@ -5096,8 +5102,9 @@ __webpack_require__.r(__webpack_exports__);
     openDialog: function openDialog(userPost, index) {
       this.postDialog = userPost;
       this.postDialogIndex = index;
-      this.findLikeUsers(userPost.id);
-      this.findCommentUsers(userPost.id);
+      console.log(userPost);
+      this.dialog = true; // this.findLikeUsers(userPost.id);
+      // this.findCommentUsers(userPost.id)
     },
     findLikeUsers: function findLikeUsers(id) {
       var _this6 = this;
@@ -20484,7 +20491,8 @@ var render = function() {
                                             key: index,
                                             attrs: {
                                               href:
-                                                "/profile?id=" + likedUser.id
+                                                "/profile?id=" +
+                                                likedUser.user.id
                                             }
                                           },
                                           [
@@ -20495,7 +20503,8 @@ var render = function() {
                                                   attrs: {
                                                     src:
                                                       "storage/image/avatar/" +
-                                                      likedUser.profile_image
+                                                      likedUser.user
+                                                        .profile_image
                                                   }
                                                 })
                                               ],
@@ -20508,7 +20517,7 @@ var render = function() {
                                                 _c("v-list-item-title", {
                                                   domProps: {
                                                     textContent: _vm._s(
-                                                      likedUser.screen_name
+                                                      likedUser.user.screen_name
                                                     )
                                                   }
                                                 })
@@ -20517,7 +20526,7 @@ var render = function() {
                                             ),
                                             _vm._v(" "),
                                             _c("v-list-item-icon", [
-                                              _vm.iconType(likedUser.id) == 0
+                                              likedUser.reaction == 0
                                                 ? _c(
                                                     "div",
                                                     [
@@ -20533,8 +20542,7 @@ var render = function() {
                                                     ],
                                                     1
                                                   )
-                                                : _vm.iconType(likedUser.id) ==
-                                                  1
+                                                : likedUser.reaction == 1
                                                 ? _c(
                                                     "div",
                                                     [
@@ -20554,8 +20562,7 @@ var render = function() {
                                                     ],
                                                     1
                                                   )
-                                                : _vm.iconType(likedUser.id) ==
-                                                  2
+                                                : likedUser.reaction == 2
                                                 ? _c(
                                                     "div",
                                                     [
@@ -20575,8 +20582,7 @@ var render = function() {
                                                     ],
                                                     1
                                                   )
-                                                : _vm.iconType(likedUser.id) ==
-                                                  3
+                                                : likedUser.reaction == 3
                                                 ? _c(
                                                     "div",
                                                     [

@@ -81,20 +81,20 @@
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>いいね</v-subheader>
                                     <div>
-                                        <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.id">
+                                        <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.user.id">
                                             <v-list-item-avatar>
-                                            <v-img :src="'storage/image/avatar/' + likedUser.profile_image"></v-img>
+                                            <v-img :src="'storage/image/avatar/' + likedUser.user.profile_image"></v-img>
                                             </v-list-item-avatar>
 
                                             <v-list-item-content>
-                                            <v-list-item-title v-text="likedUser.screen_name"></v-list-item-title>
+                                            <v-list-item-title v-text="likedUser.user.screen_name"></v-list-item-title>
                                             </v-list-item-content>
 
                                             <v-list-item-icon>
-                                                <div v-if="iconType(likedUser.id) == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
-                                                <div v-else-if="iconType(likedUser.id) == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
-                                                <div v-else-if="iconType(likedUser.id) == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
-                                                <div v-else-if="iconType(likedUser.id) == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
+                                                <div v-if="likedUser.reaction == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
+                                                <div v-else-if="likedUser.reaction == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
+                                                <div v-else-if="likedUser.reaction == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
+                                                <div v-else-if="likedUser.reaction == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
                                                 <div v-else><v-icon color="pink">mdi-emoticon-kiss</v-icon></div>
                                             </v-list-item-icon>
                                         </v-list-item>
@@ -225,10 +225,24 @@
             isDeleteBtn: '',
         }
     },
+    watch: {
+        requestedUser: {
+            immediate: true,
+            handler(){
+                this.user = this.requestedUser;
+            }
+        },
+        mainUser: {
+            immediate: true,
+            handler(){
+                this.visitor = this.mainUser;
+            }
+        },
+    },
     computed:{
         parsedUserPosts(){
-            var userPosts = this.userPosts;
-            if(userPosts.length == 0){
+            var userPosts = this.user.posts;
+            if(!userPosts){
                 return false;
                 } else {
                 for(var i=0; i<userPosts.length; i++){
@@ -253,7 +267,7 @@
             }) : '';
         },
         likedUsers(){
-            var likeUsers = this.likeUsers;
+            var likeUsers = this.postDialog.likes;
             return likeUsers;
         },
         card(){
@@ -354,8 +368,10 @@
         openDialog(userPost, index){
             this.postDialog = userPost;
             this.postDialogIndex = index;
-            this.findLikeUsers(userPost.id);
-            this.findCommentUsers(userPost.id)
+            console.log(userPost)
+            this.dialog = true;
+            // this.findLikeUsers(userPost.id);
+            // this.findCommentUsers(userPost.id)
         },
         findLikeUsers(id){
             axios.post('/api/likeUsers', {
