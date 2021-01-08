@@ -4887,13 +4887,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserComments', 'likedPosts', 'isMainUser'],
+  props: ['mainUser', 'requestedUser', 'isMainUser'],
   data: function data() {
     return {
       visitor: this.mainUser,
       user: this.requestedUser,
-      userPosts: this.requestedUserPosts,
-      userComments: this.requestedUserComments,
       dialog: false,
       postDialog: '',
       postDialogIndex: '',
@@ -4901,11 +4899,6 @@ __webpack_require__.r(__webpack_exports__);
       deleteDialog: false,
       length: 3,
       window: 0,
-      userLikes: this.mainUserLikes,
-      userPostLikes: this.requestedUserLikes,
-      postLikes: this.requestedUserLikes,
-      likeUsers: '',
-      commentUsers: '',
       comment: '',
       menu: [],
       btns: [{
@@ -4933,7 +4926,6 @@ __webpack_require__.r(__webpack_exports__);
       snackbar: false,
       timeout: 2000,
       text: 'deleted',
-      likePosts: this.likedPosts,
       isDeleteBtn: ''
     };
   },
@@ -4948,6 +4940,13 @@ __webpack_require__.r(__webpack_exports__);
       immediate: true,
       handler: function handler() {
         this.visitor = this.mainUser;
+      }
+    },
+    postDialog: {
+      handler: function handler() {
+        this.isDeleteBtn = this.postDialog.comments.filter(function (commentUser) {
+          return false;
+        });
       }
     }
   },
@@ -4973,20 +4972,36 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       // findは情報取得。someは歩かないかの判定
-      return this.userLikes.some(function (userserLike) {
-        return userserLike.post_id === _this.postDialog.id;
+      return this.visitor.likes.some(function (like) {
+        return like.post_id === _this.postDialog.id;
+      });
+    },
+    mainUserCommentBool: function mainUserCommentBool() {
+      var _this2 = this;
+
+      return this.visitor.comments.some(function (comment) {
+        return comment.post_id === _this2.postDialog.id;
       });
     },
     mainUserLike: function mainUserLike() {
-      var _this2 = this;
+      var _this3 = this;
 
-      return this.postDialog ? this.userLikes.find(function (userserLike) {
-        return userserLike.post_id === _this2.postDialog.id;
+      return this.postDialog ? this.visitor.likes.find(function (like) {
+        return like.post_id === _this3.postDialog.id;
       }) : '';
     },
     likedUsers: function likedUsers() {
       var likeUsers = this.postDialog.likes;
       return likeUsers;
+    },
+    commentedUsers: function commentedUsers() {
+      var commentedUsers = this.postDialog.comments;
+
+      if (commentedUsers) {
+        return commentedUsers;
+      } else {
+        return false;
+      }
     },
     card: function card() {
       if (this.windowSize.x < 480) {
@@ -5009,41 +5024,14 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         return 500;
       }
-    },
-    likeNumber: function likeNumber() {
-      var _this3 = this;
-
-      var userPostLike = this.userPostLikes.filter(function (userPostLike) {
-        return userPostLike.post_id === _this3.postDialog.id;
-      });
-      return userPostLike.length;
-    },
-    postComments: function postComments() {
-      var _this4 = this;
-
-      if (this.postDialog.id) {
-        var postComments = this.userComments.filter(function (userComment) {
-          return userComment.post_id === _this4.postDialog.id;
-        });
-
-        if (postComments.length !== 0 && postComments.length > 1) {
-          return postComments.sort(function (a, b) {
-            return b.id - a.id;
-          });
-        } else if (postComments.length == 1) {
-          console.log(postComments);
-          return postComments;
-        } else {
-          return false;
-        }
-      } else {
-        return false;
-      }
     }
+  },
+  mounted: function mounted() {
+    console.log(this.visitor.likes);
   },
   methods: {
     showDeleteBtn: function showDeleteBtn(id, index) {
-      if (this.commentUser(id).id == this.visitor.id) {
+      if (id == this.visitor.id) {
         this.isDeleteBtn[index] = true;
         this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
           return el;
@@ -5051,7 +5039,7 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     hideDeleteBtn: function hideDeleteBtn(id, index) {
-      if (this.commentUser(id).id == this.visitor.id) {
+      if (id == this.visitor.id) {
         this.isDeleteBtn[index] = false;
         this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
           return el;
@@ -5059,32 +5047,11 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     toggleDeleteBtn: function toggleDeleteBtn(id, index) {
-      if (this.commentUser(id).id == this.visitor.id) {
+      if (id == this.visitor.id) {
         this.isDeleteBtn[index] = !this.isDeleteBtn[index];
         this.isDeleteBtn = this.isDeleteBtn.map(function (el, key) {
           return el;
         });
-      }
-    },
-    iconType: function iconType(userId) {
-      var _this5 = this;
-
-      var userPostLikes = this.userPostLikes.filter(function (userPostLike) {
-        return userPostLike.post_id === _this5.postDialog.id;
-      });
-
-      if (userPostLikes) {
-        var userPostLike = userPostLikes.find(function (like) {
-          return like.user_id === userId;
-        });
-
-        if (userPostLike) {
-          return userPostLike.reaction;
-        } else {
-          return false;
-        }
-      } else {
-        return false;
       }
     },
     next: function next() {
@@ -5102,98 +5069,27 @@ __webpack_require__.r(__webpack_exports__);
     openDialog: function openDialog(userPost, index) {
       this.postDialog = userPost;
       this.postDialogIndex = index;
-      console.log(userPost);
-      this.dialog = true; // this.findLikeUsers(userPost.id);
-      // this.findCommentUsers(userPost.id)
-    },
-    findLikeUsers: function findLikeUsers(id) {
-      var _this6 = this;
-
-      axios.post('/api/likeUsers', {
-        postId: id
-      }).then(function (response) {
-        _this6.likeUsers = response.data;
-        _this6.dialog = true;
-      })["catch"](function (error) {
-        console.log('fail');
-      });
-    },
-    commentUser: function commentUser(id) {
-      if (this.commentUsers) {
-        var user = this.commentUsers.find(function (commentUser) {
-          return commentUser.id === id;
-        });
-        return user;
-      } else {
-        return false;
-      }
-    },
-    isMainUserComment: function isMainUserComment(id) {
-      var _this7 = this;
-
-      var postComments = this.userComments.filter(function (userComment) {
-        return userComment.post_id === id;
-      });
-      return postComments.some(function (postComment) {
-        return postComment.user_id === _this7.visitor.id;
-      });
-    },
-    findCommentUsers: function findCommentUsers(id) {
-      var _this8 = this;
-
-      axios.post('/api/commentUsers', {
-        postId: id
-      }).then(function (response) {
-        _this8.commentUsers = response.data;
-        _this8.postDialogId = id;
-        _this8.isDeleteBtn = response.data.filter(function (commentUser) {
-          return false;
-        });
-      })["catch"](function (error) {
-        console.log('fail');
-      });
-    },
-    totalCommentNumber: function totalCommentNumber(id) {
-      var userComments = this.userComments;
-      var comments = userComments.filter(function (userComment) {
-        return userComment.post_id === id;
-      });
-      return comments.length;
+      this.dialog = true;
     },
     outside: function outside() {
       this.comment = '';
     },
-    submit: function submit() {
-      var _this9 = this;
-
-      axios.get('/api/comment', {
-        params: {
-          'userId': this.thisUser.id,
-          'postId': this.images.id,
-          'text': this.comment
-        }
-      }).then(function (response) {
-        return _this9.thisUserComments = response.data;
-      }, this.$refs.carouselPost.remove(), this.snackbar = true, this.destroy())["catch"](function (error) {
-        console.log(error);
-      });
-    },
     deletePost: function deletePost(postDialog) {
-      var _this10 = this;
+      var _this4 = this;
 
       var fd = new FormData();
       fd.append("post", JSON.stringify(postDialog));
       axios.post('/api/delete_post', fd).then(function (response) {
-        _this10.userPosts = response.data;
-        _this10.dialog = false;
-        _this10.deleteDialog = false;
-        _this10.snackbar = true;
+        _this4.user.posts = response.data;
+        _this4.dialog = false;
+        _this4.deleteDialog = false;
+        _this4.snackbar = true;
       })["catch"](function (error) {
         console.log(error);
       });
     },
     like: function like(index) {
-      var _this11 = this;
+      var _this5 = this;
 
       axios.post('/api/like', {
         postId: this.postDialog.id,
@@ -5201,18 +5097,18 @@ __webpack_require__.r(__webpack_exports__);
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this11.lastPostId = _this11.postDialog.id;
-        _this11.lastIndex = index;
+        _this5.lastPostId = _this5.postDialog.id;
+        _this5.lastIndex = index;
+        console.log(response.data);
+        console.log(_this5.postDialog);
 
-        _this11.checkLikeObj(response.data);
-
-        _this11.findLikeUsers(_this11.postDialog);
+        _this5.checkLikeObj(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     deleteLike: function deleteLike(thisPostId, index) {
-      var _this12 = this;
+      var _this6 = this;
 
       axios.post('/api/delete_like', {
         postId: thisPostId,
@@ -5220,41 +5116,46 @@ __webpack_require__.r(__webpack_exports__);
         requestedUserId: this.user.id,
         reaction: index
       }).then(function (response) {
-        _this12.findDeleteLike(response.data);
-
-        _this12.findLikeUsers(_this12.postDialog);
+        _this6.findDeleteLike(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     checkLikeObj: function checkLikeObj(res) {
-      var userPostLike = this.userPostLikes.find(function (userPostLike) {
-        return userPostLike.post_id === res.post_id && userPostLike.user_id === res.user_id;
+      var _this7 = this;
+
+      var isPostDialogLike = this.postDialog.likes.find(function (like) {
+        return like.user_id === _this7.visitor.id;
       });
-      var isLike = this.userLikes.find(function (userLike) {
-        return userLike.post_id === res.post_id;
+      var isUserLike = this.visitor.likes.find(function (like) {
+        return like.post_id === _this7.postDialog.id;
       });
 
-      if (isLike) {
-        isLike.reaction = res.reaction;
-        userPostLike.reaction = res.reaction;
+      if (isPostDialogLike) {
+        isPostDialogLike.reaction = res.reaction;
       } else {
-        this.userLikes.push(res);
-        this.userPostLikes.push(res);
+        this.postDialog.likes.push(res);
+      }
+
+      if (isUserLike) {
+        isUserLike.reaction = res.reaction;
+      } else {
+        this.visitor.likes.push(res);
       }
     },
     findDeleteLike: function findDeleteLike(res) {
-      var newUserLikes = this.userLikes.filter(function (userLike) {
-        return userLike.id !== res.id;
+      var postDialogIndex = this.postDialog.likes.findIndex(function (like) {
+        return like.id === res.id;
       });
-      this.userLikes = newUserLikes;
-      var newUserPostLikes = this.userPostLikes.filter(function (userPostLike) {
-        return userPostLike.id !== res.id;
+      this.postDialog.likes.splice(postDialogIndex, 1);
+      console.log(this.postDialog);
+      var visitorLikes = this.visitor.likes.findIndex(function (like) {
+        return like.id === res.id;
       });
-      this.userPostLikes = newUserPostLikes;
+      this.visitor.likes.splice(visitorLikes, 1);
     },
     sendComment: function sendComment(postId, index) {
-      var _this13 = this;
+      var _this8 = this;
 
       if (this.comment) {
         axios.post('/api/comment', {
@@ -5262,35 +5163,37 @@ __webpack_require__.r(__webpack_exports__);
           userId: this.visitor.id,
           text: this.comment
         }).then(function (response) {
-          _this13.findCommentUsers(postId);
+          _this8.comment = '', _this8.commentSnackbar = true;
+          _this8.lastPostId = postId;
+          _this8.lastIndex = index;
+          _this8.window = 2;
 
-          _this13.comment = '', _this13.commentSnackbar = true;
-          _this13.lastPostId = postId;
-          _this13.lastIndex = index;
-          _this13.window = 2;
-
-          _this13.userComments.push(response.data);
+          _this8.postDialog.comments.unshift(response.data);
         })["catch"](function (error) {
           console.log('fail');
         });
       }
     },
     deleteComment: function deleteComment(postComment) {
-      var _this14 = this;
+      var _this9 = this;
 
       axios.post('/api/delete_comment', {
         id: postComment.id
       }).then(function (response) {
-        _this14.findDeleteComment(response.data);
+        _this9.findDeleteComment(response.data);
       })["catch"](function (error) {
         console.log('fail');
       });
     },
     findDeleteComment: function findDeleteComment(res) {
-      var newUserComments = this.userComments.filter(function (userComment) {
-        return userComment.id !== res.id;
+      var postDialogIndex = this.postDialog.comments.findIndex(function (comment) {
+        return comment.id === res.id;
       });
-      this.userComments = newUserComments;
+      this.postDialog.comments.splice(postDialogIndex, 1);
+      var visitorComments = this.visitor.comments.findIndex(function (comment) {
+        return comment.id === res.id;
+      });
+      this.visitor.comments.splice(visitorComments, 1);
     }
   }
 });
@@ -14657,11 +14560,6 @@ __webpack_require__.r(__webpack_exports__);
     props: {
         mainUser: Object,
         // requestedUser: Object as PropType<PropUserObjType>,
-        requestedUserPosts: Array,
-        mainUserLikes: Array,
-        requestedUserLikes: Array,
-        requestedUserFollowed: Array,
-        requestedUserComments: Array,
         requestId: String,
     },
     data() {
@@ -14704,7 +14602,6 @@ __webpack_require__.r(__webpack_exports__);
             this.postLikeUsers = response.data.likeUsers;
             this.postComments = response.data.comments;
             this.postCommentUsers = response.data.commentUsers;
-            // this.likedPosts = response.data.posts;
             this.parsePosts(response.data.posts);
         })
             .catch(error => {
@@ -20272,10 +20169,7 @@ var render = function() {
                                                             $event
                                                           ) {
                                                             return _vm.deleteLike(
-                                                              _vm.userPosts[
-                                                                _vm
-                                                                  .postDialogIndex
-                                                              ].id,
+                                                              _vm.postDialog.id,
                                                               _vm.postDialogIndex
                                                             )
                                                           }
@@ -20339,18 +20233,26 @@ var render = function() {
                                       1
                                     ),
                                     _vm._v(" "),
-                                    _c(
-                                      "span",
-                                      {
-                                        staticClass: "pointer",
-                                        on: {
-                                          click: function($event) {
-                                            _vm.window = 1
-                                          }
-                                        }
-                                      },
-                                      [_vm._v(_vm._s(_vm.likeNumber) + "人")]
-                                    ),
+                                    _vm.postDialog
+                                      ? _c(
+                                          "span",
+                                          {
+                                            staticClass: "pointer",
+                                            on: {
+                                              click: function($event) {
+                                                _vm.window = 1
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              _vm._s(
+                                                _vm.postDialog.likes.length
+                                              ) + "人"
+                                            )
+                                          ]
+                                        )
+                                      : _vm._e(),
                                     _vm._v(" "),
                                     _c(
                                       "v-btn",
@@ -20360,9 +20262,7 @@ var render = function() {
                                           "v-icon",
                                           {
                                             attrs: {
-                                              color: _vm.isMainUserComment(
-                                                _vm.postDialog.id
-                                              )
+                                              color: _vm.mainUserCommentBool
                                                 ? "orange"
                                                 : ""
                                             }
@@ -20373,26 +20273,26 @@ var render = function() {
                                       1
                                     ),
                                     _vm._v(" "),
-                                    _c(
-                                      "span",
-                                      {
-                                        staticClass: "pointer",
-                                        on: {
-                                          click: function($event) {
-                                            _vm.window = 2
-                                          }
-                                        }
-                                      },
-                                      [
-                                        _vm._v(
-                                          _vm._s(
-                                            _vm.totalCommentNumber(
-                                              _vm.postDialog.id
+                                    _vm.postDialog
+                                      ? _c(
+                                          "span",
+                                          {
+                                            staticClass: "pointer",
+                                            on: {
+                                              click: function($event) {
+                                                _vm.window = 2
+                                              }
+                                            }
+                                          },
+                                          [
+                                            _vm._v(
+                                              _vm._s(
+                                                _vm.postDialog.comments.length
+                                              ) + "人"
                                             )
-                                          ) + "人"
+                                          ]
                                         )
-                                      ]
-                                    ),
+                                      : _vm._e(),
                                     _vm._v(" "),
                                     _vm.isMainUser
                                       ? _c(
@@ -20651,7 +20551,7 @@ var render = function() {
                                   [
                                     _c("v-subheader", [_vm._v("コメント")]),
                                     _vm._v(" "),
-                                    _vm._l(_vm.postComments, function(
+                                    _vm._l(_vm.commentedUsers, function(
                                       postComment,
                                       index
                                     ) {
@@ -20662,26 +20562,26 @@ var render = function() {
                                           on: {
                                             touchstart: function($event) {
                                               return _vm.toggleDeleteBtn(
-                                                postComment.user_id,
+                                                postComment.user.id,
                                                 index
                                               )
                                             },
                                             mouseover: function($event) {
                                               return _vm.showDeleteBtn(
-                                                postComment.user_id,
+                                                postComment.user.id,
                                                 index
                                               )
                                             },
                                             mouseleave: function($event) {
                                               return _vm.hideDeleteBtn(
-                                                postComment.user_id,
+                                                postComment.user.id,
                                                 index
                                               )
                                             }
                                           }
                                         },
                                         [
-                                          _vm.commentUser(postComment.user_id)
+                                          postComment
                                             ? _c(
                                                 "v-list-item",
                                                 [
@@ -20691,7 +20591,7 @@ var render = function() {
                                                       attrs: {
                                                         href:
                                                           "/profile?id=" +
-                                                          postComment.user_id
+                                                          postComment.user.id
                                                       }
                                                     },
                                                     [
@@ -20702,9 +20602,8 @@ var render = function() {
                                                             attrs: {
                                                               src:
                                                                 "storage/image/avatar/" +
-                                                                _vm.commentUser(
-                                                                  postComment.user_id
-                                                                ).profile_image
+                                                                postComment.user
+                                                                  .profile_image
                                                             }
                                                           })
                                                         ],
@@ -20720,9 +20619,8 @@ var render = function() {
                                                       _c("v-list-item-title", {
                                                         domProps: {
                                                           textContent: _vm._s(
-                                                            _vm.commentUser(
-                                                              postComment.user_id
-                                                            ).screen_name
+                                                            postComment.user
+                                                              .screen_name
                                                           )
                                                         }
                                                       }),
@@ -20737,9 +20635,8 @@ var render = function() {
                                                     1
                                                   ),
                                                   _vm._v(" "),
-                                                  _vm.commentUser(
-                                                    postComment.user_id
-                                                  ).id == _vm.visitor.id
+                                                  postComment.user.id ==
+                                                  _vm.visitor.id
                                                     ? _c(
                                                         "v-list-item-action",
                                                         [
@@ -25852,10 +25749,6 @@ var render = function() {
                   attrs: {
                     mainUser: _vm.mainUser,
                     requestedUser: _vm.requestedUser,
-                    requestedUserPosts: _vm.requestedUserPosts,
-                    mainUserLikes: _vm.mainUserLikes,
-                    requestedUserLikes: _vm.requestedUserLikes,
-                    requestedUserComments: _vm.requestedUserComments,
                     isMainUser: _vm.isMainUser
                   }
                 })

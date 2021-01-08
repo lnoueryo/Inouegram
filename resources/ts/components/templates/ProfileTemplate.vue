@@ -1,17 +1,9 @@
 <template>
     <div>
-        <profile-card :mainUser="mainUser" :requestedUser="requestedUser" :requestedUserFollowed="requestedUserFollowed"></profile-card>
+        <profile-card :mainUser="mainUser" :requestedUser="requestedUser"></profile-card>
         <keep-alive>
         <template v-if="value == 0">
-            <user-posts
-                :mainUser="mainUser"
-                :requestedUser="requestedUser"
-                :requestedUserPosts="requestedUserPosts"
-                :mainUserLikes="mainUserLikes"
-                :requestedUserLikes="requestedUserLikes"
-                :requestedUserComments="requestedUserComments"
-                :isMainUser="isMainUser"
-            ></user-posts>
+            <user-posts :mainUser="mainUser" :requestedUser="requestedUser" :isMainUser="isMainUser"></user-posts>
         </template>
         <template v-else-if="value == 1">
             <like-posts :mainUserPostLikes="mainUserPostLikes" :likedPosts="likedPosts" :postLikes="postLikes" :postLikeUsers="postLikeUsers" :comments="postComments" :postCommentUsers="postCommentUsers" :mainUser="mainUser" :requestedUser="requestedUser"></like-posts>
@@ -65,7 +57,7 @@ export type DataType = {
     postComments: PropUserObjType[] | string,
     postCommentUsers: PropUserObjType[] | string,
     mainUserPostLikes: PropUserObjType[] | string,
-    requestedId: string,
+    requestedUser:  any,
 }
 export default Vue.extend({
         components: {
@@ -75,12 +67,7 @@ export default Vue.extend({
         },
     props: {
         mainUser: Object as PropType<PropUserObjType>,
-        requestedUser: Object as PropType<PropUserObjType>,
-        requestedUserPosts: Array,
-        mainUserLikes: Array,
-        requestedUserLikes: Array,
-        requestedUserFollowed: Array,
-        requestedUserComments: Array,
+        // requestedUser: Object as PropType<PropUserObjType>,
         requestId: String,
     },
     data (): DataType {
@@ -92,7 +79,7 @@ export default Vue.extend({
             postCommentUsers: '',
             mainUserPostLikes: '',
             value: 0,
-            requestedId: this.requestId,
+            requestedUser: '',
         }
     },
     computed:{
@@ -103,21 +90,16 @@ export default Vue.extend({
         }
     },
     created(): void{
-        // axios.get('/api/likedPostUsers', {
-        //     params: {id: visitor.id},
-        // })
-        // .then((response) => {
-        //     this.mainUserPostLikes = response.data.userLikes;
-        //     this.postLikes = response.data.likes;
-        //     this.postLikeUsers = response.data.likeUsers;
-        //     this.postComments = response.data.comments;
-        //     this.postCommentUsers = response.data.commentUsers;
-        //     // this.likedPosts = response.data.posts;
-        //     this.parsePosts(response.data.posts);
-        // })
-        // .catch(error => {
-        //     console.log('fail')
-        // })
+        const requestId = this.requestId;
+        axios.get('/api/users/'+requestId, {
+            params: {id: requestId},
+        })
+        .then((response) => {
+            this.requestedUser = response.data;
+        })
+        .catch(error => {
+            console.log('fail')
+        })
         const visitor = this.mainUser;
         axios.get('/api/likedPostUsers', {
             params: {id: visitor.id},
@@ -128,7 +110,6 @@ export default Vue.extend({
             this.postLikeUsers = response.data.likeUsers;
             this.postComments = response.data.comments;
             this.postCommentUsers = response.data.commentUsers;
-            // this.likedPosts = response.data.posts;
             this.parsePosts(response.data.posts);
         })
         .catch(error => {

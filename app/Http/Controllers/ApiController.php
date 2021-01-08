@@ -24,7 +24,6 @@ class ApiController extends Controller
 
     public function like(Request $request){
         $search_like = Like::where('post_id', $request->postId)->where('user_id', $request->userId);
-    
         if($search_like->exists()){
             $like = $search_like->first();
             $like->reaction = $request->reaction;
@@ -36,7 +35,8 @@ class ApiController extends Controller
             $like->reaction = $request->reaction;
             $like->save();
         }
-        return $like;
+        $new_like = Like::with(['user'])->find($like->id);
+        return $new_like;
     }
     public function deleteLike(Request $request){
         $like = Like::where('post_id', $request->postId)->where('user_id', $request->userId)->first();
@@ -71,7 +71,8 @@ class ApiController extends Controller
         $comment->post_id = $request->postId;
         $comment->text = $request->text;
         $comment->save();
-        return $comment;
+        $new_comment = Comment::with(['user'])->find($comment->id);
+        return $new_comment;
     }
 
     public function deleteComment(Request $request){

@@ -40,7 +40,7 @@
                                                 <v-btn v-for="(btn, index) in btns" :key="index" icon @click="like(index)" :color="(mainUserLike.reaction === index) ? btn.color : ''">
                                                     <v-icon>{{ btn.icon }}</v-icon>
                                                 </v-btn>
-                                                <v-btn icon @click="deleteLike(userPosts[postDialogIndex].id, postDialogIndex)">
+                                                <v-btn icon @click="deleteLike(postDialog.id, postDialogIndex)">
                                                     <v-icon>mdi-minus-circle</v-icon>
                                                 </v-btn>
                                             </v-card-actions>
@@ -53,11 +53,11 @@
                                             </v-card-actions>
                                         </v-card>
                                     </v-menu>
-                                    <span class="pointer" @click="window = 1">{{ likeNumber }}人</span>
+                                    <span class="pointer" @click="window = 1" v-if="postDialog">{{ postDialog.likes.length }}人</span>
                                     <v-btn icon>
-                                    <v-icon :color="isMainUserComment(postDialog.id) ? 'orange' : ''">mdi-comment</v-icon>
+                                    <v-icon :color="mainUserCommentBool ? 'orange' : ''">mdi-comment</v-icon>
                                     </v-btn>
-                                    <span class="pointer" @click="window = 2">{{ totalCommentNumber(postDialog.id) }}人</span>
+                                    <span class="pointer" @click="window = 2" v-if="postDialog">{{ postDialog.comments.length }}人</span>
                                     <!-- <v-btn icon>
                                     <v-icon>mdi-bookmark</v-icon>
                                     </v-btn> -->
@@ -104,18 +104,18 @@
                             <v-window-item :value="2">
                                 <v-list subheader style="max-height: 180px; overflow-y: scroll;">
                                 <v-subheader>コメント</v-subheader>
-                                    <div v-for="(postComment, index) in postComments" :key="index" @touchstart="toggleDeleteBtn(postComment.user_id, index)" @mouseover="showDeleteBtn(postComment.user_id, index)" @mouseleave="hideDeleteBtn(postComment.user_id, index)">
-                                        <v-list-item v-if="commentUser(postComment.user_id)">
-                                            <a :href="'/profile?id=' + postComment.user_id">
+                                    <div v-for="(postComment, index) in commentedUsers" :key="index" @touchstart="toggleDeleteBtn(postComment.user.id, index)" @mouseover="showDeleteBtn(postComment.user.id, index)" @mouseleave="hideDeleteBtn(postComment.user.id, index)">
+                                        <v-list-item v-if="postComment">
+                                            <a :href="'/profile?id=' + postComment.user.id">
                                             <v-list-item-avatar>
-                                            <v-img :src="'storage/image/avatar/' + commentUser(postComment.user_id).profile_image"></v-img>
+                                            <v-img :src="'storage/image/avatar/' + postComment.user.profile_image"></v-img>
                                             </v-list-item-avatar>
                                             </a>
                                             <v-list-item-content>
-                                            <v-list-item-title v-text="commentUser(postComment.user_id).screen_name"></v-list-item-title>
+                                            <v-list-item-title v-text="postComment.user.screen_name"></v-list-item-title>
                                             {{ postComment.text }}
                                             </v-list-item-content>
-                                            <v-list-item-action v-if="commentUser(postComment.user_id).id==visitor.id">
+                                            <v-list-item-action v-if="postComment.user.id==visitor.id">
                                             <transition name="slide-fade">
                                                     <v-btn color="success" @click="deleteComment(postComment)" v-if="isDeleteBtn[index]">削除</v-btn>
                                             </transition>
@@ -184,13 +184,11 @@
 
 <script>
     export default {
-    props: ['mainUser', 'requestedUser', 'requestedUserPosts', 'mainUserLikes', 'requestedUserLikes', 'requestedUserComments', 'likedPosts', 'isMainUser'],
+    props: ['mainUser', 'requestedUser', 'isMainUser'],
     data () {
         return {
             visitor: this.mainUser,
             user: this.requestedUser,
-            userPosts: this.requestedUserPosts,
-            userComments: this.requestedUserComments,
             dialog: false,
             postDialog: '',
             postDialogIndex: '',
@@ -198,11 +196,6 @@
             deleteDialog: false,
             length: 3,
             window: 0,
-            userLikes: this.mainUserLikes,
-            userPostLikes: this.requestedUserLikes,
-            postLikes: this.requestedUserLikes,
-            likeUsers: '',
-            commentUsers: '',
             comment: '',
             menu: [],
             btns: [
@@ -221,7 +214,6 @@
             snackbar: false,
             timeout: 2000,
             text: 'deleted',
-            likePosts: this.likedPosts,
             isDeleteBtn: '',
         }
     },
@@ -236,6 +228,13 @@
             immediate: true,
             handler(){
                 this.visitor = this.mainUser;
+            }
+        },
+        postDialog: {
+            handler(){
+                this.isDeleteBtn = this.postDialog.comments.filter((commentUser) => {
+                    return false;
+                })
             }
         },
     },
@@ -257,18 +256,31 @@
         },
         mainUserLikeBool(){
             // findは情報取得。someは歩かないかの判定
-            return this.userLikes.some((userserLike) => {
-                return userserLike.post_id === this.postDialog.id;
+            return this.visitor.likes.some((like) => {
+                return like.post_id === this.postDialog.id;
+            })
+        },
+        mainUserCommentBool(){
+            return this.visitor.comments.some((comment) => {
+                return comment.post_id === this.postDialog.id;
             })
         },
         mainUserLike(){
-            return this.postDialog ? this.userLikes.find((userserLike) => {
-                return userserLike.post_id === this.postDialog.id;
+            return this.postDialog ? this.visitor.likes.find((like) => {
+                return like.post_id === this.postDialog.id;
             }) : '';
         },
         likedUsers(){
             var likeUsers = this.postDialog.likes;
             return likeUsers;
+        },
+        commentedUsers(){
+            var commentedUsers = this.postDialog.comments;
+            if (commentedUsers) {
+                return commentedUsers;
+            } else {
+                return false
+            }
         },
         card(){
             if(this.windowSize.x < 480){
@@ -284,35 +296,13 @@
                 return 500;
             }
         },
-        likeNumber(){
-            var userPostLike = this.userPostLikes.filter((userPostLike) => {
-                return userPostLike.post_id === this.postDialog.id;
-            })
-            return userPostLike.length;
-        },
-        postComments(){
-            if(this.postDialog.id){
-                var postComments = this.userComments.filter((userComment) => {
-                    return userComment.post_id === this.postDialog.id;
-                })
-                if(postComments.length!==0 && postComments.length>1){
-                    return postComments.sort((a, b) => {
-                        return b.id - a.id;
-                    });
-                } else if(postComments.length==1){
-                    console.log(postComments)
-                    return postComments
-                } else {
-                    return false;
-                }
-            } else {
-                return false
-            }
-        },
+    },
+    mounted(){
+        console.log(this.visitor.likes)
     },
     methods: {
         showDeleteBtn(id, index){
-            if(this.commentUser(id).id==this.visitor.id){
+            if(id==this.visitor.id){
                 this.isDeleteBtn[index] = true;
                 this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
                     return el;
@@ -320,7 +310,7 @@
             }
         },
         hideDeleteBtn(id, index){
-            if(this.commentUser(id).id==this.visitor.id){
+            if(id==this.visitor.id){
                 this.isDeleteBtn[index] = false;
                 this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
                     return el;
@@ -328,28 +318,11 @@
             }
         },
         toggleDeleteBtn(id, index){
-            if(this.commentUser(id).id==this.visitor.id){
+            if(id==this.visitor.id){
                 this.isDeleteBtn[index] = !this.isDeleteBtn[index];
                 this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
                     return el;
                 })
-            }
-        },
-        iconType(userId){
-            var userPostLikes = this.userPostLikes.filter((userPostLike) => {
-                return userPostLike.post_id === this.postDialog.id;
-            });
-            if (userPostLikes) {
-                var userPostLike = userPostLikes.find((like) => {
-                    return like.user_id === userId;
-                })
-                if(userPostLike){
-                    return userPostLike.reaction;
-                } else {
-                    return false
-                }
-            } else {
-                return false
             }
         },
         next () {
@@ -368,79 +341,10 @@
         openDialog(userPost, index){
             this.postDialog = userPost;
             this.postDialogIndex = index;
-            console.log(userPost)
             this.dialog = true;
-            // this.findLikeUsers(userPost.id);
-            // this.findCommentUsers(userPost.id)
-        },
-        findLikeUsers(id){
-            axios.post('/api/likeUsers', {
-                postId: id,
-            })
-            .then(response => {
-                this.likeUsers = response.data;
-                this.dialog = true;
-            })
-            .catch(error => {
-                console.log('fail')
-            })
-        },
-        commentUser(id){
-            if(this.commentUsers){
-                var user = this.commentUsers.find((commentUser) => {
-                    return commentUser.id ===id;
-                })
-                return user;
-            } else {
-                return false;
-            }
-        },
-        isMainUserComment(id){
-            var postComments = this.userComments.filter((userComment) => {
-                return userComment.post_id === id;
-            })
-            return postComments.some((postComment) => {
-                return postComment.user_id === this.visitor.id;
-            })
-        },
-        findCommentUsers(id){
-            axios.post('/api/commentUsers', {
-                postId: id,
-            })
-            .then(response => {
-                this.commentUsers = response.data;
-                this.postDialogId = id;
-                this.isDeleteBtn = response.data.filter((commentUser) => {
-                    return false;
-                })
-            })
-            .catch(error => {
-                console.log('fail')
-            })
-        },
-        totalCommentNumber(id){
-            var userComments = this.userComments;
-            var comments = userComments.filter((userComment) => {
-                return userComment.post_id === id;
-            });
-            return comments.length;
         },
         outside(){
             this.comment = '';
-        },
-        submit(){
-            axios.get('/api/comment', {
-            params: {'userId': this.thisUser.id, 'postId': this.images.id, 'text': this.comment},
-            })
-            .then(
-                response => (this.thisUserComments = response.data),
-                this.$refs.carouselPost.remove(),
-                this.snackbar = true,
-                this.destroy(),
-            )
-            .catch(function (error) {
-                console.log(error);
-            });
         },
         deletePost(postDialog){
             let fd= new FormData();
@@ -448,7 +352,7 @@
             axios.post('/api/delete_post', fd)
             .then(
                 response => {
-                    this.userPosts = response.data;
+                    this.user.posts = response.data;
                     this.dialog = false;
                     this.deleteDialog = false;
                     this.snackbar = true;
@@ -468,8 +372,9 @@
             .then(response => {
                 this.lastPostId = this.postDialog.id;
                 this.lastIndex = index;
+                console.log(response.data)
+                console.log(this.postDialog)
                 this.checkLikeObj(response.data);
-                this.findLikeUsers(this.postDialog);
             })
             .catch(error => {
                 console.log('fail')
@@ -484,37 +389,39 @@
             })
             .then(response => {
                 this.findDeleteLike(response.data);
-                this.findLikeUsers(this.postDialog);
             })
             .catch(error => {
                 console.log('fail')
             })
         },
         checkLikeObj(res){
-            var userPostLike = this.userPostLikes.find((userPostLike) => {
-                return userPostLike.post_id === res.post_id && userPostLike.user_id === res.user_id;
+            var isPostDialogLike = this.postDialog.likes.find((like) => {
+                return like.user_id === this.visitor.id;
             })
-            var isLike = this.userLikes.find((userLike) => {
-                return userLike.post_id === res.post_id;
+            var isUserLike = this.visitor.likes.find((like) => {
+                return like.post_id === this.postDialog.id;
             })
-            if(isLike){
-                isLike.reaction = res.reaction;
-                userPostLike.reaction = res.reaction;
+            if(isPostDialogLike){
+                isPostDialogLike.reaction = res.reaction;
             } else {
-                this.userLikes.push(res);
-                this.userPostLikes.push(res);
+                this.postDialog.likes.push(res);
+            }
+            if(isUserLike){
+                isUserLike.reaction = res.reaction;
+            } else {
+                this.visitor.likes.push(res);
             }
         },
         findDeleteLike(res){
-            var newUserLikes = this.userLikes.filter((userLike) => {
-                return userLike.id !== res.id;
+            var postDialogIndex = this.postDialog.likes.findIndex((like) => {
+                return like.id === res.id;
             })
-            this.userLikes = newUserLikes;
-
-            var newUserPostLikes = this.userPostLikes.filter((userPostLike) => {
-                return userPostLike.id !== res.id;
+            this.postDialog.likes.splice(postDialogIndex, 1);
+            console.log(this.postDialog)
+            var visitorLikes = this.visitor.likes.findIndex((like) => {
+                return like.id === res.id;
             })
-            this.userPostLikes = newUserPostLikes;
+            this.visitor.likes.splice(visitorLikes, 1);
         },
         sendComment(postId, index){
             if (this.comment) {
@@ -524,13 +431,12 @@
                     text: this.comment,
                 })
                 .then(response => {
-                    this.findCommentUsers(postId)
                     this.comment = '',
                     this.commentSnackbar = true;
                     this.lastPostId = postId;
                     this.lastIndex = index;
                     this.window = 2;
-                    this.userComments.push(response.data);
+                    this.postDialog.comments.unshift(response.data);
                 })
                 .catch(error => {
                     console.log('fail')
@@ -549,10 +455,14 @@
             })
         },
         findDeleteComment(res){
-            var newUserComments = this.userComments.filter((userComment) => {
-                return userComment.id !== res.id;
+            var postDialogIndex = this.postDialog.comments.findIndex((comment) => {
+                return comment.id === res.id;
             })
-            this.userComments = newUserComments;
+            this.postDialog.comments.splice(postDialogIndex, 1);
+            var visitorComments = this.visitor.comments.findIndex((comment) => {
+                return comment.id === res.id;
+            })
+            this.visitor.comments.splice(visitorComments, 1);
         },
     }
 }
