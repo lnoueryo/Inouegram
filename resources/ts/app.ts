@@ -7,8 +7,8 @@ import VueRouter from 'vue-router';
 
 // Vuex
 import Vuex from 'vuex';
-// import store from './store/index';
-
+// import store from './store/index.js';
+import store from './store/index.ts';
 // Vuetify
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
@@ -39,4 +39,5 @@ const app: any = new Vue({
             iconfont: 'mdi',
         }
     }),
+    store: store,
 });
