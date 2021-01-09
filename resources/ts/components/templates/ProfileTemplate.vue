@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-resize="onResize">
         <profile-card :mainUser="mainUser" :requestedUser="requestedUser"></profile-card>
         <keep-alive>
         <template v-if="value == 0">
@@ -58,6 +58,7 @@ export type DataType = {
     postCommentUsers: PropUserObjType[] | string,
     mainUserPostLikes: PropUserObjType[] | string,
     requestedUser:  any,
+    windowSize: any,
 }
 export default Vue.extend({
         components: {
@@ -80,6 +81,10 @@ export default Vue.extend({
             mainUserPostLikes: '',
             value: 0,
             requestedUser: '',
+            windowSize: {
+                x: 0,
+                y: 0,
+            },
         }
     },
     computed:{
@@ -96,11 +101,13 @@ export default Vue.extend({
         })
         .then((response) => {
             this.requestedUser = response.data;
+            this.$store.commit('requestedUser', response.data)
         })
         .catch(error => {
             console.log('fail')
         })
         const visitor = this.mainUser;
+        this.$store.commit('visitor', visitor);//vuex
         axios.get('/api/likedPostUsers', {
             params: {id: visitor.id},
         })
@@ -133,7 +140,12 @@ export default Vue.extend({
                 top: 0,
                 behavior: "smooth"
             });
-        }
+        },
+        onResize () {
+            this.windowSize = { x: window.innerWidth, y: window.innerHeight }
+            // this.$store.dispatch('windowSize', this.windowSize)
+            this.$store.commit('windowSize', this.windowSize)
+        },
     }
 })
 </script>
