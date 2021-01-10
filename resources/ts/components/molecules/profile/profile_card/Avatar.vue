@@ -7,13 +7,19 @@
     </div>
 </template>
 
-<script>
-export default {
-    props: ['requestedUser', 'mainUser'],
-    data() {
+<script lang="ts">
+import Vue from "vue";
+import axios from 'axios';
+export type DataType = {
+    user: any,
+    visitor: any,
+    windowSize: { x: number, y: number},
+}
+export default Vue.extend({
+    data(): DataType{
         return {
-            user: this.requestedUser,
-            visitor: this.mainUser,
+            user: '',
+            visitor: '',
             windowSize: this.$store.getters.windowSize
         }
     },
@@ -21,66 +27,63 @@ export default {
         user: {
             immediate: true,
             handler(){
-                this.user = this.requestedUser;
+                this.user = this.$store.getters.requestedUser;
             }
         },
         visitor: {
             immediate: true,
             handler(){
-                this.visitor = this.mainUser;
+                this.visitor = this.$store.getters.visitor;
             }
         }
     },
     computed: {
-        requestedUserInfo(){
+        requestedUserInfo(): object{
             return this.user;
         }
     },
     methods: {
-        btnclick2() {
+        btnclick2(): void {
             if(this.visitor.id == this.user.id){
-                let element = this.$refs.avatar;
+                const element: HTMLElement | any = this.$refs.avatar;
                 element.click()
             }
         },
-        async changeAvatar(event){
-            var file = event.target.files[0];
+        async changeAvatar(event: any): Promise<any>{
+            const file = event.target.files[0];
             if (typeof FileReader === 'function') {
                 if(this.windowSize.x<480){
                     if(file.size<3100000){
-                        this.progress = true;
-                        var reader = new FileReader();
+                        this.$emit('progress', true);
+                        const reader = new FileReader();
                         reader.readAsDataURL(file);
-                        var avatarData;
-                        var that = this;
-                        reader.onload = function(e) {
-                            avatarData = e.target.result;
-                            let fd= new FormData();
+                        const that = this;
+                        reader.onload = function(e: any) {
+                            const avatarData = e.target.result;
+                            const fd= new FormData();
                             fd.append("avatarData", avatarData);
                             fd.append("userId", that.user.id);
                             axios.post('/api/upload2', fd)
                             .then(
                                 response => {
                                     that.user.profile_image = response.data;
-                                    that.progress = false;
+                                    that.$emit('progress', false);
                                 }
                             )
                             .catch(function (error) {
                                 console.log(error);
-                                that.progress = false;
+                                that.$emit('progress', false);
                             });
                         }
                     } else {
-                        this.sizeDialog = true;
+                        this.$emit('sizeDialog', true);
                     }
                 } else {
-                    var reader = new FileReader();
-                    reader.readAsDataURL(file);
-                    var avatarData;
-                    var that = this;
-                    reader.onload = function(e) {
-                        avatarData = e.target.result;
-                        let fd= new FormData();
+                    const reader = new FileReader();
+                    const that = this;
+                    reader.onload = function(e: any) {
+                        const avatarData = e.target.result;
+                        const fd= new FormData();
                         fd.append("avatarData", avatarData);
                         fd.append("userId", that.user.id);
                         axios.post('/api/upload2', fd)
@@ -93,9 +96,10 @@ export default {
                             console.log(error);
                         });
                     }
+                    reader.readAsDataURL(file);
                 }
             }
         },
     }
-}
+})
 </script>
