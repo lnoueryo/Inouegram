@@ -104,8 +104,8 @@ export type DataType = {
 export default Vue.extend({
     data(): DataType{
         return {
-            user: '',
-            visitor: '',
+            user: this.$store.getters.requestedUser,
+            visitor: this.$store.getters.visitor,
             profileDialog: false,
             saveSnackbar: false,
             timeout: 2000,
@@ -164,14 +164,14 @@ export default Vue.extend({
             .then(
                 response => {
                     this.saveSnackbar = true;
-                    this.user = response.data;
+                    this.$store.commit('requestedUser', response.data)
                     this.profileDialog = false;
                     this.profile.password = '';
                     this.resetValidation();
                 }
             )
             .catch((error) => {
-                let responseErrors = error.response.data.errors;
+                const responseErrors = error.response.data.errors;
                 let errors: any = {};
                 for(const key in responseErrors) {
                     errors[key] = responseErrors[key][0];
@@ -181,7 +181,7 @@ export default Vue.extend({
             });
         },
         resetValidation (): void {
-            let element: HTMLElement | any = this.$refs.form;
+            const element: HTMLElement | any = this.$refs.form;
             element.resetValidation();
         },
         logout(): void {
