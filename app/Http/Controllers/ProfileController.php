@@ -68,7 +68,11 @@ class ProfileController extends Controller
             Storage::delete($image[$i]);
         };
         $post->delete();
-        $posts = Post::where('user_id', $post->user_id)->orderBy('updated_at', 'desc')->get();
+        $posts = Post::with(['likes' => function($like_query){
+            $like_query->with(['user'])->orderBy('updated_at', 'desc');
+        }, 'comments' => function($comment_query){
+            $comment_query->with(['user'])->orderBy('updated_at', 'desc');
+        }])->where('user_id', $post->user_id)->orderBy('updated_at', 'desc')->get();
         return $posts;
     }
 
