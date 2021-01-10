@@ -18,267 +18,73 @@
                         <v-carousel :height="dialogSize" v-model="carousel[postDialogIndex]">
                             <v-carousel-item v-for="(postDialogImage,index) in postDialog.image" :key="index" :src="'storage/image/' + postDialogImage" reverse-transition="fade-transition" transition="fade-transition"></v-carousel-item>
                         </v-carousel>
-                        <v-window v-model="window" class="elevation-0">
-                            <v-window-item :value="0">
-                                <v-card flat>
-                                    <v-card-text class="py-1" style="position: relative; max-width: 340px;">
-                                        <p class="text-h6 font-weight-light orange--text mb-2" style="margin: 0!important;">
-                                        {{ postDialog.title }}
-                                        </p>
-                                        <div class="text-subtitle-1 font-weight-light grey--text title mb-2">
-                                        <div class="content">{{ postDialog.text }}</div>
-                                        </div>
-                                    </v-card-text>
-                                    <v-menu v-model="menu[postDialogIndex]" :close-on-content-click="true" :nudge-width="200" offset-y top>
-                                        <template v-slot:activator="{ on, attrs }">
-                                            <v-btn class="ml-3" icon v-bind="attrs" v-on="on" :color="mainUserLikeBool ? 'pink' : ''">
-                                            <v-icon>mdi-heart</v-icon>
-                                            </v-btn>
-                                        </template>
-                                        <v-card v-if="mainUserLikeBool">
-                                            <v-card-actions>
-                                                <v-btn v-for="(btn, index) in btns" :key="index" icon @click="like(index)" :color="(mainUserLike.reaction === index) ? btn.color : ''">
-                                                    <v-icon>{{ btn.icon }}</v-icon>
-                                                </v-btn>
-                                                <v-btn icon @click="deleteLike(postDialog.id, postDialogIndex)">
-                                                    <v-icon>mdi-minus-circle</v-icon>
-                                                </v-btn>
-                                            </v-card-actions>
-                                        </v-card>
-                                        <v-card v-else>
-                                            <v-card-actions>
-                                                <v-btn v-for="(btn, index) in btns" :key="index" icon @click="like(index)">
-                                                    <v-icon>{{ btn.icon }}</v-icon>
-                                                </v-btn>
-                                            </v-card-actions>
-                                        </v-card>
-                                    </v-menu>
-                                    <span class="pointer" @click="window = 1" v-if="postDialog">{{ postDialog.likes.length }}人</span>
-                                    <v-btn icon>
-                                    <v-icon :color="mainUserCommentBool ? 'orange' : ''">mdi-comment</v-icon>
-                                    </v-btn>
-                                    <span class="pointer" @click="window = 2" v-if="postDialog">{{ postDialog.comments.length }}人</span>
-                                    <!-- <v-btn icon>
-                                    <v-icon>mdi-bookmark</v-icon>
-                                    </v-btn> -->
-                                    <v-btn absolute icon right @click="deleteDialog = true" v-if="isMainUser">
-                                    <v-icon>mdi-delete</v-icon>
-                                    </v-btn>
-                                    <div class="d-flex align-center justify-space-around px-2">
-                                        <v-text-field
-                                        class="px-2 pt-2"
-                                        color="purple darken-2"
-                                        label="コメント"
-                                        required
-                                        v-model="comment"
-                                        ></v-text-field>
-                                    <v-btn @click="sendComment(postDialog.id, postDialogIndex)">投稿</v-btn>
-                                    </div>
-                                </v-card>
-                            </v-window-item>
-
-                            <v-window-item :value="1">
-                                <v-list subheader style="max-height: 180px; overflow-y: scroll;">
-                                <v-subheader>いいね</v-subheader>
-                                    <div>
-                                        <v-list-item v-for="(likedUser, index) in likedUsers" :key="index" :href="'/profile?id=' + likedUser.user.id">
-                                            <v-list-item-avatar>
-                                            <v-img :src="'storage/image/avatar/' + likedUser.user.profile_image"></v-img>
-                                            </v-list-item-avatar>
-
-                                            <v-list-item-content>
-                                            <v-list-item-title v-text="likedUser.user.screen_name"></v-list-item-title>
-                                            </v-list-item-content>
-
-                                            <v-list-item-icon>
-                                                <div v-if="likedUser.reaction == 0"><v-icon color="yellow">mdi-emoticon</v-icon></div>
-                                                <div v-else-if="likedUser.reaction == 1"><v-icon color="blue">mdi-emoticon-cry</v-icon></div>
-                                                <div v-else-if="likedUser.reaction == 2"><v-icon color="orange">mdi-emoticon-lol</v-icon></div>
-                                                <div v-else-if="likedUser.reaction == 3"><v-icon color="red">mdi-emoticon-angry</v-icon></div>
-                                                <div v-else><v-icon color="pink">mdi-emoticon-kiss</v-icon></div>
-                                            </v-list-item-icon>
-                                        </v-list-item>
-                                    </div>
-                                </v-list>
-                            </v-window-item>
-                            <v-window-item :value="2">
-                                <v-list subheader style="max-height: 180px; overflow-y: scroll;">
-                                <v-subheader>コメント</v-subheader>
-                                    <div v-for="(postComment, index) in commentedUsers" :key="index" @touchstart="toggleDeleteBtn(postComment.user.id, index)" @mouseover="showDeleteBtn(postComment.user.id, index)" @mouseleave="hideDeleteBtn(postComment.user.id, index)">
-                                        <v-list-item v-if="postComment">
-                                            <a :href="'/profile?id=' + postComment.user.id">
-                                            <v-list-item-avatar>
-                                            <v-img :src="'storage/image/avatar/' + postComment.user.profile_image"></v-img>
-                                            </v-list-item-avatar>
-                                            </a>
-                                            <v-list-item-content>
-                                            <v-list-item-title v-text="postComment.user.screen_name"></v-list-item-title>
-                                            {{ postComment.text }}
-                                            </v-list-item-content>
-                                            <v-list-item-action v-if="postComment.user.id==visitor.id">
-                                            <transition name="slide-fade">
-                                                    <v-btn color="success" @click="deleteComment(postComment)" v-if="isDeleteBtn[index]">削除</v-btn>
-                                            </transition>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                    </div>
-                                </v-list>
-                            </v-window-item>
-                        </v-window>
-                        <v-card-actions class="justify-space-between">
-                            <v-btn text @click="prev">
-                                <v-icon>mdi-chevron-left</v-icon>
-                            </v-btn>
-                            <v-item-group v-model="window" class="text-center" mandatory>
-                                <v-item v-for="n in length" :key="`btn-${n}`" v-slot:default="{ active, toggle }">
-                                    <v-btn :input-value="active" icon @click="toggle">
-                                        <v-icon>mdi-record</v-icon>
-                                    </v-btn>
-                                </v-item>
-                            </v-item-group>
-                            <v-btn text @click="next">
-                                <v-icon>mdi-chevron-right</v-icon>
-                            </v-btn>
-                        </v-card-actions>
+                        <card-content ref="cardContent" :isDeleteBtn="isDeleteBtn" @bar="bar($event)"></card-content><!-- コンポーネント-->
                     </v-card>
                 </v-dialog>
-                <v-dialog v-model="deleteDialog" max-width="290">
-                    <v-card>
-                        <v-card-title class="headline">
-                        Make sure!!
-                        </v-card-title>
-
-                        <v-card-text>
-                        Are you sure you are gonna delete this post??
-                        </v-card-text>
-
-                        <v-card-actions>
-                        <v-spacer></v-spacer>
-                        <v-btn color="green darken-1" text @click="deleteDialog = false">
-                            Disagree
-                        </v-btn>
-
-                        <v-btn color="green darken-1" text @click="deletePost(postDialog)">
-                            Agree
-                        </v-btn>
-                        </v-card-actions>
-                    </v-card>
-                </v-dialog>
-
-                <v-snackbar v-model="snackbar" :timeout="timeout">
-                    {{ text }}
-                    <template v-slot:action="{ attrs }">
-                        <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
-                        Close
-                        </v-btn>
-                    </template>
-                </v-snackbar>
             </v-layout>
         </div>
         <div v-else class="text-center" style="margin: auto;">
             まだ投稿はありません<br>
-            <v-btn href="/post" v-if="visitor.id == user.id">投稿する</v-btn>
+            <v-btn href="/post" v-if="isMainUser">投稿する</v-btn>
         </div>
+        <v-snackbar v-model="snackbar" :timeout="timeout">
+            削除しました
+            <template v-slot:action="{ attrs }">
+                <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
+                閉じる
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
-<script>
-    export default {
-    props: ['mainUser', 'requestedUser', 'isMainUser'],
-    data () {
+<script lang="ts">
+    import Vue from "vue";
+    import CardContent from "../../molecules/profile/user_posts/CardContent.vue";
+    export type DataType = {
+        dialog: boolean,
+        carousel: string[],
+        deleteDialog: boolean,
+        lastPostId: number | string,
+        lastIndex: number | string,
+        isDeleteBtn: boolean[] | string,
+        snackbar: boolean,
+        timeout: number,
+    }
+    export type card = {size1: number, size2: number, size3: number}
+    export type cardContent = {comment: string} | any
+    export default Vue.extend({
+    components:{
+        CardContent
+    },
+    data (): DataType {
         return {
-            visitor: this.mainUser,
-            user: this.requestedUser,
             dialog: false,
-            postDialog: '',
-            postDialogIndex: '',
             carousel: [],
             deleteDialog: false,
-            length: 3,
-            window: 0,
-            comment: '',
-            menu: [],
-            btns: [
-                {color: 'yellow', icon: 'mdi-emoticon'},
-                {color: 'blue', icon: 'mdi-emoticon-cry'},
-                {color: 'orange', icon: 'mdi-emoticon-lol'},
-                {color: 'red', icon: 'mdi-emoticon-angry'},
-                {color: 'pink', icon: 'mdi-emoticon-kiss'},
-            ],
             lastPostId: '',
             lastIndex: '',
+            isDeleteBtn: '',
             snackbar: false,
             timeout: 2000,
-            text: 'deleted',
-            isDeleteBtn: '',
         }
     },
-    watch: {
-        requestedUser: {
-            immediate: true,
-            handler(){
-                this.user = this.requestedUser;
-            }
-        },
-        mainUser: {
-            immediate: true,
-            handler(){
-                this.visitor = this.mainUser;
-            }
-        },
-        postDialog: {
-            handler(){
-                this.isDeleteBtn = this.postDialog.comments.filter((commentUser) => {
-                    return false;
-                })
-            }
-        },
-    },
     computed:{
-        parsedUserPosts(){
-            var userPosts = this.user.posts;
+        isMainUser(): boolean{
+            return this.$store.getters.isMainUser;
+        },
+        parsedUserPosts(): boolean | string[]{
+            const userPosts = this.$store.getters.requestedUser.posts;
             if(!userPosts){
                 return false;
                 } else {
-                for(var i=0; i<userPosts.length; i++){
+                for(let i=0; i<userPosts.length; i++){
                     userPosts[i].image = JSON.parse(userPosts[i].image);
                 }
                 return userPosts;
             }
         },
-        requestedUserInfo(){
-            var user = this.user;
-            return user;
-        },
-        mainUserLikeBool(){
-            // findは情報取得。someは歩かないかの判定
-            return this.visitor.likes.some((like) => {
-                return like.post_id === this.postDialog.id;
-            })
-        },
-        mainUserCommentBool(){
-            return this.visitor.comments.some((comment) => {
-                return comment.post_id === this.postDialog.id;
-            })
-        },
-        mainUserLike(){
-            return this.postDialog ? this.visitor.likes.find((like) => {
-                return like.post_id === this.postDialog.id;
-            }) : '';
-        },
-        likedUsers(){
-            var likeUsers = this.postDialog.likes;
-            return likeUsers;
-        },
-        commentedUsers(){
-            var commentedUsers = this.postDialog.comments;
-            if (commentedUsers) {
-                return commentedUsers;
-            } else {
-                return false
-            }
-        },
-        card(){
+        card(): card{
             const windowSize = this.$store.getters.windowSize;
             if(windowSize.x < 480){
                 return {size1: 350, size2: 300, size3: 110};
@@ -286,7 +92,7 @@
                 return {size1: 600, size2: 500, size3: 350};
             }
         },
-        dialogSize(){
+        dialogSize(): number{
             const windowSize = this.$store.getters.windowSize;
             if(windowSize.x < 480){
                 return 300;
@@ -294,173 +100,35 @@
                 return 500;
             }
         },
+        postDialog(){
+            return this.$store.getters.postDialog;
+        },
+        postDialogIndex(){
+            return this.$store.getters.postDialogIndex;
+        },
     },
     methods: {
-        showDeleteBtn(id, index){
-            if(id==this.visitor.id){
-                this.isDeleteBtn[index] = true;
-                this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
-                    return el;
-                })
-            }
-        },
-        hideDeleteBtn(id, index){
-            if(id==this.visitor.id){
-                this.isDeleteBtn[index] = false;
-                this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
-                    return el;
-                })
-            }
-        },
-        toggleDeleteBtn(id, index){
-            if(id==this.visitor.id){
-                this.isDeleteBtn[index] = !this.isDeleteBtn[index];
-                this.isDeleteBtn = this.isDeleteBtn.map((el, key) => {
-                    return el;
-                })
-            }
-        },
-        next () {
-            this.window = this.window + 1 === this.length
-            ? 0
-            : this.window + 1
-        },
-        prev () {
-            this.window = this.window - 1 < 0
-            ? this.length - 1
-            : this.window - 1
-        },
-        openDialog(userPost, index){
-            this.postDialog = userPost;
-            this.postDialogIndex = index;
+        openDialog(postDialog: {comments: string[]}, postDialogIndex: number): void{
+            this.$store.commit('postDialog',postDialog)
+            this.$store.commit('postDialogIndex',postDialogIndex)
             this.dialog = true;
+            const isDeleteBtn = postDialog.comments.map((commentUser) => {
+                return false;
+            })
+            this.isDeleteBtn = isDeleteBtn;
         },
-        outside(){
-            this.comment = '';
+        outside(): void{
+            let element: cardContent = this.$refs.cardContent as InstanceType<typeof CardContent>;
+            element.comment = '';
         },
-        deletePost(postDialog){
-            let fd= new FormData();
-            fd.append("post", JSON.stringify(postDialog));
-            axios.post('/api/delete_post', fd)
-            .then(
-                response => {
-                    this.user.posts = response.data;
-                    this.dialog = false;
-                    this.deleteDialog = false;
-                    this.snackbar = true;
-                }
-            )
-            .catch(function (error) {
-                console.log(error);
-            });
-        },
-        like(index){
-            axios.post('/api/like', {
-                postId: this.postDialog.id,
-                userId: this.visitor.id,
-                requestedUserId: this.user.id,
-                reaction: index,
-            })
-            .then(response => {
-                this.lastPostId = this.postDialog.id;
-                this.lastIndex = index;
-                console.log(response.data)
-                console.log(this.postDialog)
-                this.checkLikeObj(response.data);
-            })
-            .catch(error => {
-                console.log('fail')
-            })
-        },
-        deleteLike(thisPostId, index){
-            axios.post('/api/delete_like', {
-                postId: thisPostId,
-                userId: this.visitor.id,
-                requestedUserId: this.user.id,
-                reaction: index,
-            })
-            .then(response => {
-                this.findDeleteLike(response.data);
-            })
-            .catch(error => {
-                console.log('fail')
-            })
-        },
-        checkLikeObj(res){
-            var isPostDialogLike = this.postDialog.likes.find((like) => {
-                return like.user_id === this.visitor.id;
-            })
-            var isUserLike = this.visitor.likes.find((like) => {
-                return like.post_id === this.postDialog.id;
-            })
-            if(isPostDialogLike){
-                isPostDialogLike.reaction = res.reaction;
-            } else {
-                this.postDialog.likes.push(res);
-            }
-            if(isUserLike){
-                isUserLike.reaction = res.reaction;
-            } else {
-                this.visitor.likes.push(res);
-            }
-        },
-        findDeleteLike(res){
-            var postDialogIndex = this.postDialog.likes.findIndex((like) => {
-                return like.id === res.id;
-            })
-            this.postDialog.likes.splice(postDialogIndex, 1);
-            console.log(this.postDialog)
-            var visitorLikes = this.visitor.likes.findIndex((like) => {
-                return like.id === res.id;
-            })
-            this.visitor.likes.splice(visitorLikes, 1);
-        },
-        sendComment(postId, index){
-            if (this.comment) {
-                axios.post('/api/comment', {
-                    postId: postId,
-                    userId: this.visitor.id,
-                    text: this.comment,
-                })
-                .then(response => {
-                    this.comment = '',
-                    this.commentSnackbar = true;
-                    this.lastPostId = postId;
-                    this.lastIndex = index;
-                    this.window = 2;
-                    this.postDialog.comments.unshift(response.data);
-                })
-                .catch(error => {
-                    console.log('fail')
-                })
-            }
-        },
-        deleteComment(postComment){
-            axios.post('/api/delete_comment', {
-                id: postComment.id,
-            })
-            .then(response => {
-                this.findDeleteComment(response.data);
-            })
-            .catch(error => {
-                console.log('fail')
-            })
-        },
-        findDeleteComment(res){
-            var postDialogIndex = this.postDialog.comments.findIndex((comment) => {
-                return comment.id === res.id;
-            })
-            this.postDialog.comments.splice(postDialogIndex, 1);
-            var visitorComments = this.visitor.comments.findIndex((comment) => {
-                return comment.id === res.id;
-            })
-            this.visitor.comments.splice(visitorComments, 1);
-        },
+        bar(event: {dialog: boolean, snackbar: boolean}){
+            this.dialog = event.dialog;
+            this.snackbar = event.snackbar;
+        }
     }
-}
+})
 </script>
 <style scoped>
-
 
 .slide-fade-enter-active,
 .slide-fade-leave-active,
@@ -494,14 +162,6 @@
     transition: all 0.8s ease;
 }
 
-/* .theme--dark {
-    background-image: linear-gradient(25deg, rgba(255, 0, 0, 0.7), rgba(0, 255, 0, 0.7));
-    transition-duration: .7s;
-}
-
-.overlay{
-    opacity: 0;
-} */
 .v-card--reveal {
   align-items: center;
   bottom: 0;
@@ -510,27 +170,11 @@
   position: absolute;
   width: 100%;
 }
-.content{
-    overflow: hidden;
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
 
 .pointer {
     cursor: pointer;
 }
-.slide-fade-enter-active {
-    transition: all .6s ease;
-}
-.slide-fade-leave-active {
-    transition: all .2s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-.slide-fade-enter, .slide-fade-leave-to {
-    transform: translateY(10px);
-    opacity: 0;
-}
+
 .v-list-item__action{
     display: inline-flex;
     min-width: 70px!important;
