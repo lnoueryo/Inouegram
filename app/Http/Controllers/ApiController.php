@@ -107,12 +107,21 @@ class ApiController extends Controller
         $request->validate([
             'password' => new HashCheck($request->id),
         ]);
-        $user = User::find($request->id);
+        $user = User::with(['followees'])->find($request->id);
         $user->name = $request->name;
         $user->screen_name = $request->screen_name;
         $user->email = $request->email;
         $user->save();
-        return $user;
+        $requested_user = User::with(['followees' => function($followee_query){
+            $followee_query->with(['followee']);
+        }, 'posts' => function($post_query){
+            $post_query->with(['likes' => function($like_query){
+                $like_query->with(['user'])->orderBy('updated_at', 'desc');
+            }, 'comments' => function($comment_query){
+                $comment_query->with(['user'])->orderBy('updated_at', 'desc');
+            }])->orderBy('updated_at', 'desc');
+        }])->find($request->id);
+        return $requested_user;
     }
 
 }
