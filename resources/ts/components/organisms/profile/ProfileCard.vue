@@ -1,6 +1,6 @@
 <template>
     <div>
-        <v-card class="mx-auto" max-width="800" tile flat elevation="1" v-if="requestedUserInfo">
+        <v-card class="mx-auto" max-width="800" tile flat elevation="1" v-if="requestedUser">
             <background-image></background-image>
             <v-list-item three-line class="px-3">
                 <v-list-item-avatar size="80">
@@ -40,50 +40,34 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import Avatar from "../../molecules/profile/profile_card/Avatar.vue";
 import Buttons from "../../molecules/profile/profile_card/Buttons.vue";
 import Follower from "../../molecules/profile/profile_card/Follower.vue";
-import BackgroundImage from "../../molecules/profile/profile_card/BackgroundImage";
-export default {
+import BackgroundImage from "../../molecules/profile/profile_card/BackgroundImage.vue";
+import Vue from "vue";
+
+export type DataType = {
+    sizeDialog: boolean,
+    progress: boolean,
+}
+export default Vue.extend({
     components:{
         Avatar,
         Buttons,
         Follower,
         BackgroundImage
     },
-    props: ['mainUser', 'requestedUser'],
-    data () {
+    data(): DataType {
         return {
-            user: this.$store.getters.requestedUser,
-            visitor: this.$store.getters.visitor,
-            followerDialog: false,
             sizeDialog: false,
             progress: false,
         }
     },
-    watch:  {
-        requestedUser: {
-            immediate: true,
-            handler: function () {
-                this.user = this.$store.getters.requestedUser;
-            },
-        },
-        mainUser: {
-            immediate: true,
-            handler: function () {
-                this.visitor = this.$store.getters.visitor;
-            }
-        },
-    },
     computed:{
-        requestedUserInfo(){
-            var user = this.user;
-            return user;
+        requestedUser(): string[]{
+            return this.$store.getters.requestedUser;
         },
     },
-    methods: {
-
-    }
-}
+})
 </script>
