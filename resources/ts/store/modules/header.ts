@@ -26,12 +26,7 @@ export const header = {
         },
         requestedUser(state: State, requestedUser: null | string[]){
           state.requestedUser = requestedUser;
-        }
+        },
     },
-    actions: {
-      // windowSize(windowSize: { x: number; y: number; }){
-      //   windowSize.commit('windowSize');
-      //   console.log(windowSize)
-      // },
-    }
+
   }

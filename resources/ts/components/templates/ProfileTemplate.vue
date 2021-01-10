@@ -101,7 +101,7 @@ export default Vue.extend({
         })
         .then((response) => {
             this.requestedUser = response.data;
-            this.$store.commit('requestedUser', response.data)
+            this.$store.commit('requestedUser', response.data)//vuex
         })
         .catch(error => {
             console.log('fail')

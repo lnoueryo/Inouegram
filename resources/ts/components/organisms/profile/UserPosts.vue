@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div v-if="parsedUserPosts" v-resize="onResize">
+        <div v-if="parsedUserPosts">
             <v-layout row wrap class="justify-end" style="margin: auto;">
                 <v-hover v-for="(parsedUserPost, index) in parsedUserPosts" :key="index" v-slot="{ hover }">
                     <v-card class="mx-auto my-4" color="grey lighten-4" :max-width="card.size3" style="width: 100%">
@@ -205,10 +205,6 @@
                 {color: 'red', icon: 'mdi-emoticon-angry'},
                 {color: 'pink', icon: 'mdi-emoticon-kiss'},
             ],
-            windowSize: {
-                x: 0,
-                y: 0,
-            },
             lastPostId: '',
             lastIndex: '',
             snackbar: false,
@@ -283,22 +279,21 @@
             }
         },
         card(){
-            if(this.windowSize.x < 480){
+            const windowSize = this.$store.getters.windowSize;
+            if(windowSize.x < 480){
                 return {size1: 350, size2: 300, size3: 110};
             } else {
                 return {size1: 600, size2: 500, size3: 350};
             }
         },
         dialogSize(){
-            if(this.windowSize.x < 480){
+            const windowSize = this.$store.getters.windowSize;
+            if(windowSize.x < 480){
                 return 300;
             } else {
                 return 500;
             }
         },
-    },
-    mounted(){
-        console.log(this.visitor.likes)
     },
     methods: {
         showDeleteBtn(id, index){
@@ -334,9 +329,6 @@
             this.window = this.window - 1 < 0
             ? this.length - 1
             : this.window - 1
-        },
-        onResize () {
-            this.windowSize = { x: window.innerWidth, y: window.innerHeight }
         },
         openDialog(userPost, index){
             this.postDialog = userPost;
