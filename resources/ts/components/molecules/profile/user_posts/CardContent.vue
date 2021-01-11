@@ -124,6 +124,7 @@ export default Vue.extend({
                     this.lastIndex = index;
                     this.window = 2;
                     this.$store.getters.postDialog.comments.unshift(response.data);
+                    this.$store.getters.visitor.comments.unshift(response.data);
                 })
                 .catch(error => {
                     console.log('fail')
