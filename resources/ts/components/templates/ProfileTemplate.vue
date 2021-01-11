@@ -5,12 +5,12 @@
         <template v-if="value == 0">
             <user-posts :mainUser="mainUser" :requestedUser="requestedUser" :isMainUser="isMainUser"></user-posts>
         </template>
-        <template v-else-if="value == 1">
+        <!-- <template v-else-if="value == 1">
             <like-posts :mainUserPostLikes="mainUserPostLikes" :likedPosts="likedPosts" :postLikes="postLikes" :postLikeUsers="postLikeUsers" :comments="postComments" :postCommentUsers="postCommentUsers" :mainUser="mainUser" :requestedUser="requestedUser"></like-posts>
-        </template>
-        <template v-else>
-            a
-        </template>
+        </template> -->
+        <!-- <template v-else>
+            
+        </template> -->
         </keep-alive>
         <!-- <v-bottom-navigation :value="value" color="teal" grow fixed v-if="isMainUser">
             <v-btn @click="value = 0">
