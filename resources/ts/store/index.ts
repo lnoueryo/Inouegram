@@ -1,7 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-// import profile from './modules/profile';
-import {profile} from './modules/profile.ts';
+import {profile} from './modules/profile';
 
 Vue.use(Vuex);
 

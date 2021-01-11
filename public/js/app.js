@@ -88782,7 +88782,7 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js");
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
-/* harmony import */ var _modules_profile_ts__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/profile.ts */ "./resources/ts/store/modules/profile.ts");
+/* harmony import */ var _modules_profile__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/profile */ "./resources/ts/store/modules/profile.ts");
 
 
 // import profile from './modules/profile';
@@ -88790,7 +88790,7 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
     modules: {
-        profile: _modules_profile_ts__WEBPACK_IMPORTED_MODULE_2__["profile"],
+        profile: _modules_profile__WEBPACK_IMPORTED_MODULE_2__["profile"],
     }
 }));
 
