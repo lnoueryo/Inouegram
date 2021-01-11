@@ -14345,11 +14345,12 @@ __webpack_require__.r(__webpack_exports__);
                     text: this.comment,
                 })
                     .then(response => {
+                    console.log(response.data);
                     this.comment = '',
                         this.lastPostId = postId;
                     this.lastIndex = index;
                     this.window = 2;
-                    this.postDialog.comments.unshift(response.data);
+                    this.$store.getters.postDialog.comments.unshift(response.data);
                 })
                     .catch(error => {
                     console.log('fail');
@@ -88785,7 +88786,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_profile__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/profile */ "./resources/ts/store/modules/profile.ts");
 
 
-// import profile from './modules/profile';
 
 vue__WEBPACK_IMPORTED_MODULE_0__["default"].use(vuex__WEBPACK_IMPORTED_MODULE_1__["default"]);
 /* harmony default export */ __webpack_exports__["default"] = (new vuex__WEBPACK_IMPORTED_MODULE_1__["default"].Store({
