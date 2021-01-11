@@ -4640,19 +4640,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments', 'liked-posts', 'request-id'],
+  props: ['main-user', 'request-id'],
   components: {
     ProfileTemplates: _templates_ProfileTemplate__WEBPACK_IMPORTED_MODULE_0__["default"]
   }
@@ -14163,6 +14153,10 @@ __webpack_require__.r(__webpack_exports__);
                 return false;
             }
         },
+        guest() {
+            const visitor = this.$store.getters.visitor;
+            return (visitor.email == 'guest@guest.com' && visitor.name == 'Guest') ? true : false;
+        }
     },
     watch: {
         user: {
@@ -18946,7 +18940,12 @@ var render = function() {
                 [
                   _c("v-card-title", [
                     _c("span", { staticClass: "headline" }, [
-                      _vm._v("プロフィール")
+                      _vm._v("プロフィール"),
+                      _vm.guest
+                        ? _c("span", { staticStyle: { "font-size": "14px" } }, [
+                            _vm._v("　※ゲストのため変更できません。")
+                          ])
+                        : _vm._e()
                     ])
                   ]),
                   _vm._v(" "),
@@ -18981,7 +18980,8 @@ var render = function() {
                                         attrs: {
                                           label: "名前",
                                           required: "",
-                                          rules: _vm.nameRules
+                                          rules: _vm.nameRules,
+                                          disabled: _vm.guest
                                         },
                                         model: {
                                           value: _vm.profile.name,
@@ -19002,7 +19002,8 @@ var render = function() {
                                       _c("v-text-field", {
                                         attrs: {
                                           label: "ニックネーム",
-                                          rules: _vm.nicknameRules
+                                          rules: _vm.nicknameRules,
+                                          disabled: _vm.guest
                                         },
                                         model: {
                                           value: _vm.profile.screen_name,
@@ -19028,7 +19029,8 @@ var render = function() {
                                         attrs: {
                                           label: "メールアドレス",
                                           required: "",
-                                          rules: _vm.emailRules
+                                          rules: _vm.emailRules,
+                                          disabled: _vm.guest
                                         },
                                         model: {
                                           value: _vm.profile.email,
@@ -19050,6 +19052,7 @@ var render = function() {
                                         staticClass:
                                           "input-group--focused py-2",
                                         attrs: {
+                                          disabled: _vm.guest,
                                           "append-icon": _vm.showPassword
                                             ? "mdi-eye"
                                             : "mdi-eye-off",
@@ -21376,17 +21379,7 @@ var render = function() {
     "div",
     [
       _c("profile-templates", {
-        attrs: {
-          mainUser: _vm.mainUser,
-          requestedUser: _vm.requestedUser,
-          requestedUserPosts: _vm.requestedUserPosts,
-          mainUserLikes: _vm.mainUserLikes,
-          requestedUserLikes: _vm.requestedUserLikes,
-          requestedUserFollowed: _vm.requestedUserFollowed,
-          requestedUserComments: _vm.requestedUserComments,
-          likedPosts: _vm.likedPosts,
-          requestId: _vm.requestId
-        }
+        attrs: { mainUser: _vm.mainUser, requestId: _vm.requestId }
       })
     ],
     1
@@ -25775,22 +25768,7 @@ var render = function() {
                   }
                 })
               ]
-            : _vm.value == 1
-            ? [
-                _c("like-posts", {
-                  attrs: {
-                    mainUserPostLikes: _vm.mainUserPostLikes,
-                    likedPosts: _vm.likedPosts,
-                    postLikes: _vm.postLikes,
-                    postLikeUsers: _vm.postLikeUsers,
-                    comments: _vm.postComments,
-                    postCommentUsers: _vm.postCommentUsers,
-                    mainUser: _vm.mainUser,
-                    requestedUser: _vm.requestedUser
-                  }
-                })
-              ]
-            : [_vm._v("\n        a\n    ")]
+            : _vm._e()
         ],
         2
       ),

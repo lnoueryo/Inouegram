@@ -17,23 +17,23 @@
             <v-dialog v-model="profileDialog" max-width="600px">
                 <v-card>
                     <v-card-title>
-                    <span class="headline">プロフィール</span>
+                    <span class="headline">プロフィール<span style="font-size: 14px" v-if="guest">　※ゲストのため変更できません。</span></span>
                     </v-card-title>
                     <v-card-text>
                     <v-container>
                         <v-form ref="form" v-model="valid" lazy-validation>
                             <v-row>
                                 <v-col cols="12" sm="6" md="6">
-                                    <v-text-field v-model="profile.name" label="名前" required :rules="nameRules"></v-text-field>
+                                    <v-text-field v-model="profile.name" label="名前" required :rules="nameRules" :disabled="guest"></v-text-field>
                                 </v-col>
                                 <v-col cols="12" sm="6" md="6">
-                                    <v-text-field v-model="profile.screen_name" label="ニックネーム" :rules="nicknameRules"></v-text-field>
+                                    <v-text-field v-model="profile.screen_name" label="ニックネーム" :rules="nicknameRules" :disabled="guest"></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
-                                    <v-text-field v-model="profile.email" label="メールアドレス" required :rules="emailRules"></v-text-field>
+                                    <v-text-field v-model="profile.email" label="メールアドレス" required :rules="emailRules" :disabled="guest"></v-text-field>
                                 </v-col>
                                 <v-col cols="12">
-                                    <v-text-field :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="[passwordRules.required, passwordRules.min]" :type="showPassword ? 'text' : 'password'" name="input-10-2"
+                                    <v-text-field :disabled="guest" :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'" :rules="[passwordRules.required, passwordRules.min]" :type="showPassword ? 'text' : 'password'" name="input-10-2"
                                         label="パスワード"
                                         hint="8文字以上です"
                                         autocomplete="new-password"
@@ -141,6 +141,10 @@ export default Vue.extend({
                 return false;
             }
         },
+        guest(): boolean{
+            const visitor = this.$store.getters.visitor;
+            return (visitor.email=='guest@guest.com' && visitor.name == 'Guest') ? true : false;
+        }
     },
     watch:  {
         user: {
