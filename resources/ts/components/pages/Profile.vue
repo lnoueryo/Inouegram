@@ -1,23 +1,13 @@
 <template>
     <div>
-        <profile-templates
-            :mainUser="mainUser"
-            :requestedUser="requestedUser"
-            :requestedUserPosts="requestedUserPosts"
-            :mainUserLikes="mainUserLikes"
-            :requestedUserLikes="requestedUserLikes"
-            :requestedUserFollowed="requestedUserFollowed"
-            :requestedUserComments="requestedUserComments"
-            :likedPosts="likedPosts"
-            :requestId="requestId"
-        ></profile-templates>
+        <profile-templates :mainUser="mainUser" :requestId="requestId"></profile-templates>
     </div>
 </template>
 
 <script>
 import ProfileTemplates from '../templates/ProfileTemplate'
 export default {
-    props: ['main-user', 'requested-user', 'requested-user-posts', 'main-user-likes', 'requested-user-likes', 'requested-user-followed', 'requested-user-comments', 'liked-posts', 'request-id'],
+    props: ['main-user', 'request-id'],
     components: {
         ProfileTemplates,
     },
