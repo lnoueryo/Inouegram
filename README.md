@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="http://lnoueryo98.sakura.ne.jp/lp/img/carousel/11.png" width=100%>  
+  <img src="http://lnoueryo98.sakura.ne.jp/introduction/img/carousel/11.png" width=100%>  
 </p>
 
 ## アプリケーションの概要
