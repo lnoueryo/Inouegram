@@ -302,6 +302,10 @@
     <v-overlay :value="cropProgress">
         <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
+    <v-dialog v-model="cameraDialog" width="500">
+        <video ref="video" autoplay playsinline></video>
+        <v-btn @click="capture">撮影</v-btn>
+    </v-dialog>
     <!-- <v-row justify="center">
         <v-dialog v-model="currentImageDialog" fullscreen hide-overlay transition="dialog-bottom-transition">
         <v-card style="height: 50;">
@@ -431,6 +435,7 @@ export default {
     },
     data() {
         return {
+            cameraDialog: false,
             currentImageDialog: false,
             cropProgress: false,
             titleMessagevalidation: false,
@@ -568,6 +573,36 @@ export default {
         this.mediaSize = window.innerWidth;
     },
     methods: {
+        openCamera(){
+            this.cameraDialog = true;
+            const constraints = {
+                audio: false,
+                video: {
+                facingMode: "user"   // フロントカメラを利用する
+                }
+            };
+            try {
+                navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+                navigator.mediaDevices.getUserMedia(constraints)
+                .then( stream => {
+                    this.$refs.video.srcObject = stream;
+                    let that = this;
+                    this.$refs.video.onloadedmetadata = (e) => {
+                        that.$refs.video.play();
+                    };
+                })
+                .catch( (err) => {
+                    alert(err)
+                });
+            } catch (error) {
+                alert(error)
+            }
+        },
+        capture () {
+            this.$refs.cropper.replace(this.$refs.video);
+            this.imgSrc = this.$refs.video;
+            this.cameraDialog = false;
+        },
         coverNext () {
             this.coverItem = this.coverItem + 1 === this.coverLength
             ? 0
