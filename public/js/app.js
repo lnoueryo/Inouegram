@@ -4362,263 +4362,45 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-cropperjs */ "./node_modules/vue-cropperjs/dist/VueCropper.js");
-/* harmony import */ var vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue_cropperjs__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var cropperjs_dist_cropper_css__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! cropperjs/dist/cropper.css */ "./node_modules/cropperjs/dist/cropper.css");
-/* harmony import */ var cropperjs_dist_cropper_css__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(cropperjs_dist_cropper_css__WEBPACK_IMPORTED_MODULE_1__);
 //
 //
 //
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-
 /* harmony default export */ __webpack_exports__["default"] = ({
-  components: {
-    VueCropper: vue_cropperjs__WEBPACK_IMPORTED_MODULE_0___default.a
-  },
-  data: function data() {
-    return {
-      imgSrc: '/assets/images/berserk.jpg',
-      cropImg: '',
-      data: null
-    };
-  },
-  methods: {
-    cropImage: function cropImage() {
-      // get image data for post processing, e.g. upload or setting image src
-      this.cropImg = this.$refs.cropper.getCroppedCanvas().toDataURL();
-    },
-    flipX: function flipX() {
-      var dom = this.$refs.flipX;
-      var scale = dom.getAttribute('data-scale');
-      scale = scale ? -scale : -1;
-      this.$refs.cropper.scaleX(scale);
-      dom.setAttribute('data-scale', scale);
-    },
-    flipY: function flipY() {
-      var dom = this.$refs.flipY;
-      var scale = dom.getAttribute('data-scale');
-      scale = scale ? -scale : -1;
-      this.$refs.cropper.scaleY(scale);
-      dom.setAttribute('data-scale', scale);
-    },
-    getCropBoxData: function getCropBoxData() {
-      this.data = JSON.stringify(this.$refs.cropper.getCropBoxData(), null, 4);
-    },
-    getData: function getData() {
-      this.data = JSON.stringify(this.$refs.cropper.getData(), null, 4);
-    },
-    move: function move(offsetX, offsetY) {
-      this.$refs.cropper.move(offsetX, offsetY);
-    },
-    reset: function reset() {
-      this.$refs.cropper.reset();
-    },
-    rotate: function rotate(deg) {
-      this.$refs.cropper.rotate(deg);
-    },
-    setCropBoxData: function setCropBoxData() {
-      if (!this.data) return;
-      this.$refs.cropper.setCropBoxData(JSON.parse(this.data));
-    },
-    setData: function setData() {
-      if (!this.data) return;
-      this.$refs.cropper.setData(JSON.parse(this.data));
-    },
-    setImage: function setImage(e) {
-      var _this = this;
+  mounted: function mounted() {
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    var URL = window.URL || window.webkitURL;
+    var RTCPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+    var RTCSessionDescription = window.RTCSessionDescription || window.webkitRTCSessionDescription || window.mozRTCSessionDescription;
+    var RTCIceCandidate = window.RTCIceCandidate || window.webkitRTCIceCandidate || window.mozRTCIceCandidate; // フロント（イン）カメラの場合	
 
-      var file = e.target.files[0];
-
-      if (file.type.indexOf('image/') === -1) {
-        alert('Please select an image file');
-        return;
-      }
-
-      if (typeof FileReader === 'function') {
-        var reader = new FileReader();
-
-        reader.onload = function (event) {
-          _this.imgSrc = event.target.result; // rebuild cropperjs with the updated source
-
-          _this.$refs.cropper.replace(event.target.result);
-        };
-
-        reader.readAsDataURL(file);
-      } else {
-        alert('Sorry, FileReader API not supported');
+    var medias = {
+      audio: false,
+      video: {
+        facingMode: "user"
       }
     },
-    showFileChooser: function showFileChooser() {
-      this.$refs.input.click();
-    },
-    zoom: function zoom(percent) {
-      this.$refs.cropper.relativeZoom(percent);
+        video = document.getElementById("video"); // リア（バック/アウト）カメラの場合
+
+    /* const medias = {audio : false, video : { facingMode: { exact: "environment" } }},
+          video  = document.getElementById("video"); */
+
+    navigator.getUserMedia(medias, successCallback, errorCallback);
+
+    function successCallback(stream) {
+      video.srcObject = stream;
+      video.play();
     }
+
+    ;
+
+    function errorCallback(error) {
+      alert(error);
+    }
+
+    ;
   }
 });
 
@@ -5491,6 +5273,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -5506,6 +5295,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var _ref;
 
     return _ref = {
+      video: '',
+      cameraDialog: false,
       size: 1100,
       titleMessagevalidation: false,
       text: 'タイトルと内容を書いてください',
@@ -5631,6 +5422,36 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     var img = document.getElementById("select");
   },
   methods: {
+    openCamera: function openCamera() {
+      var _this = this;
+
+      var constraints = {
+        audio: false,
+        video: {
+          facingMode: "user" // フロントカメラを利用する
+
+        }
+      };
+
+      try {
+        navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+        navigator.mediaDevices.getUserMedia(constraints).then(function (stream) {
+          _this.$refs.video.srcObject = stream;
+          var that = _this;
+
+          _this.$refs.video.onloadedmetadata = function (e) {
+            that.$refs.video.play();
+          };
+        })["catch"](function (err) {
+          alert(err);
+        });
+      } catch (error) {
+        alert(error);
+      }
+    },
+    capture: function capture() {
+      this.$refs.cropper.replace(this.$refs.video);
+    },
     oneMoreImage: function oneMoreImage() {
       this.e1 = 1;
       this.imgSrc = '';
@@ -5743,7 +5564,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       return image;
     },
     searchTimeOut: function searchTimeOut() {
-      var _this = this;
+      var _this2 = this;
 
       if (this.timer) {
         clearTimeout(this.timer);
@@ -5751,7 +5572,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.timer = setTimeout(function () {
-        _this.pen();
+        _this2.pen();
       }, 200);
     },
     pen: function pen() {
@@ -5949,18 +5770,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.color = '#00000080'; // that.searchTimeOut();
     },
     searchTimeOut2: function searchTimeOut2() {
-      var _this2 = this;
-
-      if (this.timer) {
-        clearTimeout(this.timer);
-        this.timer = null;
-      }
-
-      this.timer = setTimeout(function () {
-        _this2.colorImage();
-      }, 200);
-    },
-    searchTimeOut3: function searchTimeOut3() {
       var _this3 = this;
 
       if (this.timer) {
@@ -5969,9 +5778,21 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       }
 
       this.timer = setTimeout(function () {
-        _this3.filter();
-
         _this3.colorImage();
+      }, 200);
+    },
+    searchTimeOut3: function searchTimeOut3() {
+      var _this4 = this;
+
+      if (this.timer) {
+        clearTimeout(this.timer);
+        this.timer = null;
+      }
+
+      this.timer = setTimeout(function () {
+        _this4.filter();
+
+        _this4.colorImage();
       }, 200);
     },
     colorImage: function colorImage() {
@@ -7442,36 +7263,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     }
   }
 });
-
-/***/ }),
-
-/***/ "./node_modules/cropperjs/dist/cropper.css":
-/*!*************************************************!*\
-  !*** ./node_modules/cropperjs/dist/cropper.css ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../css-loader??ref--7-1!../../postcss-loader/src??ref--7-2!./cropper.css */ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/cropperjs/dist/cropper.css");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
 
 /***/ }),
 
@@ -11129,25 +10920,6 @@ exports.push([module.i, "/* MaterialDesignIcons.com */\n@font-face {\n  font-fam
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/cropperjs/dist/cropper.css":
-/*!*********************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/postcss-loader/src??ref--7-2!./node_modules/cropperjs/dist/cropper.css ***!
-  \*********************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "/*!\n * Cropper.js v1.5.9\n * https://fengyuanchen.github.io/cropperjs\n *\n * Copyright 2015-present Chen Fengyuan\n * Released under the MIT license\n *\n * Date: 2020-09-10T13:16:21.689Z\n */\n\n.cropper-container {\n  direction: ltr;\n  font-size: 0;\n  line-height: 0;\n  position: relative;\n  -ms-touch-action: none;\n  touch-action: none;\n  -webkit-user-select: none;\n  -moz-user-select: none;\n  -ms-user-select: none;\n  user-select: none;\n}\n\n.cropper-container img {\n  display: block;\n  height: 100%;\n  image-orientation: 0deg;\n  max-height: none !important;\n  max-width: none !important;\n  min-height: 0 !important;\n  min-width: 0 !important;\n  width: 100%;\n}\n\n.cropper-wrap-box,\n.cropper-canvas,\n.cropper-drag-box,\n.cropper-crop-box,\n.cropper-modal {\n  bottom: 0;\n  left: 0;\n  position: absolute;\n  right: 0;\n  top: 0;\n}\n\n.cropper-wrap-box,\n.cropper-canvas {\n  overflow: hidden;\n}\n\n.cropper-drag-box {\n  background-color: #fff;\n  opacity: 0;\n}\n\n.cropper-modal {\n  background-color: #000;\n  opacity: 0.5;\n}\n\n.cropper-view-box {\n  display: block;\n  height: 100%;\n  outline: 1px solid #39f;\n  outline-color: rgba(51, 153, 255, 0.75);\n  overflow: hidden;\n  width: 100%;\n}\n\n.cropper-dashed {\n  border: 0 dashed #eee;\n  display: block;\n  opacity: 0.5;\n  position: absolute;\n}\n\n.cropper-dashed.dashed-h {\n  border-bottom-width: 1px;\n  border-top-width: 1px;\n  height: calc(100% / 3);\n  left: 0;\n  top: calc(100% / 3);\n  width: 100%;\n}\n\n.cropper-dashed.dashed-v {\n  border-left-width: 1px;\n  border-right-width: 1px;\n  height: 100%;\n  left: calc(100% / 3);\n  top: 0;\n  width: calc(100% / 3);\n}\n\n.cropper-center {\n  display: block;\n  height: 0;\n  left: 50%;\n  opacity: 0.75;\n  position: absolute;\n  top: 50%;\n  width: 0;\n}\n\n.cropper-center::before,\n.cropper-center::after {\n  background-color: #eee;\n  content: ' ';\n  display: block;\n  position: absolute;\n}\n\n.cropper-center::before {\n  height: 1px;\n  left: -3px;\n  top: 0;\n  width: 7px;\n}\n\n.cropper-center::after {\n  height: 7px;\n  left: 0;\n  top: -3px;\n  width: 1px;\n}\n\n.cropper-face,\n.cropper-line,\n.cropper-point {\n  display: block;\n  height: 100%;\n  opacity: 0.1;\n  position: absolute;\n  width: 100%;\n}\n\n.cropper-face {\n  background-color: #fff;\n  left: 0;\n  top: 0;\n}\n\n.cropper-line {\n  background-color: #39f;\n}\n\n.cropper-line.line-e {\n  cursor: ew-resize;\n  right: -3px;\n  top: 0;\n  width: 5px;\n}\n\n.cropper-line.line-n {\n  cursor: ns-resize;\n  height: 5px;\n  left: 0;\n  top: -3px;\n}\n\n.cropper-line.line-w {\n  cursor: ew-resize;\n  left: -3px;\n  top: 0;\n  width: 5px;\n}\n\n.cropper-line.line-s {\n  bottom: -3px;\n  cursor: ns-resize;\n  height: 5px;\n  left: 0;\n}\n\n.cropper-point {\n  background-color: #39f;\n  height: 5px;\n  opacity: 0.75;\n  width: 5px;\n}\n\n.cropper-point.point-e {\n  cursor: ew-resize;\n  margin-top: -3px;\n  right: -3px;\n  top: 50%;\n}\n\n.cropper-point.point-n {\n  cursor: ns-resize;\n  left: 50%;\n  margin-left: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-w {\n  cursor: ew-resize;\n  left: -3px;\n  margin-top: -3px;\n  top: 50%;\n}\n\n.cropper-point.point-s {\n  bottom: -3px;\n  cursor: s-resize;\n  left: 50%;\n  margin-left: -3px;\n}\n\n.cropper-point.point-ne {\n  cursor: nesw-resize;\n  right: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-nw {\n  cursor: nwse-resize;\n  left: -3px;\n  top: -3px;\n}\n\n.cropper-point.point-sw {\n  bottom: -3px;\n  cursor: nesw-resize;\n  left: -3px;\n}\n\n.cropper-point.point-se {\n  bottom: -3px;\n  cursor: nwse-resize;\n  height: 20px;\n  opacity: 1;\n  right: -3px;\n  width: 20px;\n}\n\n@media (min-width: 768px) {\n  .cropper-point.point-se {\n    height: 15px;\n    width: 15px;\n  }\n}\n\n@media (min-width: 992px) {\n  .cropper-point.point-se {\n    height: 10px;\n    width: 10px;\n  }\n}\n\n@media (min-width: 1200px) {\n  .cropper-point.point-se {\n    height: 5px;\n    opacity: 0.75;\n    width: 5px;\n  }\n}\n\n.cropper-point.point-se::before {\n  background-color: #39f;\n  bottom: -50%;\n  content: ' ';\n  display: block;\n  height: 200%;\n  opacity: 0;\n  position: absolute;\n  right: -50%;\n  width: 200%;\n}\n\n.cropper-invisible {\n  opacity: 0;\n}\n\n.cropper-bg {\n  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAAA3NCSVQICAjb4U/gAAAABlBMVEXMzMz////TjRV2AAAACXBIWXMAAArrAAAK6wGCiw1aAAAAHHRFWHRTb2Z0d2FyZQBBZG9iZSBGaXJld29ya3MgQ1M26LyyjAAAABFJREFUCJlj+M/AgBVhF/0PAH6/D/HkDxOGAAAAAElFTkSuQmCC');\n}\n\n.cropper-hide {\n  display: block;\n  height: 0;\n  position: absolute;\n  width: 0;\n}\n\n.cropper-hidden {\n  display: none !important;\n}\n\n.cropper-move {\n  cursor: move;\n}\n\n.cropper-crop {\n  cursor: crosshair;\n}\n\n.cropper-disabled .cropper-drag-box,\n.cropper-disabled .cropper-face,\n.cropper-disabled .cropper-line,\n.cropper-disabled .cropper-point {\n  cursor: not-allowed;\n}\n", ""]);
-
-// exports
-
-
-/***/ }),
-
 /***/ "./node_modules/css-loader/index.js?!./node_modules/postcss-loader/src/index.js?!./node_modules/vuetify/dist/vuetify.min.css":
 /*!***********************************************************************************************************************************!*\
   !*** ./node_modules/css-loader??ref--7-1!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vuetify/dist/vuetify.min.css ***!
@@ -11313,25 +11085,6 @@ exports = module.exports = __webpack_require__(/*! ../../../../../node_modules/c
 
 // module
 exports.push([module.i, "\n.slide-fade-enter-active[data-v-f11a15ba],\r\n.slide-fade-leave-active[data-v-f11a15ba],\r\n.slide-fade-move[data-v-f11a15ba] {\r\n  transition: 500ms cubic-bezier(0.59, 0.12, 0.34, 0.95);\r\n  transition-property: opacity, transform;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter[data-v-f11a15ba] {\r\n  opacity: 0;\r\n  transform: translateX(50px) scaleY(0.5);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-enter-to[data-v-f11a15ba] {\r\n  opacity: 1;\r\n  transform: translateX(0) scaleY(1);\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-active[data-v-f11a15ba] {\r\n  position: absolute;\r\n    transition: all 0.8s ease;\n}\n.slide-fade-leave-to[data-v-f11a15ba] {\r\n  opacity: 0;\r\n  transform: scaleY(0);\r\n  transform-origin: center top;\r\n    transition: all 0.8s ease;\n}\n.v-card--reveal[data-v-f11a15ba] {\r\n  align-items: center;\r\n  bottom: 0;\r\n  justify-content: center;\r\n  opacity: .5;\r\n  position: absolute;\r\n  width: 100%;\n}\n.pointer[data-v-f11a15ba] {\r\n    cursor: pointer;\n}\n.v-list-item__action[data-v-f11a15ba]{\r\n    display: inline-flex;\r\n    min-width: 70px!important;\n}\r\n", ""]);
-
-// exports
-
-
-/***/ }),
-
-/***/ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css&":
-/*!********************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css& ***!
-  \********************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-exports = module.exports = __webpack_require__(/*! ../../../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
-// imports
-
-
-// module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n/* body {\n  font-family: Arial, Helvetica, sans-serif;\n  width: 1024px;\n  margin: 0 auto;\n} */\ninput[type=\"file\"][data-v-1fa3ee07] {\n  display: none;\n}\n.header[data-v-1fa3ee07] {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 10px 0 5px 0;\n}\n.header h2[data-v-1fa3ee07] {\n  margin: 0;\n}\n.header a[data-v-1fa3ee07] {\n  text-decoration: none;\n  color: black;\n}\n.content[data-v-1fa3ee07] {\n  display: flex;\n  justify-content: space-between;\n}\n.cropper-area[data-v-1fa3ee07] {\n  width: 614px;\n}\n.actions[data-v-1fa3ee07] {\n  margin-top: 1rem;\n}\n.actions a[data-v-1fa3ee07] {\n  display: inline-block;\n  padding: 5px 15px;\n  background: #0062CC;\n  color: white;\n  text-decoration: none;\n  border-radius: 3px;\n  margin-right: 1rem;\n  margin-bottom: 1rem;\n}\ntextarea[data-v-1fa3ee07] {\n  width: 100%;\n  height: 100px;\n}\n.preview-area[data-v-1fa3ee07] {\n  width: 307px;\n}\n.preview-area p[data-v-1fa3ee07] {\n  font-size: 1.25rem;\n  margin: 0;\n  margin-bottom: 1rem;\n}\n.preview-area p[data-v-1fa3ee07]:last-of-type {\n  margin-top: 1rem;\n}\n.preview[data-v-1fa3ee07] {\n  width: 100%;\n  height: calc(372px * (9 / 16));\n  overflow: hidden;\n}\n.crop-placeholder[data-v-1fa3ee07] {\n  width: 100%;\n  height: 200px;\n  background: #ccc;\n}\n.cropped-image img[data-v-1fa3ee07] {\n  max-width: 100%;\n}\n", ""]);
 
 // exports
 
@@ -12913,36 +12666,6 @@ options.transform = transform
 options.insertInto = undefined;
 
 var update = __webpack_require__(/*! ../../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
-
-if(content.locals) module.exports = content.locals;
-
-if(false) {}
-
-/***/ }),
-
-/***/ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css&":
-/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader!./node_modules/css-loader??ref--7-1!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src??ref--7-2!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css& ***!
-  \************************************************************************************************************************************************************************************************************************************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-
-var content = __webpack_require__(/*! !../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css& */ "./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css&");
-
-if(typeof content === 'string') content = [[module.i, content, '']];
-
-var transform;
-var insertInto;
-
-
-
-var options = {"hmr":true}
-
-options.transform = transform
-options.insertInto = undefined;
-
-var update = __webpack_require__(/*! ../../../../node_modules/style-loader/lib/addStyles.js */ "./node_modules/style-loader/lib/addStyles.js")(content, options);
 
 if(content.locals) module.exports = content.locals;
 
@@ -14882,7 +14605,7 @@ __webpack_require__.r(__webpack_exports__);
 var render = function(_h, _vm) {
   var _c = _vm._c
   return _c(
-    "v-container",
+    "div",
     [
       _c("input", {
         ref: "input",
@@ -14902,15 +14625,10 @@ var render = function(_h, _vm) {
               _c(
                 "v-btn",
                 {
-                  attrs: { color: "deep-purple text--white", fab: "" },
+                  attrs: { color: "deep-purple white--text" },
                   on: { click: _vm.listeners.click }
                 },
-                [
-                  _c("v-icon", { attrs: { color: "white" } }, [
-                    _vm._v("mdi-camera")
-                  ])
-                ],
-                1
+                [_vm._v("再選択")]
               )
             ],
             1
@@ -21017,10 +20735,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&scoped=true&":
-/*!*****************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&scoped=true& ***!
-  \*****************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&":
+/*!*****************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07& ***!
+  \*****************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -21033,327 +20751,10 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", [
-    _vm._m(0),
-    _vm._v(" "),
-    _c("hr"),
-    _vm._v(" "),
-    _c("input", {
-      ref: "input",
-      attrs: { type: "file", name: "image", accept: "image/*" },
-      on: { change: _vm.setImage }
-    }),
-    _vm._v(" "),
-    _c("div", { staticClass: "content" }, [
-      _c("section", { staticClass: "cropper-area" }, [
-        _c(
-          "div",
-          { staticClass: "img-cropper" },
-          [
-            _c("vue-cropper", {
-              ref: "cropper",
-              attrs: {
-                "aspect-ratio": 16 / 9,
-                src: _vm.imgSrc,
-                preview: ".preview"
-              }
-            })
-          ],
-          1
-        ),
-        _vm._v(" "),
-        _c("div", { staticClass: "actions" }, [
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.zoom(0.2)
-                }
-              }
-            },
-            [_vm._v("\n          Zoom In\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.zoom(-0.2)
-                }
-              }
-            },
-            [_vm._v("\n          Zoom Out\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.move(-10, 0)
-                }
-              }
-            },
-            [_vm._v("\n          Move Left\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.move(10, 0)
-                }
-              }
-            },
-            [_vm._v("\n          Move Right\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.move(0, -10)
-                }
-              }
-            },
-            [_vm._v("\n          Move Up\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.move(0, 10)
-                }
-              }
-            },
-            [_vm._v("\n          Move Down\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.rotate(90)
-                }
-              }
-            },
-            [_vm._v("\n          Rotate +90deg\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.rotate(-90)
-                }
-              }
-            },
-            [_vm._v("\n          Rotate -90deg\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              ref: "flipX",
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.flipX($event)
-                }
-              }
-            },
-            [_vm._v("\n          Flip X\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              ref: "flipY",
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.flipY($event)
-                }
-              }
-            },
-            [_vm._v("\n          Flip Y\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.cropImage($event)
-                }
-              }
-            },
-            [_vm._v("\n          Crop\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.reset($event)
-                }
-              }
-            },
-            [_vm._v("\n          Reset\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.getData($event)
-                }
-              }
-            },
-            [_vm._v("\n          Get Data\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.setData($event)
-                }
-              }
-            },
-            [_vm._v("\n          Set Data\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.getCropBoxData($event)
-                }
-              }
-            },
-            [_vm._v("\n          Get CropBox Data\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.setCropBoxData($event)
-                }
-              }
-            },
-            [_vm._v("\n          Set CropBox Data\n        ")]
-          ),
-          _vm._v(" "),
-          _c(
-            "a",
-            {
-              attrs: { href: "#", role: "button" },
-              on: {
-                click: function($event) {
-                  $event.preventDefault()
-                  return _vm.showFileChooser($event)
-                }
-              }
-            },
-            [_vm._v("\n          Upload Image\n        ")]
-          )
-        ]),
-        _vm._v(" "),
-        _c("textarea", {
-          directives: [
-            {
-              name: "model",
-              rawName: "v-model",
-              value: _vm.data,
-              expression: "data"
-            }
-          ],
-          domProps: { value: _vm.data },
-          on: {
-            input: function($event) {
-              if ($event.target.composing) {
-                return
-              }
-              _vm.data = $event.target.value
-            }
-          }
-        })
-      ]),
-      _vm._v(" "),
-      _c("section", { staticClass: "preview-area" }, [
-        _c("p", [_vm._v("Preview")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "preview" }),
-        _vm._v(" "),
-        _c("p", [_vm._v("Cropped Image")]),
-        _vm._v(" "),
-        _c("div", { staticClass: "cropped-image" }, [
-          _vm.cropImg
-            ? _c("img", { attrs: { src: _vm.cropImg, alt: "Cropped Image" } })
-            : _c("div", { staticClass: "crop-placeholder" })
-        ])
-      ])
-    ])
+    _c("video", { ref: "video", attrs: { id: "video", autoplay: "" } })
   ])
 }
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "header" }, [
-      _c("h2", [_vm._v("Vue CropperJS")]),
-      _vm._v(" "),
-      _c("a", { attrs: { href: "https://github.com/Agontuk/vue-cropperjs" } }, [
-        _vm._v("Github")
-      ])
-    ])
-  }
-]
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -22348,15 +21749,32 @@ var render = function() {
                                   }),
                                   _vm._v(" "),
                                   _c(
-                                    "v-btn",
-                                    {
-                                      attrs: {
-                                        color: "primary",
-                                        disabled: _vm.stepBtn1
-                                      },
-                                      on: { click: _vm.cropImage }
-                                    },
-                                    [_vm._v("トリミング")]
+                                    "div",
+                                    { staticClass: "d-flex" },
+                                    [
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "mr-2",
+                                          attrs: {
+                                            color: "primary",
+                                            disabled: _vm.stepBtn1
+                                          },
+                                          on: { click: _vm.cropImage }
+                                        },
+                                        [_vm._v("トリミング")]
+                                      ),
+                                      _vm._v(" "),
+                                      _c("input-file", {
+                                        attrs: { size: _vm.size },
+                                        on: {
+                                          selectedImage: function($event) {
+                                            return _vm.loadImage($event)
+                                          }
+                                        }
+                                      })
+                                    ],
+                                    1
                                   )
                                 ],
                                 1
@@ -22384,17 +21802,29 @@ var render = function() {
                                 attrs: { id: "preview" }
                               }),
                               _vm._v(" "),
-                              _c("input-file", {
-                                attrs: { size: _vm.size },
-                                on: {
-                                  selectedImage: function($event) {
-                                    return _vm.loadImage($event)
-                                  }
-                                }
-                              })
+                              _c(
+                                "v-btn",
+                                { attrs: { color: "deep-purple", fab: "" } },
+                                [
+                                  _c(
+                                    "v-icon",
+                                    {
+                                      attrs: { color: "white" },
+                                      on: { click: _vm.openCamera }
+                                    },
+                                    [_vm._v("mdi-camera")]
+                                  )
+                                ],
+                                1
+                              )
                             ],
                             1
-                          )
+                          ),
+                          _vm._v(" "),
+                          _c("video", {
+                            ref: "video",
+                            attrs: { autoplay: "", playsinline: "" }
+                          })
                         ]
                       )
                     ],
@@ -24051,6 +23481,17 @@ var render = function() {
         ],
         1
       ),
+      _vm._v(" "),
+      _c("v-dialog", {
+        attrs: { width: "500" },
+        model: {
+          value: _vm.cameraDialog,
+          callback: function($$v) {
+            _vm.cameraDialog = $$v
+          },
+          expression: "cameraDialog"
+        }
+      }),
       _vm._v(" "),
       _c(
         "v-snackbar",
@@ -88255,11 +87696,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _Practice_vue_vue_type_template_id_1fa3ee07_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Practice.vue?vue&type=template&id=1fa3ee07&scoped=true& */ "./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&scoped=true&");
+/* harmony import */ var _Practice_vue_vue_type_template_id_1fa3ee07___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Practice.vue?vue&type=template&id=1fa3ee07& */ "./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&");
 /* harmony import */ var _Practice_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Practice.vue?vue&type=script&lang=js& */ "./resources/ts/components/pages/Practice.vue?vue&type=script&lang=js&");
-/* empty/unused harmony star reexport *//* harmony import */ var _Practice_vue_vue_type_style_index_0_id_1fa3ee07_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css& */ "./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
-
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -88267,13 +87706,13 @@ __webpack_require__.r(__webpack_exports__);
 
 /* normalize component */
 
-var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _Practice_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _Practice_vue_vue_type_template_id_1fa3ee07_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _Practice_vue_vue_type_template_id_1fa3ee07_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _Practice_vue_vue_type_template_id_1fa3ee07___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _Practice_vue_vue_type_template_id_1fa3ee07___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  "1fa3ee07",
+  null,
   null
   
 )
@@ -88299,35 +87738,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css&":
-/*!*************************************************************************************************************!*\
-  !*** ./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css& ***!
-  \*************************************************************************************************************/
-/*! no static exports found */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_style_index_0_id_1fa3ee07_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader!../../../../node_modules/css-loader??ref--7-1!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/src??ref--7-2!../../../../node_modules/vue-loader/lib??vue-loader-options!./Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css& */ "./node_modules/style-loader/index.js!./node_modules/css-loader/index.js?!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/src/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=style&index=0&id=1fa3ee07&scoped=true&lang=css&");
-/* harmony import */ var _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_style_index_0_id_1fa3ee07_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_style_index_0_id_1fa3ee07_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__);
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_style_index_0_id_1fa3ee07_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _node_modules_style_loader_index_js_node_modules_css_loader_index_js_ref_7_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_src_index_js_ref_7_2_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_style_index_0_id_1fa3ee07_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-
-
-/***/ }),
-
-/***/ "./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&scoped=true&":
-/*!***********************************************************************************************!*\
-  !*** ./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&scoped=true& ***!
-  \***********************************************************************************************/
+/***/ "./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&":
+/*!***********************************************************************************!*\
+  !*** ./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07& ***!
+  \***********************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_template_id_1fa3ee07_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Practice.vue?vue&type=template&id=1fa3ee07&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&scoped=true&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_template_id_1fa3ee07_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_template_id_1fa3ee07___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./Practice.vue?vue&type=template&id=1fa3ee07& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/ts/components/pages/Practice.vue?vue&type=template&id=1fa3ee07&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_template_id_1fa3ee07___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_template_id_1fa3ee07_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Practice_vue_vue_type_template_id_1fa3ee07___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 
