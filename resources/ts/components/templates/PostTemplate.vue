@@ -40,15 +40,19 @@
                                     drag-mode="crop"
                                     preview=".preview"
                                 />
-                    <v-btn @click="cropImage" color="primary" :disabled="stepBtn1">トリミング</v-btn>
+                            <div class="d-flex">
+                            <v-btn class="mr-2" @click="cropImage" color="primary" :disabled="stepBtn1">トリミング</v-btn>
+                            <input-file :size="size" @selectedImage="loadImage($event)"></input-file>
+                                </div>
                             </div>
                             <div v-else>
                                 <input-file-image :size="size" @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                             <div>
                             <div id="preview" class="preview"/>
-                            <input-file :size="size" @selectedImage="loadImage($event)"></input-file>
+                            <v-btn color="deep-purple" fab><v-icon color="white" @click="openCamera">mdi-camera</v-icon></v-btn>
                             </div>
+                            <video ref="video" autoplay playsinline></video>
                         </v-layout>
                     </v-container>
                 </v-stepper-content>
@@ -326,6 +330,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="cameraDialog" width="500">
+        <!-- <video ref="video" autoplay playsinline></video> -->
+    </v-dialog>
     <v-snackbar v-model="titleMessagevalidation" :timeout="timeout">
       {{ text }}
       <template v-slot:action="{ attrs }">
@@ -351,6 +358,8 @@ export default {
     },
     data() {
       return {
+          video: '',
+          cameraDialog: false,
           size: 1100,
       titleMessagevalidation: false,
       text: 'タイトルと内容を書いてください',
@@ -470,8 +479,36 @@ export default {
         this.textCanvasctx = this.textCanvas.getContext("2d");
         this.mediaSize = window.innerWidth;
         var img = document.getElementById("select");
+
     },
     methods: {
+        openCamera(){
+            const constraints = {
+                audio: false,
+                video: {
+                facingMode: "user"   // フロントカメラを利用する
+                }
+            };
+            try {
+                navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+                navigator.mediaDevices.getUserMedia(constraints)
+                .then( stream => {
+                    this.$refs.video.srcObject = stream;
+                    let that = this;
+                    this.$refs.video.onloadedmetadata = (e) => {
+                        that.$refs.video.play();
+                    };
+                })
+                .catch( (err) => {
+                    alert(err)
+                });
+            } catch (error) {
+                alert(error)
+            }
+        },
+        capture () {
+            this.$refs.cropper.replace(this.$refs.video);
+        },
         oneMoreImage(){
             this.e1 = 1;
             this.imgSrc = '';

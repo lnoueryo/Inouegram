@@ -1,12 +1,12 @@
 <template atoms functional>
-    <v-container>
+    <div>
         <input style="display: none" ref="input" type="file" accept="image/jpeg, image/jpg, image/png" @input="listeners.input">
         <v-layout text-xs-center wrap>
             <v-flex xs12>
-                <v-btn color="deep-purple text--white" @click="listeners.click" fab><v-icon color="white">mdi-camera</v-icon></v-btn>
+                <v-btn color="deep-purple white--text" @click="listeners.click">再選択</v-btn>
             </v-flex>
         </v-layout>
-    </v-container>
+    </div>
 </template>
 <style>
 input {
