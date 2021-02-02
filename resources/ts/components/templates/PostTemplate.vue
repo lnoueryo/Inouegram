@@ -46,7 +46,7 @@
                                 <input-file-image :size="size" @selectedImage="loadImage($event)"></input-file-image>
                             </div>
                             <div>
-                            <div id="preview" class="preview"/>
+                            <div id="preview" class="preview" style="display:none;" />
                             <input-file :size="size" @selectedImage="loadImage($event)"></input-file>
                             </div>
                         </v-layout>
@@ -65,7 +65,6 @@
                         </div>
                             <canvas id="drawCanvas" style="position: absolute; z-index: 1;top: 0; left: 0;" v-bind:class="{eraser: canvasMode === 'eraser'}" width="500" height="500" @mousedown="dragStart" @mouseup="dragEnd" @mouseout="dragEnd" @mousemove="draw"></canvas>
                             <canvas id="cover" style="position: absolute; top: 0; left: 0;" width="500" height="500"></canvas>
-                            <!-- <canvas id="text" style="z-index: 0; position: absolute;" width=500 height=500 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas> -->
                             <canvas id="text" :class="{index2: value == 2}" style="position: absolute;top: 0; left: 0;" width=500 height=500 @dblclick="selectText" @mousedown.prevent="handleMouseDown" @mousemove.prevent="handleMouseMove" @mouseup.prevent="handleMouseUp" @mouseout.prevent="handleMouseOut"></canvas>
                         </div>
                         <v-bottom-navigation absolute hide-on-scroll scroll-target="#hide-on-scroll-example" v-model="value">

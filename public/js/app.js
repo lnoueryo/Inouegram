@@ -5537,7 +5537,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
 
 
 
@@ -22428,6 +22427,7 @@ var render = function() {
                             [
                               _c("div", {
                                 staticClass: "preview",
+                                staticStyle: { display: "none" },
                                 attrs: { id: "preview" }
                               }),
                               _vm._v(" "),
